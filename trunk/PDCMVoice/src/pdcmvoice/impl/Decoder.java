@@ -49,12 +49,6 @@ public class Decoder {
     public Decoder(int format){
         this.encodedFormat=format;
         
-//          poutput=new PipedOutputStream();
-//          pinput=new PipedInputStream(1024);
-//          try{
-//              pinput.connect(poutput);
-//          }
-//          catch(IOException e){}
         if (encodedFormat==FORMAT_CODE_SPEEX_NB ||
             encodedFormat==FORMAT_CODE_SPEEX_WB )
         {
@@ -118,7 +112,7 @@ public class Decoder {
             encodedFormat==FORMAT_CODE_SPEEX_WB )
         {   
             try{
-            if(frame==null)//frame has beenlost
+            if(frame==null)//frame has been lost
                 speexDecoder.processData(true); //lost=true
             else //decode received frame
                 speexDecoder.processData(frame, 0, frame.length);

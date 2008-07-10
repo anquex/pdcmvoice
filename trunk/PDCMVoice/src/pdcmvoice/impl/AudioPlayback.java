@@ -35,6 +35,7 @@ package pdcmvoice.impl;
 import	java.io.*;
 import	javax.sound.sampled.*;
 import static pdcmvoice.impl.Constants.*;
+import static pdcmvoice.impl.AudioUtils.*;
 
 // Class that reads its audio from an AudioInputStream
 public class AudioPlayback extends AudioBase {
@@ -99,7 +100,14 @@ public class AudioPlayback extends AudioBase {
 
     // in network format
     public void setAudioInputStream(AudioInputStream ais) {
-	this.ais = ais;
+        //convert to a higher sample rate to solve 
+        // problems of delay that occurs on some computers
+        // due to bad drivers
+        
+//        float outSampleRate=16000.0f;
+//        AudioFormat targetFormat=getLineAudioFormat(outSampleRate);
+//	this.ais = AudioSystem.getAudioInputStream(targetFormat, ais);
+        this.ais=ais;
     }
 
     class PlayThread extends Thread {
