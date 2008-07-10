@@ -39,7 +39,7 @@ import static pdcmvoice.impl.Constants.*;
 // Class that reads its audio from an AudioInputStream
 public class AudioPlayback extends AudioBase {
 
-    private static final boolean DEBUG_TRANSPORT = true;
+    private static final boolean DEBUG_TRANSPORT = false;
 
     protected AudioInputStream ais;
     private PlayThread thread;
@@ -140,14 +140,14 @@ public class AudioPlayback extends AudioBase {
 // try to see how many data put in buffer to avoid blocking calls...
 // this is the only stable solution I found for getting a bounded delay...
 // but introduces a bit of distortion sometimes...
-                            System.out.println("SPEAKERS: "+sdl.available()+" writable without blocking");
-                            System.out.println("SPEAKERS: "+r+" Byte Read");
+//                            System.out.println("SPEAKERS: "+sdl.available()+" writable without blocking");
+//                            System.out.println("SPEAKERS: "+r+" Byte Read");
 // resolves overload of audio device
-                        if (sdl.available()<r)
-                        {   dropped++;
-                            System.out.println("SPEAKERS: drop"+dropped);
-                            System.out.println("SPEAKERS: received"+received);
-                        }
+//                        if (sdl.available()<r)
+//                        {   dropped++;
+//                            System.out.println("SPEAKERS: drop"+dropped);
+//                            System.out.println("SPEAKERS: received"+received);
+//                        }
                             sdl.write(buffer, 0, r);
 // audio frame size resulted to be the better compromise to wait
 // for reducing error introduced by Math.min(sdl.available(), r)

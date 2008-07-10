@@ -18,7 +18,6 @@
  */
 package jlibrtp;
 
-import jlibrtp.*;
 import java.util.Enumeration;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

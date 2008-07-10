@@ -124,7 +124,7 @@ public class Encoder extends Thread{
             while(nReadBytes!=-1){
                 try{
                     nReadBytes=ais.read(buffer);
-                   System.out.println(nReadBytes);
+//                   System.out.println(nReadBytes);
                 }catch(IOException e){
                     e.printStackTrace();
                     break; //let process die
