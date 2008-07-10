@@ -5,19 +5,20 @@
 
 package pdcmvoice.impl;
 
-import com.sun.org.apache.bcel.internal.generic.IFEQ;
-import java.net.InetSocketAddress;
 import jlibrtp.DataFrame;
-import jlibrtp.DebugAppIntf;
 import jlibrtp.Participant;
 import jlibrtp.RTPAppIntf;
 import jlibrtp.RTPSession;
+
+import static pdcmvoice.impl.Constants.*;
+
+import java.util.Arrays;
 
 /**
  *
  * @author marco
  */
-public class Depacketizer implements RTPAppIntf,DebugAppIntf{
+public class Depacketizer implements RTPAppIntf{
     
     private final boolean DEBUG=false;
     
@@ -27,6 +28,9 @@ public class Depacketizer implements RTPAppIntf,DebugAppIntf{
     private long lastReceivedSN=0;
     private boolean inited;
     
+    //DEBUG
+    private byte[] lastNewVoice;
+    
 //    int avg=0;
 //    int packets=0;
 //    long LastTimeStamp=0;
@@ -34,21 +38,68 @@ public class Depacketizer implements RTPAppIntf,DebugAppIntf{
     
     public Depacketizer(RTPSession s){
         rtpSession=s;
-        if(DEBUG) rtpSession.RTPSessionRegister(this, null, this);
-        else rtpSession.RTPSessionRegister(this, null, null);
+        rtpSession.RTPSessionRegister(this, null, null);
+        
         
     }
     public synchronized void receiveData(DataFrame frame, Participant participant)
     {   
         if (!inited) return;
-        
 //        if(LastTimeStamp==0) LastTimeStamp=System.currentTimeMillis();
 //        currentTimeStamp=System.currentTimeMillis();
 //        System.out.println(currentTimeStamp-LastTimeStamp);
 //        LastTimeStamp=currentTimeStamp;
+        
         byte[] data = frame.getConcatenatedData();
+        boolean isRDT=isRDT(frame.payloadType());
+        
+//        out("FRAME :"+frame.payloadType());
         long timestamp=frame.rtpTimestamp();
         int SN=frame.sequenceNumbers()[0];
+        if (isRDT){
+            int prevoiusSN=SN-1;
+            //always integer
+            int lenght=data.length/2;
+            byte[] newVoice= new byte[lenght];
+            byte[] previousVoice=new byte[lenght];
+            System.arraycopy(data, 0, newVoice, 0, lenght);
+            System.arraycopy(data, lenght, previousVoice, 0, lenght);
+           
+            
+            //DEBUG 
+            
+           
+            
+            //Print new voice frame
+            
+//            System.out.println("New Voice :"+frame.sequenceNumbers()[0]);
+//            String out="";
+//            for(int i=0;i<newVoice.length;i++)
+//                out+=" "+newVoice[i];
+//            System.out.println(out);
+//            
+//            System.out.println("Previous Voice :"+frame.sequenceNumbers()[0]);
+//            out="";
+//            for(int i=0;i<previousVoice.length;i++)
+//                out+=" "+previousVoice[i];
+//            System.out.println(out);
+            
+            //print previous voice frame
+            
+//            if (lastNewVoice!=null){
+//                if(Arrays.equals(lastNewVoice, previousVoice))
+//                     System.out.println("coincidono");
+//                else System.out.println("non coincidono");
+//               
+//            }
+//            lastNewVoice=newVoice;
+            
+            
+        }
+        else{    
+        }
+        
+        
         if (lastReceivedSN>SN) {
 //            System.out.println("OutOfOrder");
             decoder.decodeFrame(null,SN,timestamp);
@@ -61,6 +112,15 @@ public class Depacketizer implements RTPAppIntf,DebugAppIntf{
     // to prevent null pointer exception
     public void init(){
         inited=true;
+    }
+    
+    private boolean isRDT(int payloadType){
+        if (payloadType==PAYLOAD_SPEEX_RDT ||
+            payloadType==PAYLOAD_iLBC_RDT)
+            return true;
+        // unknown payload or not RDT
+        else return false;
+                
     }
     
     
@@ -84,18 +144,6 @@ public class Depacketizer implements RTPAppIntf,DebugAppIntf{
     public int frameSize(int payloadType) {
         // 1 packet -> at least 1 frame
         return 1;
-    }
-
-    public void packetReceived(int type, InetSocketAddress socket, String description) {
-        //nothing
-    }
-
-    public void packetSent(int type, InetSocketAddress socket, String description) {
-        //nothing
-    }
-
-    public void importantEvent(int type, String description) {
-        //nothing
     }
 
 }

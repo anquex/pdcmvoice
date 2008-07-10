@@ -105,10 +105,18 @@ public class Constants {
     
     public static final int DEFAULT_SPEEX_QUALITY_INDEX = 5;
     
+    public static final int PAYLOAD_iLBC=96;
+    public static final int PAYLOAD_SPEEX=97;
+    public static final int PAYLOAD_iLBC_RDT=98;
+    public static final int PAYLOAD_SPEEX_RDT=99;
+    
     
     //  FEC ENABLE?
 
     public static void out(String s) {
 	System.out.println(s);
+    }
+    public static void out(int n) {
+	System.out.println(""+n);
     }
 }
