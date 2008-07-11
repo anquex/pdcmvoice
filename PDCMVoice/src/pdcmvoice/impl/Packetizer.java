@@ -77,7 +77,6 @@ public class Packetizer {
         RDT=false;
         //backup inital session payloadType
         rtpSession.payloadType(initialPayloadType);
-        
     }
     
     public boolean isRDT(){

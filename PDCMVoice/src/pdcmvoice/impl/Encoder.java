@@ -10,7 +10,10 @@ import javax.sound.sampled.AudioInputStream;
 import static pdcmvoice.impl.AudioUtils.getNetAudioFormat;
 import org.xiph.speex.SpeexEncoder;
 import static pdcmvoice.impl.Constants.*;
+import pdcmvoice.codecs.IlbcEncoder;
 
+
+import net.java.sip.communicator.impl.media.codec.audio.ilbc.ilbc_encoder;
 
 /**
  *
@@ -20,6 +23,7 @@ public class Encoder extends Thread{
     
     private AudioInputStream ais;
     private SpeexEncoder speexEncoder=null;
+    private IlbcEncoder ilbcEncoder = null;
     private int encoding_format;
     private Packetizer packetizer; //callback reference
     private boolean registered;
@@ -42,7 +46,8 @@ public class Encoder extends Thread{
             
         }
         else if (encoding_format==FORMAT_CODE_iLBC){
-            
+            int mode=20; //20ms
+            ilbcEncoder=new IlbcEncoder(mode,true);
         }
         else throw new IllegalArgumentException();
         
@@ -138,7 +143,28 @@ public class Encoder extends Thread{
                 }
             }
        // iLBC Encoding
-       }else{   
+       }else{
+            //byte[] buffer= new byte[480];
+            byte[] buffer= new byte[PCMbytesPerFrame];
+            int nReadBytes=0;
+            int encodedDataBytes=0;
+            byte encodedFrame[]=null;
+            while(nReadBytes!=-1){
+                try{
+                    nReadBytes=ais.read(buffer);
+//                   System.out.println(nReadBytes);
+                }catch(IOException e){
+                    e.printStackTrace();
+                    break; //let process die
+                }
+                if (nReadBytes>0){
+                    ilbcEncoder.processData(buffer, 0,nReadBytes);
+                    encodedFrame=new byte[ilbcEncoder.getProcessedDataByteSize()];
+                //    System.out.println(encodedFrame.length);
+                    ilbcEncoder.getProcessedData(encodedFrame, 0);
+                    packetizer.sendVoice(encodedFrame);
+                }            
+             }
        }
     }//end run
     

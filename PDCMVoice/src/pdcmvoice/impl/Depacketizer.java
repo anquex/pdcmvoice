@@ -64,6 +64,8 @@ public class Depacketizer implements RTPAppIntf{
             byte[] previousVoice=new byte[lenght];
             System.arraycopy(data, 0, newVoice, 0, lenght);
             System.arraycopy(data, lenght, previousVoice, 0, lenght);
+            
+            decoder.decodeFrame(newVoice,SN,timestamp);
            
             
             //DEBUG 
@@ -96,7 +98,8 @@ public class Depacketizer implements RTPAppIntf{
             
             
         }
-        else{    
+        else{
+           decoder.decodeFrame(data,SN,timestamp);
         }
         
         
@@ -104,7 +107,6 @@ public class Depacketizer implements RTPAppIntf{
 //            System.out.println("OutOfOrder");
             decoder.decodeFrame(null,SN,timestamp);
         }
-        decoder.decodeFrame(data,SN,timestamp);
         //System.out.println("pacchetto ricevuto");
         
     }

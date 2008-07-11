@@ -1,11 +1,11 @@
-///*
-// * SIP Communicator, the OpenSource Java VoIP and Instant Messaging client.
-// *
-// * Distributable under LGPL license.
-// * See terms of license at gnu.org.
-// */
-//package net.java.sip.communicator.impl.media.codec.audio.ilbc;
-//
+/*
+ * SIP Communicator, the OpenSource Java VoIP and Instant Messaging client.
+ *
+ * Distributable under LGPL license.
+ * See terms of license at gnu.org.
+ */
+package net.java.sip.communicator.impl.media.codec.audio.ilbc;
+
 //import javax.media.*;
 //import javax.media.format.*;
 //

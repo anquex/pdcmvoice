@@ -11,7 +11,7 @@ import java.lang.*;
 /**
  * @author Jean Lorchat
  */
-class ilbc_encoder {
+public class ilbc_encoder {
     /* encoding mode, either 20 or 30 ms */
     int mode;
 
@@ -1823,6 +1823,7 @@ class ilbc_encoder {
     // 	else
     // 	    return ilbc_constants.BLOCKL_30MS;
     //     }
+    
     public short encode(short encoded_data[], short data[])
     {
 	float block[] = new float [this.ULP_inst.blockl];
