@@ -151,10 +151,6 @@ public class RTPSession {
 	 protected int fbMaxDelay = 1000;			// how long the information is useful
 	 // RTCP bandwidth
 	 protected int rtcpBandwidth = -1;
-
-    public RTPSession() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 	 
 	 
 	 /**
