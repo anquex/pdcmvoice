@@ -9,140 +9,140 @@ package net.java.sip.communicator.impl.media.codec.audio.ilbc;
 /**
  * @author Jean Lorchat
  */
-class ilbc_constants {
+public class ilbc_constants {
     /* general codec settings */
 
-    static float FS = (float)8000.0f;
-    static int BLOCKL_20MS = 160;
-    static int BLOCKL_30MS = 240;
-    static int BLOCKL_MAX = 240;
-    static int NSUB_20MS = 4;
-    static int NSUB_30MS = 6;
-    static int NSUB_MAX = 6;
-    static int NASUB_20MS = 2;
-    static int NASUB_30MS = 4;
-    static int NASUB_MAX = 4;
-    static int SUBL = 40;
-    static int STATE_LEN = 80;
-    static int STATE_SHORT_LEN_30MS = 58;
-    static int STATE_SHORT_LEN_20MS = 57;
+    public static final float FS = (float)8000.0f;
+    public static final int BLOCKL_20MS = 160;
+    public static final int BLOCKL_30MS = 240;
+    public static final int BLOCKL_MAX = 240;
+    public static final int NSUB_20MS = 4;
+    public static final int NSUB_30MS = 6;
+    public static final int NSUB_MAX = 6;
+    public static final int NASUB_20MS = 2;
+    public static final int NASUB_30MS = 4;
+    public static final int NASUB_MAX = 4;
+    public static final int SUBL = 40;
+    public static final int STATE_LEN = 80;
+    public static final int STATE_SHORT_LEN_30MS = 58;
+    public static final int STATE_SHORT_LEN_20MS = 57;
 
     /* LPC settings */
 
-    static int  LPC_FILTERORDER = 10;
-    static float LPC_CHIRP_SYNTDENUM = (float)0.9025;
-    static float LPC_CHIRP_WEIGHTDENUM = (float)0.4222;
-    static int LPC_LOOKBACK = 60;
-    static int LPC_N_20MS = 1;
-    static int LPC_N_30MS = 2;
-    static int LPC_N_MAX = 2;
-    static int LPC_ASYMDIFF = 20;
-    static float LPC_BW = (float)60.0f;
-    static float LPC_WN = (float)1.0001f;
-    static int LSF_NSPLIT = 3;
-    static int LSF_NUMBER_OF_STEPS = 4;
-    static int LPC_HALFORDER = (LPC_FILTERORDER/2);
+    public static final int  LPC_FILTERORDER = 10;
+    public static final float LPC_CHIRP_SYNTDENUM = (float)0.9025;
+    public static final float LPC_CHIRP_WEIGHTDENUM = (float)0.4222;
+    public static final int LPC_LOOKBACK = 60;
+    public static final int LPC_N_20MS = 1;
+    public static final int LPC_N_30MS = 2;
+    public static final int LPC_N_MAX = 2;
+    public static final int LPC_ASYMDIFF = 20;
+    public static final float LPC_BW = (float)60.0f;
+    public static final float LPC_WN = (float)1.0001f;
+    public static final int LSF_NSPLIT = 3;
+    public static final int LSF_NUMBER_OF_STEPS = 4;
+    public static final int LPC_HALFORDER = (LPC_FILTERORDER/2);
 
     /* cb settings */
 
-    static int CB_NSTAGES = 3;
-    static int CB_EXPAND = 2;
-    static int CB_MEML = 147;
-    static int CB_HALFFILTERLEN = 4;
-    static int CB_FILTERLEN = 2*CB_HALFFILTERLEN;
-    static int CB_RESRANGE = 34;
-    static float CB_MAXGAIN = (float)1.3;
+    public static final int CB_NSTAGES = 3;
+    public static final int CB_EXPAND = 2;
+    public static final int CB_MEML = 147;
+    public static final int CB_HALFFILTERLEN = 4;
+    public static final int CB_FILTERLEN = 2*CB_HALFFILTERLEN;
+    public static final int CB_RESRANGE = 34;
+    public static final float CB_MAXGAIN = (float)1.3;
 
     /* enhancer */
 
-    static int ENH_BLOCKL = 80;  /* block length */
-    static int ENH_BLOCKL_HALF = (ENH_BLOCKL/2);
-    static int ENH_HL = 3;   /* 2*ENH_HL+1 is number blocks
+    public static final int ENH_BLOCKL = 80;  /* block length */
+    public static final int ENH_BLOCKL_HALF = (ENH_BLOCKL/2);
+    public static final int ENH_HL = 3;   /* 2*ENH_HL+1 is number blocks
 				in said second sequence */
-    static int ENH_SLOP = 2;   /* max difference estimated and
+    public static final int ENH_SLOP = 2;   /* max difference estimated and
 				  correct pitch period */
-    static int ENH_PLOCSL = 20;  /* pitch-estimates and pitch-
+    public static final int ENH_PLOCSL = 20;  /* pitch-estimates and pitch-
 				    locations buffer length */
-    static int ENH_OVERHANG = 2;
-    static int ENH_UPS0 = 4;   /* upsampling rate */
-    static int ENH_FL0 = 3;   /* 2*FLO+1 is the length of
+    public static final int ENH_OVERHANG = 2;
+    public static final int ENH_UPS0 = 4;   /* upsampling rate */
+    public static final int ENH_FL0 = 3;   /* 2*FLO+1 is the length of
 				 each filter */
-    static int ENH_VECTL = (ENH_BLOCKL+2*ENH_FL0);
-    static int ENH_CORRDIM = (2*ENH_SLOP+1);
-    static int ENH_NBLOCKS = (BLOCKL_MAX/ENH_BLOCKL);
-    static int ENH_NBLOCKS_EXTRA = 5;
-    static int ENH_NBLOCKS_TOT = 8;   /* ENH_NBLOCKS +
+    public static final int ENH_VECTL = (ENH_BLOCKL+2*ENH_FL0);
+    public static final int ENH_CORRDIM = (2*ENH_SLOP+1);
+    public static final int ENH_NBLOCKS = (BLOCKL_MAX/ENH_BLOCKL);
+    public static final int ENH_NBLOCKS_EXTRA = 5;
+    public static final int ENH_NBLOCKS_TOT = 8;   /* ENH_NBLOCKS +
 					 ENH_NBLOCKS_EXTRA */
-    static int ENH_BUFL = (ENH_NBLOCKS_TOT)*ENH_BLOCKL;
-    static float ENH_ALPHA0 = (float)0.05f;
+    public static final int ENH_BUFL = (ENH_NBLOCKS_TOT)*ENH_BLOCKL;
+    public static final float ENH_ALPHA0 = (float)0.05f;
 
     /* Down sampling */
 
-    static int FILTERORDER_DS = 7;
-    static int DELAY_DS = 3;
-    static int FACTOR_DS = 2;
+    public static final int FILTERORDER_DS = 7;
+    public static final int DELAY_DS = 3;
+    public static final int FACTOR_DS = 2;
 
     /* bit stream defs */
 
-    static int NO_OF_BYTES_20MS = 38;
-    static int NO_OF_BYTES_30MS = 50;
-    static int NO_OF_WORDS_20MS = 19;
-    static int NO_OF_WORDS_30MS = 25;
-    static int STATE_BITS = 3;
-    static int BYTE_LEN = 8;
-    static int ULP_CLASSES = 3;
+    public static final int NO_OF_BYTES_20MS = 38;
+    public static final int NO_OF_BYTES_30MS = 50;
+    public static final int NO_OF_WORDS_20MS = 19;
+    public static final int NO_OF_WORDS_30MS = 25;
+    public static final int STATE_BITS = 3;
+    public static final int BYTE_LEN = 8;
+    public static final int ULP_CLASSES = 3;
 
     /* help parameters */
 
-    static float DOUBLE_MAX = (float)1.0e37;
-    static float EPS = (float)2.220446049250313e-016;
-    static float PI = (float)3.14159265358979323846;
-    static int MIN_SAMPLE = -32768;
-    static int MAX_SAMPLE = 32767;
-    static float TWO_PI = (float)6.283185307;
-    static float PI2 = (float)0.159154943;
+    public static final float DOUBLE_MAX = (float)1.0e37;
+    public static final float EPS = (float)2.220446049250313e-016;
+    public static final float PI = (float)3.14159265358979323846;
+    public static final int MIN_SAMPLE = -32768;
+    public static final int MAX_SAMPLE = 32767;
+    public static final float TWO_PI = (float)6.283185307;
+    public static final float PI2 = (float)0.159154943;
 
     /* */
 
-    static int lsf_bits_20ms[][] = {   {6,0,0,0,0}, {7,0,0,0,0}, {7,0,0,0,0},
+    public static final int lsf_bits_20ms[][] = {   {6,0,0,0,0}, {7,0,0,0,0}, {7,0,0,0,0},
 				       {0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}};
-    static int start_bits_20ms[] = {2,0,0,0,0};
-    static int startfirst_bits_20ms[] = {1,0,0,0,0};
-    static int scale_bits_20ms[] = {6,0,0,0,0};
-    static int state_bits_20ms[] = {0,1,2,0,0};
+    public static final int start_bits_20ms[] = {2,0,0,0,0};
+    public static final int startfirst_bits_20ms[] = {1,0,0,0,0};
+    public static final int scale_bits_20ms[] = {6,0,0,0,0};
+    public static final int state_bits_20ms[] = {0,1,2,0,0};
 
-    static int extra_cb_index_20ms[][] = {{6,0,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}};
-    static int extra_cb_gain_20ms[][] = {{2,0,3,0,0}, {1,1,2,0,0}, {0,0,3,0,0}};
+    public static final int extra_cb_index_20ms[][] = {{6,0,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}};
+    public static final int extra_cb_gain_20ms[][] = {{2,0,3,0,0}, {1,1,2,0,0}, {0,0,3,0,0}};
 
-    static int cb_index_20ms[][][] = {   {{7,0,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}},
+    public static final int cb_index_20ms[][][] = {   {{7,0,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}},
 					 {{0,0,8,0,0}, {0,0,8,0,0}, {0,0,8,0,0}},
 					 {{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}},
 					 {{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}}};
 
-    static int cb_gain_20ms[][][] = {   {{1,2,2,0,0}, {1,1,2,0,0}, {0,0,3,0,0}},
+    public static final int cb_gain_20ms[][][] = {   {{1,2,2,0,0}, {1,1,2,0,0}, {0,0,3,0,0}},
 					{{1,1,3,0,0}, {0,2,2,0,0}, {0,0,3,0,0}},
 					{{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}},
 					{{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}}};
 
 
-    static int lsf_bits_30ms[][] = {   {6,0,0,0,0}, {7,0,0,0,0}, {7,0,0,0,0},
+    public static final int lsf_bits_30ms[][] = {   {6,0,0,0,0}, {7,0,0,0,0}, {7,0,0,0,0},
 				       {6,0,0,0,0}, {7,0,0,0,0}, {7,0,0,0,0}};
-    static int start_bits_30ms[] = {3,0,0,0,0};
-    static int startfirst_bits_30ms[] = {1,0,0,0,0};
-    static int scale_bits_30ms[] = {6,0,0,0,0};
-    static int state_bits_30ms[] = {0,1,2,0,0};
+    public static final int start_bits_30ms[] = {3,0,0,0,0};
+    public static final int startfirst_bits_30ms[] = {1,0,0,0,0};
+    public static final int scale_bits_30ms[] = {6,0,0,0,0};
+    public static final int state_bits_30ms[] = {0,1,2,0,0};
 
-    static int extra_cb_index_30ms[][] = {{4,2,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}};
-    static int extra_cb_gain_30ms[][] = {{1,1,3,0,0}, {1,1,2,0,0}, {0,0,3,0,0}};
+    public static final int extra_cb_index_30ms[][] = {{4,2,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}};
+    public static final int extra_cb_gain_30ms[][] = {{1,1,3,0,0}, {1,1,2,0,0}, {0,0,3,0,0}};
 
-    static int cb_index_30ms[][][] = {   {{6,1,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}},
+    public static final int cb_index_30ms[][][] = {   {{6,1,1,0,0}, {0,0,7,0,0}, {0,0,7,0,0}},
 					 {{0,7,1,0,0}, {0,0,8,0,0}, {0,0,8,0,0}},
 					 {{0,7,1,0,0}, {0,0,8,0,0}, {0,0,8,0,0}},
 					 {{0,7,1,0,0}, {0,0,8,0,0}, {0,0,8,0,0}},
 					 {{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}},
 					 {{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}}};
 
-    static int cb_gain_30ms[][][] = {   {{1,2,2,0,0}, {1,2,1,0,0}, {0,0,3,0,0}},
+    public static final int cb_gain_30ms[][][] = {   {{1,2,2,0,0}, {1,2,1,0,0}, {0,0,3,0,0}},
 					{{0,2,3,0,0}, {0,2,2,0,0}, {0,0,3,0,0}},
 					{{0,1,4,0,0}, {0,1,3,0,0}, {0,0,3,0,0}},
 					{{0,1,4,0,0}, {0,1,3,0,0}, {0,0,3,0,0}},
@@ -150,27 +150,27 @@ class ilbc_constants {
 					{{0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}}};
 
     /* HP filters */
-    static float hpi_zero_coefsTbl[] = {(float)0.92727436f, (float)-1.8544941f, (float)0.92727436f};
-    static float hpi_pole_coefsTbl[] = {(float)1.0f, (float)-1.9059465f, (float)0.9114024f};
-    static float hpo_zero_coefsTbl[] = {(float)0.93980581f, (float)-1.8795834f, (float)0.93980581f};
-    static float hpo_pole_coefsTbl[] = {(float)1.0f, (float)-1.9330735f, (float)0.93589199f};
+    public static final float hpi_zero_coefsTbl[] = {(float)0.92727436f, (float)-1.8544941f, (float)0.92727436f};
+    public static final float hpi_pole_coefsTbl[] = {(float)1.0f, (float)-1.9059465f, (float)0.9114024f};
+    public static final float hpo_zero_coefsTbl[] = {(float)0.93980581f, (float)-1.8795834f, (float)0.93980581f};
+    public static final float hpo_pole_coefsTbl[] = {(float)1.0f, (float)-1.9330735f, (float)0.93589199f};
 
     /* LP Filter */
 
-    static float lpFilt_coefsTbl[] = {(float)-0.066650, (float)0.125000,
+    public static final float lpFilt_coefsTbl[] = {(float)-0.066650, (float)0.125000,
 				       (float)0.316650, (float)0.414063,
 				       (float)0.316650, (float)0.125000,
 				       (float)-0.066650};
 
     /* State quantization tables */
 
-    static float state_sq3Tbl[] = {
+    public static final float state_sq3Tbl[] = {
 	(float)-3.719849, (float)-2.177490, (float)-1.130005,
 	(float)-0.309692, (float)0.444214, (float)1.329712,
 	(float)2.436279, (float)3.983887
     };
 
-    static float state_frgqTbl[] = {
+    public static final float state_frgqTbl[] = {
 	(float)1.000085, (float)1.071695, (float)1.140395,
 	(float)1.206868, (float)1.277188, (float)1.351503,
 	(float)1.429380, (float)1.500727, (float)1.569049,
@@ -197,14 +197,14 @@ class ilbc_constants {
 
     /* CB tables */
 
-    static int search_rangeTbl[][]={{58,58,58}, {108,44,44},
+    public static final int search_rangeTbl[][]={{58,58,58}, {108,44,44},
 				    {108,108,108}, {108,108,108}, {108,108,108}};
-    static int stMemLTbl=85;
-    static int memLfTbl[]={147,147,147,147};
+    public static final int stMemLTbl=85;
+    public static final int memLfTbl[]={147,147,147,147};
 
     /* expansion filter(s) */
 
-    static float cbfiltersTbl[]={
+    public static final float cbfiltersTbl[]={
 	(float)-0.034180, (float)0.108887, (float)-0.184326,
 	(float)0.806152,  (float)0.713379, (float)-0.144043,
 	(float)0.083740,  (float)-0.033691
@@ -212,12 +212,12 @@ class ilbc_constants {
 
     /* Gain Quantization */
 
-    static float gain_sq3Tbl[]={
+    public static final float gain_sq3Tbl[]={
 	(float)-1.000000,  (float)-0.659973,  (float)-0.330017,
 	(float)0.000000, (float)0.250000, (float)0.500000,
 	(float)0.750000, (float)1.00000};
 
-    static float gain_sq4Tbl[]={
+    public static final float gain_sq4Tbl[]={
 	(float)-1.049988, (float)-0.900024, (float)-0.750000,
 	(float)-0.599976, (float)-0.450012, (float)-0.299988,
 	(float)-0.150024, (float)0.000000, (float)0.150024,
@@ -225,7 +225,7 @@ class ilbc_constants {
 	(float)0.750000, (float)0.900024, (float)1.049988,
 	(float)1.200012};
 
-    static float gain_sq5Tbl[]={
+    public static final float gain_sq5Tbl[]={
 	(float)0.037476, (float)0.075012, (float)0.112488,
 	(float)0.150024, (float)0.187500, (float)0.224976,
 	(float)0.262512, (float)0.299988, (float)0.337524,
@@ -239,7 +239,7 @@ class ilbc_constants {
 	(float)1.162476, (float)1.200012};
 
     /* Enhancer - Upsamling a factor 4 (ENH_UPS0 = 4) */
-    static float polyphaserTbl[]={
+    public static final float polyphaserTbl[]={
 	(float)0.000000, (float)0.000000, (float)0.000000,
 	(float)1.000000,
 	(float)0.000000, (float)0.000000, (float)0.000000,
@@ -253,30 +253,30 @@ class ilbc_constants {
 	(float)0.288330,
 	(float)-0.076904, (float)0.015625, (float)-0.018799};
 
-    static float enh_plocsTbl[] = {(float)40.0f, (float)120.0f,
+    public static final float enh_plocsTbl[] = {(float)40.0f, (float)120.0f,
 				    (float)200.0f, (float)280.0f, (float)360.0f,
 				    (float)440.0f, (float)520.0f, (float)600.0};
 
     /* LPC analysis and quantization */
 
-    static int dim_lsfCbTbl[] = {3, 3, 4};
-    static int size_lsfCbTbl[] = {64,128,128};
+    public static final int dim_lsfCbTbl[] = {3, 3, 4};
+    public static final int size_lsfCbTbl[] = {64,128,128};
 
-    static float lsfmeanTbl[] = {
+    public static final float lsfmeanTbl[] = {
 	(float)0.281738, (float)0.445801, (float)0.663330,
 	(float)0.962524, (float)1.251831, (float)1.533081,
 	(float)1.850586, (float)2.137817, (float)2.481445,
 	(float)2.777344};
 
-    static float lsf_weightTbl_30ms[] = {(float)(1.0f/2.0), (float)1.0,
+    public static final float lsf_weightTbl_30ms[] = {(float)(1.0f/2.0), (float)1.0,
 					  (float)(2.0f/3.0),
 					  (float)(1.0f/3.0), (float)0.0f, (float)0.0};
 
-    static float lsf_weightTbl_20ms[] = {(float)(3.0f/4.0), (float)(2.0/4.0),
+    public static final float lsf_weightTbl_20ms[] = {(float)(3.0f/4.0), (float)(2.0/4.0),
 					  (float)(1.0f/4.0), (float)(0.0)};
 
     /* Hanning LPC window */
-    static float lpc_winTbl[]={
+    public static final float lpc_winTbl[]={
 	(float)0.000183, (float)0.000671, (float)0.001526,
 	(float)0.002716, (float)0.004242, (float)0.006104,
 	(float)0.008301, (float)0.010834, (float)0.013702,
@@ -360,7 +360,7 @@ class ilbc_constants {
     };
 
     /* Asymmetric LPC window */
-    static float lpc_asymwinTbl[]={
+    public static final float lpc_asymwinTbl[]={
 	(float)0.000061, (float)0.000214, (float)0.000458,
 	(float)0.000824, (float)0.001282, (float)0.001831,
 	(float)0.002472, (float)0.003235, (float)0.004120,
@@ -444,14 +444,14 @@ class ilbc_constants {
     };
 
     /* Lag window for LPC */
-    static float lpc_lagwinTbl[]={
+    public static final float lpc_lagwinTbl[]={
 	(float)1.000100, (float)0.998890, (float)0.995569,
 	(float)0.990057, (float)0.982392,
 	(float)0.972623, (float)0.960816, (float)0.947047,
 	(float)0.931405, (float)0.913989, (float)0.894909};
 
     /* LSF quantization*/
-    static float lsfCbTbl[] = {
+    public static final float lsfCbTbl[] = {
 	(float)0.155396, (float)0.273193, (float)0.451172,
 	(float)0.390503, (float)0.648071, (float)1.002075,
 	(float)0.440186, (float)0.692261, (float)0.955688,

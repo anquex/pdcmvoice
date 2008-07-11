@@ -11,7 +11,7 @@ import java.lang.*;
 /**
  * @author Jean Lorchat
  */
-class ilbc_decoder {
+public class ilbc_decoder {
 
     int consPLICount;
     int prevPLI;

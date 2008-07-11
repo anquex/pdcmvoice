@@ -6,6 +6,7 @@ package pdcmvoice.impl;
 import static pdcmvoice.impl.Constants.*;
 
 import org.xiph.speex.SpeexDecoder;
+import pdcmvoice.codecs.IlbcDecoder;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
@@ -15,8 +16,7 @@ import pdcmvoice.util.CircularByteBuffer;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -37,11 +37,9 @@ public class Decoder {
     private CircularByteBuffer cBuffer=new CircularByteBuffer(1281);
     private InputStream input=cBuffer.getInputStream();
     private OutputStream output=cBuffer.getOutputStream();
-     
-    private PipedOutputStream poutput;
-    private PipedInputStream pinput;
     
     private SpeexDecoder speexDecoder;
+    private IlbcDecoder ilbcDecoder;
     private int encodedFormat;
     
     private boolean inited;
@@ -90,6 +88,8 @@ public class Decoder {
         }
         else if(encodedFormat==FORMAT_CODE_iLBC)
         {// to be implemented
+            int mode=20; //20 ms
+            ilbcDecoder= new IlbcDecoder(mode, true);
         }
         else throw new RuntimeException("Invalid Parameter");
         inited=true;
@@ -119,14 +119,16 @@ public class Decoder {
             }catch(StreamCorruptedException e){e.printStackTrace();}
             PCMFrame=new byte[speexDecoder.getProcessedDataByteSize()];
             speexDecoder.getProcessedData(PCMFrame, 0);
-            try{
-                output.write(PCMFrame, 0, PCMFrame.length);
-                //poutput.write(PCMFrame, 0, PCMFrame.length);
-            }catch(IOException ignore){ignore.printStackTrace();}
-
        }       // iLBC Encoding
         else{   //to be implemented
-       } 
+            ilbcDecoder.processData(frame, 0, frame.length);
+            PCMFrame=new byte[ilbcDecoder.getProcessedDataByteSize()];
+            ilbcDecoder.getProcessedData(PCMFrame, 0);
+       }
+        try{
+            output.write(PCMFrame, 0, PCMFrame.length);
+        //poutput.write(PCMFrame, 0, PCMFrame.length);
+        }catch(IOException ignore){ignore.printStackTrace();}
        
        // System.out.println("Pacchetto decodificato");
     }
