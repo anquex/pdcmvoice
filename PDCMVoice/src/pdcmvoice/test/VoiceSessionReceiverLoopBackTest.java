@@ -10,11 +10,24 @@ package pdcmvoice.test;
  * @author marco
  */
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
+
+import org.xiph.speex.NbEncoder;
+
 import jlibrtp.Participant;
 import jlibrtp.RTPSession;
 import pdcmvoice.impl.VoiceSessionReceiver;
+import pdcmvoice.recovery.RecoveryClientThread;
+import pdcmvoice.recovery.RecoveryCollection;
+import pdcmvoice.recovery.RecoveryConnection;
+import pdcmvoice.recovery.RecoveryServerThread;
 import static pdcmvoice.impl.Constants.*;
+
+
+import java.net.ServerSocket;
+
 
 public class VoiceSessionReceiverLoopBackTest {
     
@@ -35,6 +48,24 @@ public class VoiceSessionReceiverLoopBackTest {
             VoiceSessionReceiver r = new VoiceSessionReceiver(3, rtpsession);
             r.init();
             r.start();
+            
+          //RECOVERY
+            ServerSocket server = new ServerSocket(6001);
+            Socket serverSocket = server.accept();
+            
+            Socket client = new Socket("localhost", 6000);
+            
+            NbEncoder encoder = new NbEncoder();
+            int pktSize = encoder.getFrameSize();
+            RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1);
+            RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1);
+            
+            RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocket, localCollection, client, remoteCollection, rtpsession, false);
+            
+            RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
+            RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
+            rs.start();
+            rc.start();
     }
     
 
