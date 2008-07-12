@@ -523,7 +523,7 @@ public class RTPSession {
 	  * 
 	  * @return true if session and associated threads are terminating.
 	  */
-	boolean isEnding() {
+	public boolean isEnding() {
 		return this.endSession;
 	}
 
