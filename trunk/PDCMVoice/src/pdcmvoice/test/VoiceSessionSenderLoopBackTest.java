@@ -16,6 +16,13 @@ import jlibrtp.RTPSession;
 import pdcmvoice.impl.VoiceSessionSender;
 import static pdcmvoice.impl.Constants.*;
 
+import java.net.Socket;
+import java.net.ServerSocket;
+import java.net.InetAddress;
+import pdcmvoice.recovery.*; 
+import org.xiph.speex.NbEncoder;
+
+
 public class VoiceSessionSenderLoopBackTest {
     
     public static void main (String[] args) throws Exception{
@@ -30,9 +37,28 @@ public class VoiceSessionSenderLoopBackTest {
             RTPSession rtpsession = new RTPSession(rtpSocket, rtcpSocket);
             Participant p = new Participant("127.0.0.1", 9000, 9001); //RTCP Port
             rtpsession.addParticipant(p);
-            rtpsession.payloadType(PAYLOAD_iLBC_RDT);
-            VoiceSessionSender s = new VoiceSessionSender(3, rtpsession);
+            rtpsession.payloadType(FORMAT_CODE_SPEEX_NB);
+            VoiceSessionSender s = new VoiceSessionSender(1, rtpsession);
             s.start();
+            
+          //RECOVERY
+            Socket client = new Socket(InetAddress.getLocalHost(), 6001);
+            
+            ServerSocket server = new ServerSocket(6000);
+            Socket serverSocket = server.accept();
+            
+            
+            NbEncoder encoder = new NbEncoder();
+            int pktSize = encoder.getFrameSize();
+            RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1);
+            RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1);
+            
+            RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocket, localCollection, client, remoteCollection, rtpsession, false);
+            
+            RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
+            RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
+            rs.start();
+            rc.start();
     }
     
 
