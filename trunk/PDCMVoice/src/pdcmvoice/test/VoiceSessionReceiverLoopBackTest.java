@@ -50,6 +50,7 @@ public class VoiceSessionReceiverLoopBackTest {
             r.start();
             
           //RECOVERY
+            /*
             ServerSocket server = new ServerSocket(6001);
             Socket serverSocket = server.accept();
             
@@ -66,6 +67,7 @@ public class VoiceSessionReceiverLoopBackTest {
             RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
             rs.start();
             rc.start();
+            */
     }
     
 
