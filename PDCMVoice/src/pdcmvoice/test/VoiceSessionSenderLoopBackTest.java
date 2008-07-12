@@ -42,6 +42,7 @@ public class VoiceSessionSenderLoopBackTest {
             s.start();
             
           //RECOVERY
+            /*
             Socket client = new Socket(InetAddress.getLocalHost(), 6001);
             
             ServerSocket server = new ServerSocket(6000);
@@ -59,6 +60,7 @@ public class VoiceSessionSenderLoopBackTest {
             RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
             rs.start();
             rc.start();
+            */
     }
     
 
