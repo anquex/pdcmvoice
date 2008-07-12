@@ -33,7 +33,6 @@ public class VoiceSessionReceiverLoopBackTest {
             rtpsession.naivePktReception(true);
             rtpsession.payloadType(PAYLOAD_iLBC_RDT);
             VoiceSessionReceiver r = new VoiceSessionReceiver(3, rtpsession);
-            rtpsession.packetBufferBehavior(1);
             r.init();
             r.start();
     }

@@ -18,6 +18,7 @@ import java.io.OutputStream;
 
 
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -64,7 +65,7 @@ public class Decoder {
         if(inited) throw new RuntimeException("Init Already Done");
         
         if (encodedFormat==FORMAT_CODE_SPEEX_NB){            
-            int sampleRate=8000;
+            int sampleRate=16000;
             int mode=0;
             int channels=1;
             boolean enhanced= false;
@@ -134,7 +135,8 @@ public class Decoder {
     }
     
     public AudioInputStream getAudioInputStream() throws UnsupportedAudioFileException{
-        return new AudioInputStream(input, AudioUtils.getLineAudioFormat(encodedFormat), AudioSystem.NOT_SPECIFIED);
+        AudioFormat format=AudioUtils.getLineAudioFormat(encodedFormat);
+        return new AudioInputStream(input, format, AudioSystem.NOT_SPECIFIED);
     //    return new AudioInputStream(pinput, AudioUtils.getLineAudioFormat(encodedFormat), AudioSystem.NOT_SPECIFIED);
     }
 }
