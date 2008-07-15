@@ -45,6 +45,8 @@ public class Decoder {
     
     private boolean inited;
     
+    private final boolean DEBUG=false;
+    
     public Decoder(int format){
         this.encodedFormat=format;
         
@@ -103,9 +105,17 @@ public class Decoder {
      * @param RTP Timestamp (to be used)
      */
     
-    public synchronized void decodeFrame(byte[] frame,int SN,long timestamp){
+    public synchronized void decodeFrame(byte[] frame){
         // If decoder is not ready then drop
         if (!inited) return;
+        
+        if (DEBUG){
+            String out="";
+            for (int i=0;i<frame.length;i++){
+                out+=" "+frame[i];
+            }
+            out(out);
+            }
         
         byte[] PCMFrame=null;
             //Speex Encoding

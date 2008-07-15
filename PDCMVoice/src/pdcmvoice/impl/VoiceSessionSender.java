@@ -54,6 +54,10 @@ public class VoiceSessionSender extends Thread{
         }
     
     }
+    
+    public Packetizer getPacketizer(){
+        return packetizer;
+    }
    
 
 }

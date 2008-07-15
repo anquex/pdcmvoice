@@ -19,10 +19,10 @@ import org.xiph.speex.NbEncoder;
 import jlibrtp.Participant;
 import jlibrtp.RTPSession;
 import pdcmvoice.impl.VoiceSessionReceiver;
-import pdcmvoice.recovery.RecoveryClientThread;
-import pdcmvoice.recovery.RecoveryCollection;
-import pdcmvoice.recovery.RecoveryConnection;
-import pdcmvoice.recovery.RecoveryServerThread;
+//import pdcmvoice.recovery.RecoveryClientThread;
+//import pdcmvoice.recovery.RecoveryCollection;
+//import pdcmvoice.recovery.RecoveryConnection;
+//import pdcmvoice.recovery.RecoveryServerThread;
 import static pdcmvoice.impl.Constants.*;
 
 
@@ -42,10 +42,10 @@ public class VoiceSessionReceiverLoopBackTest {
             }
             RTPSession rtpsession = new RTPSession(rtpSocket, rtcpSocket);
             Participant p = new Participant("127.0.0.1", 7000, 7100); //RTCP Port
-            rtpsession.addParticipant(p);
+            //rtpsession.addParticipant(p);
             rtpsession.naivePktReception(true);
-            rtpsession.payloadType(PAYLOAD_iLBC_RDT);
-            VoiceSessionReceiver r = new VoiceSessionReceiver(3, rtpsession);
+            rtpsession.payloadType(PAYLOAD_SPEEX);
+            VoiceSessionReceiver r = new VoiceSessionReceiver(2, rtpsession);
             r.init();
             r.start();
             
