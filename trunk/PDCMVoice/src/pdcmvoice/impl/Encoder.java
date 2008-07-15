@@ -33,6 +33,9 @@ public class Encoder extends Thread{
     public final int DECODEDNB=320;         // unencoded bytes in frameDurationInMillis
     public final int DECODEDWB=640;
     private int PCMbytesPerFrame;
+    private int nEncoded;
+    
+    private final boolean DEBUG=false;
     
     public Encoder(int encoded_format_code, AudioInputStream ais){
         
@@ -127,6 +130,7 @@ public class Encoder extends Thread{
             int encodedDataBytes=0;
             byte encodedFrame[]=null;
             while(nReadBytes!=-1){
+                nEncoded++;
                 try{
                     nReadBytes=ais.read(buffer);
 //                   System.out.println(nReadBytes);
@@ -139,6 +143,13 @@ public class Encoder extends Thread{
                     encodedFrame=new byte[speexEncoder.getProcessedDataByteSize()];
                 //    System.out.println(encodedFrame.length);
                     speexEncoder.getProcessedData(encodedFrame, 0);
+                    if (DEBUG){
+                        String out="";
+                        for (int i=0;i<encodedFrame.length;i++){
+                            out+=" "+encodedFrame[i];
+                        }
+                        out(out);
+                    }
                     packetizer.sendVoice(encodedFrame);
                 }
             }
