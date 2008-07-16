@@ -32,8 +32,8 @@ public class RecoveryServerThread extends Thread
 	    
 	    try {
             //DataInputStream dis = new DataInputStream(RecConn.getServerSocket().getInputStream());
-		    br = new BufferedReader(new InputStreamReader(RecConn.getServerSocket().getInputStream()));
-		    dos = new DataOutputStream(RecConn.getServerSocket().getOutputStream());
+		    br = new BufferedReader(new InputStreamReader(RecConn.getClientSocket().getInputStream()));
+		    dos = new DataOutputStream(RecConn.getClientSocket().getOutputStream());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -41,19 +41,46 @@ public class RecoveryServerThread extends Thread
         
         while (!stop)
         {    
+            int l = 0;
             boolean lineRead = false;
             while (!lineRead)
             {
                 try {
-                    this.lastQuery = br.readLine();
-                    lineRead = true;
+                    Thread.sleep(500); //attesa durante la ricezione
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                
+                try {
+                    if (RecConn.debug)
+                        System.out.println("attesa query..." + l++);
+                    if (br.ready())
+                    {
+//                        if (RecConn.debug)
+//                            System.out.println("br.ready...");
+//                        
+                        this.lastQuery = br.readLine();
+//                        if (lastQuery != null)
+//                        {
+                            lineRead = true;
+                            System.out.println("lastQuery: " + lastQuery);
+//                        }
+                    }
                 } catch (IOException e) {
                     
-                    if (RecoveryConnection.debug)
-                       e.printStackTrace();
-                    
-                    
+                    if (RecConn.debug)
+                        e.printStackTrace();
+                    System.out.println("ERROR:lastQuery: " + lastQuery);
                 }
+                
+            
+                
+            }
+            if (lastQuery != "")
+            {
+                if (RecConn.getLocalCollection().debug)
+                    System.out.println("RICEZIONE QUERY: " + lastQuery);
             }
             
             if (lastQuery == "END OF QUERY")
@@ -89,7 +116,7 @@ public class RecoveryServerThread extends Thread
                 
                 for (int i = start; i <= end; i++)
                 {
-                    if (totalePkt*pktSize + pktSize >= send.length -1)
+                    if ((totalePkt+1)*pktSize + pktSize >= send.length -1)
                         arrayResize(send, 2*send.length);
                     temp = RecConn.getLocalCollection().read(i);
                     System.arraycopy (temp, 0, send, totalePkt*pktSize, temp.length);
@@ -102,6 +129,7 @@ public class RecoveryServerThread extends Thread
             try {
                 dos.write(send, 0, totalePkt*pktSize);
                 dos.flush();
+                lastQuery = null;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -111,8 +139,10 @@ public class RecoveryServerThread extends Thread
 		
         //chiusura degli stream tra server locale e client remoto
         try {
-            RecConn.getServerSocket().getInputStream().close();
-            RecConn.getServerSocket().getOutputStream().close();
+            if (RecConn.getLocalCollection().debug)
+                System.out.println("ServerThread: chiusura stream sul socket del client");
+            RecConn.getClientSocket().getInputStream().close();
+            RecConn.getClientSocket().getOutputStream().close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

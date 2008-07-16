@@ -16,13 +16,12 @@ public class RecoveryClientThread extends Thread
     private RecoveryConnection RecConn;
     private String lastQuery;
     private boolean lastQueryDone;
-    private RecoveryServerThread server; //serve per interrompere l'esecuzione del ServerThread
+    //private RecoveryServerThread server; //NO! il serverThread si ferma da solo quando legge lastQuery == "END OF QUERY"!!! - serve per interrompere l'esecuzione del ServerThread
     private boolean stopQuery;
     
-    public RecoveryClientThread(RecoveryConnection RecConn, RecoveryServerThread server)
+    public RecoveryClientThread(RecoveryConnection RecConn)
 	{
         this.RecConn = RecConn;
-        this.server = server;
         lastQuery = null;
         lastQueryDone = false;
         stopQuery = false;
@@ -34,6 +33,15 @@ public class RecoveryClientThread extends Thread
 	{
 		//deve scrivere con writeUTF oppure con writeBytes di DataOutputStream e concludere la stringa di richiesta con \n
 	    //deve leggere con read(byte[] b, int off, int len)  di DataInputStream in base alla richiesta effettuata
+	    
+	    
+	    /*
+	     * RICORDA LA RIGA DI DEBUG
+	     * 
+	     * if (frame != null && SN % 10 != 0) //simulo perdita di 9 pacchetti ogni 10
+	     * 
+	     * in Decoder.java
+	     */
 	    
 	    DataInputStream dis = null;
         DataOutputStream dos = null;
@@ -51,31 +59,45 @@ public class RecoveryClientThread extends Thread
         boolean rtpDown;
         
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000); //attesa prima di partire
         } catch (InterruptedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         
+        //TODO
         //CONTROLLARE PRIMA LA QUANTITA' DI PACCHETTI RICHIESTI DALLA QUERY!!! SE TROPPO POCHI; ASPETTA A MANDARLA
         while(!stopQuery)
         {
             
-            rtpDown= RecConn.getRtpSession().isEnding();
+            try {
+                Thread.sleep(1000); //attesa durante la ricezione
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            
+            rtpDown= RecConn.getRtpSession().isEnding() || RecConn.getRtpSession() == null;
             
             if (!rtpDown)
                 lastQuery = RecConn.getRemoteCollection().findHoles(0, false);
             else
                 lastQuery = RecConn.getRemoteCollection().findAllHoles();
             
-            try {
-                dos.writeBytes(lastQuery + "\n");
-                dos.flush();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (lastQuery != "")
+            {
+                if (RecConn.getRemoteCollection().debug)
+                    System.out.println("INVIO QUERY: " + lastQuery);
+                try {
+                    dos.writeBytes(lastQuery + "\n");
+                    dos.flush();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            
+            else if (RecConn.getRemoteCollection().debug)
+                System.out.println("ClientThread: nessun pkt perso dall'ultima ricerca");
            
             StringTokenizer izer = new StringTokenizer(lastQuery, ";", false);
             StringTokenizer izer2;
@@ -106,10 +128,15 @@ public class RecoveryClientThread extends Thread
                         e.printStackTrace();
                     }
                     RecConn.getLocalCollection().recover(i, temp);
+                    
+                    if (RecConn.getRemoteCollection().debug)
+                        System.out.println("pkt recuperato dal ClientThread: " + i);
                    
                 }
                 
             }
+            
+            lastQuery = null;
             
             if (rtpDown) stopQuery = true;
         }
@@ -172,7 +199,8 @@ public class RecoveryClientThread extends Thread
             
             if (local.read(localSn) != null)
             {
-                localDecoder.decodeFrame(local.read(localSn), localSn, 0);
+                //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
+                localDecoder.decodeFrame(local.read(localSn));
                 
                 try {
                     localAis.read(localArray, i*320 , 320);
@@ -196,7 +224,8 @@ public class RecoveryClientThread extends Thread
             
             if (remote.read(remoteSn) != null)
             {
-                remoteDecoder.decodeFrame(remote.read(remoteSn), remoteSn, 0);
+                //remoteDecoder.decodeFrame(remote.read(remoteSn), remoteSn, 0);
+                remoteDecoder.decodeFrame(remote.read(remoteSn));
                 
                 try {
                     remoteAis.read(remoteArray, j*320 , 320);
