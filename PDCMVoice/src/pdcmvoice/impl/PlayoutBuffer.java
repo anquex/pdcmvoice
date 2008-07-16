@@ -25,8 +25,8 @@ public class PlayoutBuffer{
     private boolean isBuffering;
     private boolean isPlaying;
     private Decoder decoder;
-    private int minBufferedMillis=60;
-    private int maxBufferedMillis=60;
+    private int minBufferedMillis=100;
+    private int maxBufferedMillis=100;
     private SortedSet<VoiceFrame> listBuffer;
     
     private Timer timer;
@@ -80,10 +80,10 @@ public class PlayoutBuffer{
                         if (timer==null){
                             timer=new Timer("Playout Timer", true);
                             // play a packet every 20 ms
-                            timer.scheduleAtFixedRate(periodicPopper,0,20);
+                            //timer.scheduleAtFixedRate(periodicPopper, 0, 20);
                         }
                         if(DEBUG){
-                            out("Buffering Complete");
+                            out("-------Buffering Complete");
                         }
                         break;
                     }
@@ -138,8 +138,16 @@ public class PlayoutBuffer{
         
         private int samplesPlayed;
         private long nextTimestampToPlay;
+        private boolean first=true;
 
         public void run() {
+//            while(isPlaying){
+//                if (first){
+//                    
+//                }
+//                
+//            }
+            
             if (isPlaying){
                 if(isEmpty()){
                     isPlaying=false;
@@ -148,8 +156,8 @@ public class PlayoutBuffer{
                     decoder.decodeFrame(null);
                     return;
                 }
-                out("lower"+getLowerTimestamp());
-                out("next"+nextTimestampToPlay);
+//                out("lower"+getLowerTimestamp());
+//                out("next"+nextTimestampToPlay);
                 // if a packet is missing it meeans that getLowerTimestamp()
                 // is higher than nextTimestampToPlay
                 // if it is lower it means that I'm introducing unnecessary 
@@ -174,13 +182,13 @@ public class PlayoutBuffer{
                 }
                 nextTimestampToPlay+=20;
             }
-//            else{
-//                //synchronize while not playing to first playable sample
-//                if (!isEmpty()){
-//                    nextTimestampToPlay=getLowerTimestamp();
-//                    isPlaying=true;
-//                }
-//            }
+            else{
+                //synchronize while not playing to first playable sample
+                if (!isEmpty()){
+                    nextTimestampToPlay=getLowerTimestamp();
+                   // isPlaying=true;
+                }
+            }
         }
     }//Deliver
     
