@@ -28,7 +28,7 @@ public class VoiceSessionSender extends Thread{
         this.rtpsession=rtp;
         capture= new AudioCapture(formatCode, //fortmato in cui codificare
                                   null, //default mixer
-                                  50);  //
+                                  60);  //
         packetizer= new Packetizer(rtp);
         try{
         capture.open();

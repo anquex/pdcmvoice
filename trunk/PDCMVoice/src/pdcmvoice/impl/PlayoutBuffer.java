@@ -23,10 +23,9 @@ public class PlayoutBuffer{
     private boolean isFirst;
     private long startPacketTimestamp;
     private boolean isBuffering;
-    private boolean isPlaying;
     private Decoder decoder;
-    private int minBufferedMillis=100;
-    private int maxBufferedMillis=100;
+    private int minBufferedMillis=40;
+    private int maxBufferedMillis=40;
     private SortedSet<VoiceFrame> listBuffer;
     
     private Timer timer;
@@ -42,6 +41,11 @@ public class PlayoutBuffer{
         isFirst=true;
         isBuffering=true;
         periodicPopper= new Deliver();
+        if (timer==null){
+            timer=new Timer("Playout Timer", true);
+            // try to play a packet every 20 ms
+            timer.scheduleAtFixedRate(periodicPopper, 0, 20);
+        }
     }
 
 
@@ -76,12 +80,7 @@ public class PlayoutBuffer{
                         // I have enought consecutive voice frame 
                         // in the buffer to start playback
                         isBuffering=false;
-                        isPlaying=true;
-                        if (timer==null){
-                            timer=new Timer("Playout Timer", true);
-                            // play a packet every 20 ms
-                            //timer.scheduleAtFixedRate(periodicPopper, 0, 20);
-                        }
+                        periodicPopper.startPlaying(getLowerTimestamp());
                         if(DEBUG){
                             out("-------Buffering Complete");
                         }
@@ -111,7 +110,6 @@ public class PlayoutBuffer{
     private synchronized VoiceFrame remove(){
         if (isEmpty()){
             // nothing to play or remove
-            isPlaying=false;
             isBuffering=true;
             return null;
         }
@@ -139,18 +137,26 @@ public class PlayoutBuffer{
         private int samplesPlayed;
         private long nextTimestampToPlay;
         private boolean first=true;
+        private boolean isPlaying;
+        
+        public synchronized void startPlaying(long firstTimestamp){
+            nextTimestampToPlay=firstTimestamp;
+            isPlaying=true;
+        }
+        public synchronized void stopPlaying(){
+            isPlaying=false;
+        }
+        
+        public synchronized boolean isPlaying(){
+            return isPlaying;
+        }  
+               
 
-        public void run() {
-//            while(isPlaying){
-//                if (first){
-//                    
-//                }
-//                
-//            }
-            
-            if (isPlaying){
+        public synchronized void run() {
+            if (isPlaying()){
                 if(isEmpty()){
-                    isPlaying=false;
+                    // nothing to play
+                    stopPlaying();
                     isBuffering=true;
                     // Notify decoder of the PL
                     decoder.decodeFrame(null);
@@ -162,13 +168,13 @@ public class PlayoutBuffer{
                 // is higher than nextTimestampToPlay
                 // if it is lower it means that I'm introducing unnecessary 
                 // delay
-                if (getLowerTimestamp()<nextTimestampToPlay)
-                    nextTimestampToPlay=getLowerTimestamp();
+//                if (getLowerTimestamp()<nextTimestampToPlay)
+//                    nextTimestampToPlay=getLowerTimestamp();
                 // I want to have bounded delay, max acceptable delay is 
                 // maxBufferedMillis
                 // max delay should be managed by add method
-                if (getHigherTimestamp()>maxBufferedMillis+nextTimestampToPlay)
-                    nextTimestampToPlay=getLowerTimestamp();
+//                if (getHigherTimestamp()>maxBufferedMillis+nextTimestampToPlay)
+//                    nextTimestampToPlay=getLowerTimestamp();
                 if (getLowerTimestamp()==nextTimestampToPlay){
                     samplesPlayed++;
                     // in the buffer there is what i want to play
@@ -182,13 +188,13 @@ public class PlayoutBuffer{
                 }
                 nextTimestampToPlay+=20;
             }
-            else{
-                //synchronize while not playing to first playable sample
-                if (!isEmpty()){
-                    nextTimestampToPlay=getLowerTimestamp();
-                   // isPlaying=true;
-                }
-            }
+//            else{
+//                //synchronize while not playing to first playable sample
+//                if (!isEmpty()){
+//                    nextTimestampToPlay=getLowerTimestamp();
+//                   // isPlaying=true;
+//                }
+//            }
         }
     }//Deliver
     

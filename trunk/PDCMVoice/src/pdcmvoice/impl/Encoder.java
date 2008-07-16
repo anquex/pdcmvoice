@@ -35,7 +35,11 @@ public class Encoder extends Thread{
     private int PCMbytesPerFrame;
     private int nEncoded;
     
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
+    // debug variables
+    private int producedFrames;
+    private long firsttimeStamp;
+    private long lasttimeStamp;
     
     public Encoder(int encoded_format_code, AudioInputStream ais){
         
@@ -130,6 +134,14 @@ public class Encoder extends Thread{
             int encodedDataBytes=0;
             byte encodedFrame[]=null;
             while(nReadBytes!=-1){
+                if (DEBUG) {
+                    lasttimeStamp=System.currentTimeMillis();
+                if (firsttimeStamp==0) 
+                    firsttimeStamp=System.currentTimeMillis();
+                else
+                    out(""+((lasttimeStamp-firsttimeStamp)/producedFrames));
+                producedFrames++;
+                }
                 nEncoded++;
                 try{
                     nReadBytes=ais.read(buffer);
@@ -143,19 +155,18 @@ public class Encoder extends Thread{
                     encodedFrame=new byte[speexEncoder.getProcessedDataByteSize()];
                 //    System.out.println(encodedFrame.length);
                     speexEncoder.getProcessedData(encodedFrame, 0);
-                    if (DEBUG){
-                        String out="";
-                        for (int i=0;i<encodedFrame.length;i++){
-                            out+=" "+encodedFrame[i];
-                        }
-                        out(out);
-                    }
+//                    if (DEBUG){
+//                        String out="";
+//                        for (int i=0;i<encodedFrame.length;i++){
+//                            out+=" "+encodedFrame[i];
+//                        }
+//                        out(out);
+//                    }
                     packetizer.sendVoice(encodedFrame);
                 }
             }
        // iLBC Encoding
        }else{
-            //byte[] buffer= new byte[480];
             byte[] buffer= new byte[PCMbytesPerFrame];
             int nReadBytes=0;
             int encodedDataBytes=0;
@@ -163,7 +174,7 @@ public class Encoder extends Thread{
             while(nReadBytes!=-1){
                 try{
                     nReadBytes=ais.read(buffer);
-//                   System.out.println(nReadBytes);
+                   // out(nReadBytes);
                 }catch(IOException e){
                     e.printStackTrace();
                     break; //let process die
