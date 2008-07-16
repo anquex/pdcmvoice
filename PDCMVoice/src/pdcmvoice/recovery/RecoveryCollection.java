@@ -27,13 +27,13 @@ import jlibrtp.RTPSession;
 
 public class RecoveryCollection
 {
-    public String type; //local oppure remote
+    private String type; //local oppure remote
     private int pktSize; //byte; dimesione del pacchetto codificato (speex)
     private int firstSnReceived; //uguale a quello del pkt RTP che lo contiene; costituisce l'offset per ottenere il SN esatto per il lastSampleWrote (considera l'eventuale perdita dei primi pacchetti)
-    private int lastSnReceived;  //ultimoSN della collezione impostato ESPLICITAMENTE da Marco
+    public int lastSnReceived;  //ultimoSN della collezione impostato ESPLICITAMENTE da Marco
     private long startTimestamp;
     private int encodedFormat; //vedi pdcmvoice.impl.Constants
-        
+    public boolean debug;    
         
     private RecoverySample[] collection;
     
@@ -52,10 +52,27 @@ public class RecoveryCollection
         lastSnReceived = -1;
         windowWidth = 50; //ricezione di 50 pkt/s --> finestra di 1s
         this.encodedFormat = encodedFormat;
+        this.debug = false;
         
         collection = new RecoverySample[6000]; //spazio per 2 minuti di audio
         
 	}
+	
+	public RecoveryCollection(String type, int pktSize, int encodedFormat, boolean debug)
+    {
+        this.type = type;
+        this.pktSize = pktSize;
+        firstSnReceived = -1;
+        startTimestamp = -1;
+        lastSn = firstSnReceived;
+        lastSnReceived = -1;
+        windowWidth = 50; //ricezione di 50 pkt/s --> finestra di 1s
+        this.encodedFormat = encodedFormat;
+        this.debug = debug;
+        
+        collection = new RecoverySample[6000]; //spazio per 2 minuti di audio
+        
+    }
 	
 	
 	/**
@@ -80,9 +97,12 @@ public class RecoveryCollection
 	            collection = collectionResize(collection, 2 * collection.length);
 	        
 	        collection[i] = new RecoverySample(sn, pkt);
+	        
+	        System.out.println(type + ": inserito sn " + sn);
 	    }
 	       
 	}
+	
 	
     public void setLastSnReceived(int sn)
     {
@@ -114,8 +134,11 @@ public class RecoveryCollection
 	    if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
 	        end = lastSnReceived;
 	    else
-	        end = window > 0 ?  (start + window) : (start + windowWidth);
+	        end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
 	    lastSn = end;
+	    
+	    if (debug)
+	        System.out.println("findHoles - start: " + start + ", end: " + end);
 	    
 	    int i, j;
 	    for (i = start; i <= end; i++ )

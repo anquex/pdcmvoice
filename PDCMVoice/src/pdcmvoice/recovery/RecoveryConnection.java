@@ -25,7 +25,7 @@ public class RecoveryConnection
     private Socket client; //stabilito nel main
 	private RecoveryCollection local;
 	private RecoveryCollection remote;
-	private RTPSession rtpSession;
+	public RTPSession rtpSession;
 	static public boolean debug;
 	
     public RecoveryConnection(Socket server, RecoveryCollection local, Socket client, RecoveryCollection remote, RTPSession rtpSession, boolean debug)
