@@ -62,6 +62,7 @@ public class Depacketizer implements RTPAppIntf{
         /*  ------------------------------
          *  --- SEND TO PLAYOUT BUFFER ---
          *  ------------------------------ */
+        
         byte[] voice=frame.getConcatenatedData();
         int lenght=0;
         
@@ -75,7 +76,12 @@ public class Depacketizer implements RTPAppIntf{
             out+=" SN :"+frame.sequenceNumbers()[0];
             out(out);
         }
-
+        /* -----------------
+         * --- COLLECTION --
+         * -----------------*/
+        
+        // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
+        
         if (isRDT(frame.payloadType()) || frame.marks()[0]){
             lenght=voice.length/2;
             byte[] v=new byte[voice.length/2];

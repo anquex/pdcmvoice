@@ -174,6 +174,12 @@ public class Packetizer {
         markers[0]=marked;
         f[0]=frames;
         long[][] r=rtpSession.sendData(f, null, markers, currentTimeStamp, null);
+        /* -----------------
+         * --- COLLECTION --
+         * -----------------*/
+        
+        // collection.add((int)r[1],f, r[0]);
+        
         if (DEBUG){
             String out="";
             out+="Sending Packet with";
