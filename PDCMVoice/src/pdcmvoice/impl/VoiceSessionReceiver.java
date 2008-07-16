@@ -28,7 +28,7 @@ public class VoiceSessionReceiver extends Thread{
         decoder=new Decoder(formatCode);
         player= new AudioPlayback(formatCode, //fortmato in cui codificare
                           null, //default mixer
-                          50   //buffer size
+                          60   //buffer size
                             );  //input queue
     }
     
