@@ -7,13 +7,10 @@ package pdcmvoice.impl;
 
 import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
-import static pdcmvoice.impl.AudioUtils.getNetAudioFormat;
 import org.xiph.speex.SpeexEncoder;
 import static pdcmvoice.impl.Constants.*;
 import pdcmvoice.codecs.IlbcEncoder;
 
-
-import net.java.sip.communicator.impl.media.codec.audio.ilbc.ilbc_encoder;
 
 /**
  *
@@ -35,7 +32,7 @@ public class Encoder extends Thread{
     private int PCMbytesPerFrame;
     private int nEncoded;
     
-    private final boolean DEBUG=true;
+    private final boolean DEBUG=false;
     // debug variables
     private int producedFrames;
     private long firsttimeStamp;

@@ -28,8 +28,9 @@ public class VoiceSessionReceiver extends Thread{
         decoder=new Decoder(formatCode);
         player= new AudioPlayback(formatCode, //fortmato in cui codificare
                           null, //default mixer
-                          60   //buffer size
+                          50   //buffer size
                             );  //input queue
+        this.setName("VoiceSessionReceiver");
     }
     
     public void init() throws UnsupportedAudioFileException{

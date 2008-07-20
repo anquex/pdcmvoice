@@ -28,14 +28,15 @@ public class VoiceSessionSender extends Thread{
         this.rtpsession=rtp;
         capture= new AudioCapture(formatCode, //fortmato in cui codificare
                                   null, //default mixer
-                                  60);  //
+                                  50);  //
         packetizer= new Packetizer(rtp);
         try{
         capture.open();
         }catch(Exception e){e.printStackTrace();}
         AudioInputStream ais=capture.getAudioInputStream();
         encoder=new Encoder(formatCode, ais);
-        encoder.registerPacketizer(packetizer);     
+        encoder.registerPacketizer(packetizer);
+        this.setName("VoiceSessionSender");
     }
 
     

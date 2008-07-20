@@ -35,7 +35,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Decoder {
     
-    private CircularByteBuffer cBuffer=new CircularByteBuffer(1281);
+    private CircularByteBuffer cBuffer=new CircularByteBuffer(100000);
     private InputStream input=cBuffer.getInputStream();
     private OutputStream output=cBuffer.getOutputStream();
     

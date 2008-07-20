@@ -108,7 +108,8 @@ public class Packetizer {
                         if(isRDT() || framesPerPacket==1){
                             // I'm here just because I need to finish
                             // before chancing mode
-                            String out="A frame was waiting... Delaying switch of 1 packet...";
+                            String out="A frame was waiting... Delaying mode " +
+                                    "switch of 1 packet...";
                             out(out);
                         }
                    }
