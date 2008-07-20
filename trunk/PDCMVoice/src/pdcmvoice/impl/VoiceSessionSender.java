@@ -5,7 +5,6 @@
 
 package pdcmvoice.impl;
 
-import javax.sound.sampled.AudioInputStream;
 import jlibrtp.RTPSession;
 
 import pdcmvoice.*;
@@ -37,6 +36,10 @@ public class VoiceSessionSender extends Thread{
         encoder=new Encoder(formatCode, ais);
         encoder.registerPacketizer(packetizer);
         this.setName("VoiceSessionSender");
+
+//        packetizer.framesPerPackets(2);
+
+//        packetizer.enableRDT();
     }
 
     

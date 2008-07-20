@@ -35,18 +35,15 @@ package pdcmvoice.impl;
 import	java.io.*;
 import	javax.sound.sampled.*;
 import static pdcmvoice.impl.Constants.*;
-import static pdcmvoice.impl.AudioUtils.*;
 
 // Class that reads its audio from an AudioInputStream
 public class AudioPlayback extends AudioBase {
 
     private static final boolean DEBUG_TRANSPORT = false;
-    private static final boolean DEBUG_VERBOSE = false;
-    private static final boolean DEBUG = false;
 
     protected AudioInputStream ais;
     private PlayThread thread;
-//    private boolean allowMoreBuffering=true;
+    SourceDataLine sdl;
 
     public AudioPlayback(int formatCode, Mixer mixer, int bufferSizeMillis) {
 	super("Speaker", formatCode, mixer, bufferSizeMillis);
@@ -103,14 +100,7 @@ public class AudioPlayback extends AudioBase {
 
     // in network format
     public void setAudioInputStream(AudioInputStream ais) {
-        //convert to a higher sample rate to solve 
-        // problems of delay that occurs on some computers
-        // due to bad drivers
-        
-//        float outSampleRate=16000.0f;
-//        AudioFormat targetFormat=getLineAudioFormat(outSampleRate);
-//	this.ais = AudioSystem.getAudioInputStream(targetFormat, ais);
-        this.ais=ais;
+	this.ais = AudioSystem.getAudioInputStream(lineFormat, ais);
     }
 
     class PlayThread extends Thread {
@@ -119,51 +109,18 @@ public class AudioPlayback extends AudioBase {
 	// for debugging
 	private boolean printedBytes = false;
 
+
 	public void run() {
 	    if (VERBOSE) out("Start AudioPlayback pull thread");
 	    byte[] buffer = new byte[getBufferSize()];
-            SourceDataLine sdl = (SourceDataLine) line;
-            System.out.println("AudioInputSTREAM :"+ais.getFormat().toString());
-            System.out.println("Line Format :"+lineFormat);
-            int dropped=0;
-            int received=0;
+            sdl = (SourceDataLine) line;
+            Meter m=new Meter();
+            m.start();
 	    try {
 		while (!doTerminate) {
+
 		    if (ais != null) {
-//                       if (DEBUG_VERBOSE) out("PLAYER : Frame Position "+
-//                                              sdl.getFramePosition());
-
-                       int r=0;
-
-                       // to avoid chicks due to small timings...
-
-//                       if (allowMoreBuffering){
-//                           if(DEBUG) out("PLAYER:  " +ais.available()+" (B) available");
-//                           long waitBytes=millis2bytes(20, ais.getFormat());
-//                           if (ais.available()<0) {
-//                               if(DEBUG)
-//                                   out("PLAYER: Waiting for buffer to fill " +
-//                                       "enought... "
-//                                       );
-//                               synchronized(this){
-//                                   wait(20);
-//                               }
-//                           }
-//                           else{
-//                               if(DEBUG)out("PLAYER: Playback begins...");
-//                               allowMoreBuffering=false;
-//                           }
-//                       }
-//                       else {
-
-                       out("PLAYER --------------------------"+
-                               "--------> Circular Buffer "+ais.available());
-                       out("PLAYER --------------------------"+
-                               "--------> Devide Buffer "+(line.getBufferSize()-line.available()));
-
-                           r = ais.read(buffer, 0, buffer.length);
-//                       }
-//                        received++;
+			int r = ais.read(buffer, 0, buffer.length);
 			if (r > 50 && DEBUG_TRANSPORT && !printedBytes) {
 			    printedBytes = true;
 			    out("AudioPlayback: first bytes being played:");
@@ -173,44 +130,32 @@ public class AudioPlayback extends AudioBase {
 			    }
 			    out(s);
 			}
-                        if (isMuted()) {
-                            muteBuffer(buffer, 0, r);
-                        }
-                        // run some simple analysis
-                        calcCurrVol(buffer, 0, r);
-                        if (sdl != null) {
-                                
-// try to see how many data put in buffer to avoid blocking calls...
-// this is the only stable solution I found for getting a bounded delay...
-// but introduces a bit of distortion sometimes...
-//                            System.out.println("SPEAKERS: "+sdl.available()+" writable without blocking");
-//                            System.out.println("SPEAKERS: "+r+" Byte Read");
-// resolves overload of audio device
-//                        if (sdl.available()<r)
-//                        {   dropped++;
-//                            System.out.println("SPEAKERS: drop"+dropped);
-//                            System.out.println("SPEAKERS: received"+received);
-//                        }
-
-//                          if (r>0)
-                            sdl.write(buffer, 0, r);
-// audio frame size resulted to be the better compromise to wait
-// for reducing error introduced by Math.min(sdl.available(), r)
-// this helps in computers where java works bad and mantains the 
-// same good performance in computers with good drivers
-                                
-//                            synchronized(this) {
-//                                this.wait(20);
-//                            }
-                        }
+			if (r > 0) {
+			    if (isMuted()) {
+				muteBuffer(buffer, 0, r);
+			    }
+			    // run some simple analysis
+			    calcCurrVol(buffer, 0, r);
+			    if (sdl != null) {
+			    	sdl.write(buffer, 0, r);
+			    }
+			} else {
+			    if (r == 0) {
+				synchronized(this) {
+				    this.wait(40);
+				}
+			    }
+			}
 		    } else {
 			synchronized(this) {
 			    this.wait(50);
 			}
 		    }
 		}
+                sdl.drain();
+                sdl.flush();
 	    } catch (IOException ioe) {
-		if (DEBUG) ioe.printStackTrace();
+		//if (DEBUG) ioe.printStackTrace();
 	    } catch (InterruptedException ie) {
 		if (DEBUG) ie.printStackTrace();
 	    }
@@ -236,6 +181,31 @@ public class AudioPlayback extends AudioBase {
 		}
 	    }
 	}
+    }
+
+    class Meter extends Thread{
+
+        public void run() {
+        try{
+        while(true){
+            String out="";
+            int d1,d2=0,d3=0;
+                {
+                  //  d1=target.available();
+                    if (ais!=null)
+                    d2=ais.available();
+                    d3=getBufferSize()-sdl.available();
+                  //  out+="TARTGET :"+d1+" - ";
+                    out+="PIPE :"+d2+" - ";
+                    out+="SOURCE :"+d3+" - ";
+                    out+="TOTAL :"+(+d2+d3);
+             }
+            System.out.println(out);
+            sleep(500);
+
+            }
+        }catch(Exception e){e.printStackTrace();}
+        }
     }
 
 }

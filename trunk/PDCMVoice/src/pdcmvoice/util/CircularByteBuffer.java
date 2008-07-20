@@ -586,13 +586,14 @@ public class CircularByteBuffer {
                         }
                         int available = CircularByteBuffer.this.available();
                         //Reader has nothing to read, so wait for some data
+//                        if (available==0) return 0;
                         if (available==0){
                              try{
                                  if (DEBUG==true) System.out.println("LETTORE-->0 byte da leggere (dormo)");
                                  notEnoughtDataToRead.await();
                                  if (DEBUG==true) System.out.println("LETTORE-->risvegliato");
                                  available = CircularByteBuffer.this.available();
-                             }catch(InterruptedException ignore){} 
+                             }catch(InterruptedException ignore){}
                         }
                         // Qui ci sono dati da leggere;
                         int length = Math.min(len, available);
