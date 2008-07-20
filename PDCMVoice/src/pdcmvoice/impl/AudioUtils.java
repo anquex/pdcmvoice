@@ -36,8 +36,9 @@ package pdcmvoice.impl;
 
 import java.io.InputStream;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -77,6 +78,10 @@ public class AudioUtils {
     }
 
     public static AudioFormat getNetAudioFormat(int formatCode) throws UnsupportedAudioFileException {
+        // add quality propriety to SPEEX audio format
+        Map<String,Object> proprieties=new LinkedHashMap<String,Object>();
+        proprieties.put("quality", SPEEX_QUALITY[DEFAULT_SPEEX_QUALITY_INDEX]);
+        
 	if (formatCode==FORMAT_CODE_SPEEX_NB) {
 	    return new AudioFormat(
 				   SpeexEncoding.SPEEX,
@@ -85,7 +90,8 @@ public class AudioUtils {
 				    1,      // channels
 				   -1,      // frameSize
 				   -1,      // frameRate
-				   true);   // bigEndian
+				   true,  // bigEndian
+                                   proprieties);
 	}
 	else if (formatCode==FORMAT_CODE_SPEEX_WB) {
 	    return new AudioFormat(
@@ -95,7 +101,8 @@ public class AudioUtils {
 				    1,      // channels
 				   -1,      // frameSize
 				   -1,      // frameRate
-				   true);   // bigEndian
+				   true,  // bigEndian
+                                   proprieties);
 	}
 	else if (formatCode==FORMAT_CODE_iLBC) {
 	    return new AudioFormat(
@@ -143,6 +150,23 @@ public class AudioUtils {
 	    return FORMAT_CODE_iLBC;
 	}
 	throw new RuntimeException("Wrong Format");
+    }
+    /**
+     *  Get the Payload type associated with the econding format
+     *  Returns simple (not RDT) payload format.
+     *  
+     * 
+     * @param formatCode encoding format
+     * @return associated default payload
+     */
+    
+    public static int getPayloadType(int formatCode){
+        if (formatCode==FORMAT_CODE_SPEEX_NB
+             || formatCode==FORMAT_CODE_SPEEX_WB)
+             return  PAYLOAD_SPEEX;
+        if (formatCode==FORMAT_CODE_iLBC)
+            return PAYLOAD_iLBC;
+        throw new IllegalArgumentException("Format Code doesn\'t have  a defined Payload Type");
     }
     
 }

@@ -16,11 +16,7 @@ import jlibrtp.RTPSession;
 import pdcmvoice.impl.VoiceSessionSender;
 import static pdcmvoice.impl.Constants.*;
 
-import java.net.Socket;
-import java.net.ServerSocket;
-import java.net.InetAddress;
 import pdcmvoice.recovery.*; 
-import org.xiph.speex.NbEncoder;
 
 
 public class VoiceSessionSenderLoopBackTest {
