@@ -27,7 +27,7 @@ public class Packetizer {
     
     private final int DEFAULT_FRAMES_PER_PACKET=1;
     
-    private static final boolean DEBUG=false;
+    private static final boolean DEBUG=true;
     
     public Packetizer(RTPSession s){
         rtpSession= s;

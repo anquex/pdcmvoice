@@ -11,7 +11,7 @@ import jlibrtp.*;
  *
  * @author marco
  */
-public class VoiceSessionReceiver extends Thread{
+public class VoiceSessionReceiver {
     
     final boolean DEBUG=true;
     
@@ -30,7 +30,6 @@ public class VoiceSessionReceiver extends Thread{
                           null, //default mixer
                           50   //buffer size
                             );  //input queue
-        this.setName("VoiceSessionReceiver");
     }
     
     public void init() throws UnsupportedAudioFileException{
@@ -42,20 +41,16 @@ public class VoiceSessionReceiver extends Thread{
             player.open();
         }catch(Exception e){e.printStackTrace();}
     }
-    public void run() {
-        try {
+    
+    public void start() throws Exception {
             player.start();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        depacketizer.init();
-//        while(true){
-//            System.out.println("Coda: "+playFramQueue.size());
-//            try{
-//                sleep(200);
-//            }catch(InterruptedException e){};
-//        }
+            depacketizer.init();
         
     }
+    
+    public void stop(){
+            player.closeLine(false);
+    }
+            
 
 }
