@@ -10,8 +10,6 @@ package pdcmvoice.test;
  * @author marco
  */
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
 
 import org.xiph.speex.NbEncoder;

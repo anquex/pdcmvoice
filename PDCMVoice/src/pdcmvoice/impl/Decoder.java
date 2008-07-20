@@ -35,9 +35,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Decoder {
     
-    private CircularByteBuffer cBuffer=new CircularByteBuffer(100000);
-    private InputStream input=cBuffer.getInputStream();
-    private OutputStream output=cBuffer.getOutputStream();
+    private CircularByteBuffer cBuffer;
+    private InputStream input;
+    private OutputStream output;
     
     private SpeexDecoder speexDecoder;
     private IlbcDecoder ilbcDecoder;
@@ -59,6 +59,9 @@ public class Decoder {
             
         }
         else throw new IllegalArgumentException();
+        cBuffer=new CircularByteBuffer(321);
+        input=cBuffer.getInputStream();
+        output=cBuffer.getOutputStream();
     }
     
     public void init(){
@@ -105,7 +108,7 @@ public class Decoder {
      * @param RTP Timestamp (to be used)
      */
     
-    public synchronized void decodeFrame(byte[] frame){
+    public void decodeFrame(byte[] frame){
         // If decoder is not ready then drop
         if (!inited) return;
         

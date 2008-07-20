@@ -27,8 +27,8 @@ public class PlayoutBuffer{
     private Decoder decoder;
     private int minBufferedMillis=60;
 
-    // at least 20 ms!
-    private int maxBufferedMillis=60;
+    // must be at least 20 ms!
+    private int maxBufferedMillis=120;
     private SortedSet<VoiceFrame> listBuffer;
     
     private Timer timer;
@@ -74,10 +74,10 @@ public class PlayoutBuffer{
         // bursts arrivals produces more packets are dropped at once
 
         // this code is never exectuted if I have only 1 packet or I'm buffering
-        while(getHigherTimestamp()-getLowerTimestamp()+20>maxBufferedMillis
+        if(getHigherTimestamp()-getLowerTimestamp()+20>maxBufferedMillis
               && !isBuffering)
         {
-            if (DEBUG) 
+            if (DEBUG)
                     out("PLAYOUT BUFFER : Maximum Delay Reached: "+
                     (getHigherTimestamp()-getLowerTimestamp()+20));
 
@@ -85,7 +85,7 @@ public class PlayoutBuffer{
 
             remove();
 
-            if(DEBUG)  out("PLAYOUT BUFFER : Packet Dropped");
+            if(DEBUG)  out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
 
             // start playing from the older packet
 
@@ -135,6 +135,7 @@ public class PlayoutBuffer{
                         // send a frame to decoder each 20 ms
                         if(timer==null){
                             timer=new Timer("Playout Buffer Timer");
+                           //timer.schedule(decoderDeliver,0,20);
                             timer.scheduleAtFixedRate(decoderDeliver,0,20);
                         }
 
@@ -168,9 +169,6 @@ public class PlayoutBuffer{
         if (isEmpty()){
             // nothing to play or remove
             if (DEBUG) out("BUFFER : Buffer Empty");
-
-            // stop playing since I don't have nothing to play
-            decoderDeliver.stopPlaying();
 
             isBuffering=true;
             if (DEBUG) out("BUFFER : Starting Buffering again...");
@@ -231,9 +229,9 @@ public class PlayoutBuffer{
                 synchronized(PlayoutBuffer.this){
                     if(isEmpty()){
                         // nothing to play
-                        isBuffering=true;
-                        // Notify decoder of the PL
-                        decoder.decodeFrame(null);
+                        isBuffering=true; //Playout buffer
+                       // stop playing since I don't have nothing to play
+                        stopPlaying();
                         return;
                     }
     //                out("lower"+getLowerTimestamp());
