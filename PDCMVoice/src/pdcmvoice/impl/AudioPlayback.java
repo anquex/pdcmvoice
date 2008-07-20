@@ -41,9 +41,12 @@ import static pdcmvoice.impl.AudioUtils.*;
 public class AudioPlayback extends AudioBase {
 
     private static final boolean DEBUG_TRANSPORT = false;
+    private static final boolean DEBUG_VERBOSE = false;
+    private static final boolean DEBUG = true;
 
     protected AudioInputStream ais;
     private PlayThread thread;
+//    private boolean allowMoreBuffering=true;
 
     public AudioPlayback(int formatCode, Mixer mixer, int bufferSizeMillis) {
 	super("Speaker", formatCode, mixer, bufferSizeMillis);
@@ -127,7 +130,33 @@ public class AudioPlayback extends AudioBase {
 	    try {
 		while (!doTerminate) {
 		    if (ais != null) {
-			int r = ais.read(buffer, 0, buffer.length);
+                       if (DEBUG_VERBOSE) out("PLAYER : Frame Position "+
+                                              sdl.getFramePosition());
+
+                       int r=0;
+
+                       // to avoid chicks due to small timings...
+
+//                       if (allowMoreBuffering){
+//                           if(DEBUG) out("PLAYER:  " +ais.available()+" (B) available");
+//                           long waitBytes=millis2bytes(20, ais.getFormat());
+//                           if (ais.available()<0) {
+//                               if(DEBUG)
+//                                   out("PLAYER: Waiting for buffer to fill " +
+//                                       "enought... "
+//                                       );
+//                               synchronized(this){
+//                                   wait(20);
+//                               }
+//                           }
+//                           else{
+//                               if(DEBUG)out("PLAYER: Playback begins...");
+//                               allowMoreBuffering=false;
+//                           }
+//                       }
+//                       else {
+                           r = ais.read(buffer, 0, buffer.length);
+//                       }
 //                        received++;
 			if (r > 50 && DEBUG_TRANSPORT && !printedBytes) {
 			    printedBytes = true;
@@ -156,6 +185,8 @@ public class AudioPlayback extends AudioBase {
 //                            System.out.println("SPEAKERS: drop"+dropped);
 //                            System.out.println("SPEAKERS: received"+received);
 //                        }
+
+//                          if (r>0)
                             sdl.write(buffer, 0, r);
 // audio frame size resulted to be the better compromise to wait
 // for reducing error introduced by Math.min(sdl.available(), r)

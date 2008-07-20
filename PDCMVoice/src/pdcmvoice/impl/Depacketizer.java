@@ -12,16 +12,6 @@ import jlibrtp.RTPSession;
 
 import static pdcmvoice.impl.Constants.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.Timer;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import java.util.TimerTask;
 
 /**
  *
@@ -55,7 +45,7 @@ public class Depacketizer implements RTPAppIntf{
         
         
     }
-    public synchronized void receiveData(DataFrame frame, Participant participant)
+    public void receiveData(DataFrame frame, Participant participant)
     {   
         if (!inited) return;
         
@@ -69,13 +59,14 @@ public class Depacketizer implements RTPAppIntf{
         if (DEBUG){
             String out="";
             out+="Received Packet with";
-            out+=" PAYLOAD: "+rtpSession.payloadType();
-            out+=" AUDIO :"+voice.length;
-            out+=" MARKED :"+frame.marked();
-            out+=" TIMESTAMP :"+(short)frame.rtpTimestamp();
-            out+=" SN :"+frame.sequenceNumbers()[0];
+            out+=" PAYLOAD: "+ rtpSession.payloadType();
+            out+=" AUDIO :"+ voice.length;
+            out+=" MARKED :"+ frame.marked();
+            out+=" TIMESTAMP :"+ frame.rtpTimestamp();
+            out+=" SN :"+ frame.sequenceNumbers()[0];
             out(out);
         }
+
         /* -----------------
          * --- COLLECTION --
          * -----------------*/
@@ -112,7 +103,7 @@ public class Depacketizer implements RTPAppIntf{
     
     
     public boolean registerDecoder(Decoder d){
-      //  if (d==null) throw new NullPointerException("Null is not a valid Decoder");
+        if (d==null) throw new NullPointerException("Null is not a valid Decoder");
         if(registered) {
                 System.out.println("Depacketizer: Can\'t register another decoder!");
                 return false;
