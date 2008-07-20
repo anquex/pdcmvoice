@@ -42,7 +42,7 @@ public class AudioPlayback extends AudioBase {
 
     private static final boolean DEBUG_TRANSPORT = false;
     private static final boolean DEBUG_VERBOSE = false;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     protected AudioInputStream ais;
     private PlayThread thread;
@@ -130,8 +130,8 @@ public class AudioPlayback extends AudioBase {
 	    try {
 		while (!doTerminate) {
 		    if (ais != null) {
-                       if (DEBUG_VERBOSE) out("PLAYER : Frame Position "+
-                                              sdl.getFramePosition());
+//                       if (DEBUG_VERBOSE) out("PLAYER : Frame Position "+
+//                                              sdl.getFramePosition());
 
                        int r=0;
 
@@ -155,6 +155,12 @@ public class AudioPlayback extends AudioBase {
 //                           }
 //                       }
 //                       else {
+
+                       out("PLAYER --------------------------"+
+                               "--------> Circular Buffer "+ais.available());
+                       out("PLAYER --------------------------"+
+                               "--------> Devide Buffer "+(line.getBufferSize()-line.available()));
+
                            r = ais.read(buffer, 0, buffer.length);
 //                       }
 //                        received++;

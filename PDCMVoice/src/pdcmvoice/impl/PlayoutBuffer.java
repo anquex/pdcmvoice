@@ -28,13 +28,13 @@ public class PlayoutBuffer{
     private int minBufferedMillis=60;
 
     // at least 20 ms!
-    private int maxBufferedMillis=100;
+    private int maxBufferedMillis=60;
     private SortedSet<VoiceFrame> listBuffer;
     
     private Timer timer;
     private Deliver decoderDeliver;
     
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
 
     //CONSTANTS
 
