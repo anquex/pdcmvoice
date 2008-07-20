@@ -21,6 +21,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class PlayoutBuffer{
 
+    private static int addWaiting;
     private boolean isFirst;
     private long startPacketTimestamp;
     private boolean isBuffering;
@@ -52,6 +53,11 @@ public class PlayoutBuffer{
 
 
     public synchronized void add(long timestamp, byte[] frame){
+        
+        synchronized(PlayoutBuffer.class){
+            addWaiting++;
+        }
+        if(DEBUG) out("BUFFER : ----------->>>>>> Add calls "+addWaiting);
         /* We consider the timestamp of the first packet received as first*/
         
 //        if(timestamp<=decoderDeliver.getNextTimestampToPlay())
@@ -154,6 +160,9 @@ public class PlayoutBuffer{
         // Have to manage brust lenght
         
         //decoder.decodeFrame(frame, 0, timestamp);
+        synchronized(PlayoutBuffer.class){
+            addWaiting--;
+        }
         
     }
     
