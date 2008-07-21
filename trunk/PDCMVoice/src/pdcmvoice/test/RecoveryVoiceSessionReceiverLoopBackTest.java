@@ -14,7 +14,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
-import org.xiph.speex.NbEncoder;
 
 import jlibrtp.Participant;
 import jlibrtp.RTPSession;
@@ -22,7 +21,6 @@ import pdcmvoice.impl.VoiceSessionReceiver;
 import pdcmvoice.recovery.RecoveryClientThread;
 import pdcmvoice.recovery.RecoveryCollection;
 import pdcmvoice.recovery.RecoveryConnection;
-import pdcmvoice.recovery.RecoveryServerThread;
 import static pdcmvoice.impl.Constants.*;
 
 

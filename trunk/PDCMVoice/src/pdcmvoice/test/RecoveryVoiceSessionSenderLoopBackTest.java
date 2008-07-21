@@ -20,7 +20,6 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import java.net.InetAddress;
 import pdcmvoice.recovery.*; 
-import org.xiph.speex.NbEncoder;
 
 /*
  * Avviare prima VoiceSessionReceiverLoopBackTest e poi VoiceSessionSenderLoopBackTest
@@ -67,7 +66,7 @@ public class RecoveryVoiceSessionSenderLoopBackTest {
           //c'è una RecoveryConnection per VoiceSessionReceiverLoopBackTest ed una per VoiceSessionSenderLoopBackTest anche se entrambe sono tra gli stessi endpoint
             //teoricamente la RecoveryConnection deve essere unica! infatti in questo file la remoteConnection rimane inutilizzata!
             //EVENTUALE SOLUZIONE: cambiare il costruttore in modo che crei solo la collezione che serve davvero
-            //EVENTUALE SOLUZIONE 2: creare i due thread di recovery e i due thread VoiceSessionReceiver e VoiceSessionSender all'interno dello stesso main in modo da creare solo le due collezioni che servono ed un0unica RecoveryConnection
+// DA FARE //EVENTUALE SOLUZIONE 2: creare i due thread di recovery e i due thread VoiceSessionReceiver e VoiceSessionSender all'interno dello stesso main in modo da creare solo le due collezioni che servono ed un0unica RecoveryConnection. E' necessario per le operazioni di salvataggio eseguite dal ClientThread
             RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocket, localCollection, client, remoteCollection, rtpsession, true);
             
             RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
