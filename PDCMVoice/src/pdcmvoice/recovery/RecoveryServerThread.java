@@ -15,7 +15,7 @@ public class RecoveryServerThread extends Thread
     private RecoveryConnection RecConn;
     private String lastQuery;
     private boolean lastQueryDone;
-    public boolean stop; //impostato dal thread client locale 
+    public boolean stop; 
     
     public RecoveryServerThread(RecoveryConnection RecConn)
 	{
@@ -39,7 +39,9 @@ public class RecoveryServerThread extends Thread
             e.printStackTrace();
         }
         
-        while (!stop)
+        boolean endServerThread = false; 
+        
+        while (!endServerThread)
         {    
             int l = 0;
             boolean lineRead = false;
@@ -64,75 +66,74 @@ public class RecoveryServerThread extends Thread
 //                        if (lastQuery != null)
 //                        {
                             lineRead = true;
-                            System.out.println("lastQuery: " + lastQuery);
+                            System.out.println("lastQuery: " + this.lastQuery);
 //                        }
                     }
                 } catch (IOException e) {
                     
                     if (RecConn.debug)
                         e.printStackTrace();
-                    System.out.println("ERROR:lastQuery: " + lastQuery);
+                    System.out.println("ERROR:lastQuery: " + this.lastQuery);
                 }
                 
             
                 
             }
-            if (lastQuery != "")
+            if (this.lastQuery != "")
             {
                 if (RecConn.getLocalCollection().debug)
-                    System.out.println("RICEZIONE QUERY: " + lastQuery);
+                    System.out.println("RICEZIONE QUERY: " + this.lastQuery);
             }
             
-            if (lastQuery == "END OF QUERY")
+            if (this.lastQuery.equals("END OF QUERY"))
+                endServerThread = true;
+            else 
             {
-                stop = true;
-                break;
-            }
-            
-            StringTokenizer izer = new StringTokenizer(lastQuery, ";", false);
-            StringTokenizer izer2;
-            int start;
-            int end;
-            int totalePkt = 0;
-            
-            int pktSize = RecConn.getLocalCollection().getPktSize();
-            byte[] temp;//contiene il pacchetto associato ad ogni SN
-            byte[] send = new byte[20*pktSize];//contiene 20 pacchetti (da ritrasmettere)
-            
-            while (izer.hasMoreTokens())
-            {
-                start = -1; end = -1;
+                StringTokenizer izer = new StringTokenizer(this.lastQuery, ";", false);
+                StringTokenizer izer2;
+                int start;
+                int end;
+                int totalePkt = 0;
                 
-                String token = izer.nextToken();
-                izer2 = new StringTokenizer(token, "-", false);
+                int pktSize = RecConn.getLocalCollection().getPktSize();
+                byte[] temp;//contiene il pacchetto associato ad ogni SN
+                byte[] send = new byte[20*pktSize];//contiene 20 pacchetti (da ritrasmettere)
                 
-                if (izer2.hasMoreTokens())
-                    start = Integer.parseInt(izer2.nextToken());
-                if (izer2.hasMoreTokens())
-                    end = Integer.parseInt(izer2.nextToken());
-                
-                if (end == -1)
-                    end = start;
-                
-                for (int i = start; i <= end; i++)
+                while (izer.hasMoreTokens())
                 {
-                    if ((totalePkt+1)*pktSize + pktSize >= send.length -1)
-                        arrayResize(send, 2*send.length);
-                    temp = RecConn.getLocalCollection().read(i);
-                    System.arraycopy (temp, 0, send, totalePkt*pktSize, temp.length);
-                    totalePkt++;
-                   
+                    start = -1; end = -1;
+                    
+                    String token = izer.nextToken();
+                    izer2 = new StringTokenizer(token, "-", false);
+                    
+                    if (izer2.hasMoreTokens())
+                        start = Integer.parseInt(izer2.nextToken());
+                    if (izer2.hasMoreTokens())
+                        end = Integer.parseInt(izer2.nextToken());
+                    
+                    if (end == -1)
+                        end = start;
+                    
+                    for (int i = start; i <= end; i++)
+                    {
+                        if ((totalePkt+1)*pktSize + pktSize >= send.length -1)
+                            arrayResize(send, 2*send.length);
+                        temp = RecConn.getLocalCollection().read(i);
+                        System.arraycopy (temp, 0, send, totalePkt*pktSize, temp.length);
+                        totalePkt++;
+                       
+                    }
+                    
                 }
                 
-            }
-            
-            try {
-                dos.write(send, 0, totalePkt*pktSize);
-                dos.flush();
-                lastQuery = null;
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                try {
+                    dos.write(send, 0, totalePkt*pktSize);
+                    dos.flush();
+                    lastQuery = null;
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             
         }//end while (!stop)
@@ -141,8 +142,8 @@ public class RecoveryServerThread extends Thread
         try {
             if (RecConn.getLocalCollection().debug)
                 System.out.println("ServerThread: chiusura stream sul socket del client");
-            RecConn.getClientSocket().getInputStream().close();
-            RecConn.getClientSocket().getOutputStream().close();
+            RecConn.getClientSocket().getInputStream().close();//interrompe la connessione (anche l'outputStream viene chiuso)
+            //RecConn.getClientSocket().getOutputStream().close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

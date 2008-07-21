@@ -83,6 +83,7 @@ public class RecoveryCollection
 	 */
 	public void add(int sn, byte[] pkt, long timestamp)
 	{
+	                  
 	    if (firstSnReceived < 0)
 	    {
     	    firstSnReceived = sn;
@@ -100,7 +101,7 @@ public class RecoveryCollection
 	        
 	        System.out.println(type + ": inserito sn " + sn);
 	    }
-	       
+	     
 	}
 	
 	

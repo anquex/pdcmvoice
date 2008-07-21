@@ -26,7 +26,7 @@ public class RecoveryConnection
 	private RecoveryCollection local;
 	private RecoveryCollection remote;
 	public RTPSession rtpSession;
-	static public boolean debug;
+	public boolean debug;
 	
     public RecoveryConnection(Socket server, RecoveryCollection local, Socket client, RecoveryCollection remote, RTPSession rtpSession, boolean debug)
 	{
