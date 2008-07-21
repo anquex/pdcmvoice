@@ -7,6 +7,7 @@ package pdcmvoice.impl;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import jlibrtp.*;
+import pdcmvoice.recovery.RecoveryCollection;
 /**
  *
  * @author marco
@@ -25,6 +26,17 @@ public class VoiceSessionReceiver {
         this.formatCode=formatCode;
         this.rtpsession=rtp;
         depacketizer= new Depacketizer(rtp);
+        decoder=new Decoder(formatCode);
+        player= new AudioPlayback(formatCode, //fortmato in cui codificare
+                          null, //default mixer
+                          50   //buffer size
+                            );  //input queue
+    }
+    
+    public VoiceSessionReceiver (int formatCode, RTPSession rtp, RecoveryCollection remote){
+        this.formatCode=formatCode;
+        this.rtpsession=rtp;
+        depacketizer= new Depacketizer(rtp, remote);
         decoder=new Decoder(formatCode);
         player= new AudioPlayback(formatCode, //fortmato in cui codificare
                           null, //default mixer
