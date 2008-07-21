@@ -18,65 +18,55 @@ import static pdcmvoice.impl.Constants.*;
  * @author marco
  */
 public class VoiceSession {
-    
+
     private VoiceSessionSender senderSession;
     private VoiceSessionReceiver receiverSession;
+    private VoiceSessionController vsc;
     private RTPSession rtpSession;
     private VoiceSessionSettings settings;
-    
+
     DatagramSocket rtpSocket = null;
     DatagramSocket rtcpSocket = null;
     DatagramSocket recoverySocket = null; // still not used
-    
+
     public VoiceSession (VoiceSessionSettings settings) throws SocketException{
-        
+
             this.settings=settings;
 
              rtpSocket = new DatagramSocket(settings.getLocalRTPPort());
              rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
 
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
-            
+
             senderSession= new VoiceSessionSender(
                                                     settings.getSendFormatCode(),
                                                     rtpSession);
             receiverSession=new VoiceSessionReceiver(
-                                                   settings.getReceiveFormatCode(), 
+                                                   settings.getReceiveFormatCode(),
                                                    rtpSession);
-            rtpSession.naivePktReception(true);
+            //rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
-            out(""+settings.getPartecipant());
-                                                   
-            
+
+
     }
-    
+
     public void start() throws UnsupportedAudioFileException, Exception{
             receiverSession.init();
+            rtpSession.RTPSessionRegister(receiverSession.getPacketizer(),
+                              vsc, //to be implemented
+                              null);
             receiverSession.start();
             senderSession.start();
-        
+
     }
-    
+
     public void stop(){
+            rtpSession.endSession();
             senderSession.stop();
             receiverSession.stop();
-        
+            // recovery connection should still be running
+
     }
-    
-//    public void enableLoopbackTest(){
-//        rtpSession.addParticipant(getLoopBackPartecipant());
-//    }
-//    
-//    public void disableLoopbackTest(){
-//        rtpSession.removeParticipant(getLoopBackPartecipant());
-//        
-//    }
-//    
-//    private Participant getLoopBackPartecipant(){
-//                return new Participant("127.0.0.1",
-//                                                   settings.getLocalRTPPort(),
-//                                                   settings.getLocalRTCPPort());
-//    }
-    
+
 
 }
