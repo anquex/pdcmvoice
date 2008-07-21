@@ -64,6 +64,23 @@ public class Decoder {
         output=cBuffer.getOutputStream();
     }
     
+    public Decoder(int format, boolean recovery){
+        this.encodedFormat=format;
+        
+        if (encodedFormat==FORMAT_CODE_SPEEX_NB ||
+            encodedFormat==FORMAT_CODE_SPEEX_WB )
+        {
+            speexDecoder=new SpeexDecoder();
+        }
+        else if (encodedFormat==FORMAT_CODE_iLBC){
+            
+        }
+        else throw new IllegalArgumentException();
+        cBuffer=new CircularByteBuffer(150000);
+        input=cBuffer.getInputStream();
+        output=cBuffer.getOutputStream();
+    }
+    
     public void init(){
         //set encoder and coding parameters according to 
         //selected format
