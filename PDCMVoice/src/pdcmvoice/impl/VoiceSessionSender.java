@@ -7,6 +7,7 @@ package pdcmvoice.impl;
 
 import javax.sound.sampled.AudioInputStream;
 import jlibrtp.RTPSession;
+import pdcmvoice.recovery.RecoveryCollection;
 
 /**
  *
@@ -37,6 +38,38 @@ public class VoiceSessionSender {
                                   50);  //
         
         packetizer= new Packetizer(rtp);
+        try{
+            capture.open();
+        }catch(Exception e){e.printStackTrace();}
+        
+        // Connect modules
+        
+        AudioInputStream ais=capture.getAudioInputStream();
+        encoder=new Encoder(formatCode, ais);
+        encoder.registerPacketizer(packetizer);
+        
+
+//        packetizer.framesPerPackets(2);
+
+//        packetizer.enableRDT();
+    }
+    
+ public VoiceSessionSender(int formatCode, RTPSession rtp, RecoveryCollection local){
+        
+        this.formatCode=formatCode;
+        this.rtpsession=rtp;
+        
+        
+        // Set rtpsession payload type according to format code
+        // This Setting must be performed before creating the Packetizer
+        
+        rtpsession.payloadType(AudioUtils.getPayloadType(formatCode));
+        
+        capture= new AudioCapture(formatCode, //fortmato in cui codificare
+                                  null, //default mixer
+                                  50);  //
+        
+        packetizer= new Packetizer(rtp, local);
         try{
             capture.open();
         }catch(Exception e){e.printStackTrace();}
