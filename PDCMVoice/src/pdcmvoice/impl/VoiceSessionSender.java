@@ -129,6 +129,13 @@ public class VoiceSessionSender {
      public synchronized boolean isRDT(){
          return packetizer.isRDT();
     }
-   
+
+    public Packetizer getPacketizer(){
+        return packetizer;
+    }
+
+    public Encoder getEncoder(){
+        return encoder;
+    }
 
 }

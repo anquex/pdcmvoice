@@ -28,11 +28,14 @@ public class Encoder extends Thread {
     public final int DECODEDNB = 320;         // unencoded bytes in frameDurationInMillis
     public final int DECODEDWB = 640;
     private int PCMbytesPerFrame;
-    private int nEncoded;
     private int speexquality = SPEEX_QUALITY[DEFAULT_SPEEX_QUALITY_INDEX];
+
     private final boolean DEBUG = false;
-    // debug variables
+
+    
     private int producedFrames;
+    private int producedBytes;
+    private int lastFrameSize;
     private long firsttimeStamp;
     private long lasttimeStamp;
 
@@ -123,72 +126,49 @@ public class Encoder extends Thread {
             throw new IllegalStateException();
         }
         if (!registered) {
-            throw new NullPointerException();
+            throw new NullPointerException("No Packetizer registered");
         }
 
-        //Speex Encoding
-        if (encoding_format == FORMAT_CODE_SPEEX_NB ||
-                encoding_format == FORMAT_CODE_SPEEX_WB) {
-            byte[] buffer = new byte[PCMbytesPerFrame];
-            int nReadBytes = 0;
-            int encodedDataBytes = 0;
-            byte encodedFrame[] = null;
+        byte[] buffer = new byte[PCMbytesPerFrame];
+        int nReadBytes = 0;
+        int encodedDataBytes = 0;
+        byte encodedFrame[] = null;
+
             while (nReadBytes != -1) {
-                if (DEBUG) {
-                    lasttimeStamp = System.currentTimeMillis();
-                    if (firsttimeStamp == 0) {
-                        firsttimeStamp = System.currentTimeMillis();
-                    } else {
-                        out("" + ((lasttimeStamp - firsttimeStamp) / producedFrames));
+                // READ FROM THE STREAM 20 MS OF AUDIO
+                try {
+                    nReadBytes = ais.read(buffer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break; //let process die
+                }
+                // ENCODE READED BYTES
+                if (nReadBytes > 0) {
+                    //Speex Encoding
+                    if (encoding_format == FORMAT_CODE_SPEEX_NB ||
+                        encoding_format == FORMAT_CODE_SPEEX_WB)
+                    {
+                        speexEncoder.processData(buffer, 0, nReadBytes);
+                        encodedFrame = new byte[speexEncoder.getProcessedDataByteSize()];
+                        speexEncoder.getProcessedData(encodedFrame, 0);
                     }
+                    else
+                    // iLBC Encoding
+                    {
+                        ilbcEncoder.processData(buffer, 0, nReadBytes);
+                        encodedFrame = new byte[ilbcEncoder.getProcessedDataByteSize()];
+                        ilbcEncoder.getProcessedData(encodedFrame, 0);
+                    }
+                    packetizer.sendVoice(encodedFrame);
+
+                    // UPDATE STATS
+                    producedBytes+=encodedFrame.length;
                     producedFrames++;
-                }
-                nEncoded++;
-                try {
-                    nReadBytes = ais.read(buffer);
-//                   System.out.println(nReadBytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break; //let process die
-                }
-                if (nReadBytes > 0) {
-                    speexEncoder.processData(buffer, 0, nReadBytes);
-                    encodedFrame = new byte[speexEncoder.getProcessedDataByteSize()];
-                    //    System.out.println(encodedFrame.length);
-                    speexEncoder.getProcessedData(encodedFrame, 0);
-//                    if (DEBUG){
-//                        String out="";
-//                        for (int i=0;i<encodedFrame.length;i++){
-//                            out+=" "+encodedFrame[i];
-//                        }
-//                        out(out);
-//                    }
-                    packetizer.sendVoice(encodedFrame);
+                    lastFrameSize=encodedFrame.length;
                 }
             }
-        // iLBC Encoding
-        } else {
-            byte[] buffer = new byte[PCMbytesPerFrame];
-            int nReadBytes = 0;
-            int encodedDataBytes = 0;
-            byte encodedFrame[] = null;
-            while (nReadBytes != -1) {
-                try {
-                    nReadBytes = ais.read(buffer);
-                // out(nReadBytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break; //let process die
-                }
-                if (nReadBytes > 0) {
-                    ilbcEncoder.processData(buffer, 0, nReadBytes);
-                    encodedFrame = new byte[ilbcEncoder.getProcessedDataByteSize()];
-                    //    System.out.println(encodedFrame.length);
-                    ilbcEncoder.getProcessedData(encodedFrame, 0);
-                    packetizer.sendVoice(encodedFrame);
-                }
-            }
-        }
+
+
     }//end run
     /** Return current speex Encoder quality
      * 
@@ -196,7 +176,7 @@ public class Encoder extends Thread {
      * @return speex quality
      */
     
-    public int speexQuality() {
+    public int getSpeexQuality() {
         return speexquality;
     }
     
@@ -207,12 +187,25 @@ public class Encoder extends Thread {
      *  otherwise 
      */
 
-    public int speexQuality(int n) {
+    public int setSpeexQuality(int n) {
         if (n >= 0 && n <= 10) {
             return speexquality = n;
         } else {
             return speexquality;
         }
     }
+
+    // FOR STATS PURPOSE
+    public int getEncodedBytes(){
+        return producedBytes;
+    }
+    public int getProducedFrames(){
+        return producedFrames;
+    }
+    public int getLastFrameSize(){
+        // could return 0 if no frame produced
+        return lastFrameSize;
+    }
+
 }//end Encoder
 

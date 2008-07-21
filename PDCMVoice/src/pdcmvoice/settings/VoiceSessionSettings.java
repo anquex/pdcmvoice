@@ -83,5 +83,20 @@ public class VoiceSessionSettings {
             
             return new Participant(remoteAddr, remoteRTPPort, remoteRTCPPort);
         }
+
+        public void setRemote(int f ,String addr,int rtp,int rtcp, int rec){
+            remoteAddr=addr;
+            if(f!=0) receiveFormatCode=f;
+            if (rtp>0) remoteRTPPort=rtp;
+            if (rtcp>0) remoteRTCPPort=rtcp;
+            if (rec>0) remoteRecoveryPort=rec;
+        }
+
+        public void setLocal(int f ,int rtp,int rtcp, int rec){
+            if(f!=0) sendFormatCode=f;
+            if (rtp>0) localRTPPort=rtp;
+            if (rtcp>0) localRTCPPort=rtcp;
+            if (rec>0) localRecoveryPort=rec;
+        }
       
 }
