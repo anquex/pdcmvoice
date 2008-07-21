@@ -16,27 +16,27 @@ import pdcmvoice.settings.VoiceSessionSettings;
  * @author marco
  */
 public class VoiceSessionTest extends Thread{
-    
+
     VoiceSessionSettings s;
     VoiceSession ss;
 
     public VoiceSessionTest() {
         try {
-            s = new VoiceSessionSettings(2, 2, "da cambiare...");
+            s = new VoiceSessionSettings(2, 2, "10.0.0.100");
             ss = new VoiceSession(s);
             ss.start();
-            
+
         } catch (UnsupportedAudioFileException ex) {
             Logger.getLogger(VoiceSessionTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(VoiceSessionTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
+
     }
-    
+
     public static void main(String[] args){
             VoiceSessionTest v=new VoiceSessionTest();
-        
+
     }
 
 }

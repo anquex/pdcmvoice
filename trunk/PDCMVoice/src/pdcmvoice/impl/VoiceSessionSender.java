@@ -68,14 +68,6 @@ public class VoiceSessionSender {
         
     }
     /**
-     * Returns the packetizer used by this Voice Session
-     * 
-     * @return packetizer
-     */
-    public Packetizer getPacketizer(){
-        return packetizer;
-    }
-    /**
      * 
      * Sets RDT to be alsways active or disabled
      * @param enabled true if you want RDT always active
