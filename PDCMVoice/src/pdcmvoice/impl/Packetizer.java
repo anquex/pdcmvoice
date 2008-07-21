@@ -7,6 +7,7 @@ package pdcmvoice.impl;
 
 import jlibrtp.RTPSession;
 import static pdcmvoice.impl.Constants.*;
+import pdcmvoice.recovery.RecoveryCollection;
 
 /**
  * @author marco
@@ -32,6 +33,8 @@ public class Packetizer {
 
     private static final boolean DEBUG=true;
 
+    private RecoveryCollection local;
+    
     public Packetizer(RTPSession s){
         rtpSession= s;
         System.out.println("Initial RTP PAYLOAD :"+rtpSession.payloadType());
@@ -41,10 +44,17 @@ public class Packetizer {
         framesPerPacket= DEFAULT_FRAMES_PER_PACKET;
     }
 
-    /*
-     *
-     *
-     */
+    
+    public Packetizer(RTPSession s, RecoveryCollection local){
+        this.local = local;
+        rtpSession= s;
+        System.out.println("Initial RTP PAYLOAD :"+rtpSession.payloadType());
+        initialPayloadType=rtpSession.payloadType();
+        RDT=isSessionRTD(initialPayloadType);
+        isFirst=true;
+        framesPerPacket= DEFAULT_FRAMES_PER_PACKET; 
+    }
+
 
     public synchronized void sendVoice(byte[] currentEncodedFrame){
         // generate timestamp the first time and update the other times
@@ -184,7 +194,18 @@ public class Packetizer {
          * -----------------*/
 
         // collection.add((int)r[1],f, r[0]);
-
+        
+        byte[] toSend = new byte[local.getPktSize()];
+        System.arraycopy(frames, 0, toSend, 0, local.getPktSize()); //singolo pacchetto voce: 20Byte
+        this.local.add((int)r[0][1], toSend, r[0][0]);
+       
+       if (marked)
+        {
+            System.arraycopy(frames, local.getPktSize(), toSend, 0, local.getPktSize());
+            this.local.add((int)r[1][1], toSend, r[1][0]);
+        }
+        
+        
         if (DEBUG){
             String out="";
             out+="Sending Packet with";
