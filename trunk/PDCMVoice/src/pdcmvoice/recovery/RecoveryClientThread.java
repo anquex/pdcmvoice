@@ -38,7 +38,7 @@ public class RecoveryClientThread extends Thread
 	    /*
 	     * RICORDA LA RIGA DI DEBUG
 	     * 
-	     * if (frame != null && SN % 10 != 0) //simulo perdita di 9 pacchetti ogni 10
+	     * if (frame != null && SN % 10 != 0) //simulo perdita di 1 pacchetto ogni 10
 	     * 
 	     * in Decoder.java
 	     */
@@ -64,6 +64,8 @@ public class RecoveryClientThread extends Thread
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+        
+        int writingTest = 1;
         
         //TODO
         //CONTROLLARE PRIMA LA QUANTITA' DI PACCHETTI RICHIESTI DALLA QUERY!!! SE TROPPO POCHI; ASPETTA A MANDARLA
@@ -139,6 +141,11 @@ public class RecoveryClientThread extends Thread
             lastQuery = null;
             
             if (rtpDown) stopQuery = true;
+            
+            //ATTENZIONE!!
+            //PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA SECONDA QUERY
+            if (writingTest++ >= 2)
+                stopQuery = true;
         }
         
         //informa il server dell'altro interlocutore che sono stati ricevuti tutti i pacchetti
@@ -240,7 +247,7 @@ public class RecoveryClientThread extends Thread
         
         //ora localAis e remoteAis contengono gli stream decodificati (PCM)
         
-        //scrittura nei due file .wav
+        //scrittura nei due file .wav ///DEVO USARE UN MIXER!!
         FileOutputStream fos1; 
         DataOutputStream dos1;
         
