@@ -21,19 +21,23 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class PlayoutBuffer{
 
-    private static int addWaiting;
-    private boolean isFirst;
+    private boolean isFirst;          //is true for the first packet
     private long startPacketTimestamp;
-    private boolean isBuffering;
+    private boolean isBuffering;      //true if buffer is waiting to fill up
     private Decoder decoder;
-    private int minBufferedMillis=60;
+    private int minBufferedMillis=60; // if buffer is empty I wait for
+                                      // minBufferedMillis before starting
+                                      // playback
 
     // must be at least 20 ms!
-    private int maxBufferedMillis=120;
-    private SortedSet<VoiceFrame> listBuffer;
+    private int maxBufferedMillis=120;// if buffer exeeds maxBufferedMillis
+                                      // I start dropping oleder frames
+
+    private SortedSet<VoiceFrame> listBuffer; // frame container sorted by time
+                                              // stamp
     
-    private Timer timer;
-    private Deliver decoderDeliver;
+    private Timer timer;            // popout a frame every 20ms
+    private Deliver decoderDeliver; // does the pop out work
     
     private final boolean DEBUG=true;
 
@@ -46,18 +50,22 @@ public class PlayoutBuffer{
     public PlayoutBuffer(Decoder d) {
         decoder=d;
         listBuffer=Collections.synchronizedSortedSet(new TreeSet<VoiceFrame>(new VoiceFrameComparator()));
+        listBuffer=new TreeSet<VoiceFrame>(new VoiceFrameComparator());
         isFirst=true;
         isBuffering=true;
         decoderDeliver= new Deliver();
     }
 
+    /**
+     *  Add a 20ms encoded audio frame to playout buffer
+     *
+     * @param timestamp
+     * @param frame
+     */
+
 
     public synchronized void add(long timestamp, byte[] frame){
         
-        synchronized(PlayoutBuffer.class){
-            addWaiting++;
-        }
-        if(DEBUG) out("BUFFER : ----------->>>>>> Add calls "+addWaiting);
         /* We consider the timestamp of the first packet received as first*/
         
 //        if(timestamp<=decoderDeliver.getNextTimestampToPlay())
@@ -98,8 +106,6 @@ public class PlayoutBuffer{
             decoderDeliver.startPlaying(getLowerTimestamp());
 
         }
-
-
 
         if (isBuffering){
             Iterator<VoiceFrame> iter=listBuffer.iterator();
@@ -160,9 +166,6 @@ public class PlayoutBuffer{
         // Have to manage brust lenght
         
         //decoder.decodeFrame(frame, 0, timestamp);
-        synchronized(PlayoutBuffer.class){
-            addWaiting--;
-        }
         
     }
     
@@ -195,6 +198,18 @@ public class PlayoutBuffer{
         if (minBufferedMillis>=0)
             minBufferedMillis=n;
         return minBufferedMillis;
+    }
+
+    public synchronized int getMinBufferedMillis(){
+        return minBufferedMillis;
+    }
+
+    public synchronized int getMaxBufferedMillis(){
+        return maxBufferedMillis;
+    }
+    public synchronized int setMaxBufferedMillis(int n){
+        int i= Math.max(n, minBufferedMillis);
+        return maxBufferedMillis=i;
     }
     
     public synchronized  int size(){

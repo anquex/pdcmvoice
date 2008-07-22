@@ -6,7 +6,6 @@ package pdcmvoice.impl;
 
 import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import org.xiph.speex.SpeexEncoder;
 import static pdcmvoice.impl.Constants.*;
 import pdcmvoice.codecs.IlbcEncoder;
@@ -126,7 +125,7 @@ public class Encoder extends Thread {
             throw new IllegalStateException();
         }
         if (!registered) {
-            throw new NullPointerException("No Packetizer registered");
+            throw new RuntimeException("No Packetizer registered");
         }
 
         byte[] buffer = new byte[PCMbytesPerFrame];

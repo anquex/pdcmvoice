@@ -52,8 +52,9 @@ public class Constants {
     
 
     public static final String[] FORMAT_NAMES={
-	"Speex CBR",
-	"iLBC",
+	"Speex NarrowBand",
+        "Speex WideBand",
+	"iLBC (NarroBand)",
     };
 
     public static final int[] FORMAT_CODES={
