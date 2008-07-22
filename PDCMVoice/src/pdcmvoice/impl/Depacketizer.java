@@ -50,7 +50,8 @@ public class Depacketizer implements RTPAppIntf{
 
     public Depacketizer(RTPSession s, RecoveryCollection remote){
         this(s);
-        rtpSession=s;
+        rtpSession.RTPSessionRegister(this, null, null);
+        this.remote = remote;
     }
 
     public void receiveData(DataFrame frame, Participant participant)
