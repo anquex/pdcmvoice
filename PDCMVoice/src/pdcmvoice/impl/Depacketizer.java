@@ -80,21 +80,22 @@ public class Depacketizer implements RTPAppIntf{
          * ---------------------------------------*/
 
         // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
-
-        byte[] toSend = new byte[remote.getPktSize()];
-        System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
-        //ATTENZIONE!!!
-        //SIMULAZIONE PERDITA PACCHETTI
-        if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-        this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
-
-        if (frame.marked())
-        {
-            System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
+        if (remote!=null){
+            byte[] toSend = new byte[remote.getPktSize()];
+            System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
             //ATTENZIONE!!!
             //SIMULAZIONE PERDITA PACCHETTI
-            if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-            this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
+            if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+            this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+
+            if (frame.marked())
+            {
+                System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
+                //ATTENZIONE!!!
+                //SIMULAZIONE PERDITA PACCHETTI
+                if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+                this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
+            }
         }
 
         /* ---------------------------------------
