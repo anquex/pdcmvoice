@@ -52,7 +52,7 @@ public class VoiceSession {
 
     public void start() throws UnsupportedAudioFileException, Exception{
             receiverSession.init();
-            rtpSession.RTPSessionRegister(receiverSession.getPacketizer(),
+            rtpSession.RTPSessionRegister(receiverSession.getDepacketizer(),
                               vsc, //to be implemented
                               null);
             receiverSession.start();
@@ -66,6 +66,35 @@ public class VoiceSession {
             receiverSession.stop();
             // recovery connection should still be running
 
+    }
+    public int setMinBufferedMillis(int n){
+        return receiverSession.getDepacketizer()
+                .getPlayoutBuffer().setMinBufferedMillis(n);
+    }
+
+    public int getMinBufferedMillis(int n){
+        return receiverSession.getDepacketizer()
+                .getPlayoutBuffer().getMinBufferedMillis();
+    }
+
+    public int setMaxBufferedMillis(int n){
+        return 0;
+    }
+
+    public int getBufferedFrames(){
+        return receiverSession.getDepacketizer().getPlayoutBuffer().size();
+    }
+
+    public int getFramesPerPacket(){
+        return senderSession.getPacketizer().framesPerPackets();
+    }
+
+    public int setFramesPerPacket(int n){
+        return senderSession.getPacketizer().framesPerPackets(n);
+    }
+
+    public String getSendingFormatName(){
+        return FORMAT_NAMES[settings.getSendFormatCode()-1];
     }
 
 

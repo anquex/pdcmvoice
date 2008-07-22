@@ -31,8 +31,10 @@ public class Packetizer {
 
     private final int DEFAULT_FRAMES_PER_PACKET=1;
 
-    private static final boolean DEBUG=true;
+    private static final boolean DEBUG=false;
 
+
+    //RECOVERY COLLECTION VARIABLES
     private RecoveryCollection local;
 
     public Packetizer(RTPSession s){

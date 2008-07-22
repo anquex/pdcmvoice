@@ -105,10 +105,12 @@ public class Depacketizer implements RTPAppIntf{
         if (isRDT(frame.payloadType()) || frame.marks()[0]){
             lenght=voice.length/2;
             byte[] v=new byte[voice.length/2];
-            System.arraycopy(voice, 0, v, 0, lenght);
-            playoutBuffer.add(frame.rtpTimestamp(), v);
+            // first add older packet (see playout buffer why)
             System.arraycopy(voice, lenght, v, 0, lenght);
             playoutBuffer.add(frame.rtpTimestamp()-20, v);
+            // then add new packet
+            System.arraycopy(voice, 0, v, 0, lenght);
+            playoutBuffer.add(frame.rtpTimestamp(), v);
         }
         else{
             playoutBuffer.add(frame.rtpTimestamp(), voice);
@@ -152,6 +154,10 @@ public class Depacketizer implements RTPAppIntf{
     public int frameSize(int payloadType) {
         // 1 packet -> at least 1 frame
         return 1;
+    }
+
+    public PlayoutBuffer getPlayoutBuffer() {
+        return playoutBuffer;
     }
 
 

@@ -58,7 +58,7 @@ public class VoiceSessionReceiver {
             player.closeLine(false);
     }
 
-    public Depacketizer getPacketizer(){
+    public Depacketizer getDepacketizer(){
         return depacketizer;
     }
 
