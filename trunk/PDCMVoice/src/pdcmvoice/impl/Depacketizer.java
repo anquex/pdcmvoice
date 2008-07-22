@@ -29,7 +29,7 @@ public class Depacketizer implements RTPAppIntf{
     private boolean inited;
 
     private RecoveryCollection remote;
-    
+
     PlayoutBuffer playoutBuffer;
 
     //DEBUG
@@ -47,17 +47,12 @@ public class Depacketizer implements RTPAppIntf{
 
 
     }
-    
+
     public Depacketizer(RTPSession s, RecoveryCollection remote){
-        this.remote = remote;
+        this(s);
         rtpSession=s;
-        rtpSession.RTPSessionRegister(this, null, null);
-        // disable rtp buffering, recive all packets!
-        rtpSession.packetBufferBehavior(0);
-        
-        
     }
-    
+
     public void receiveData(DataFrame frame, Participant participant)
     {
         if (!inited) return;
@@ -80,9 +75,9 @@ public class Depacketizer implements RTPAppIntf{
             out(out);
         }
 
-        /* -----------------
-         * --- COLLECTION --
-         * -----------------*/
+        /* ---------------------------------------
+         * --- RECOVERY COLLECTION CODE BEGINS ---
+         * ---------------------------------------*/
 
         // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
 
@@ -92,7 +87,7 @@ public class Depacketizer implements RTPAppIntf{
         //SIMULAZIONE PERDITA PACCHETTI
         if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
         this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
-        
+
         if (frame.marked())
         {
             System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
@@ -101,8 +96,11 @@ public class Depacketizer implements RTPAppIntf{
             if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
             this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
         }
-        
-        
+
+        /* ---------------------------------------
+         * --- RECOVERY COLLECTION CODE ENDS -----
+         * ---------------------------------------*/
+
         if (isRDT(frame.payloadType()) || frame.marks()[0]){
             lenght=voice.length/2;
             byte[] v=new byte[voice.length/2];
