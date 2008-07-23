@@ -52,9 +52,9 @@ public class Constants {
     
 
     public static final String[] FORMAT_NAMES={
-	"Speex NarrowBand",
-        "Speex WideBand",
-	"iLBC (NarroBand)",
+	"SpeexNB",
+        "SpeexWB",
+	"iLBC",
     };
 
     public static final int[] FORMAT_CODES={
@@ -98,12 +98,16 @@ public class Constants {
     public static final int DEFAULT_RTCP_PORT = 8767;
     public static final int DEFAULT_RECOVERY_PORT = 8769;
     
-    public static final int[] SPEEX_QUALITY=
+    public static final int[] SPEEX_QUALITIES=
     {
         0,1,2,3,4,5,6,7,8,9,10
     };
+    public static final String[] SPEEX_QUALITIES_NAMES=
+    {
+        "0","1","2","3","4","5","6","7","8","9","10"
+    };
     
-    public static final int DEFAULT_SPEEX_QUALITY_INDEX = 5;
+    public static final int DEFAULT_SPEEX_QUALITY_INDEX = 3;
     
     public static final int PAYLOAD_iLBC=96;
     public static final int PAYLOAD_SPEEX=97;

@@ -2,18 +2,18 @@ package pdcmvoice.recovery;
 
 /*
 dim pacchetto
-primo SN ricevuto (SN del RTP è lo stesso del pacchetto speex correntericevuto nel RTP)
+primo SN ricevuto (SN del RTP Ã¨ lo stesso del pacchetto speex correntericevuto nel RTP)
 timestamp iniziale
 
-Se non è la collezione locale: ultimo SN fino a cui ho fatto o sto facendo  richieste TCP (controllo "buchi")
+Se non Ã¨ la collezione locale: ultimo SN fino a cui ho fatto o sto facendo  richieste TCP (controllo "buchi")
 
-array di oggetti RecoverySample: ogni oggetto RecoverySample è costituito da un SN (16bit) e da un array di byte (il pacchetto speex) lungo "dim pacchetto"
+array di oggetti RecoverySample: ogni oggetto RecoverySample ï¿½ costituito da un SN (16bit) e da un array di byte (il pacchetto speex) lungo "dim pacchetto"
 
 metodo add per Marco: con parametri(SN-da 16 bit-, array di byte, long timestamp)
-	se il SN da inserire è precedente a "ultimo SN fino a cui ho fatto..." allora non inserisco
+	se il SN da inserire Ã¨ precedente a "ultimo SN fino a cui ho fatto..." allora non inserisco
 
 nelle richieste TCP devo richiedere il SN di partenza + offset dato dall'indice dell'array
-	ogni richiesta rimane in sosteso finchè non sono arrivati i pckt
+	ogni richiesta rimane in sosteso finchÃ¨ non sono arrivati i pckt
 */
 
 /**
@@ -177,7 +177,7 @@ public class RecoveryCollection
     	            else
     	            {
     	                output += (firstSnReceived + i) + "-" + (firstSnReceived + j) + ";";
-    	                break; //j è arrivato in fondo ed è stato inserito nella richiesta
+    	                break; //j ï¿½ arrivato in fondo ed ï¿½ stato inserito nella richiesta
     	            }
     	        }//end else: i < end
 	        }// end if (collection[i] == null)

@@ -27,7 +27,7 @@ public class Encoder extends Thread {
     public final int DECODEDNB = 320;         // unencoded bytes in frameDurationInMillis
     public final int DECODEDWB = 640;
     private int PCMbytesPerFrame;
-    private int speexquality = SPEEX_QUALITY[DEFAULT_SPEEX_QUALITY_INDEX];
+    private int speexquality = SPEEX_QUALITIES[DEFAULT_SPEEX_QUALITY_INDEX];
 
     private final boolean DEBUG = false;
 
