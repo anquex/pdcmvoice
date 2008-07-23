@@ -103,5 +103,12 @@ public class ConnectionSettings implements Serializable{
         }
         recovery=n;
     }
+
+    public void restoreDefaults(){
+            setMaster(DEFAULT_MASTER_PORT);
+            setRTP(DEFAULT_RTP_PORT);
+            setRTCP(DEFAULT_RTCP_PORT);
+            setRecovery(DEFAULT_RECOVERY_PORT);
+    }
 }
 
