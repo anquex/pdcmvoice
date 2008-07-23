@@ -1,11 +1,15 @@
 package pdcmvoice.recovery;
 
+
 import java.io.*;
 
 import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.List;
 import pdcmvoice.impl.*;
 import javax.sound.sampled.*;
 import javax.sound.sampled.spi.*;
+import org.xiph.speex.spi.*;
 
 /**
  * 
@@ -129,7 +133,7 @@ public class RecoveryClientThread extends Thread
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    RecConn.getLocalCollection().recover(i, temp);
+                    RecConn.getRemoteCollection().recover(i, temp);
                     
                     if (RecConn.getRemoteCollection().debug)
                         System.out.println("pkt recuperato dal ClientThread: " + i);
@@ -143,8 +147,8 @@ public class RecoveryClientThread extends Thread
             if (rtpDown) stopQuery = true;
             
             //ATTENZIONE!!
-            //PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA SECONDA QUERY
-            if (writingTest++ >= 2)
+            //PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA QUARTA QUERY
+            if (writingTest++ >= 4)
                 stopQuery = true;
         }
         
@@ -165,11 +169,18 @@ public class RecoveryClientThread extends Thread
          
          */
         
+        
+        //if (RecConn.getRemoteCollection().debug)
+            System.out.println("--ELAB-- INIZIO ELABORAZIONE DELLE COLLEZIONI");
+        
         RecoveryCollection local = RecConn.getLocalCollection();
         RecoveryCollection remote = RecConn.getRemoteCollection();
             
-        Decoder localDecoder = new Decoder (local.getEncodedFormat());
-        Decoder remoteDecoder = new Decoder (remote.getEncodedFormat());
+        //Decoder localDecoder = new Decoder (local.getEncodedFormat());
+        Decoder localDecoder = new Decoder (local.getEncodedFormat(), true);
+        localDecoder.init();
+        Decoder remoteDecoder = new Decoder (remote.getEncodedFormat(), true);
+        remoteDecoder.init();
         
         AudioInputStream localAis = null;
         AudioInputStream remoteAis = null;
@@ -195,7 +206,424 @@ public class RecoveryClientThread extends Thread
         byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         
+        /*
+        STRATEGIA 1
+        Converto le collezioni in AudioInputStream di tipo Speex
+        poi converto in AudioInputStream di tipo PCM con SpeexFormatConversionProvider
+        poi scrivo nei file usando metodo write di SpeexAudioFileWriter
+        
+        STRATEGIA 2
+        Converto i singoli frame (array di byte da 20 elementi) in frame PCM ottenendo un AudioInputStream PCM con Decoder.java (marco)
+        "aggiorno" l'AudioInputStream assegnando la dimensione IN FRAME dello stream (num byte dello stream / num byte per frame)
+        poi scrivo gli AudioInputStream su file con AudioSystem.write(..) dopo aver assegnato la dimensione
+         
+        
+        STRATEGIA 3
+        a partire dagli stream OPPURE dai file .wav "separati" (utile per gestione delle lunghezze)
+        preparazione degli stream per MixingAudioInputStream..come?? come "aggiornamento" della strategia 2??
+        mixaggio con audioInputStream = new MixingAudioInputStream(audioFormat, audioInputStreamList);
+        e scrittura su file
+        */
+        
+       
+        /*
+         * STRATEGIA 2
+         */
+        
+      //if (RecConn.getLocalCollection().debug)
+        System.out.println("--ELAB-- ELABORAZIONE LOCAL COLLECTION");
+    
+        int i = 0;
+        for (; ; i++)
+        {
+            localSn = local.getFirstSnReceived() + i;
+           
+            if (local.read(localSn) != null)
+            {
+                //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
+                localDecoder.decodeFrame(local.read(localSn));
+                
+                //if (RecConn.getLocalCollection().debug)
+                    System.out.print("--ELAB-- Decodificato Sn " + localSn + ": ");
+                    
+                    for (int l = 0; l <= local.read(localSn).length -1; l++)
+                    {
+                        System.out.print(local.read(localSn)[l] + " ");
+                    }
+                    
+                    System.out.println("");
+                
+            }
+            else
+            {
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Trovato pacchetto NULL");
+                break;
+            }
+        }
+        
+      //if (RecConn.getLocalCollection().debug)
+        {
+        System.out.println("--ELAB-- formato localAis: " + localAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- byte presenti in localAis: " + localAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- lunghezza localAis in frame: " + localAis.getFrameLength());
+        }
+        
+//        try {
+////            while (localAis.available() < 10)
+////            {
+////                Thread.sleep(50);
+////              //if (RecConn.getLocalCollection().debug)
+////                System.out.println("--ELAB-- attendo 50ms per l'AudioInputStream");
+////            }
+//            int byteRead = localAis.read(localArray, 0, 320);
+//             
+//          //if (RecConn.getLocalCollection().debug)
+//            {
+//            System.out.print("--ELAB-- localArray: ");
+//            for (int f = 0; f <= byteRead - 1; f++)
+//                System.out.print(localArray[f] + ",");
+//            System.out.println("");
+//            }
+//                
+//            } catch (Exception e) {
+//                // TODO: handle exception
+//                e.printStackTrace();
+//            }    
+        
+        
+        
+        //if (RecConn.getLocalCollection().debug)
+        {
+            AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes(localAis);  
+            for (int f = 0; f <= types.length - 1; f++)
+                System.out.print("--ELAB-- localAis types: " + types[f] + ",");
+            System.out.println("");
+        }
+        
+        //SCRITTURA DI localAis SU FILE .WAV
+        
+
+//      AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes(toBeWritten);
+//      //if (RecConn.getLocalCollection().debug)
+//            for (int f = 0; f <= types.length - 1; f++)
+//            System.out.print("--ELAB-- types: " + types[f] + ",");
+       
+        
+        //Aggiornamento lunghezza IN FRAME dello stream localAis (necessaria per la scrittura del file .wav)
+        try {
+            localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
+        
+        //visualizzazione info sul NUOVO localAis
+      //if (RecConn.getLocalCollection().debug)
+        {
+        System.out.println("--ELAB-- AGG. formato localAis: " + localAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- AGG. byte presenti in localAis: " + localAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- AGG. lunghezza localAis in frame: " + localAis.getFrameLength());
+        System.out.println("--ELAB-- AGG. frame size localAis in byte: " + localAis.getFormat().getFrameSize());
+        }
+      
+        //SCRITTURA
+        if (RecConn.getLocalCollection().debug)
+        {
+            File file= new File("F:\\local.wav");
+          //if (RecConn.getLocalCollection().debug)
+            System.out.println("--ELAB-- File aperto");
+            
+            if (!file.canWrite())
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+            
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            
+            int byteWritten = 0;
+            try {
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Inizio scrittura del file");
+                
+                byteWritten = AudioSystem.write(localAis, AudioFileFormat.Type.WAVE, fos);
+                
+                fos.flush();
+                fos.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+           
+            //if (RecConn.getLocalCollection().debug)
+            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+        }
+        
+       
+        
+        
+        
+        
+        //REMOTE COLLECTION OLD
+        
+        /*
+        if (RecConn.getRemoteCollection().debug)
+            System.out.println("--ELAB-- ELABORAZIONE REMOTE COLLECTION");
+        
+        int j = 0;
+        for (; ; j++)
+        {
+            remoteSn = remote.getFirstSnReceived() + j;
+           
+            if (remote.read(remoteSn) != null)
+            {
+                //remoteDecoder.decodeFrame(remote.read(remoteSn), remoteSn, 0);
+                remoteDecoder.decodeFrame(remote.read(remoteSn));
+                
+                if (RecConn.getRemoteCollection().debug)
+                    System.out.println("--ELAB-- Decodificato Sn " + remoteSn);
+                
+            }
+            else
+                break;
+        }
+        
+        */
+        
+      //if (RecConn.getRemoteCollection().debug)
+        System.out.println("--ELAB-- ELABORAZIONE REMOTE COLLECTION");
+    
+        i = 0;
+        for (; ; i++)
+        {
+            remoteSn = remote.getFirstSnReceived() + i;
+           
+            if (remote.read(remoteSn) != null)
+            {
+                //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
+                remoteDecoder.decodeFrame(remote.read(remoteSn));
+                
+                //if (RecConn.getRemoteCollection().debug)
+                    System.out.print("--ELAB-- Decodificato Sn " + remoteSn + ": ");
+                    
+                    for (int l = 0; l <= remote.read(remoteSn).length -1; l++)
+                    {
+                        System.out.print(remote.read(remoteSn)[l] + " ");
+                    }
+                    
+                    System.out.println("");
+                
+            }
+            else
+            {
+              //if (RecConn.getRemoteCollection().debug)
+                System.out.println("--ELAB-- Trovato pacchetto NULL");
+                break;
+            }
+        }
+        
+      //if (RecConn.getRemoteCollection().debug)
+        {
+        System.out.println("--ELAB-- formato remoteAis: " + remoteAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- byte presenti in remoteAis: " + remoteAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- lunghezza remoteAis in frame: " + remoteAis.getFrameLength());
+        }
+        
+        
+        //if (RecConn.getRemoteCollection().debug)
+        {
+            AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes(remoteAis);  
+            for (int f = 0; f <= types.length - 1; f++)
+                System.out.print("--ELAB-- remoteAis types: " + types[f] + ",");
+            System.out.println("");
+        }
+        
+//SCRITTURA DI localAis SU FILE .WAV
+        
+
+//      AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes(toBeWritten);
+//      //if (RecConn.getLocalCollection().debug)
+//            for (int f = 0; f <= types.length - 1; f++)
+//            System.out.print("--ELAB-- types: " + types[f] + ",");
+       
+        
+        //Aggiornamento lunghezza IN FRAME dello stream remoteAis (necessaria per la scrittura del file .wav)
+        try {
+            remoteAis = new AudioInputStream(remoteAis, remoteAis.getFormat(), remoteAis.available()/remoteAis.getFormat().getFrameSize());
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
+        
+        //visualizzazione info sul NUOVO localAis
+      //if (RecConn.getRemoteCollection().debug)
+        {
+        System.out.println("--ELAB-- AGG. formato remoteAis: " + remoteAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- AGG. byte presenti in remoteAis: " + remoteAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- AGG. lunghezza remoteAis in frame: " + remoteAis.getFrameLength());
+        System.out.println("--ELAB-- AGG. frame size remoteAis in byte: " + remoteAis.getFormat().getFrameSize());
+        }
+      
+//SCRITTURA
+      if (RecConn.getRemoteCollection().debug)
+      {
+            File file= new File("F:\\remote.wav");
+          //if (RecConn.getLocalCollection().debug)
+            System.out.println("--ELAB-- File aperto");
+            
+            if (!file.canWrite())
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+            
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            
+            int byteWritten = 0;
+            try {
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Inizio scrittura del file");
+                
+                byteWritten = AudioSystem.write(remoteAis, AudioFileFormat.Type.WAVE, fos);
+                
+                fos.flush();
+                fos.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+           
+            //if (RecConn.getLocalCollection().debug)
+            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+        
+      }
+        
+        List collectionAisList = new ArrayList();
+        collectionAisList.add(localAis);
+        collectionAisList.add(remoteAis);
+        
+        AudioInputStream mixedAis = new MixingAudioInputStream(localAis.getFormat(), collectionAisList);
+        
+      //if (RecConn.getRemoteCollection().debug)
+        {
+        System.out.println("--ELAB-- formato mixedAis: " + mixedAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- byte presenti in mixedAis: " + mixedAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- lunghezza mixedAis in frame: " + mixedAis.getFrameLength());
+        }
+        
+        
+        //if (RecConn.getRemoteCollection().debug)
+        {
+            AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes(mixedAis);  
+            for (int f = 0; f <= types.length - 1; f++)
+                System.out.print("--ELAB-- mixedAis types: " + types[f] + ",");
+            System.out.println("");
+        }
+        
+        
+//      //Aggiornamento lunghezza IN FRAME dello stream mixedAis (necessaria per la scrittura del file .wav)
+//        try {
+//            remoteAis = new AudioInputStream(mixedAis, mixedAis.getFormat(), mixedAis.available()/mixedAis.getFormat().getFrameSize());
+//        } catch (IOException e2) {
+//            // TODO Auto-generated catch block
+//            e2.printStackTrace();
+//        }
+//        
+//        //visualizzazione info sul NUOVO mixedAis
+//      //if (RecConn.getRemoteCollection().debug)
+//        {
+//        System.out.println("--ELAB-- AGG. formato mixedAis: " + mixedAis.getFormat().toString());
+//        try {
+//            System.out.println("--ELAB-- AGG. byte presenti in mixedAis: " + mixedAis.available());
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        System.out.println("--ELAB-- AGG. lunghezza mixedAis in frame: " + mixedAis.getFrameLength());
+//        System.out.println("--ELAB-- AGG. frame size mixedAis in byte: " + mixedAis.getFormat().getFrameSize());
+//        }
+        
+        
+        
+//SCRITTURA del mixedAis
+                
+                File file= new File("F:\\mixed.wav");
+              //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- File aperto");
+                
+                if (!file.canWrite())
+                  //if (RecConn.getLocalCollection().debug)
+                    System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+                
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(file);
+                } catch (FileNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                
+                int byteWritten = 0;
+                try {
+                  //if (RecConn.getLocalCollection().debug)
+                    System.out.println("--ELAB-- Inizio scrittura del file");
+                    
+                    byteWritten = AudioSystem.write(mixedAis, AudioFileFormat.Type.WAVE, fos);
+                    
+                    fos.flush();
+                    fos.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+               
+                //if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+                
+                   
+        
+        
+        
+/* PROVA DECODIFICA E CONVERSIONE IN PCM
         //creo i due input stream e i due array da scrivere nei file
+        
+        //if (RecConn.getRemoteCollection().debug)
+            System.out.println("--ELAB-- ELABORAZIONE LOCAL COLLECTION");
+        
         int i = 0;
         for (; ; i++)
         {
@@ -209,9 +637,25 @@ public class RecoveryClientThread extends Thread
                 //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
                 localDecoder.decodeFrame(local.read(localSn));
                 
+                //if (RecConn.getRemoteCollection().debug)
+                    System.out.println("--ELAB-- Decodificato Sn " + localSn);
+                
                 try {
+                    
+                    while (localAis.available() < 320)
+                    {
+                        Thread.sleep(100);
+                      //if (RecConn.getRemoteCollection().debug)
+                        System.out.println("--ELAB-- attendo 100ms per leggere la decodifica di Sn " + localSn);
+                    }
                     localAis.read(localArray, i*320 , 320);
+                    //if (RecConn.getRemoteCollection().debug)
+                        System.out.println("--ELAB-- Sn " + localSn + "scritto nel localArray");
                 } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -220,6 +664,9 @@ public class RecoveryClientThread extends Thread
             else
                 break;
         }
+        
+        if (RecConn.getRemoteCollection().debug)
+            System.out.println("--ELAB-- ELABORAZIONE REMOTE COLLECTION");
         
         int j = 0;
         for (; ; j++)
@@ -234,8 +681,15 @@ public class RecoveryClientThread extends Thread
                 //remoteDecoder.decodeFrame(remote.read(remoteSn), remoteSn, 0);
                 remoteDecoder.decodeFrame(remote.read(remoteSn));
                 
+                if (RecConn.getRemoteCollection().debug)
+                    System.out.println("--ELAB-- Decodificato Sn " + remoteSn);
+                
                 try {
                     remoteAis.read(remoteArray, j*320 , 320);
+                    
+                    if (RecConn.getRemoteCollection().debug)
+                        System.out.println("--ELAB-- Sn " + remoteSn + "scritto nel localArray");
+                    
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -246,6 +700,7 @@ public class RecoveryClientThread extends Thread
         }
         
         //ora localAis e remoteAis contengono gli stream decodificati (PCM)
+ 
         
         //scrittura nei due file .wav ///DEVO USARE UN MIXER!!
         FileOutputStream fos1; 
@@ -281,8 +736,10 @@ public class RecoveryClientThread extends Thread
           } catch (IOException e) {
             e.printStackTrace();
           }
-        
-        /* PROVA DI MIXAGGIO
+ 
+*/
+          
+/* PROVA DI MIXAGGIO
         byte[] outputCollection = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         
         //i pacchetti decompressi sono sempre di 320Byte e vengono inseriti nell'input stream restituito dal decoder
