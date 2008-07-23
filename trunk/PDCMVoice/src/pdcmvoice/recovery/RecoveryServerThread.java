@@ -82,7 +82,7 @@ public class RecoveryServerThread extends Thread
             if (this.lastQuery != "")
             {
                 if (RecConn.getLocalCollection().debug)
-                    System.out.println("RICEZIONE QUERY: " + this.lastQuery);
+                    System.out.println("---RICEZIONE QUERY: " + this.lastQuery);
             }
             
             if (this.lastQuery.equals("END OF QUERY"))
@@ -141,7 +141,7 @@ public class RecoveryServerThread extends Thread
         //chiusura degli stream tra server locale e client remoto
         try {
             if (RecConn.getLocalCollection().debug)
-                System.out.println("ServerThread: chiusura stream sul socket del client");
+                System.out.println("_____________________________ServerThread: chiusura stream sul socket del client");
             RecConn.getClientSocket().getInputStream().close();//interrompe la connessione (anche l'outputStream viene chiuso)
             //RecConn.getClientSocket().getOutputStream().close();
         } catch (IOException e) {
