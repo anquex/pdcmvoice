@@ -25,7 +25,7 @@ public class ConnectionSettings implements Serializable{
         this(DEFAULT_MASTER_PORT,
             DEFAULT_RTP_PORT,
             DEFAULT_RTCP_PORT,
-            DEFAULT_RECOVERY_PORT);
+            DEFAULT_RECOVERY_PORT_LOCAL);
     }
 
     public ConnectionSettings(int master,int rtp, int rtcp, int recovery){
@@ -95,7 +95,7 @@ public class ConnectionSettings implements Serializable{
         rtcp=n;
     }
     public void setRecovery(String s){
-        int n=DEFAULT_RECOVERY_PORT;
+        int n=DEFAULT_RECOVERY_PORT_LOCAL;
         try{
         int temp=Integer.parseInt(s);
         if (temp>1023) n=temp;
