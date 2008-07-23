@@ -347,7 +347,7 @@ public class RecoveryClientThread extends Thread
 //            
 //            if (!file.canWrite())
 //              //if (RecConn.getLocalCollection().debug)
-//                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+//                System.out.println("--ELAB-- ATTENZIONE! Non ï¿½ possibile scrivere nel file.");
 //            
 //            FileOutputStream fos = null;
 //            try {
@@ -499,7 +499,7 @@ public class RecoveryClientThread extends Thread
 //            
 //            if (!file.canWrite())
 //              //if (RecConn.getLocalCollection().debug)
-//                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+//                System.out.println("--ELAB-- ATTENZIONE! Non Ã¨ possibile scrivere nel file.");
 //            
 //            FileOutputStream fos = null;
 //            try {
@@ -588,7 +588,7 @@ public class RecoveryClientThread extends Thread
                 
                 if (!file.canWrite())
                   //if (RecConn.getLocalCollection().debug)
-                    System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+                    System.out.println("--ELAB-- ATTENZIONE! Non Ã¨ possibile scrivere nel file.");
                 
                 FileOutputStream fos = null;
                 try {

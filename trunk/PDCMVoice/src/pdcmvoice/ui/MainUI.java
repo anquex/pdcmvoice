@@ -64,6 +64,7 @@ public class MainUI extends javax.swing.JFrame {
     public MainUI() {
         initComponents();
         renderLocalConnectionSettings();
+        renderLocalTransmissionSettings();
     }
 
     /** This method is called from within the constructor to
@@ -322,7 +323,12 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel14.setText("Frames Per Packet");
 
-        UIFramesPerPacket.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2" }));
+        UIFramesPerPacket.setModel(new javax.swing.DefaultComboBoxModel(ALLOWED_FRAMES_PER_PACKET_MENU));
+        UIFramesPerPacket.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UIFramesPerPacketActionPerformed(evt);
+            }
+        });
 
         UIRDT.setSelected(true);
         UIRDT.setText("enable RDT");
@@ -367,7 +373,7 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
                                 .add(UIFramesPerPacket, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 139, Short.MAX_VALUE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 142, Short.MAX_VALUE))
                             .add(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 39, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -650,6 +656,10 @@ public class MainUI extends javax.swing.JFrame {
         UIBackgroundRecovery.setEnabled(canManualModify);
         UIFramesPerPacket.setEnabled(canManualModify);
     }//GEN-LAST:event_DynamicAdaptationItemStateChanged
+
+    private void UIFramesPerPacketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIFramesPerPacketActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UIFramesPerPacketActionPerformed
 
     /**
     * @param args the command line arguments
