@@ -148,7 +148,7 @@ public class RecoveryClientThread extends Thread
             
             //ATTENZIONE!!
             //PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA QUARTA QUERY
-            if (writingTest++ >= 4)
+            if (writingTest++ >= 10)
                 stopQuery = true;
         }
         
