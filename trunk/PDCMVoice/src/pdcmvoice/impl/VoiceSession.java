@@ -5,13 +5,21 @@
 
 package pdcmvoice.impl;
 
+import java.io.IOException;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
+
 import javax.sound.sampled.UnsupportedAudioFileException;
 import jlibrtp.Participant;
 import pdcmvoice.settings.VoiceSessionSettings;
 import jlibrtp.RTPSession;
 import static pdcmvoice.impl.Constants.*;
+//RECOVERY
+import java.net.Socket;
+import java.net.ServerSocket;
+import pdcmvoice.recovery.*; 
 
 /**
  *
@@ -24,6 +32,10 @@ public class VoiceSession {
     private VoiceSessionController vsc;
     private RTPSession rtpSession;
     private VoiceSessionSettings settings;
+    
+    //RECOVERY
+    private RecoveryServerThread rs;
+    private RecoveryClientThread rc;
 
     DatagramSocket rtpSocket = null;
     DatagramSocket rtcpSocket = null;
@@ -49,6 +61,52 @@ public class VoiceSession {
 
 
     }
+    
+    public VoiceSession (VoiceSessionSettings settings, boolean withRecovery) throws SocketException{
+
+        this.settings=settings;
+
+         rtpSocket = new DatagramSocket(settings.getLocalRTPPort());
+         rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
+
+        rtpSession = new RTPSession(rtpSocket, rtcpSocket);
+        
+        Socket client = null;
+        Socket server = null;
+        try {
+            ServerSocket serverSocket = new ServerSocket(DEFAULT_RECOVERY_PORT_LOCAL);
+            client = new Socket(settings.getRemoteAddress(), DEFAULT_RECOVERY_PORT_LOCAL);
+            server = serverSocket.accept();
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        RecoveryCollection localCollection = new RecoveryCollection("local", DEFAULT_ENCODED_PACKET_SIZE, 1, true);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", DEFAULT_ENCODED_PACKET_SIZE, 1, true);
+         
+        RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, true);
+        
+        rs = new RecoveryServerThread(recoveryConnection);
+        rc = new RecoveryClientThread(recoveryConnection);
+
+        senderSession= new VoiceSessionSender(
+                                                settings.getSendFormatCode(),
+                                                rtpSession,
+                                                localCollection
+                                                );
+        receiverSession=new VoiceSessionReceiver(
+                                               settings.getReceiveFormatCode(),
+                                               rtpSession,
+                                               remoteCollection);
+        //rtpSession.naivePktReception(true);
+        rtpSession.addParticipant(settings.getPartecipant());
+
+
+}
 
     public void start() throws UnsupportedAudioFileException, Exception{
             receiverSession.init();
@@ -57,6 +115,8 @@ public class VoiceSession {
                               null);
             receiverSession.start();
             senderSession.start();
+            rs.start();
+            rc.start();
 
     }
 

@@ -96,7 +96,10 @@ public class Constants {
     public static final int DEFAULT_MASTER_PORT = 8765;
     public static final int DEFAULT_RTP_PORT = 8766;
     public static final int DEFAULT_RTCP_PORT = 8767;
-    public static final int DEFAULT_RECOVERY_PORT = 8769;
+    public static final int DEFAULT_RECOVERY_PORT_LOCAL = 8769;
+    public static final int DEFAULT_RECOVERY_PORT_REMOTE = 8770;//inutilizzata
+    
+    public static final int DEFAULT_ENCODED_PACKET_SIZE = 20;
     
     public static final int[] SPEEX_QUALITIES=
     {
