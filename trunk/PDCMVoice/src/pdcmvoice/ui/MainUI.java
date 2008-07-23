@@ -11,9 +11,9 @@
 
 package pdcmvoice.ui;
 
-import javax.swing.JComboBox;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.ConnectionSettings;
+import pdcmvoice.settings.TransmissionSettings;
 import static pdcmvoice.impl.Constants.*;
 
 /**
@@ -24,6 +24,7 @@ public class MainUI extends javax.swing.JFrame {
 
     //GUI Fields
     private ConnectionSettings myConnectionSettings=new ConnectionSettings();
+    private TransmissionSettings myTransmissionSettings= new TransmissionSettings();
     private VoiceSession voiceSession;
 
 
@@ -40,12 +41,23 @@ public class MainUI extends javax.swing.JFrame {
         myConnectionSettings.setRTP(UILocalRTP.getText());
         myConnectionSettings.setRTCP(UILocalRTCP.getText());
         myConnectionSettings.setRecovery(UILocalRecovery.getText());
-
     }
-
-    private void initEncodingMenu(JComboBox encodingMenu){
+    private void renderLocalTransmissionSettings(){
+        DynamicAdaptation.setSelected(myTransmissionSettings.getDynamic());
+        UIminBuf.setText(""+myTransmissionSettings.getMinBufferSize());
+        UImaxBuf.setText(""+myTransmissionSettings.getMaxBufferSize());
+        UIRDT.setSelected(myTransmissionSettings.getRDT());
+        UIBackgroundRecovery.setSelected(myTransmissionSettings.getRecovery());
+        UIFramesPerPacket.setSelectedIndex(myTransmissionSettings.getFramesPerPacket()-1);
     }
-
+    private void updateLocalTransmissionSettings(){
+        myTransmissionSettings.setDynamic(DynamicAdaptation.isSelected());
+        myTransmissionSettings.setFramesPerPacket(UIFramesPerPacket.getSelectedIndex()+1);
+        myTransmissionSettings.setMaxBufferSize(UImaxBuf.getText());
+        myTransmissionSettings.setMinBufferSize(UIminBuf.getText());
+        myTransmissionSettings.setRDT(UIRDT.isSelected());
+        myTransmissionSettings.setRecovery(UIBackgroundRecovery.isSelected());
+    }
 
 
     /** Creates new form MainUI */
@@ -86,7 +98,7 @@ public class MainUI extends javax.swing.JFrame {
         ApplySettingsButton = new javax.swing.JButton();
         RestoreDefaultsButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        DynamicAdaptation = new javax.swing.JCheckBox();
         jLabel12 = new javax.swing.JLabel();
         UIminBuf = new javax.swing.JTextField();
         UImaxBuf = new javax.swing.JTextField();
@@ -195,7 +207,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 66, Short.MAX_VALUE)
                 .add(jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -222,7 +234,6 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel11.setText("Master Port");
 
-        UILocalMaster.setText(""+DEFAULT_MASTER_PORT);
         UILocalMaster.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UILocalMasterActionPerformed(evt);
@@ -250,7 +261,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(UILocalRecovery)
                     .add(UILocalRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         ConnectionSettingsPanelLayout.setVerticalGroup(
             ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -285,20 +296,29 @@ public class MainUI extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Trasmission Settings"));
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Dynamic Adaptation");
-        jCheckBox1.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
-        jCheckBox1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+        DynamicAdaptation.setSelected(true);
+        DynamicAdaptation.setText("Dynamic Adaptation");
+        DynamicAdaptation.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
+        DynamicAdaptation.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        DynamicAdaptation.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        DynamicAdaptation.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                DynamicAdaptationItemStateChanged(evt);
             }
         });
 
-        jLabel12.setText("Min Buffered Millis");
+        jLabel12.setText("Min Buffered ms");
 
-        jLabel13.setText("Max Buffered Millis");
+        UIminBuf.setText(""+DEFAULT_MIN_BUFFER_SIZE);
+        UIminBuf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UIminBufActionPerformed(evt);
+            }
+        });
+
+        UImaxBuf.setText(""+DEFAULT_MAX_BUFFER_SIZE);
+
+        jLabel13.setText("Max Buffered ms");
 
         jLabel14.setText("Frames Per Packet");
 
@@ -306,7 +326,8 @@ public class MainUI extends javax.swing.JFrame {
 
         UIRDT.setSelected(true);
         UIRDT.setText("enable RDT");
-        UIRDT.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
+        UIRDT.setToolTipText("if enabled PDCM tried to adjust dyncamically\nsending and receiving settings according to \ncurrent Voice Session quality");
+        UIRDT.setContentAreaFilled(false);
         UIRDT.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         UIRDT.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         UIRDT.addActionListener(new java.awt.event.ActionListener() {
@@ -334,11 +355,11 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(50, 50, 50)
-                        .add(jCheckBox1))
-                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                        .add(DynamicAdaptation))
+                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                            .add(jLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                                 .add(org.jdesktop.layout.GroupLayout.LEADING, UIRDT, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel14, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -346,28 +367,29 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
                                 .add(UIFramesPerPacket, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 128, Short.MAX_VALUE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 139, Short.MAX_VALUE))
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(UIBackgroundRecovery, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))))
+                                .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 39, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(2, 2, 2)
+                                .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(UIBackgroundRecovery, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
-                .add(jCheckBox1)
+                .add(DynamicAdaptation)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel12)
                     .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel13)
-                    .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel12))
+                    .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(UIFramesPerPacket, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -388,7 +410,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(SettingsMainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(AudioSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, SettingsMainPanelLayout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 25, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 35, Short.MAX_VALUE)
                         .add(RestoreDefaultsButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(ApplySettingsButton)
@@ -577,10 +599,6 @@ public class MainUI extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
     private void UIRDTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIRDTActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_UIRDTActionPerformed
@@ -594,16 +612,22 @@ public class MainUI extends javax.swing.JFrame {
 }//GEN-LAST:event_UIRemoteAddressActionPerformed
 
     private void ApplySettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplySettingsButtonActionPerformed
-        // TODO add your handling code here:
+
         updateLocalConnectionSettings();
         renderLocalConnectionSettings();
+
+        updateLocalTransmissionSettings();
+        renderLocalTransmissionSettings();
 
     }//GEN-LAST:event_ApplySettingsButtonActionPerformed
 
     private void RestoreDefaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestoreDefaultsButtonActionPerformed
         // TODO add your handling code here:
-        myConnectionSettings=new ConnectionSettings();
+        myConnectionSettings.restoreDefaults();
         renderLocalConnectionSettings();
+
+        myTransmissionSettings.restoreDefaults();
+        renderLocalTransmissionSettings();
     }//GEN-LAST:event_RestoreDefaultsButtonActionPerformed
 
     private void UILocalEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UILocalEncodingActionPerformed
@@ -613,6 +637,19 @@ public class MainUI extends javax.swing.JFrame {
     private void UILocalMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UILocalMasterActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_UILocalMasterActionPerformed
+
+    private void UIminBufActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIminBufActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UIminBufActionPerformed
+
+    private void DynamicAdaptationItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_DynamicAdaptationItemStateChanged
+        boolean canManualModify=!DynamicAdaptation.isSelected();
+        UIminBuf.setEnabled(canManualModify);
+        UImaxBuf.setEnabled(canManualModify);
+        UIRDT.setEnabled(canManualModify);
+        UIBackgroundRecovery.setEnabled(canManualModify);
+        UIFramesPerPacket.setEnabled(canManualModify);
+    }//GEN-LAST:event_DynamicAdaptationItemStateChanged
 
     /**
     * @param args the command line arguments
@@ -630,6 +667,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel AudioSettingsPanel;
     private javax.swing.JPanel ConnectionSettingsPanel;
     private javax.swing.JPanel DCTestPanel;
+    private javax.swing.JCheckBox DynamicAdaptation;
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JPanel OnlineList;
     private javax.swing.JButton RestoreDefaultsButton;
@@ -660,7 +698,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

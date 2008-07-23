@@ -116,7 +116,14 @@ public class Constants {
     public static final int PAYLOAD_SPEEX=97;
     public static final int PAYLOAD_iLBC_RDT=98;
     public static final int PAYLOAD_SPEEX_RDT=99;
-    
+
+    public static final int DEFAULT_MIN_BUFFER_SIZE=60;
+    public static final int DEFAULT_MAX_BUFFER_SIZE=100;
+
+    public static final boolean DEFAULT_DYNAMIC_ADAPTATION=true;
+    public static final boolean DEFAULT_BACKGROUND_RECOVERY=true;
+    public static final boolean DEFAULT_RDT_ENABLED=true;
+    public static final int DEFAULT_FRAMES_PER_PACKET=2;
     
     //  FEC ENABLE?
 
