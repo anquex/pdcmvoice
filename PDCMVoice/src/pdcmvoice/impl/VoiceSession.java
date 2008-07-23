@@ -36,6 +36,7 @@ public class VoiceSession {
     //RECOVERY
     private RecoveryServerThread rs;
     private RecoveryClientThread rc;
+    boolean withRecovery;
 
     DatagramSocket rtpSocket = null;
     DatagramSocket rtcpSocket = null;
@@ -58,6 +59,7 @@ public class VoiceSession {
                                                    rtpSession);
             //rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
+            withRecovery = false;
 
 
     }
@@ -76,6 +78,7 @@ public class VoiceSession {
         try {
             ServerSocket serverSocket = new ServerSocket(DEFAULT_RECOVERY_PORT_LOCAL);
             client = new Socket(settings.getRemoteAddress(), DEFAULT_RECOVERY_PORT_LOCAL);
+            //client = new Socket("192.168.0.2", DEFAULT_RECOVERY_PORT_LOCAL);
             server = serverSocket.accept();
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
@@ -104,6 +107,8 @@ public class VoiceSession {
                                                remoteCollection);
         //rtpSession.naivePktReception(true);
         rtpSession.addParticipant(settings.getPartecipant());
+        
+        this.withRecovery = withRecovery;
 
 
 }
@@ -115,8 +120,12 @@ public class VoiceSession {
                               null);
             receiverSession.start();
             senderSession.start();
-            rs.start();
-            rc.start();
+            
+            if (withRecovery)
+            {
+                rs.start();
+                rc.start();
+            }
 
     }
 
