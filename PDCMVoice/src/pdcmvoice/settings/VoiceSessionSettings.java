@@ -5,6 +5,7 @@
 
 package pdcmvoice.settings;
 
+import java.io.Serializable;
 import jlibrtp.Participant;
 import static pdcmvoice.impl.Constants.*;
 
@@ -12,7 +13,7 @@ import static pdcmvoice.impl.Constants.*;
  *
  * @author marco
  */
-public class VoiceSessionSettings {
+public class VoiceSessionSettings implements Serializable{
         
         private int sendFormatCode;
         private int receiveFormatCode;
