@@ -35,11 +35,11 @@ public class VoiceSessionSettings implements Serializable{
             remoteAddr=d;
             remoteRTPPort  = DEFAULT_RTP_PORT;
             remoteRTCPPort=DEFAULT_RTCP_PORT;
-            remoteRecoveryPort=DEFAULT_RECOVERY_PORT;
+            remoteRecoveryPort=DEFAULT_RECOVERY_PORT_LOCAL;
             
             localRTPPort  = DEFAULT_RTP_PORT;
             localRTCPPort=DEFAULT_RTCP_PORT;
-            localRecoveryPort=DEFAULT_RECOVERY_PORT;
+            localRecoveryPort=DEFAULT_RECOVERY_PORT_LOCAL;
         }
         
         public int getSendFormatCode(){
