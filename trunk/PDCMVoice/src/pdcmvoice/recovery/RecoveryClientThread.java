@@ -337,42 +337,43 @@ public class RecoveryClientThread extends Thread
         System.out.println("--ELAB-- AGG. frame size localAis in byte: " + localAis.getFormat().getFrameSize());
         }
       
-        //SCRITTURA
-        if (RecConn.getLocalCollection().debug)
-        {
-            File file= new File("F:\\local.wav");
-          //if (RecConn.getLocalCollection().debug)
-            System.out.println("--ELAB-- File aperto");
-            
-            if (!file.canWrite())
-              //if (RecConn.getLocalCollection().debug)
-                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
-            
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(file);
-            } catch (FileNotFoundException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-            
-            int byteWritten = 0;
-            try {
-              //if (RecConn.getLocalCollection().debug)
-                System.out.println("--ELAB-- Inizio scrittura del file");
-                
-                byteWritten = AudioSystem.write(localAis, AudioFileFormat.Type.WAVE, fos);
-                
-                fos.flush();
-                fos.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-           
-            //if (RecConn.getLocalCollection().debug)
-            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
-        }
+//SCRITTURA
+        
+//        if (RecConn.getLocalCollection().debug)
+//        {
+//            File file= new File("F:\\local.wav");
+//          //if (RecConn.getLocalCollection().debug)
+//            System.out.println("--ELAB-- File aperto");
+//            
+//            if (!file.canWrite())
+//              //if (RecConn.getLocalCollection().debug)
+//                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+//            
+//            FileOutputStream fos = null;
+//            try {
+//                fos = new FileOutputStream(file);
+//            } catch (FileNotFoundException e1) {
+//                // TODO Auto-generated catch block
+//                e1.printStackTrace();
+//            }
+//            
+//            int byteWritten = 0;
+//            try {
+//              //if (RecConn.getLocalCollection().debug)
+//                System.out.println("--ELAB-- Inizio scrittura del file");
+//                
+//                byteWritten = AudioSystem.write(localAis, AudioFileFormat.Type.WAVE, fos);
+//                
+//                fos.flush();
+//                fos.close();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//           
+//            //if (RecConn.getLocalCollection().debug)
+//            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+//        }
         
        
         
@@ -490,42 +491,42 @@ public class RecoveryClientThread extends Thread
         }
       
 //SCRITTURA
-      if (RecConn.getRemoteCollection().debug)
-      {
-            File file= new File("F:\\remote.wav");
-          //if (RecConn.getLocalCollection().debug)
-            System.out.println("--ELAB-- File aperto");
-            
-            if (!file.canWrite())
-              //if (RecConn.getLocalCollection().debug)
-                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
-            
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(file);
-            } catch (FileNotFoundException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-            
-            int byteWritten = 0;
-            try {
-              //if (RecConn.getLocalCollection().debug)
-                System.out.println("--ELAB-- Inizio scrittura del file");
-                
-                byteWritten = AudioSystem.write(remoteAis, AudioFileFormat.Type.WAVE, fos);
-                
-                fos.flush();
-                fos.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-           
-            //if (RecConn.getLocalCollection().debug)
-            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
-        
-      }
+//      if (RecConn.getRemoteCollection().debug)
+//      {
+//            File file= new File("F:\\remote.wav");
+//          //if (RecConn.getLocalCollection().debug)
+//            System.out.println("--ELAB-- File aperto");
+//            
+//            if (!file.canWrite())
+//              //if (RecConn.getLocalCollection().debug)
+//                System.out.println("--ELAB-- ATTENZIONE! Non è possibile scrivere nel file.");
+//            
+//            FileOutputStream fos = null;
+//            try {
+//                fos = new FileOutputStream(file);
+//            } catch (FileNotFoundException e1) {
+//                // TODO Auto-generated catch block
+//                e1.printStackTrace();
+//            }
+//            
+//            int byteWritten = 0;
+//            try {
+//              //if (RecConn.getLocalCollection().debug)
+//                System.out.println("--ELAB-- Inizio scrittura del file");
+//                
+//                byteWritten = AudioSystem.write(remoteAis, AudioFileFormat.Type.WAVE, fos);
+//                
+//                fos.flush();
+//                fos.close();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//           
+//            //if (RecConn.getLocalCollection().debug)
+//            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+//        
+//      }
         
         List collectionAisList = new ArrayList();
         collectionAisList.add(localAis);
@@ -555,27 +556,27 @@ public class RecoveryClientThread extends Thread
         }
         
         
-//      //Aggiornamento lunghezza IN FRAME dello stream mixedAis (necessaria per la scrittura del file .wav)
-//        try {
-//            remoteAis = new AudioInputStream(mixedAis, mixedAis.getFormat(), mixedAis.available()/mixedAis.getFormat().getFrameSize());
-//        } catch (IOException e2) {
-//            // TODO Auto-generated catch block
-//            e2.printStackTrace();
-//        }
-//        
-//        //visualizzazione info sul NUOVO mixedAis
-//      //if (RecConn.getRemoteCollection().debug)
-//        {
-//        System.out.println("--ELAB-- AGG. formato mixedAis: " + mixedAis.getFormat().toString());
-//        try {
-//            System.out.println("--ELAB-- AGG. byte presenti in mixedAis: " + mixedAis.available());
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        System.out.println("--ELAB-- AGG. lunghezza mixedAis in frame: " + mixedAis.getFrameLength());
-//        System.out.println("--ELAB-- AGG. frame size mixedAis in byte: " + mixedAis.getFormat().getFrameSize());
-//        }
+      //Aggiornamento lunghezza IN FRAME dello stream mixedAis (necessaria per la scrittura del file .wav)
+        try {
+            remoteAis = new AudioInputStream(mixedAis, mixedAis.getFormat(), mixedAis.available()/mixedAis.getFormat().getFrameSize());
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
+        
+        //visualizzazione info sul NUOVO mixedAis
+      //if (RecConn.getRemoteCollection().debug)
+        {
+        System.out.println("--ELAB-- AGG. formato mixedAis: " + mixedAis.getFormat().toString());
+        try {
+            System.out.println("--ELAB-- AGG. byte presenti in mixedAis: " + mixedAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- AGG. lunghezza mixedAis in frame: " + mixedAis.getFrameLength());
+        System.out.println("--ELAB-- AGG. frame size mixedAis in byte: " + mixedAis.getFormat().getFrameSize());
+        }
         
         
         
