@@ -11,7 +11,10 @@
 
 package pdcmvoice.ui;
 
+import javax.swing.JComboBox;
+import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.ConnectionSettings;
+import static pdcmvoice.impl.Constants.*;
 
 /**
  *
@@ -21,6 +24,7 @@ public class MainUI extends javax.swing.JFrame {
 
     //GUI Fields
     private ConnectionSettings myConnectionSettings=new ConnectionSettings();
+    private VoiceSession voiceSession;
 
 
     private void renderLocalConnectionSettings(){
@@ -37,6 +41,9 @@ public class MainUI extends javax.swing.JFrame {
         myConnectionSettings.setRTCP(UILocalRTCP.getText());
         myConnectionSettings.setRecovery(UILocalRecovery.getText());
 
+    }
+
+    private void initEncodingMenu(JComboBox encodingMenu){
     }
 
 
@@ -167,11 +174,17 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel9.setText("Local Encoding");
 
-        UILocalEncoding.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        UILocalEncoding.setModel(new javax.swing.DefaultComboBoxModel(FORMAT_NAMES));
+        UILocalEncoding.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UILocalEncodingActionPerformed(evt);
+            }
+        });
 
-        UILocalQuality.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
-        UILocalQuality.setSelectedIndex(3);
+        UILocalQuality.setModel(new javax.swing.DefaultComboBoxModel(SPEEX_QUALITIES_NAMES));
+        UILocalQuality.setSelectedIndex(DEFAULT_SPEEX_QUALITY_INDEX);
 
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel15.setText("Quality");
 
         org.jdesktop.layout.GroupLayout AudioSettingsPanelLayout = new org.jdesktop.layout.GroupLayout(AudioSettingsPanel);
@@ -182,9 +195,9 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)
-                .add(jLabel15)
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 56, Short.MAX_VALUE)
+                .add(jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -208,6 +221,13 @@ public class MainUI extends javax.swing.JFrame {
         jLabel10.setText("Recovery");
 
         jLabel11.setText("Master Port");
+
+        UILocalMaster.setText(""+DEFAULT_MASTER_PORT);
+        UILocalMaster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UILocalMasterActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout ConnectionSettingsPanelLayout = new org.jdesktop.layout.GroupLayout(ConnectionSettingsPanel);
         ConnectionSettingsPanel.setLayout(ConnectionSettingsPanelLayout);
@@ -409,17 +429,17 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
 
-        transmitButton.setText("jButton1");
+        transmitButton.setText("Start Transmitting");
 
         jLabel4.setText("Remote Encoding");
 
-        UIRemoteEncoding.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        UIRemoteEncoding.setModel(new javax.swing.DefaultComboBoxModel(FORMAT_NAMES));
 
         jLabel5.setText("Notes:");
 
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
-        jTextArea1.setFont(new java.awt.Font("Courier", 0, 12));
+        jTextArea1.setFont(new java.awt.Font("Courier", 0, 12)); // NOI18N
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setText("Simply starts transmitting and receiving without caring about settings and host status.\n");
@@ -585,6 +605,14 @@ public class MainUI extends javax.swing.JFrame {
         myConnectionSettings=new ConnectionSettings();
         renderLocalConnectionSettings();
     }//GEN-LAST:event_RestoreDefaultsButtonActionPerformed
+
+    private void UILocalEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UILocalEncodingActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UILocalEncodingActionPerformed
+
+    private void UILocalMasterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UILocalMasterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UILocalMasterActionPerformed
 
     /**
     * @param args the command line arguments

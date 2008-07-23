@@ -80,7 +80,7 @@ public class AudioUtils {
     public static AudioFormat getNetAudioFormat(int formatCode) throws UnsupportedAudioFileException {
         // add quality propriety to SPEEX audio format
         Map<String,Object> proprieties=new LinkedHashMap<String,Object>();
-        proprieties.put("quality", SPEEX_QUALITY[DEFAULT_SPEEX_QUALITY_INDEX]);
+        proprieties.put("quality", SPEEX_QUALITIES[DEFAULT_SPEEX_QUALITY_INDEX]);
         
 	if (formatCode==FORMAT_CODE_SPEEX_NB) {
 	    return new AudioFormat(
