@@ -33,9 +33,9 @@ public class RecoverySystemLoopBackTest {
         //rtpsession.addParticipant(p);
         rtpsessionR.naivePktReception(true);
     
-        //rtpsession.payloadType(FORMAT_CODE_SPEEX_NB);
+        rtpsessionR.payloadType(FORMAT_CODE_SPEEX_NB);
     
-        rtpsessionR.payloadType(PAYLOAD_SPEEX);
+        //rtpsessionR.payloadType(PAYLOAD_SPEEX);
         
         /*
          * RTP SENDER
@@ -53,9 +53,9 @@ public class RecoverySystemLoopBackTest {
         Participant pS = new Participant("127.0.0.1", 9000, 9001); //RTCP Port
         rtpsessionS.addParticipant(pS);
     
-        //rtpsession.payloadType(FORMAT_CODE_SPEEX_NB);
+        rtpsessionS.payloadType(FORMAT_CODE_SPEEX_NB);
     
-        rtpsessionS.payloadType(PAYLOAD_SPEEX);
+        //rtpsessionS.payloadType(PAYLOAD_SPEEX);
         
         
         /*
@@ -88,8 +88,8 @@ public class RecoverySystemLoopBackTest {
         int pktSize = 20;
         RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, true);
         RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, true);
-        
-        RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocketA, localCollection, clientB, remoteCollection, rtpsessionR, false);
+         
+        RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocketA, localCollection, clientB, remoteCollection, rtpsessionR, true);
         
         RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
         RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection);
