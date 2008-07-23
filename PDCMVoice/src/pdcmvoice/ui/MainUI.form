@@ -464,7 +464,7 @@
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="UIFramesPerPacket" min="-2" max="-2" attributes="2"/>
-                                          <EmptySpace pref="139" max="32767" attributes="0"/>
+                                          <EmptySpace pref="142" max="32767" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
@@ -557,13 +557,13 @@
                 </Component>
                 <Component class="javax.swing.JComboBox" name="UIFramesPerPacket">
                   <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="2">
-                        <StringItem index="0" value="1"/>
-                        <StringItem index="1" value="2"/>
-                      </StringArray>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new javax.swing.DefaultComboBoxModel(ALLOWED_FRAMES_PER_PACKET_MENU)" type="code"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UIFramesPerPacketActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="UIRDT">
                   <Properties>

@@ -36,9 +36,9 @@ import javax.sound.sampled.*;
 
 
 public class Constants {
-    
+
     public Constants(){};
-    
+
     // Audio Constants
     public static final int DIR_MIC = 0;
     public static final int DIR_SPK = 1;
@@ -49,7 +49,7 @@ public class Constants {
     public static final int FORMAT_CODE_SPEEX_NB=1;
     public static final int FORMAT_CODE_SPEEX_WB=2;
     public static final int FORMAT_CODE_iLBC=3;
-    
+
 
     public static final String[] FORMAT_NAMES={
 	"SpeexNB",
@@ -63,7 +63,7 @@ public class Constants {
 	FORMAT_CODE_iLBC,
 
     };
-    
+
     public static final int DEFAULT_FORMAT_CODE = FORMAT_CODE_SPEEX_NB;
 
     public static final int[] BUFFER_SIZE_MILLIS = {
@@ -72,7 +72,7 @@ public class Constants {
     public static final String[] BUFFER_SIZE_MILLIS_STR = {
     	"30", "40", "50", "70", "85", "100", "130", "150", "180", "220", "400"
     };
-    
+
     public static final int BUFFER_SIZE_INDEX_DEFAULT = 2;
 
 
@@ -84,9 +84,9 @@ public class Constants {
     public static final int PROTOCOL_ACK = 1001;
     public static final int PROTOCOL_ERROR = 1002;
 
-    
+
     //NETWORK SETTINGS
-    
+
     // Socket options
     public static final boolean TCP_NODELAY = false;
     // -1 means do not set the value
@@ -97,10 +97,11 @@ public class Constants {
     public static final int DEFAULT_RTP_PORT = 8766;
     public static final int DEFAULT_RTCP_PORT = 8767;
     public static final int DEFAULT_RECOVERY_PORT_LOCAL = 8769;
+    public static final int DEFAULT_RECOVERY_PORT = DEFAULT_RECOVERY_PORT_LOCAL;
     public static final int DEFAULT_RECOVERY_PORT_REMOTE = 8770;//inutilizzata
-    
+
     public static final int DEFAULT_ENCODED_PACKET_SIZE = 20;
-    
+
     public static final int[] SPEEX_QUALITIES=
     {
         0,1,2,3,4,5,6,7,8,9,10
@@ -109,9 +110,9 @@ public class Constants {
     {
         "0","1","2","3","4","5","6","7","8","9","10"
     };
-    
+
     public static final int DEFAULT_SPEEX_QUALITY_INDEX = 3;
-    
+
     public static final int PAYLOAD_iLBC=96;
     public static final int PAYLOAD_SPEEX=97;
     public static final int PAYLOAD_iLBC_RDT=98;
@@ -120,11 +121,19 @@ public class Constants {
     public static final int DEFAULT_MIN_BUFFER_SIZE=60;
     public static final int DEFAULT_MAX_BUFFER_SIZE=100;
 
-    public static final boolean DEFAULT_DYNAMIC_ADAPTATION=true;
+    public static final boolean DEFAULT_DYNAMIC_ADAPTATION=false;
     public static final boolean DEFAULT_BACKGROUND_RECOVERY=true;
     public static final boolean DEFAULT_RDT_ENABLED=true;
-    public static final int DEFAULT_FRAMES_PER_PACKET=2;
-    
+    public static final int[] ALLOWED_FRAMES_PER_PACKET=
+    {
+        1,2
+    };
+    public static final String[] ALLOWED_FRAMES_PER_PACKET_MENU=
+    {
+        "1","2"
+    };
+    public static final int DEFAULT_FRAMES_PER_PACKET_INDEX=1;
+
     //  FEC ENABLE?
 
     public static void out(String s) {

@@ -101,7 +101,7 @@ public class TransmissionSettings {
 
     public void restoreDefaults(){
         setDynamic(DEFAULT_DYNAMIC_ADAPTATION);
-        setFramesPerPacket(DEFAULT_FRAMES_PER_PACKET);
+        setFramesPerPacket(ALLOWED_FRAMES_PER_PACKET[DEFAULT_FRAMES_PER_PACKET_INDEX]);
         setMaxBufferSize(DEFAULT_MAX_BUFFER_SIZE);
         setMinBufferSize(DEFAULT_MIN_BUFFER_SIZE);
         setRDT(DEFAULT_RDT_ENABLED);
