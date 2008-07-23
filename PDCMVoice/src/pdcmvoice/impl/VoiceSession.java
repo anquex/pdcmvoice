@@ -75,10 +75,10 @@ public class VoiceSession {
         
         Socket client = null;
         Socket server = null;
+        
         try {
             ServerSocket serverSocket = new ServerSocket(DEFAULT_RECOVERY_PORT_LOCAL);
-            client = new Socket(settings.getRemoteAddress(), DEFAULT_RECOVERY_PORT_LOCAL);
-            //client = new Socket("192.168.0.2", DEFAULT_RECOVERY_PORT_LOCAL);
+            client = new Socket(InetAddress.getByName(settings.getRemoteAddress()), DEFAULT_RECOVERY_PORT_LOCAL);
             server = serverSocket.accept();
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
