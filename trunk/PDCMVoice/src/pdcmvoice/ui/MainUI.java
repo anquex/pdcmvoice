@@ -11,15 +11,40 @@
 
 package pdcmvoice.ui;
 
+import pdcmvoice.settings.ConnectionSettings;
+
 /**
  *
  * @author marco
  */
 public class MainUI extends javax.swing.JFrame {
 
+    //GUI Fields
+    private ConnectionSettings myConnectionSettings=new ConnectionSettings();
+
+
+    private void renderLocalConnectionSettings(){
+        UILocalMaster.setText(""+myConnectionSettings.getMaster());
+        UILocalRTP.setText(""+myConnectionSettings.getRTP());
+        UILocalRTCP.setText(""+myConnectionSettings.getRTCP());
+        UILocalRecovery.setText(""+myConnectionSettings.getRecovery());
+
+    }
+
+    private void updateLocalConnectionSettings(){
+        myConnectionSettings.setMaster(UILocalMaster.getText());
+        myConnectionSettings.setRTP(UILocalRTP.getText());
+        myConnectionSettings.setRTCP(UILocalRTCP.getText());
+        myConnectionSettings.setRecovery(UILocalRecovery.getText());
+
+    }
+
+
+
     /** Creates new form MainUI */
     public MainUI() {
         initComponents();
+        renderLocalConnectionSettings();
     }
 
     /** This method is called from within the constructor to
@@ -39,41 +64,41 @@ public class MainUI extends javax.swing.JFrame {
         SettingsMainPanel = new javax.swing.JPanel();
         AudioSettingsPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
-        jComboBox4 = new javax.swing.JComboBox();
+        UILocalEncoding = new javax.swing.JComboBox();
+        UILocalQuality = new javax.swing.JComboBox();
         jLabel15 = new javax.swing.JLabel();
         ConnectionSettingsPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        UILocalRTP = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
+        UILocalRTCP = new javax.swing.JTextField();
+        UILocalRecovery = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        UILocalMaster = new javax.swing.JTextField();
+        ApplySettingsButton = new javax.swing.JButton();
+        RestoreDefaultsButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jLabel12 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jTextField10 = new javax.swing.JTextField();
+        UIminBuf = new javax.swing.JTextField();
+        UImaxBuf = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
+        UIFramesPerPacket = new javax.swing.JComboBox();
+        UIRDT = new javax.swing.JCheckBox();
         jSeparator2 = new javax.swing.JSeparator();
-        jCheckBox3 = new javax.swing.JCheckBox();
+        UIBackgroundRecovery = new javax.swing.JCheckBox();
         DCTestPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        UIRemoteRTCP = new javax.swing.JTextField();
+        UIRemoteRTP = new javax.swing.JTextField();
+        UIRemoteAddress = new javax.swing.JTextField();
+        transmitButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        UIRemoteEncoding = new javax.swing.JComboBox();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -142,10 +167,10 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel9.setText("Local Encoding");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        UILocalEncoding.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
-        jComboBox4.setSelectedIndex(3);
+        UILocalQuality.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
+        UILocalQuality.setSelectedIndex(3);
 
         jLabel15.setText("Quality");
 
@@ -156,11 +181,11 @@ public class MainUI extends javax.swing.JFrame {
             .add(AudioSettingsPanelLayout.createSequentialGroup()
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)
                 .add(jLabel15)
                 .add(18, 18, 18)
-                .add(jComboBox4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         AudioSettingsPanelLayout.setVerticalGroup(
@@ -168,8 +193,8 @@ public class MainUI extends javax.swing.JFrame {
             .add(AudioSettingsPanelLayout.createSequentialGroup()
                 .add(AudioSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel9)
-                    .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jComboBox4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel15))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
@@ -195,16 +220,16 @@ public class MainUI extends javax.swing.JFrame {
                     .add(jLabel11))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(jTextField6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                    .add(jTextField8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
+                    .add(UILocalRTCP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                    .add(UILocalMaster, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
                 .add(16, 16, 16)
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel7)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(jTextField7)
-                    .add(jTextField5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
+                    .add(UILocalRecovery)
+                    .add(UILocalRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         ConnectionSettingsPanelLayout.setVerticalGroup(
@@ -213,20 +238,30 @@ public class MainUI extends javax.swing.JFrame {
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel11)
                     .add(jLabel7)
-                    .add(jTextField8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(UILocalMaster, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UILocalRTP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel8)
-                    .add(jTextField6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UILocalRTCP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel10)
-                    .add(jTextField7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(UILocalRecovery, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton2.setText("Apply");
+        ApplySettingsButton.setText("Apply");
+        ApplySettingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ApplySettingsButtonActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Restore Defaults");
+        RestoreDefaultsButton.setText("Restore Defaults");
+        RestoreDefaultsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RestoreDefaultsButtonActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Trasmission Settings"));
 
@@ -247,27 +282,27 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel14.setText("Frames Per Packet");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2" }));
+        UIFramesPerPacket.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2" }));
 
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("enable RDT");
-        jCheckBox2.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
-        jCheckBox2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jCheckBox2.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        UIRDT.setSelected(true);
+        UIRDT.setText("enable RDT");
+        UIRDT.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
+        UIRDT.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        UIRDT.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        UIRDT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
+                UIRDTActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setSelected(true);
-        jCheckBox3.setText("Background Recovery");
-        jCheckBox3.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
-        jCheckBox3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jCheckBox3.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+        UIBackgroundRecovery.setSelected(true);
+        UIBackgroundRecovery.setText("Background Recovery");
+        UIBackgroundRecovery.setToolTipText("if enabled PDCM tried to adjust dyncamically \\n\nsending and receiving settings according to \ncurrent Voice Session quality");
+        UIBackgroundRecovery.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        UIBackgroundRecovery.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        UIBackgroundRecovery.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
+                UIBackgroundRecoveryActionPerformed(evt);
             }
         });
 
@@ -285,20 +320,20 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
                             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBox2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(org.jdesktop.layout.GroupLayout.LEADING, UIRDT, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel14, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                                .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(UIFramesPerPacket, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 128, Short.MAX_VALUE))
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(jTextField9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(jTextField10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jCheckBox3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))))
+                                .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(UIBackgroundRecovery, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -309,18 +344,18 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jTextField9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UIminBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel13)
-                    .add(jTextField10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UImaxBuf, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel12))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UIFramesPerPacket, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel14))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jCheckBox2)
-                    .add(jCheckBox3))
+                    .add(UIRDT)
+                    .add(UIBackgroundRecovery))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
@@ -334,9 +369,9 @@ public class MainUI extends javax.swing.JFrame {
                     .add(AudioSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, SettingsMainPanelLayout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 25, Short.MAX_VALUE)
-                        .add(jButton3)
+                        .add(RestoreDefaultsButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jButton2)
+                        .add(ApplySettingsButton)
                         .add(65, 65, 65))
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(ConnectionSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -352,14 +387,15 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(7, 7, 7)
                 .add(SettingsMainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jButton3)
-                    .add(jButton2))
+                    .add(RestoreDefaultsButton)
+                    .add(ApplySettingsButton))
                 .addContainerGap())
         );
 
         MainTabbedPanel.addTab("Settings", SettingsMainPanel);
 
         DCTestPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Direct Connection Test"));
+        DCTestPanel.setEnabled(false);
 
         jLabel1.setText("Remote Address");
 
@@ -367,17 +403,23 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel3.setText("Remote RTCP Port");
 
-        jButton1.setText("jButton1");
+        UIRemoteAddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UIRemoteAddressActionPerformed(evt);
+            }
+        });
+
+        transmitButton.setText("jButton1");
 
         jLabel4.setText("Remote Encoding");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        UIRemoteEncoding.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel5.setText("Notes:");
 
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
-        jTextArea1.setFont(new java.awt.Font("Courier", 0, 12)); // NOI18N
+        jTextArea1.setFont(new java.awt.Font("Courier", 0, 12));
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setText("Simply starts transmitting and receiving without caring about settings and host status.\n");
@@ -390,9 +432,7 @@ public class MainUI extends javax.swing.JFrame {
             DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(DCTestPanelLayout.createSequentialGroup()
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, DCTestPanelLayout.createSequentialGroup()
-                        .addContainerGap(189, Short.MAX_VALUE)
-                        .add(jButton1))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, transmitButton)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, DCTestPanelLayout.createSequentialGroup()
                         .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel3)
@@ -401,10 +441,10 @@ public class MainUI extends javax.swing.JFrame {
                             .add(jLabel4))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 55, Short.MAX_VALUE)
                         .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(jComboBox1, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jTextField3)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jTextField1)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jTextField2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
+                            .add(UIRemoteEncoding, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteAddress)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTCP)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
                 .addContainerGap())
             .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
             .add(DCTestPanelLayout.createSequentialGroup()
@@ -417,21 +457,21 @@ public class MainUI extends javax.swing.JFrame {
             .add(DCTestPanelLayout.createSequentialGroup()
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
-                    .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(UIRemoteAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel2)
-                    .add(jTextField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(UIRemoteRTP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel3)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(UIRemoteRTCP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UIRemoteEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel4))
                 .add(23, 23, 23)
-                .add(jButton1)
+                .add(transmitButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -521,13 +561,30 @@ public class MainUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void UIRDTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIRDTActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+}//GEN-LAST:event_UIRDTActionPerformed
 
-    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
+    private void UIBackgroundRecoveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIBackgroundRecoveryActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox3ActionPerformed
+}//GEN-LAST:event_UIBackgroundRecoveryActionPerformed
+
+    private void UIRemoteAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIRemoteAddressActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_UIRemoteAddressActionPerformed
+
+    private void ApplySettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplySettingsButtonActionPerformed
+        // TODO add your handling code here:
+        updateLocalConnectionSettings();
+        renderLocalConnectionSettings();
+
+    }//GEN-LAST:event_ApplySettingsButtonActionPerformed
+
+    private void RestoreDefaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestoreDefaultsButtonActionPerformed
+        // TODO add your handling code here:
+        myConnectionSettings=new ConnectionSettings();
+        renderLocalConnectionSettings();
+    }//GEN-LAST:event_RestoreDefaultsButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -541,13 +598,30 @@ public class MainUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ApplySettingsButton;
     private javax.swing.JPanel AudioSettingsPanel;
     private javax.swing.JPanel ConnectionSettingsPanel;
     private javax.swing.JPanel DCTestPanel;
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JPanel OnlineList;
+    private javax.swing.JButton RestoreDefaultsButton;
     private javax.swing.JPanel SettingsMainPanel;
     private javax.swing.JPanel StatusPanel;
+    private javax.swing.JCheckBox UIBackgroundRecovery;
+    private javax.swing.JComboBox UIFramesPerPacket;
+    private javax.swing.JComboBox UILocalEncoding;
+    private javax.swing.JTextField UILocalMaster;
+    private javax.swing.JComboBox UILocalQuality;
+    private javax.swing.JTextField UILocalRTCP;
+    private javax.swing.JTextField UILocalRTP;
+    private javax.swing.JTextField UILocalRecovery;
+    private javax.swing.JCheckBox UIRDT;
+    private javax.swing.JTextField UIRemoteAddress;
+    private javax.swing.JComboBox UIRemoteEncoding;
+    private javax.swing.JTextField UIRemoteRTCP;
+    private javax.swing.JTextField UIRemoteRTP;
+    private javax.swing.JTextField UImaxBuf;
+    private javax.swing.JTextField UIminBuf;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
@@ -557,17 +631,8 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
-    private javax.swing.JComboBox jComboBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -588,20 +653,12 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JButton transmitButton;
     // End of variables declaration//GEN-END:variables
 
 }
