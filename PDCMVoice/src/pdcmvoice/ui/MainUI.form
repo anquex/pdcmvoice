@@ -106,8 +106,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="MainTabbedPanel" min="-2" pref="293" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="MainTabbedPanel" min="-2" pref="305" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="OnlineList" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -115,11 +115,13 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <Component id="MainTabbedPanel" pref="393" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="MainTabbedPanel" alignment="1" pref="393" max="32767" attributes="0"/>
+                  <Component id="OnlineList" alignment="1" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="OnlineList" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -139,7 +141,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton4" alignment="0" pref="75" max="32767" attributes="0"/>
+                      <Component id="jButton4" alignment="0" pref="78" max="32767" attributes="0"/>
                       <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -151,7 +153,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="341" max="32767" attributes="0"/>
+                  <EmptySpace pref="330" max="32767" attributes="0"/>
                   <Component id="jButton4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -194,7 +196,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="272" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="284" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -216,19 +218,22 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="AudioSettingsPanel" alignment="0" max="32767" attributes="3"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="35" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace pref="112" max="32767" attributes="0"/>
                               <Component id="RestoreDefaultsButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="ApplySettingsButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-                          <Component id="ConnectionSettingsPanel" alignment="0" max="32767" attributes="3"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="ConnectionSettingsPanel" alignment="1" max="32767" attributes="2"/>
+                                  <Component id="jPanel1" alignment="0" pref="280" max="32767" attributes="2"/>
+                                  <Component id="AudioSettingsPanel" alignment="1" max="32767" attributes="2"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -237,17 +242,17 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="AudioSettingsPanel" min="-2" max="-2" attributes="0"/>
+                      <Component id="AudioSettingsPanel" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ConnectionSettingsPanel" min="-2" max="-2" attributes="0"/>
+                      <Component id="ConnectionSettingsPanel" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="RestoreDefaultsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ApplySettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="RestoreDefaultsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -269,7 +274,7 @@
                           <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="UILocalEncoding" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace pref="66" max="32767" attributes="0"/>
+                          <EmptySpace pref="68" max="32767" attributes="0"/>
                           <Component id="jLabel15" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="UILocalQuality" min="-2" max="-2" attributes="1"/>
@@ -358,7 +363,7 @@
                               <Component id="UILocalRecovery" max="32767" attributes="1"/>
                               <Component id="UILocalRTP" alignment="0" pref="45" max="32767" attributes="3"/>
                           </Group>
-                          <EmptySpace pref="32" max="32767" attributes="0"/>
+                          <EmptySpace pref="34" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -451,7 +456,7 @@
                                   <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                                   <Component id="DynamicAdaptation" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jSeparator2" alignment="0" pref="262" max="32767" attributes="0"/>
+                              <Component id="jSeparator2" alignment="0" pref="256" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel12" pref="89" max="32767" attributes="0"/>
@@ -462,19 +467,18 @@
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="UIBackgroundRecovery" pref="163" max="32767" attributes="1"/>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="UIFramesPerPacket" min="-2" max="-2" attributes="2"/>
-                                          <EmptySpace pref="142" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="UIminBuf" min="-2" pref="39" max="-2" attributes="2"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="1" attributes="0">
+                                              <Component id="UIminBuf" alignment="1" min="-2" pref="39" max="-2" attributes="2"/>
+                                              <Component id="UIFramesPerPacket" alignment="1" min="-2" max="-2" attributes="2"/>
+                                          </Group>
+                                          <EmptySpace max="32767" attributes="0"/>
                                           <Component id="jLabel13" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                                           <Component id="UImaxBuf" min="-2" pref="37" max="-2" attributes="2"/>
                                       </Group>
-                                      <Component id="UIBackgroundRecovery" pref="169" max="32767" attributes="1"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -491,9 +495,9 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="UIminBuf" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="UImaxBuf" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="UIminBuf" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -569,7 +573,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="enable RDT"/>
-                    <Property name="toolTipText" type="java.lang.String" value="if enabled PDCM tried to adjust dyncamically&#xa;sending and receiving settings according to &#xa;current Voice Session quality"/>
+                    <Property name="toolTipText" type="java.lang.String" value="enable Rendundant Data Transmission"/>
                     <Property name="contentAreaFilled" type="boolean" value="false"/>
                     <Property name="horizontalAlignment" type="int" value="2"/>
                     <Property name="horizontalTextPosition" type="int" value="2"/>
@@ -626,7 +630,7 @@
                                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="55" max="32767" attributes="0"/>
+                              <EmptySpace pref="67" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="UIRemoteEncoding" max="32767" attributes="1"/>
                                   <Component id="UIRemoteAddress" alignment="1" max="32767" attributes="1"/>
@@ -637,12 +641,12 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="272" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="284" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" pref="272" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="284" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
