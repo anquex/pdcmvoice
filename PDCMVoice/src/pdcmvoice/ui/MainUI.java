@@ -11,10 +11,14 @@
 
 package pdcmvoice.ui;
 
+import java.net.SocketException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JDialog;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.AudioSettings;
 import pdcmvoice.settings.ConnectionSettings;
 import pdcmvoice.settings.TransmissionSettings;
+import pdcmvoice.settings.VoiceSessionSettings;
 import static pdcmvoice.impl.Constants.*;
 
 /**
@@ -27,6 +31,12 @@ public class MainUI extends javax.swing.JFrame {
     private ConnectionSettings myConnectionSettings=new ConnectionSettings();
     private TransmissionSettings myTransmissionSettings= new TransmissionSettings();
     private AudioSettings myAudioSettings=new AudioSettings();
+
+    private AudioSettings DCTremoteAudioSettings=new AudioSettings();
+    private ConnectionSettings DCTremoteConnectionSettings=new ConnectionSettings();
+
+    private VoiceSessionSettings voiceSessionSettings;
+
     private VoiceSession voiceSession;
 
 
@@ -71,6 +81,24 @@ public class MainUI extends javax.swing.JFrame {
         UILocalQuality.setSelectedIndex(myAudioSettings.getSpeexQuality());
     }
 
+    private void  updateDCTSettings(){
+        UIRemoteAddress.getText();
+
+        DCTremoteConnectionSettings.setRTP(UIRemoteRTP.getText());
+        DCTremoteConnectionSettings.setRTCP(UIRemoteRTCP.getText());
+        DCTremoteAudioSettings.setFormat(FORMAT_CODES[UIRemoteEncoding.getSelectedIndex()]);
+
+    }
+
+    private void renderDCTSettings(){
+        UIRemoteAddress.setText("");
+
+        UIRemoteRTP.setText(""+ DCTremoteConnectionSettings.getRTP());
+        UIRemoteRTCP.setText(""+DCTremoteConnectionSettings.getRTCP());
+        UIRemoteEncoding.setSelectedIndex(DCTremoteAudioSettings.getFormat()-1);
+
+    }
+
 
     /** Creates new form MainUI */
     public MainUI() {
@@ -78,6 +106,7 @@ public class MainUI extends javax.swing.JFrame {
         renderLocalConnectionSettings();
         renderLocalTransmissionSettings();
         renderAudioSettings();
+        renderDCTSettings();
     }
 
     /** This method is called from within the constructor to
@@ -464,6 +493,10 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel3.setText("Remote RTCP Port");
 
+        UIRemoteRTCP.setText("d");
+
+        UIRemoteRTP.setText("d");
+
         UIRemoteAddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UIRemoteAddressActionPerformed(evt);
@@ -471,6 +504,11 @@ public class MainUI extends javax.swing.JFrame {
         });
 
         transmitButton.setText("Start Transmitting");
+        transmitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transmitButtonActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Remote Encoding");
 
@@ -680,6 +718,28 @@ public class MainUI extends javax.swing.JFrame {
     private void UIFramesPerPacketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIFramesPerPacketActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_UIFramesPerPacketActionPerformed
+
+    private void transmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitButtonActionPerformed
+        updateDCTSettings();
+        renderDCTSettings();
+        if(voiceSession==null){
+            try{
+                voiceSession=new VoiceSession(voiceSessionSettings);
+                transmitButton.setText("Stop Transmitting");
+                voiceSession.start();
+            }
+            catch(SocketException e){
+                e.printStackTrace();
+            }
+            catch(UnsupportedAudioFileException ingore){}
+            catch(Exception e){e.printStackTrace();}
+        }
+        else{
+            voiceSession.stop();
+            voiceSession=null;
+        }
+
+    }//GEN-LAST:event_transmitButtonActionPerformed
 
     /**
     * @param args the command line arguments

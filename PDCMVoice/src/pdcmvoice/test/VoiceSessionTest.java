@@ -22,7 +22,7 @@ public class VoiceSessionTest extends Thread{
 
     public VoiceSessionTest() {
         try {
-            s = new VoiceSessionSettings(2, 2, "10.0.0.100");
+            s = new VoiceSessionSettings(2, 2, "192.168.0.4");
             ss = new VoiceSession(s);
             ss.start();
 
