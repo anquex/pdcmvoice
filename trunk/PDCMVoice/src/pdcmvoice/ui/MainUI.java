@@ -959,6 +959,7 @@ public class MainUI extends javax.swing.JFrame {
             voiceSession.stop();
             voiceSession=null;
             rtcpStats=null;
+            transmitButton.setText("Start Transmitting");
         }
 
     }//GEN-LAST:event_transmitButtonActionPerformed
