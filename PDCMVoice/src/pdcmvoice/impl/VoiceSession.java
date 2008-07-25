@@ -57,8 +57,8 @@ public class VoiceSession {
             receiverSession=new VoiceSessionReceiver(
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
-            vsc=new VoiceSessionController();
-            //rtpSession.naivePktReception(true);
+            vsc=new VoiceSessionController(rtpSession);
+            rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
             withRecovery = false;
 
@@ -106,8 +106,8 @@ public class VoiceSession {
                                                settings.getReceiveFormatCode(),
                                                rtpSession,
                                                remoteCollection);
-        vsc=new VoiceSessionController();
-        //rtpSession.naivePktReception(true);
+        vsc=new VoiceSessionController(rtpSession);
+        rtpSession.naivePktReception(true);
         rtpSession.addParticipant(settings.getPartecipant());
         
         this.withRecovery = withRecovery;

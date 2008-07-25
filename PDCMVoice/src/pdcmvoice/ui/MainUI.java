@@ -110,7 +110,7 @@ public class MainUI extends javax.swing.JFrame {
         if (rtcpStats!=null){
             SRBytesSent.setText(""+rtcpStats.SRoctetCount);
             SRIntervalPL.setText(""+rtcpStats.SRlossFraction);
-            SRJitter.setText(""+rtcpStats.SRinterArrivalJitter);
+            SRJitter.setText(""+rtcpStats.RRinterArrivalJitter);
             SRLRRDelay.setText(""+rtcpStats.SRdelayLastSR);
             SRPacketsSent.setText(""+rtcpStats.SRpacketCount);
             SRSessionPL.setText(""+rtcpStats.SRcumulPacketsLost);
