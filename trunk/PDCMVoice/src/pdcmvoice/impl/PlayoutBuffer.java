@@ -21,17 +21,18 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class PlayoutBuffer{
 
-    private boolean doTerminate;
     private boolean isFirst;          //is true for the first packet
     private long startPacketTimestamp;
     private boolean isBuffering;      //true if buffer is waiting to fill up
     private Decoder decoder;
-    private int minBufferedMillis=60; // if buffer is empty I wait for
-                                      // minBufferedMillis before starting
-                                      // playback
+    private int minBufferedMillis=DEFAULT_MIN_BUFFER_SIZE;
+          // if buffer is empty I wait for
+          // minBufferedMillis before starting
+          // playback
 
     // must be at least 20 ms!
-    private int maxBufferedMillis=120;// if buffer exeeds maxBufferedMillis
+    private int maxBufferedMillis=DEFAULT_MAX_BUFFER_SIZE;
+                                      // if buffer exeeds maxBufferedMillis
                                       // I start dropping oleder frames
 
     private SortedSet<VoiceFrame> listBuffer; // frame container sorted by time
@@ -55,10 +56,10 @@ public class PlayoutBuffer{
         isFirst=true;
         isBuffering=true;
         decoderDeliver= new Deliver();
-    }
-
-    public void stop(){
-        doTerminate=true;
+        // send a frame to decoder each 20 ms
+        timer=new Timer("Playout Buffer Timer");
+        //timer.schedule(decoderDeliver,0,20);
+        timer.scheduleAtFixedRate(decoderDeliver,0,20);
     }
 
     /**
@@ -91,16 +92,15 @@ public class PlayoutBuffer{
         // bound max delay
 
         // bursts arrivals produces more packets are dropped at once
-
-        // this code is never exectuted if I have only 1 packet or I'm buffering
-        if(getHigherTimestamp()-getLowerTimestamp()+20>maxBufferedMillis
-              && !isBuffering)
+        // I neve get null pointer since I have at least 1 packet at
+        // this point in the buffer
+        while(getHigherTimestamp()-getLowerTimestamp()+20>maxBufferedMillis)
         {
             if (DEBUG)
                     out("PLAYOUT BUFFER : Maximum Delay Reached: "+
                     (getHigherTimestamp()-getLowerTimestamp()+20));
 
-            // drop the packet
+            // drop the older packet
 
             remove();
 
@@ -117,7 +117,7 @@ public class PlayoutBuffer{
 
             // at least 1 element is present since I just made an add
 
-            long currentTimestamp=getLowerTimestamp();
+            long currentExpectedTimestamp=getLowerTimestamp();
 
             // count how many millis I have in the buffer
 
@@ -131,12 +131,12 @@ public class PlayoutBuffer{
 
                 long nextstamp=next.getTimestamp();
                 
-                if (nextstamp==currentTimestamp){
+                if (nextstamp==currentExpectedTimestamp){
                     
                     bufferedMillis+=20;
 
                     // next packet referst to istant t+20
-                    currentTimestamp=nextstamp+20;
+                    currentExpectedTimestamp=nextstamp+20;
 
  //                   if (DEBUG) out("BUFFER : Buffered "+bufferedMillis+" millis" );
 
@@ -148,13 +148,13 @@ public class PlayoutBuffer{
                         if(DEBUG){
                             out("-------   Buffering Complete   --------");
                         }
-
-                        // send a frame to decoder each 20 ms
-                        if(timer==null){
-                            timer=new Timer("Playout Buffer Timer");
-                           //timer.schedule(decoderDeliver,0,20);
-                            timer.scheduleAtFixedRate(decoderDeliver,0,20);
-                        }
+//
+//                        // send a frame to decoder each 20 ms
+//                        if(timer==null){
+//                            timer=new Timer("Playout Buffer Timer");
+//                           //timer.schedule(decoderDeliver,0,20);
+//                            timer.scheduleAtFixedRate(decoderDeliver,0,20);
+//                        }
 
                         // start playing from older frame
 
@@ -232,23 +232,31 @@ public class PlayoutBuffer{
         private boolean first=true;
         private boolean isPlaying;
         
-        public void startPlaying(long firstTimestamp){
+        public synchronized void startPlaying(long firstTimestamp){
             if (DEBUG)
-                out ("DELIVER: Start Playing from frame "+firstTimestamp);
+                if(first){
+                    out ("DELIVER: Start Playing from frame "+firstTimestamp);
+                    first=false;
+                }else{
+                    out ("DELIVER: Continue playing from frame "+firstTimestamp+
+                         " ( Skipped "+(firstTimestamp-nextTimestampToPlay)+
+                         " ms)");
+                }
             nextTimestampToPlay=firstTimestamp;
             isPlaying=true;
         }
-        public  void stopPlaying(){
+        public synchronized  void stopPlaying(){
             if (DEBUG) out ("DELIVER: Stop  Playing");
             isPlaying=false;
             nextTimestampToPlay=-1;
+            first=true;
         }
 
-        public  long getNextTimestampToPlay(){
+        public synchronized  long getNextTimestampToPlay(){
             return nextTimestampToPlay;
         }
         
-        public  boolean isPlaying(){
+        public synchronized  boolean isPlaying(){
             return isPlaying;
         }  
                
@@ -294,13 +302,6 @@ public class PlayoutBuffer{
                     }
                     nextTimestampToPlay+=20;
                 }
-    //            else{
-    //                //synchronize while not playing to first playable sample
-    //                if (!isEmpty()){
-    //                    nextTimestampToPlay=getLowerTimestamp();
-    //                   // isPlaying=true;
-    //                }
-    //            }
             }
         }
     }//Deliver

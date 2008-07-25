@@ -79,7 +79,7 @@ public class Decoder {
         if(inited) throw new RuntimeException("Init Already Done");
 
         if (encodedFormat==FORMAT_CODE_SPEEX_NB){
-            int sampleRate=16000;
+            int sampleRate=8000;
             int mode=0;
             int channels=1;
             boolean enhanced= false;
