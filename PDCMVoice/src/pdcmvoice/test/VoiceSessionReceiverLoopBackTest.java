@@ -44,6 +44,9 @@ public class VoiceSessionReceiverLoopBackTest {
             rtpsession.naivePktReception(true);
             rtpsession.payloadType(PAYLOAD_SPEEX);
             VoiceSessionReceiver r = new VoiceSessionReceiver(1, rtpsession);
+            rtpsession.RTPSessionRegister(r.getDepacketizer(),
+            null, //to be implemented
+            null);
             r.init();
             r.start();
             
