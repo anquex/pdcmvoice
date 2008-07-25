@@ -18,24 +18,33 @@ import jlibrtp.RTCPAppIntf;
  */
 public class VoiceSessionController implements RTCPAppIntf{
 
+    private RTCPStats rtcpStats;
+
+    public VoiceSessionController(){
+        rtcpStats=new RTCPStats();
+    }
     public void SRPktReceived(long ssrc, long ntpHighOrder, long ntpLowOrder, long rtpTimestamp, long packetCount, long octetCount, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        rtcpStats.SRPktReceived(ssrc, ntpHighOrder, ntpLowOrder, rtpTimestamp, packetCount, octetCount, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
     }
 
     public void RRPktReceived(long reporterSsrc, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //DO NOTHING
     }
 
     public void SDESPktReceived(Participant[] relevantParticipants) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //DO NOTHING
     }
 
     public void BYEPktReceived(Participant[] relevantParticipants, String reason) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //DO NOTHING
     }
 
     public void APPPktReceived(Participant part, int subtype, byte[] name, byte[] data) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //DO NOTHING
+    }
+
+    public RTCPStats getRTCPStats(){
+        return rtcpStats;
     }
 
 }

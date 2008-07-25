@@ -57,6 +57,7 @@ public class VoiceSession {
             receiverSession=new VoiceSessionReceiver(
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
+            vsc=new VoiceSessionController();
             //rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
             withRecovery = false;
@@ -105,6 +106,7 @@ public class VoiceSession {
                                                settings.getReceiveFormatCode(),
                                                rtpSession,
                                                remoteCollection);
+        vsc=new VoiceSessionController();
         //rtpSession.naivePktReception(true);
         rtpSession.addParticipant(settings.getPartecipant());
         
@@ -174,5 +176,8 @@ public class VoiceSession {
         rtcpSocket.close();
     }
 
+    public RTCPStats getRTCPStats(){
+        return vsc.getRTCPStats();
+    }
 
-}
+}// END VOICE SESSION

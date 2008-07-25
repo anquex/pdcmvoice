@@ -464,6 +464,7 @@ public class CircularByteBuffer {
 			lock.lock();
                         try{
 				inputStreamClosed = true;
+                                notEnoughtDataToRead.signal();
 			}finally{lock.unlock();}
 		}
 

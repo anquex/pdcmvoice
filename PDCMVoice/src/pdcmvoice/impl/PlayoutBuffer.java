@@ -265,6 +265,7 @@ public class PlayoutBuffer{
             if (isPlaying()){
                 synchronized(PlayoutBuffer.this){
                     if(isEmpty()){
+                        if (DEBUG) out("BUFFER : Buffer Empty");
                         // nothing to play
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
