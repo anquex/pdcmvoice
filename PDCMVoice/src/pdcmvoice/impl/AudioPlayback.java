@@ -121,8 +121,6 @@ public class AudioPlayback extends AudioBase {
                     //out("do terminate? "+doTerminate);
 		    if (ais != null) {
 			int r = ais.read(buffer, 0, buffer.length);
-                        // non blocking read, if it was blocking I could not
-                        // terminate this thread if no packet is received
 			if (r > 50 && DEBUG_TRANSPORT && !printedBytes) {
 			    printedBytes = true;
 			    out("AudioPlayback: first bytes being played:");
@@ -167,6 +165,9 @@ public class AudioPlayback extends AudioBase {
 
 	public synchronized void terminate() {
 	    doTerminate = true;
+            try{
+                ais.close();
+            }catch(IOException e){e.printStackTrace();}
 	    this.notifyAll();
 	}
 

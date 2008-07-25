@@ -645,7 +645,22 @@ public class CircularByteBuffer {
                         //Reader has nothing to read, so wait for some data
 //                        if (available==0) return 0;
                         if (available==0){
-                            return 0;
+                            try {
+                                if (DEBUG == true) {
+                                    System.out.println("LETTORE-->0 byte da leggere (dormo)");
+                                }
+                                notEnoughtDataToRead.await();
+                                if (DEBUG == true) {
+                                    System.out.println("LETTORE-->risvegliato");
+                                }
+                                available = CircularByteBuffer.this.available();
+                                if(available==0){
+                                    //I've been waken up because input stream has been
+                                    //closed.
+                                    return -1;
+                                }
+                            } catch (InterruptedException ignore) {
+                            }
                         }
                         // Qui ci sono dati da leggere;
                         int length = Math.min(len, available);
