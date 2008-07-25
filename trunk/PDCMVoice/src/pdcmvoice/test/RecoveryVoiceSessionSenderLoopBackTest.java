@@ -63,7 +63,7 @@ public class RecoveryVoiceSessionSenderLoopBackTest {
             RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, true);
             RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, true);
             
-          //c'è una RecoveryConnection per VoiceSessionReceiverLoopBackTest ed una per VoiceSessionSenderLoopBackTest anche se entrambe sono tra gli stessi endpoint
+          //c'Ã¨ una RecoveryConnection per VoiceSessionReceiverLoopBackTest ed una per VoiceSessionSenderLoopBackTest anche se entrambe sono tra gli stessi endpoint
             //teoricamente la RecoveryConnection deve essere unica! infatti in questo file la remoteConnection rimane inutilizzata!
             //EVENTUALE SOLUZIONE: cambiare il costruttore in modo che crei solo la collezione che serve davvero
 // DA FARE //EVENTUALE SOLUZIONE 2: creare i due thread di recovery e i due thread VoiceSessionReceiver e VoiceSessionSender all'interno dello stesso main in modo da creare solo le due collezioni che servono ed un0unica RecoveryConnection. E' necessario per le operazioni di salvataggio eseguite dal ClientThread

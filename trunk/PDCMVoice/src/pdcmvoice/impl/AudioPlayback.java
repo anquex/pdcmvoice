@@ -114,8 +114,8 @@ public class AudioPlayback extends AudioBase {
 	    if (VERBOSE) out("Start AudioPlayback pull thread");
 	    byte[] buffer = new byte[getBufferSize()];
             sdl = (SourceDataLine) line;
-            Meter m=new Meter();
-            m.start();
+//            Meter m=new Meter();
+//            m.start();
 	    try {
 		while (!doTerminate) {
                     //out("do terminate? "+doTerminate);

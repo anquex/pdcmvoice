@@ -47,9 +47,10 @@ public class PacketizerTest extends Thread{
                 packetizer.framesPerPackets(2);
             }
             
-        } catch (InterruptedException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(PacketizerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+    }
     }
     
     public static void main (String[] args){
