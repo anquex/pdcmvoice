@@ -97,7 +97,8 @@ public class VoiceSessionSender {
         }
 
     public void stop(){
-        capture.closeLine(false);
+        capture.close();
+        //closing capture device will cause encoder to exit
         
     }
     /**

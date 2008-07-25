@@ -57,6 +57,8 @@ public class Packetizer {
         // generate timestamp the first time and update the other times
         updateTimestamp();
 
+//        if(rtpSession.isEnding()) return;
+//            //don't send packets anymore... just return
         if (RDT && lastEncodedHasBeenSent){
             /* if I switch from (2 frames per packet) -> (RDT)
              * I could have a frame not be sent, so I just

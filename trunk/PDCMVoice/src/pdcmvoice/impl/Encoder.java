@@ -129,11 +129,11 @@ public class Encoder extends Thread {
         }
 
         byte[] buffer = new byte[PCMbytesPerFrame];
-        int nReadBytes = 0;
+        int nReadBytes = -1;
         int encodedDataBytes = 0;
         byte encodedFrame[] = null;
-
-            while (nReadBytes != -1) {
+        out("Encoder: Encoding Started...");
+            while (nReadBytes != 0) {
                 // READ FROM THE STREAM 20 MS OF AUDIO
                 try {
                     nReadBytes = ais.read(buffer);
@@ -142,7 +142,13 @@ public class Encoder extends Thread {
                     break; //let process die
                 }
                 // ENCODE READED BYTES
-                if (nReadBytes > 0) {
+                if (DEBUG)
+                    out("Encoder Read: "+ nReadBytes+" Bytes");
+                if (nReadBytes >= PCMbytesPerFrame) {
+                    // encoding need at least 20 ms audio
+                    // if stream is closed I read less then required bytes...
+                    // so I ignore last incomplete frame
+
                     //Speex Encoding
                     if (encoding_format == FORMAT_CODE_SPEEX_NB ||
                         encoding_format == FORMAT_CODE_SPEEX_WB)
@@ -166,6 +172,7 @@ public class Encoder extends Thread {
                     lastFrameSize=encodedFrame.length;
                 }
             }
+            out("Encoder: Encoding Stopped...");
 
 
     }//end run

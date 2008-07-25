@@ -552,14 +552,71 @@ public class CircularByteBuffer {
 		 * @since ostermillerutils 1.00.00
 		 */
 		@Override public int read(byte[] cbuf) throws IOException {
-//			return read(cbuf, 0, cbuf.length);
-                        throw new RuntimeException("Not Implemented");
+                    int off=0;
+                    lock.lock();
+                    if (DEBUG==true) System.out.println("LETTORE-->LOCK");
+//                           if (DEBUG==true) System.out.println("LETTORE-->PRIMA");
+//                            if (DEBUG==true) System.out.println("ReadPos--> "+readPosition);
+//                            if (DEBUG==true) System.out.println("WritePpo--> "+writePosition);
+//                            if (DEBUG==true) System.out.println("MarkPos--> "+markPosition);
+                    try{
+                        if (inputStreamClosed) throw new IOException("InputStream has been closed; cannot read from a closed InputStream.");
+                        if (outputStreamClosed){
+                                //I read nothing since stream was closed
+                                //return without waking up...
+                                return -1;
+                        }
+                        int available = CircularByteBuffer.this.available();
+                        //Reader has nothing to read, so wait for some data
+//                        if (available==0) return 0;
+                        if (available==0){
+                             try{
+                                 if (DEBUG==true) System.out.println("LETTORE-->0 byte da leggere (dormo)");
+                                 notEnoughtDataToRead.await();
+                                 if (DEBUG==true) System.out.println("LETTORE-->risvegliato");
+                                 available = CircularByteBuffer.this.available();
+                             }catch(InterruptedException ignore){}
+                        }
+                        // Qui ci sono dati da leggere;
+                        int length = Math.min(cbuf.length, available);
+                        int firstLen = Math.min(length, buffer.length - readPosition);
+                        int secondLen = length - firstLen;
+                        System.arraycopy(buffer, readPosition, cbuf, off, firstLen);
+                        if (secondLen > 0){
+                                System.arraycopy(buffer, 0, cbuf, off+firstLen,  secondLen);
+                                readPosition = secondLen;
+                                //in fact in this case we have secondLen elements in the
+                                //first half of the buffer, the last element has index
+                                // secondLen-1, so the first position to read is secondLen
+                        } else {
+                                readPosition += length;
+                        }
+                        if (readPosition == buffer.length) {
+                                readPosition = 0;
+                        }
+                        //ensureMark();
+                        if (DEBUG==true) System.out.println("LETTORE--> "+length+" byte letti");
+                        // Reader removed something so wake up Producer
+                        notEnoughtFreeSpace.signal();
+                        //Return and unlock
+//                        if (DEBUG==true) System.out.println("LETTORE-->DOPO");
+//                        if (DEBUG==true) System.out.println("ReadPos--> "+readPosition);
+//                        if (DEBUG==true) System.out.println("WritePpo--> "+writePosition);
+//                        if (DEBUG==true) System.out.println("MarkPos--> "+markPosition);
+                        return length;
+                        }
+                        // Stream was open but no data to read
+                    finally
+                    {
+                        if (DEBUG==true)  System.out.println("LETTORE-->UNLOCK");
+                        lock.unlock();
+                    }
                 }
 
 		/**
 		 * Read bytes into a portion of an array.
-		 * This method will block until some input is available,
-		 * an I/O error occurs, or the end of the stream is reached.
+		 * This method is non-blocking. Returns always immidiatly
+		 * Returns immidiatly I/O error occurs, or the end of the stream is reached.
 		 *
 		 * @param cbuf Destination buffer.
 		 * @param off Offset at which to start storing bytes.
@@ -588,12 +645,7 @@ public class CircularByteBuffer {
                         //Reader has nothing to read, so wait for some data
 //                        if (available==0) return 0;
                         if (available==0){
-                             try{
-                                 if (DEBUG==true) System.out.println("LETTORE-->0 byte da leggere (dormo)");
-                                 notEnoughtDataToRead.await();
-                                 if (DEBUG==true) System.out.println("LETTORE-->risvegliato");
-                                 available = CircularByteBuffer.this.available();
-                             }catch(InterruptedException ignore){}
+                            return 0;
                         }
                         // Qui ci sono dati da leggere;
                         int length = Math.min(len, available);

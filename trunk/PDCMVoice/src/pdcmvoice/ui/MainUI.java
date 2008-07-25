@@ -39,7 +39,7 @@ public class MainUI extends javax.swing.JFrame {
 
     private VoiceSession voiceSession;
 
-    private String remoteAddress;
+    private String remoteAddress="192.168.0.22";
 
 
     private void renderLocalConnectionSettings(){
@@ -455,18 +455,15 @@ public class MainUI extends javax.swing.JFrame {
         SettingsMainPanelLayout.setHorizontalGroup(
             SettingsMainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(SettingsMainPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(SettingsMainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(SettingsMainPanelLayout.createSequentialGroup()
-                        .addContainerGap(112, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, SettingsMainPanelLayout.createSequentialGroup()
                         .add(RestoreDefaultsButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(ApplySettingsButton))
-                    .add(SettingsMainPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(SettingsMainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, ConnectionSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, AudioSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, ConnectionSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, AudioSettingsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         SettingsMainPanelLayout.setVerticalGroup(
@@ -494,10 +491,6 @@ public class MainUI extends javax.swing.JFrame {
         jLabel2.setText("Remote RTP   Port");
 
         jLabel3.setText("Remote RTCP Port");
-
-        UIRemoteRTCP.setText("d");
-
-        UIRemoteRTP.setText("d");
 
         UIRemoteAddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

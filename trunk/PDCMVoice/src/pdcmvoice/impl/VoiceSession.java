@@ -126,6 +126,7 @@ public class VoiceSession {
                 rs.start();
                 rc.start();
             }
+            out ("Voice Session Started");
 
     }
 
@@ -134,6 +135,7 @@ public class VoiceSession {
             senderSession.stop();
             receiverSession.stop();
             // recovery connection should still be running
+            out ("Voice Session Stopped");
 
     }
     public int setMinBufferedMillis(int n){
