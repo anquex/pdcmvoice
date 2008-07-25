@@ -21,6 +21,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class PlayoutBuffer{
 
+    private boolean doTerminate;
     private boolean isFirst;          //is true for the first packet
     private long startPacketTimestamp;
     private boolean isBuffering;      //true if buffer is waiting to fill up
@@ -54,6 +55,10 @@ public class PlayoutBuffer{
         isFirst=true;
         isBuffering=true;
         decoderDeliver= new Deliver();
+    }
+
+    public void stop(){
+        doTerminate=true;
     }
 
     /**

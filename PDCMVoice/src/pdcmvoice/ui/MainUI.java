@@ -39,6 +39,8 @@ public class MainUI extends javax.swing.JFrame {
 
     private VoiceSession voiceSession;
 
+    private String remoteAddress;
+
 
     private void renderLocalConnectionSettings(){
         UILocalMaster.setText(""+myConnectionSettings.getMaster());
@@ -82,7 +84,7 @@ public class MainUI extends javax.swing.JFrame {
     }
 
     private void  updateDCTSettings(){
-        UIRemoteAddress.getText();
+        remoteAddress=UIRemoteAddress.getText();
 
         DCTremoteConnectionSettings.setRTP(UIRemoteRTP.getText());
         DCTremoteConnectionSettings.setRTCP(UIRemoteRTCP.getText());
@@ -91,7 +93,7 @@ public class MainUI extends javax.swing.JFrame {
     }
 
     private void renderDCTSettings(){
-        UIRemoteAddress.setText("");
+        UIRemoteAddress.setText(remoteAddress);
 
         UIRemoteRTP.setText(""+ DCTremoteConnectionSettings.getRTP());
         UIRemoteRTCP.setText(""+DCTremoteConnectionSettings.getRTCP());
@@ -724,6 +726,13 @@ public class MainUI extends javax.swing.JFrame {
         renderDCTSettings();
         if(voiceSession==null){
             try{
+                voiceSessionSettings=new VoiceSessionSettings(myAudioSettings, 
+                                                              myConnectionSettings, 
+                                                              myTransmissionSettings, 
+                                                              DCTremoteAudioSettings, 
+                                                              DCTremoteConnectionSettings,
+                                                              remoteAddress
+                                                              );
                 voiceSession=new VoiceSession(voiceSessionSettings);
                 transmitButton.setText("Stop Transmitting");
                 voiceSession.start();
@@ -731,7 +740,7 @@ public class MainUI extends javax.swing.JFrame {
             catch(SocketException e){
                 e.printStackTrace();
             }
-            catch(UnsupportedAudioFileException ingore){}
+           // catch(UnsupportedAudioFileException ingore){}
             catch(Exception e){e.printStackTrace();}
         }
         else{

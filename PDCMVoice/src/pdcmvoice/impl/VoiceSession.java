@@ -130,7 +130,7 @@ public class VoiceSession {
     }
 
     public void stop(){
-            rtpSession.endSession();
+            //rtpSession.endSession();
             senderSession.stop();
             receiverSession.stop();
             // recovery connection should still be running
