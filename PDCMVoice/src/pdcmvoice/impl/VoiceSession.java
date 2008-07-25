@@ -131,10 +131,11 @@ public class VoiceSession {
     }
 
     public void stop(){
-            //rtpSession.endSession();
+            rtpSession.endSession();
             senderSession.stop();
             receiverSession.stop();
             // recovery connection should still be running
+            //closeSockets();
             out ("Voice Session Stopped");
 
     }
@@ -166,6 +167,11 @@ public class VoiceSession {
 
     public String getSendingFormatName(){
         return FORMAT_NAMES[settings.getSendFormatCode()-1];
+    }
+
+    private void closeSockets(){
+        rtpSocket.close();
+        rtcpSocket.close();
     }
 
 
