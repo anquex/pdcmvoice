@@ -51,11 +51,13 @@ public class VoiceSessionReceiver {
     public void start() throws Exception {
             player.start();
             depacketizer.init();
+            // after depacketizer is inited I start receiving
+            // rtp packets
 
     }
 
     public void stop(){
-            player.closeLine(false);
+            player.close();
     }
 
     public Depacketizer getDepacketizer(){

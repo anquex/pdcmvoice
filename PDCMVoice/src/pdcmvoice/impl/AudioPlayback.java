@@ -118,9 +118,11 @@ public class AudioPlayback extends AudioBase {
             m.start();
 	    try {
 		while (!doTerminate) {
-
+                    //out("do terminate? "+doTerminate);
 		    if (ais != null) {
 			int r = ais.read(buffer, 0, buffer.length);
+                        // non blocking read, if it was blocking I could not
+                        // terminate this thread if no packet is received
 			if (r > 50 && DEBUG_TRANSPORT && !printedBytes) {
 			    printedBytes = true;
 			    out("AudioPlayback: first bytes being played:");
@@ -190,7 +192,8 @@ public class AudioPlayback extends AudioBase {
         while(true){
             String out="";
             int d1,d2=0,d3=0;
-                {
+                { if (AudioPlayback.this.thread==null)
+                      break;
                   //  d1=target.available();
                     if (ais!=null)
                     d2=ais.available();
