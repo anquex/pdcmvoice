@@ -7,6 +7,7 @@ package pdcmvoice.impl;
 
 import jlibrtp.Participant;
 import jlibrtp.RTCPAppIntf;
+import jlibrtp.RTPSession;
 
 /**
  *
@@ -19,9 +20,12 @@ import jlibrtp.RTCPAppIntf;
 public class VoiceSessionController implements RTCPAppIntf{
 
     private RTCPStats rtcpStats;
+    private RTPSession rtpSession;
 
-    public VoiceSessionController(){
+    public VoiceSessionController(RTPSession s){
         rtcpStats=new RTCPStats();
+        rtpSession=s;
+
     }
     public void SRPktReceived(long ssrc, long ntpHighOrder, long ntpLowOrder, long rtpTimestamp, long packetCount, long octetCount, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
         rtcpStats.SRPktReceived(ssrc, ntpHighOrder, ntpLowOrder, rtpTimestamp, packetCount, octetCount, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
@@ -32,7 +36,13 @@ public class VoiceSessionController implements RTCPAppIntf{
     }
 
     public void SDESPktReceived(Participant[] relevantParticipants) {
-        //DO NOTHING
+
+        // JUST TO SEE IF SOME RR IS GENERATED... (SEEMS NO...)
+//        for (int i=0;i<relevantParticipants.length;i++){
+//            Participant p= relevantParticipants[i];
+//            rtpSession.addParticipant(p);
+//        }
+        
     }
 
     public void BYEPktReceived(Participant[] relevantParticipants, String reason) {
