@@ -117,7 +117,7 @@ public class VoiceSession {
 
     public void start() throws UnsupportedAudioFileException, Exception{
             receiverSession.init();
-            rtpSession.RTPSessionRegister(receiverSession.getDepacketizer(),
+            rtpSession.registerRTPSession(receiverSession.getDepacketizer(),
                               vsc, //to be implemented
                               null);
             receiverSession.start();

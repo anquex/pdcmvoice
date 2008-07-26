@@ -41,7 +41,7 @@ public class PlayoutBuffer{
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
     
-    private final boolean DEBUG=true;
+    private final boolean DEBUG=false;
 
     //CONSTANTS
 

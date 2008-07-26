@@ -32,13 +32,6 @@ public class Depacketizer implements RTPAppIntf{
 
     PlayoutBuffer playoutBuffer;
 
-    //DEBUG
-    private byte[] lastNewVoice;
-
-//    int avg=0;
-//    int packets=0;
-//    long LastTimeStamp=0;
-//    long currentTimeStamp=0;
 
     public Depacketizer(RTPSession s){
         rtpSession=s;
@@ -147,11 +140,11 @@ public class Depacketizer implements RTPAppIntf{
                 return true;
         }
     }
-
+    // NEVER USED
     public void userEvent(int type, Participant[] participant) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    // NEVER USED
     public int frameSize(int payloadType) {
         // 1 packet -> at least 1 frame
         return 1;
