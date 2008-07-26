@@ -31,12 +31,12 @@ public class RTCPStats {
 
     public long RRreporterSsrc;
     public long[] RRreporteeSsrc;
-    public int[] RRlossFraction;
-    public int[] RRcumulPacketsLost;
+    public int RRlossFraction;
+    public int RRcumulPacketsLost;
     public long[] RRextHighSeq;
-    public long[] RRinterArrivalJitter;
+    public long RRinterArrivalJitter;
     public long[] RRlastSRTimeStamp;
-    public long[] RRdelayLastSR;
+    public long RRdelayLastSR;
 
     public RTCPStats(){
     }
@@ -62,12 +62,16 @@ public class RTCPStats {
 
     RRreporterSsrc=reporterSsrc;
     RRreporteeSsrc=reporteeSsrc;
-    RRlossFraction=lossFraction;
-    RRcumulPacketsLost=cumulPacketsLost;
+    if(lossFraction.length>0)
+        RRlossFraction=lossFraction[0];
+    if(cumulPacketsLost.length>0)
+        RRcumulPacketsLost=cumulPacketsLost[0];
     RRextHighSeq=extHighSeq;
-    RRinterArrivalJitter=interArrivalJitter;
+    if(interArrivalJitter.length>0)
+        RRinterArrivalJitter=interArrivalJitter[0];
     RRlastSRTimeStamp=lastSRTimeStamp;
-    RRdelayLastSR=delayLastSR;
+    if(delayLastSR.length>0)
+        RRdelayLastSR=delayLastSR[0];
     }
 
 }
