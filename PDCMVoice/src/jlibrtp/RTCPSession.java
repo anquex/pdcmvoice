@@ -88,18 +88,18 @@ public class RTCPSession {
     protected RTCPSession(RTPSession parent, DatagramSocket rtcpSocket) {
         this.rtcpSock = rtcpSocket;
         rtpSession = parent;
-        try {
-            FileHandler  fh;
-            fh = new FileHandler("rtcp.log", true);
-            LOGGER.addHandler(fh);
-            LOGGER.setLevel(Level.ALL);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (IOException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            FileHandler  fh;
+//            fh = new FileHandler("rtcp.log", true);
+//            LOGGER.addHandler(fh);
+//            LOGGER.setLevel(Level.ALL);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//        } catch (IOException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SecurityException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     /**

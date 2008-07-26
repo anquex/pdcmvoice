@@ -32,7 +32,7 @@ public class VoiceSessionController implements RTCPAppIntf{
     }
 
     public void RRPktReceived(long reporterSsrc, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
-        //DO NOTHING
+        rtcpStats.RRPktReceived(reporterSsrc, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
     }
 
     public void SDESPktReceived(Participant[] relevantParticipants) {

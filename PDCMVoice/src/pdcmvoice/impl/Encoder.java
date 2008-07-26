@@ -12,6 +12,7 @@ import pdcmvoice.codecs.IlbcEncoder;
 
 /**
  *
+ *
  * @author marco
  */
 public class Encoder extends Thread {
