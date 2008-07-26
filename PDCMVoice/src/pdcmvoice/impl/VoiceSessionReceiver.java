@@ -5,6 +5,7 @@
 
 package pdcmvoice.impl;
 
+import jlibrtp.RTPSession;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import jlibrtp.*;
 import pdcmvoice.recovery.RecoveryCollection;

@@ -63,8 +63,8 @@ public class RecoverySystemLoopBackTest {
          */
         
         /*
-         * Nel caso generico (non LoopBack) ciascuno dei due partecipanti disporrà di una sola recoveryConnection, di una localCollection e di una remoteCollection.
-         * La connessione considererà come "server" il localhost e come "client" l'altro partecipante. Il ClientThread leggerà/scriverà sul "server" (socket) usando la remote mentre il ServerThread leggerà/scriverà sul "client" (socket) usando la local.
+         * Nel caso generico (non LoopBack) ciascuno dei due partecipanti disporrï¿½ di una sola recoveryConnection, di una localCollection e di una remoteCollection.
+         * La connessione considererï¿½ come "server" il localhost e come "client" l'altro partecipante. Il ClientThread leggerï¿½/scriverï¿½ sul "server" (socket) usando la remote mentre il ServerThread leggerï¿½/scriverï¿½ sul "client" (socket) usando la local.
          */
         
         //LOOPBACK

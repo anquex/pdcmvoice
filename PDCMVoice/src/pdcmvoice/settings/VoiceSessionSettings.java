@@ -8,7 +8,7 @@ package pdcmvoice.settings;
 import java.io.Serializable;
 import jlibrtp.Participant;
 import static pdcmvoice.impl.Constants.*;
-import pdcmvoice.settings.*;
+import jlibrtp.*;
 
 /**
  *
