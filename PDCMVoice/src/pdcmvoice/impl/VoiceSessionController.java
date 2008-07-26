@@ -8,6 +8,7 @@ package pdcmvoice.impl;
 import jlibrtp.Participant;
 import jlibrtp.RTCPAppIntf;
 import jlibrtp.RTPSession;
+import static pdcmvoice.impl.Constants.*;
 
 /**
  *
@@ -28,6 +29,8 @@ public class VoiceSessionController implements RTCPAppIntf{
 
     }
     public void SRPktReceived(long ssrc, long ntpHighOrder, long ntpLowOrder, long rtpTimestamp, long packetCount, long octetCount, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
+        out(""+packetCount);
+        out(""+octetCount);
         rtcpStats.SRPktReceived(ssrc, ntpHighOrder, ntpLowOrder, rtpTimestamp, packetCount, octetCount, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
     }
 

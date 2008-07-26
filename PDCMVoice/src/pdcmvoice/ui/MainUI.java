@@ -109,19 +109,20 @@ public class MainUI extends javax.swing.JFrame {
     private void renderRTCPStats(){
         if (rtcpStats!=null){
             SRBytesSent.setText(""+rtcpStats.SRoctetCount);
-            SRIntervalPL.setText(""+rtcpStats.SRlossFraction);
-            SRJitter.setText(""+rtcpStats.SRinterArrivalJitter);
-            SRLRRDelay.setText(""+rtcpStats.SRdelayLastSR);
             SRPacketsSent.setText(""+rtcpStats.SRpacketCount);
-            SRSessionPL.setText(""+rtcpStats.SRcumulPacketsLost);
+           
+            LRRDelay.setText(""+rtcpStats.RRdelayLastSR);
+            RRSessionPL.setText(""+rtcpStats.RRcumulPacketsLost);
+            RRJitter.setText(""+rtcpStats.RRinterArrivalJitter);
+            RRIntervalPL.setText(""+rtcpStats.RRlossFraction);
 
         }else{
             SRBytesSent.setText("N/A");
-            SRIntervalPL.setText("N/A");
-            SRJitter.setText("N/A");
-            SRLRRDelay.setText("N/A");
+            RRIntervalPL.setText("N/A");
+            RRJitter.setText("N/A");
+            LRRDelay.setText("N/A");
             SRPacketsSent.setText("N/A");
-            SRSessionPL.setText("N/A");
+            RRSessionPL.setText("N/A");
         }
 
     }
@@ -156,17 +157,17 @@ public class MainUI extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         SRPacketsSent = new javax.swing.JTextField();
         SRBytesSent = new javax.swing.JTextField();
-        SRIntervalPL = new javax.swing.JTextField();
-        SRSessionPL = new javax.swing.JTextField();
-        SRJitter = new javax.swing.JTextField();
-        SRLRRDelay = new javax.swing.JTextField();
+        LRRDelay = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
+        jLabel18 = new javax.swing.JLabel();
+        RRIntervalPL = new javax.swing.JTextField();
+        RRJitter = new javax.swing.JTextField();
+        RRSessionPL = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
         SettingsMainPanel = new javax.swing.JPanel();
         AudioSettingsPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -223,20 +224,20 @@ public class MainUI extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
-        menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        openMenuItem = new javax.swing.JMenuItem();
-        saveMenuItem = new javax.swing.JMenuItem();
-        saveAsMenuItem = new javax.swing.JMenuItem();
-        exitMenuItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenu();
-        contentsMenuItem = new javax.swing.JMenuItem();
-        aboutMenuItem = new javax.swing.JMenuItem();
+        menuBar1 = new javax.swing.JMenuBar();
+        fileMenu1 = new javax.swing.JMenu();
+        openMenuItem1 = new javax.swing.JMenuItem();
+        saveMenuItem1 = new javax.swing.JMenuItem();
+        saveAsMenuItem1 = new javax.swing.JMenuItem();
+        exitMenuItem1 = new javax.swing.JMenuItem();
+        editMenu1 = new javax.swing.JMenu();
+        cutMenuItem1 = new javax.swing.JMenuItem();
+        copyMenuItem1 = new javax.swing.JMenuItem();
+        pasteMenuItem1 = new javax.swing.JMenuItem();
+        deleteMenuItem1 = new javax.swing.JMenuItem();
+        helpMenu1 = new javax.swing.JMenu();
+        contentsMenuItem1 = new javax.swing.JMenuItem();
+        aboutMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PDCMVoice");
@@ -289,23 +290,12 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel17.setText("Bytes    Sent");
 
-        jLabel18.setText("Interval Packet Loss");
-        jLabel18.setToolTipText("packet loss in the inverval between previous and current report");
-
-        jLabel19.setText("Session Packet Loss");
-        jLabel19.setToolTipText("packet loss in the inverval between previous and current report");
-
-        jLabel20.setText("Jitter");
-        jLabel20.setToolTipText("packet loss in the inverval between previous and current report");
-
         jLabel21.setText("LRR Delay ");
         jLabel21.setToolTipText("packet loss in the inverval between previous and current report");
 
-        SRJitter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SRJitterActionPerformed(evt);
-            }
-        });
+        SRPacketsSent.setHighlighter(null);
+
+        SRBytesSent.setHighlighter(null);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -315,20 +305,14 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel21)
-                    .add(jLabel20)
-                    .add(jLabel19)
                     .add(jLabel16)
-                    .add(jLabel18)
                     .add(jLabel17))
-                .add(10, 10, 10)
+                .add(45, 45, 45)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(SRPacketsSent, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(SRBytesSent, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(SRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(SRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(SRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(SRLRRDelay, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(102, Short.MAX_VALUE))
+                    .add(LRRDelay, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -341,21 +325,9 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(SRBytesSent, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jLabel17))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(SRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel18))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(SRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel19))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(SRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel20))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(SRLRRDelay, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(LRRDelay, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jLabel21)))
                     .add(jLabel16))
                 .addContainerGap())
@@ -363,26 +335,76 @@ public class MainUI extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Last Receiver Report"));
 
+        jLabel18.setText("Interval PL Ratio*256");
+        jLabel18.setToolTipText("packet loss in the inverval between previous and current report");
+
+        RRIntervalPL.setHighlighter(null);
+
+        RRJitter.setHighlighter(null);
+        RRJitter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RRJitterActionPerformed(evt);
+            }
+        });
+
+        RRSessionPL.setHighlighter(null);
+
+        jLabel19.setText("Session Packets Lost");
+        jLabel19.setToolTipText("packet loss in the inverval between previous and current report");
+
+        jLabel20.setText("Jitter");
+        jLabel20.setToolTipText("packet loss in the inverval between previous and current report");
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 279, Short.MAX_VALUE)
+            .add(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(jLabel18)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(RRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel20)
+                            .add(jLabel19))
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanel3Layout.createSequentialGroup()
+                                .add(12, 12, 12)
+                                .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jPanel3Layout.createSequentialGroup()
+                                .add(18, 18, 18)
+                                .add(RRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 153, Short.MAX_VALUE)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel18)
+                    .add(RRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel19)
+                    .add(RRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel20))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout RTCPPanelLayout = new org.jdesktop.layout.GroupLayout(RTCPPanel);
         RTCPPanel.setLayout(RTCPPanelLayout);
         RTCPPanelLayout.setHorizontalGroup(
             RTCPPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(RTCPPanelLayout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, RTCPPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(RTCPPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(RTCPPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         RTCPPanelLayout.setVerticalGroup(
@@ -391,7 +413,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .add(71, 71, 71))
         );
 
         MainTabbedPanel.addTab("RTCP Stats", RTCPPanel);
@@ -435,7 +457,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel15))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         ConnectionSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Connection Settings"));
@@ -616,7 +638,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(UIRDT)
                     .add(UIBackgroundRecovery))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout SettingsMainPanelLayout = new org.jdesktop.layout.GroupLayout(SettingsMainPanel);
@@ -792,56 +814,54 @@ public class MainUI extends javax.swing.JFrame {
 
         menuBar.add(helpMenu);
 
-        setJMenuBar(menuBar);
+        fileMenu1.setText("File");
 
-        fileMenu.setText("File");
+        openMenuItem1.setText("Open");
+        fileMenu1.add(openMenuItem1);
 
-        openMenuItem.setText("Open");
-        fileMenu.add(openMenuItem);
+        saveMenuItem1.setText("Save");
+        fileMenu1.add(saveMenuItem1);
 
-        saveMenuItem.setText("Save");
-        fileMenu.add(saveMenuItem);
+        saveAsMenuItem1.setText("Save As ...");
+        fileMenu1.add(saveAsMenuItem1);
 
-        saveAsMenuItem.setText("Save As ...");
-        fileMenu.add(saveAsMenuItem);
-
-        exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        exitMenuItem1.setText("Exit");
+        exitMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(exitMenuItem);
+        fileMenu1.add(exitMenuItem1);
 
-        menuBar.add(fileMenu);
+        menuBar1.add(fileMenu1);
 
-        editMenu.setText("Edit");
+        editMenu1.setText("Edit");
 
-        cutMenuItem.setText("Cut");
-        editMenu.add(cutMenuItem);
+        cutMenuItem1.setText("Cut");
+        editMenu1.add(cutMenuItem1);
 
-        copyMenuItem.setText("Copy");
-        editMenu.add(copyMenuItem);
+        copyMenuItem1.setText("Copy");
+        editMenu1.add(copyMenuItem1);
 
-        pasteMenuItem.setText("Paste");
-        editMenu.add(pasteMenuItem);
+        pasteMenuItem1.setText("Paste");
+        editMenu1.add(pasteMenuItem1);
 
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
+        deleteMenuItem1.setText("Delete");
+        editMenu1.add(deleteMenuItem1);
 
-        menuBar.add(editMenu);
+        menuBar1.add(editMenu1);
 
-        helpMenu.setText("Help");
+        helpMenu1.setText("Help");
 
-        contentsMenuItem.setText("Contents");
-        helpMenu.add(contentsMenuItem);
+        contentsMenuItem1.setText("Contents");
+        helpMenu1.add(contentsMenuItem1);
 
-        aboutMenuItem.setText("About");
-        helpMenu.add(aboutMenuItem);
+        aboutMenuItem1.setText("About");
+        helpMenu1.add(aboutMenuItem1);
 
-        menuBar.add(helpMenu);
+        menuBar1.add(helpMenu1);
 
-        setJMenuBar(menuBar);
+        setJMenuBar(menuBar1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -964,9 +984,9 @@ public class MainUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_transmitButtonActionPerformed
 
-    private void SRJitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SRJitterActionPerformed
+    private void RRJitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RRJitterActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_SRJitterActionPerformed
+}//GEN-LAST:event_RRJitterActionPerformed
 
     /**
     * @param args the command line arguments
@@ -985,16 +1005,16 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel ConnectionSettingsPanel;
     private javax.swing.JPanel DCTestPanel;
     private javax.swing.JCheckBox DynamicAdaptation;
+    private javax.swing.JTextField LRRDelay;
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JPanel OnlineList;
+    private javax.swing.JTextField RRIntervalPL;
+    private javax.swing.JTextField RRJitter;
+    private javax.swing.JTextField RRSessionPL;
     private javax.swing.JPanel RTCPPanel;
     private javax.swing.JButton RestoreDefaultsButton;
     private javax.swing.JTextField SRBytesSent;
-    private javax.swing.JTextField SRIntervalPL;
-    private javax.swing.JTextField SRJitter;
-    private javax.swing.JTextField SRLRRDelay;
     private javax.swing.JTextField SRPacketsSent;
-    private javax.swing.JTextField SRSessionPL;
     private javax.swing.JPanel SettingsMainPanel;
     private javax.swing.JPanel StatusPanel;
     private javax.swing.JCheckBox UIBackgroundRecovery;
@@ -1013,14 +1033,23 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTextField UImaxBuf;
     private javax.swing.JTextField UIminBuf;
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem aboutMenuItem1;
     private javax.swing.JMenuItem contentsMenuItem;
+    private javax.swing.JMenuItem contentsMenuItem1;
     private javax.swing.JMenuItem copyMenuItem;
+    private javax.swing.JMenuItem copyMenuItem1;
     private javax.swing.JMenuItem cutMenuItem;
+    private javax.swing.JMenuItem cutMenuItem1;
     private javax.swing.JMenuItem deleteMenuItem;
+    private javax.swing.JMenuItem deleteMenuItem1;
     private javax.swing.JMenu editMenu;
+    private javax.swing.JMenu editMenu1;
     private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenuItem exitMenuItem1;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu fileMenu1;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenu helpMenu1;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1051,10 +1080,15 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuBar menuBar1;
     private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JMenuItem openMenuItem1;
     private javax.swing.JMenuItem pasteMenuItem;
+    private javax.swing.JMenuItem pasteMenuItem1;
     private javax.swing.JMenuItem saveAsMenuItem;
+    private javax.swing.JMenuItem saveAsMenuItem1;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenuItem saveMenuItem1;
     private javax.swing.JButton transmitButton;
     // End of variables declaration//GEN-END:variables
 
