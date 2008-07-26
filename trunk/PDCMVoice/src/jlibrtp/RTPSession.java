@@ -170,18 +170,18 @@ public class RTPSession {
         try { Thread.sleep(1); } catch (InterruptedException e) { LOGGER.log(Level.WARNING, "RTPSession sleep failed", e); }
         
         
-        try {
-            FileHandler  fh;
-            fh = new FileHandler("jlibrtp.log", true);
-            LOGGER.addHandler(fh);
-            LOGGER.setLevel(Level.ALL);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (IOException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            FileHandler  fh;
+//            fh = new FileHandler("jlibrtp.log", true);
+//            LOGGER.addHandler(fh);
+//            LOGGER.setLevel(Level.ALL);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//        } catch (IOException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SecurityException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
     }
     /**

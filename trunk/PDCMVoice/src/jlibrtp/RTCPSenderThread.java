@@ -58,18 +58,18 @@ public class RTCPSenderThread extends Thread {
     protected RTCPSenderThread(RTCPSession rtcpSession, RTPSession rtpSession) {
         this.rtpSession = rtpSession;
         this.rtcpSession = rtcpSession;
-        try {
-            FileHandler  fh;
-            fh = new FileHandler("RTCPSenderThread.log", true);
-            LOGGER.addHandler(fh);
-            LOGGER.setLevel(Level.ALL);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (IOException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            FileHandler  fh;
+//            fh = new FileHandler("RTCPSenderThread.log", true);
+//            LOGGER.addHandler(fh);
+//            LOGGER.setLevel(Level.ALL);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//        } catch (IOException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SecurityException ex) {
+//            Logger.getLogger(RTPSession.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         if(LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("<-> RTCPSenderThread created");
