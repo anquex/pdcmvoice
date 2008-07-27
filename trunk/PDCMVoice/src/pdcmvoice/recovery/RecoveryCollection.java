@@ -30,7 +30,7 @@ public class RecoveryCollection
     private String type; //local oppure remote
     private int pktSize; //byte; dimesione del pacchetto codificato (speex)
     private int firstSnReceived; //uguale a quello del pkt RTP che lo contiene; costituisce l'offset per ottenere il SN esatto per il lastSampleWrote (considera l'eventuale perdita dei primi pacchetti)
-    public int lastSnReceived;  //ultimoSN della collezione impostato ESPLICITAMENTE da Marco
+    public int lastSnReceived;  //ultimoSN della collezione (impostato ESPLICITAMENTE da Marco??)NO
     private long startTimestamp;
     private int encodedFormat; //vedi pdcmvoice.impl.Constants
     public boolean debug;    
@@ -70,7 +70,7 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = debug;
         
-        collection = new RecoverySample[6000]; //spazio per 2 minuti di audio
+        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio
         
     }
 	
@@ -88,8 +88,10 @@ public class RecoveryCollection
 	    {
     	    firstSnReceived = sn;
             startTimestamp = timestamp;
-            
-	    }
+        }
+	    
+	    if (sn > lastSnReceived)
+	        lastSnReceived = sn;
 	    
 	    int i = sn - firstSnReceived;
 	    if (i  > lastSn) //aggiungi solo fuori dalla finestra di ricerca dei pkt mancanti
@@ -129,59 +131,65 @@ public class RecoveryCollection
 	{
 	    String output = "";
 	    
-	    
-	    int start = lastSn > 0 ? lastSn+1 : 0;
-	    int end;
-	    if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
-	        end = lastSnReceived;
-	    else
-	        end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
-	    lastSn = end;
-	    
-	    if (debug)
-	        System.out.println("findHoles - start: " + start + ", end: " + end);
-	    
-	    int i, j;
-	    for (i = start; i <= end; i++ )
+	    if (firstSnReceived >= 0)
 	    {
-	        boolean jNull = true;
-	        if (collection[i] == null)
-	        {
-	            if (i == end)
-	                output += (firstSnReceived + i) + ";";
-	            else
+    	    int start = lastSn > 0 ? lastSn+1 : 0;
+    	    int end;
+    	    /*
+    	    if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
+    	    */
+    	    if(untilEnd)
+    	        end = lastSnReceived;
+    	    else
+    	        end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
+    	    lastSn = end;
+    	    
+    	    if (debug)
+    	        System.out.println("findHoles - start: " + start + ", end: " + end);
+    	    
+    	    int i, j;
+    	    for (i = start; i <= end; i++ )
+    	    {
+    	        boolean jNull = true;
+    	        if (collection[i] == null)
     	        {
-    	            j = i + 1;
-    	            for (; j <= end; j++ )
-    	            {
-    	                if (collection[j] != null)
-    	                {
-    	                    jNull = false;
-    	                    break;
-    	                }
-    	            }
-    	            
-    	            if (!jNull)
-    	            {
-    	                if (i == j-1)
-    	                {
-    	                    output += (firstSnReceived + i) + ";";
-    	                    
-    	                }
-    	                else
-    	                {
-    	                    output += (firstSnReceived + i) + "-" + (firstSnReceived + j-1) + ";";
-    	                }
-    	                i = j; //deve partire da j+1, ma se ne occupa il i++ del for
-    	            }
+    	            if (i == end)
+    	                output += (firstSnReceived + i) + ";";
     	            else
-    	            {
-    	                output += (firstSnReceived + i) + "-" + (firstSnReceived + j) + ";";
-    	                break; //j � arrivato in fondo ed � stato inserito nella richiesta
-    	            }
-    	        }//end else: i < end
-	        }// end if (collection[i] == null)
-	    }//end for i
+        	        {
+        	            j = i + 1;
+        	            for (; j <= end; j++ )
+        	            {
+        	                if (collection[j] != null)
+        	                {
+        	                    jNull = false; //j punta ad un valore non nullo
+        	                    break;
+        	                }
+        	            }
+        	            
+        	            if (!jNull)
+        	            {
+        	                if (i == j-1)
+        	                {
+        	                    output += (firstSnReceived + i) + ";";
+        	                    
+        	                }
+        	                else
+        	                {
+        	                    output += (firstSnReceived + i) + "-" + (firstSnReceived + j-1) + ";";
+        	                }
+        	                i = j; //deve partire da j+1, ma se ne occupa il i++ del for
+        	            }
+        	            else
+        	            {
+        	                output += (firstSnReceived + i) + "-" + (firstSnReceived + j) + ";";
+        	                break; //j e' arrivato in fondo ed e' stato inserito nella richiesta
+        	            }
+        	        } //end else: i < end
+    	        } // end if (collection[i] == null)
+    	    } //end for i
+    	    
+	    }//end if
 	    
 	    return output;
 	    
@@ -267,6 +275,11 @@ public class RecoveryCollection
 	public void setWindow(int window)
 	{
 	    windowWidth = window;
+	}
+	
+	public int getWindowWidth()
+	{
+	    return windowWidth;
 	}
 	
 	public int getEncodedFormat()
