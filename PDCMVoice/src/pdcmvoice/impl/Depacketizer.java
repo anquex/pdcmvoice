@@ -36,7 +36,7 @@ public class Depacketizer implements RTPAppIntf{
     public Depacketizer(RTPSession s){
         rtpSession=s;
         // disable rtp buffering, recive all packets!
-        rtpSession.packetBufferBehavior(0);
+        rtpSession.packetBufferBehavior(-1);
 
 
     }

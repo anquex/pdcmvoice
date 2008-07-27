@@ -78,6 +78,13 @@ public class PlayoutBuffer{
 //            return;
 
         VoiceFrame v=new VoiceFrame(timestamp, frame);
+        // protect playout from late frames
+        if (timestamp<decoderDeliver.getNextTimestampToPlay()){
+            //packet arrived too late!
+            // ignore it
+            return;
+        }
+
         listBuffer.add(v);
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
@@ -94,7 +101,7 @@ public class PlayoutBuffer{
         // bursts arrivals produces more packets are dropped at once
         // I neve get null pointer since I have at least 1 packet at
         // this point in the buffer
-        while(getHigherTimestamp()-getLowerTimestamp()+20>maxBufferedMillis)
+        while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>maxBufferedMillis)
         {
             if (DEBUG)
                     out("PLAYOUT BUFFER : Maximum Delay Reached: "+
@@ -133,10 +140,10 @@ public class PlayoutBuffer{
                 
                 if (nextstamp==currentExpectedTimestamp){
                     
-                    bufferedMillis+=20;
+                    bufferedMillis+=TIME_PER_FRAME;
 
                     // next packet referst to istant t+20
-                    currentExpectedTimestamp=nextstamp+20;
+                    currentExpectedTimestamp=nextstamp+TIME_PER_FRAME;
 
  //                   if (DEBUG) out("BUFFER : Buffered "+bufferedMillis+" millis" );
 
@@ -301,7 +308,7 @@ public class PlayoutBuffer{
                                        "expeted Frame :"+nextTimestampToPlay);
                         decoder.decodeFrame(null);
                     }
-                    nextTimestampToPlay+=20;
+                    nextTimestampToPlay+=TIME_PER_FRAME;
                 }
             }
         }
