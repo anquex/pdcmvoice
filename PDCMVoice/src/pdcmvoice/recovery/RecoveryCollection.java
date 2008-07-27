@@ -212,7 +212,10 @@ public class RecoveryCollection
 	
 	public void recover(int sn, byte[] pkt)
     {
-	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt);
+	    if (sn - firstSnReceived >= collection.length - 20)
+            collection = collectionResize(collection, 2 * collection.length);
+	    
+	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt); 
     }
 	
     /*
