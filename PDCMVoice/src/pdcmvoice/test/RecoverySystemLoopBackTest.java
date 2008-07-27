@@ -33,7 +33,10 @@ public class RecoverySystemLoopBackTest {
         //rtpsession.addParticipant(p);
         rtpsessionR.naivePktReception(true);
     
-        rtpsessionR.payloadType(FORMAT_CODE_SPEEX_NB);
+        //FORMAT_CODE_SPEEX_WB
+        //FORMAT_CODE_SPEEX_NB
+        //FORMAT_CODE_iLBC
+        rtpsessionR.payloadType(FORMAT_CODE_SPEEX_WB);
     
         //rtpsessionR.payloadType(PAYLOAD_SPEEX);
         
@@ -53,7 +56,10 @@ public class RecoverySystemLoopBackTest {
         Participant pS = new Participant("127.0.0.1", 9000, 9001); //RTCP Port
         rtpsessionS.addParticipant(pS);
     
-        rtpsessionS.payloadType(FORMAT_CODE_SPEEX_NB);
+        //FORMAT_CODE_SPEEX_WB
+        //FORMAT_CODE_SPEEX_NB
+        //FORMAT_CODE_iLBC
+        rtpsessionS.payloadType(FORMAT_CODE_SPEEX_WB);
     
         //rtpsessionS.payloadType(PAYLOAD_SPEEX);
         
@@ -86,15 +92,25 @@ public class RecoverySystemLoopBackTest {
                                                                         //Sostituire "localhost" con l'ip di questo Interlocutore
         
         int pktSize = 20;
-        RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, true);
-        RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, true);
+        RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, RECOVERY_COLLECTION_DEBUG);
          
-        RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocketA, localCollection, clientB, remoteCollection, rtpsessionR, true);
+        RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocketA, localCollection, clientB, remoteCollection, rtpsessionR, RECOVERY_CONNECTION_DEBUG);
         
         RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
         RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection);
         rs.start();
         rc.start();
+        
+        /*
+         * ATTENZIONE!! ABILITARE LA PROSSIMA ISTRUZIONE (in Depacketizer.java) SOLO 
+         * PER L'ESECUZIONE DI RecoverySystemLoopBackTest.java
+         * 
+         * 
+         * rtpSession.registerRTPSession(this, null, null); (vecchia rtpSession.RTPSessionRegister(this, null, null);)
+         */
+        
+        
         
         VoiceSessionReceiver r = new VoiceSessionReceiver(1, rtpsessionR, remoteCollection);
         r.init();
