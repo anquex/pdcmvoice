@@ -24,6 +24,13 @@ public class VoiceSessionRecoveryTest extends Thread{
         try {
             s = new VoiceSessionSettings(2, 2, "192.168.0.4");
             ss = new VoiceSession(s, true);
+            
+            /*
+             * ATTENZIONE!! DISABILITARE LA PROSSIMA ISTRUZIONE (in Depacketizer.java) 
+             * 
+             * rtpSession.registerRTPSession(this, null, null); (vecchia rtpSession.RTPSessionRegister(this, null, null);)
+             */
+            
             ss.start();
 
         } catch (UnsupportedAudioFileException ex) {
