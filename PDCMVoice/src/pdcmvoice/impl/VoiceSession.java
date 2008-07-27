@@ -89,10 +89,10 @@ public class VoiceSession {
             e.printStackTrace();
         }
         
-        RecoveryCollection localCollection = new RecoveryCollection("local", DEFAULT_ENCODED_PACKET_SIZE, 1, true);
-        RecoveryCollection remoteCollection = new RecoveryCollection("remote", DEFAULT_ENCODED_PACKET_SIZE, 1, true);
+        RecoveryCollection localCollection = new RecoveryCollection("local", DEFAULT_ENCODED_PACKET_SIZE, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", DEFAULT_ENCODED_PACKET_SIZE, 1, RECOVERY_COLLECTION_DEBUG);
          
-        RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, true);
+        RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
         
         rs = new RecoveryServerThread(recoveryConnection);
         rc = new RecoveryClientThread(recoveryConnection);
