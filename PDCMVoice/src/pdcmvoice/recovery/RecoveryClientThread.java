@@ -20,6 +20,7 @@ public class RecoveryClientThread extends Thread
     private RecoveryConnection RecConn;
     private String lastQuery;
     private boolean lastQueryDone;
+    public boolean endOfStream;
     //private RecoveryServerThread server; //NO! il serverThread si ferma da solo quando legge lastQuery == "END OF QUERY"!!! - serve per interrompere l'esecuzione del ServerThread
     private boolean stopQuery;
     
@@ -28,6 +29,7 @@ public class RecoveryClientThread extends Thread
         this.RecConn = RecConn;
         lastQuery = null;
         lastQueryDone = false;
+        endOfStream = false;
         stopQuery = false;
 	}
 	
@@ -85,12 +87,36 @@ public class RecoveryClientThread extends Thread
             
             rtpDown= RecConn.getRtpSession().isEnding() || RecConn.getRtpSession() == null;
             
-            if (!rtpDown)
+    /* ------------------- 
+     * ATTENZIONE!!
+     * PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA QUINTA QUERY
+     * -------------------
+     */
+      if (writingTest++ >= 3 && RecConn.getRemoteCollection().debug)
+      {
+          stopQuery = true;
+          lastQuery = RecConn.getRemoteCollection().findAllHoles();
+          System.out.println("lastSnReceived: " + RecConn.getRemoteCollection().lastSnReceived);
+      }
+      else
+      {      //if (!rtpDown)
+            if (!endOfStream)
                 lastQuery = RecConn.getRemoteCollection().findHoles(0, false);
             else
+            {    
                 lastQuery = RecConn.getRemoteCollection().findAllHoles();
+                stopQuery = true;
+            }
+      }    
             
-            if (lastQuery != "")
+      /*
+       * ATTENZIONE!
+       * Il primo burst lo perdo sempre se perdo il primo pacchetto e gli altri non riesco a recuperarli: 
+       * per ogni burst recupero sempre lo stesso insieme di byte che non corrisponde neppure 
+       * ad un pacchetto del burst!
+       */
+      
+            if (!lastQuery.equals(""))
             {
                 if (RecConn.getRemoteCollection().debug)
                     System.out.println("INVIO QUERY: " + lastQuery);
@@ -137,20 +163,31 @@ public class RecoveryClientThread extends Thread
                     
                     if (RecConn.getRemoteCollection().debug)
                         System.out.println("pkt recuperato dal ClientThread: " + i);
+                    
+                  //if (RecConn.debug)
+                    {
+                        System.out.print("--CLIENT-- Ricevuto Sn " + i + ": ");
+                        
+                        for (int p = 0; p <= temp.length -1; p++)
+                        {
+                            System.out.print(temp[p] + " ");
+                        }
+                        
+                        System.out.println("");
+                        }
                    
                 }
                 
             }
             
             lastQuery = null;
-            
-            if (rtpDown) stopQuery = true;
-            
-            //ATTENZIONE!!
-            //PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA QUARTA QUERY
-            if (writingTest++ >= 10)
-                stopQuery = true;
+               
         }
+        
+        /*
+         * TODO prima di finire le richieste DEVO RECUPERARE CON UN'ULTIMA RICHIESTA GLI EVENTUALI PACCHETTI INIZIALI NON ARRIVATI.
+         * li richiedo al serverThread dell'interlocutore che cercherà fino all'inizio della propria localCollection e li invierà in sequenza in modo da permettere al mio client di concatenare questo insieme di pacchetto con quello da lui posseduto (la mia remote collection)
+         */
         
         //informa il server dell'altro interlocutore che sono stati ricevuti tutti i pacchetti
         try {
@@ -202,6 +239,7 @@ public class RecoveryClientThread extends Thread
         int localSn;
         int remoteSn;
         
+        AudioFormat targetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(16000.0), localAis.getFormat().getSampleSizeInBits(), localAis.getFormat().getChannels(), localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
         
         byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
@@ -244,6 +282,7 @@ public class RecoveryClientThread extends Thread
                 localDecoder.decodeFrame(local.read(localSn));
                 
                 //if (RecConn.getLocalCollection().debug)
+                {
                     System.out.print("--ELAB-- Decodificato Sn " + localSn + ": ");
                     
                     for (int l = 0; l <= local.read(localSn).length -1; l++)
@@ -252,6 +291,7 @@ public class RecoveryClientThread extends Thread
                     }
                     
                     System.out.println("");
+                }
                 
             }
             else
@@ -318,6 +358,7 @@ public class RecoveryClientThread extends Thread
         //Aggiornamento lunghezza IN FRAME dello stream localAis (necessaria per la scrittura del file .wav)
         try {
             localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
+            //localAis = new AudioInputStream(localAis, targetAudioFormat, localAis.available()/localAis.getFormat().getFrameSize());
         } catch (IOException e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -420,6 +461,7 @@ public class RecoveryClientThread extends Thread
                 remoteDecoder.decodeFrame(remote.read(remoteSn));
                 
                 //if (RecConn.getRemoteCollection().debug)
+                {
                     System.out.print("--ELAB-- Decodificato Sn " + remoteSn + ": ");
                     
                     for (int l = 0; l <= remote.read(remoteSn).length -1; l++)
@@ -428,6 +470,7 @@ public class RecoveryClientThread extends Thread
                     }
                     
                     System.out.println("");
+                }
                 
             }
             else
@@ -471,6 +514,7 @@ public class RecoveryClientThread extends Thread
         //Aggiornamento lunghezza IN FRAME dello stream remoteAis (necessaria per la scrittura del file .wav)
         try {
             remoteAis = new AudioInputStream(remoteAis, remoteAis.getFormat(), remoteAis.available()/remoteAis.getFormat().getFrameSize());
+            //remoteAis = new AudioInputStream(remoteAis, targetAudioFormat, remoteAis.available()/remoteAis.getFormat().getFrameSize());
         } catch (IOException e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -529,6 +573,7 @@ public class RecoveryClientThread extends Thread
 //      }
         
         List collectionAisList = new ArrayList();
+        //ATTENZIONE! prova registrazione del solo remoteAis recuperato
         collectionAisList.add(localAis);
         collectionAisList.add(remoteAis);
         
