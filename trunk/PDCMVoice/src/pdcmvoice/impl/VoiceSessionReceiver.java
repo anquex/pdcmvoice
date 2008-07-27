@@ -37,6 +37,7 @@ public class VoiceSessionReceiver {
     public VoiceSessionReceiver (int formatCode, RTPSession rtp, RecoveryCollection remote){
         this(formatCode,rtp);
         depacketizer= new Depacketizer(rtp, remote);
+        decoder=new Decoder(formatCode, true);
     }
 
     public void init() throws UnsupportedAudioFileException{
