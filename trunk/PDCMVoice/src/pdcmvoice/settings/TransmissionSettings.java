@@ -5,13 +5,14 @@
 
 package pdcmvoice.settings;
 
+import java.io.Serializable;
 import static pdcmvoice.impl.Constants.*;
 
 /**
  *
  * @author marco
  */
-public class TransmissionSettings {
+public class TransmissionSettings implements Serializable{
 
     private boolean enabledDynamic=true;
     private int minBufferSize;
