@@ -38,40 +38,61 @@ public class RTCPStats {
     public long[] RRlastSRTimeStamp;
     public long RRdelayLastSR;
 
-    public RTCPStats(){
-    }
+    // AVG (RR based)
+
+    private int AVGJitter=-1;
+    private int AVGPLoss =-1; // from loss fraction
+
+    // counters
+
+    private int receivedRR;
+    private int receiverSR;
 
     public void SRPktReceived(long ssrc, long ntpHighOrder, long ntpLowOrder, long rtpTimestamp, long packetCount, long octetCount, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR){
 
-    SRssrc=ssrc;
-    SRntpHighOrder=ntpHighOrder;
-    SRntpLowOrder=ntpLowOrder;
-    SRrtpTimestamp=rtpTimestamp;
-    SRpacketCount=packetCount;
-    SRoctetCount=octetCount;
-    SRreporteeSsrc=reporteeSsrc;
-    SRlossFraction=lossFraction;
-    SRcumulPacketsLost=cumulPacketsLost;
-    SRextHighSeq=extHighSeq;
-    SRinterArrivalJitter=interArrivalJitter;
-    SRlastSRTimeStamp=lastSRTimeStamp;
-    SRdelayLastSR=delayLastSR;
+        receiverSR++;
+
+        SRssrc=ssrc;
+        SRntpHighOrder=ntpHighOrder;
+        SRntpLowOrder=ntpLowOrder;
+        SRrtpTimestamp=rtpTimestamp;
+        SRpacketCount=packetCount;
+        SRoctetCount=octetCount;
+        SRreporteeSsrc=reporteeSsrc;
+        SRlossFraction=lossFraction;
+        SRcumulPacketsLost=cumulPacketsLost;
+        SRextHighSeq=extHighSeq;
+        SRinterArrivalJitter=interArrivalJitter;
+        SRlastSRTimeStamp=lastSRTimeStamp;
+        SRdelayLastSR=delayLastSR;
+
     }
 
     public void RRPktReceived(long reporterSsrc, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
 
-    RRreporterSsrc=reporterSsrc;
-    RRreporteeSsrc=reporteeSsrc;
-    if(lossFraction.length>0)
-        RRlossFraction=lossFraction[0];
-    if(cumulPacketsLost.length>0)
-        RRcumulPacketsLost=cumulPacketsLost[0];
-    RRextHighSeq=extHighSeq;
-    if(interArrivalJitter.length>0)
-        RRinterArrivalJitter=interArrivalJitter[0];
-    RRlastSRTimeStamp=lastSRTimeStamp;
-    if(delayLastSR.length>0)
-        RRdelayLastSR=delayLastSR[0];
+        receivedRR++;
+        RRreporterSsrc=reporterSsrc;
+        RRreporteeSsrc=reporteeSsrc;
+        if(lossFraction.length>0)
+            RRlossFraction=lossFraction[0];
+        if(cumulPacketsLost.length>0)
+            RRcumulPacketsLost=cumulPacketsLost[0];
+        RRextHighSeq=extHighSeq;
+        if(interArrivalJitter.length>0)
+            RRinterArrivalJitter=interArrivalJitter[0];
+        RRlastSRTimeStamp=lastSRTimeStamp;
+        if(delayLastSR.length>0)
+            RRdelayLastSR=delayLastSR[0];
+
+        updateAVG();
+    }
+
+    private void updateAVG(){
+        // do avg update,
+        // should last n samples be remembered?
+
+        //avg variables to be defined
+
     }
 
 }
