@@ -5,13 +5,14 @@
 
 package pdcmvoice.settings;
 
+import java.io.Serializable;
 import static pdcmvoice.impl.Constants.*;
 
 /**
  *
  * @author marco
  */
-public class AudioSettings {
+public class AudioSettings implements Serializable{
 
     private int formatCode;
     private int speexQuality;
