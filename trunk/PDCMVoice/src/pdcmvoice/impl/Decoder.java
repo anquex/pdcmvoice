@@ -68,9 +68,12 @@ public class Decoder {
         this (format);
 
         //antonio modifications goes here
-        cBuffer=new CircularByteBuffer(150000);
-        input=cBuffer.getInputStream();
-        output=cBuffer.getOutputStream();
+        if (recovery)
+        {
+            cBuffer=new CircularByteBuffer(10500000); //10 minuti di audio
+            input=cBuffer.getInputStream();
+            output=cBuffer.getOutputStream();
+        }
     }
 
     public void init(){
