@@ -61,7 +61,8 @@ public class RecoveryClientThread extends Thread
         
 	    
 	    int pktSize = RecConn.getRemoteCollection().getPktSize();
-        byte[] temp = new byte[pktSize];
+	    //byte[] temp = new byte[pktSize];  NON QUI'!!!!!
+        long zero = 0;
         boolean rtpDown;
         
         try {
@@ -114,6 +115,9 @@ public class RecoveryClientThread extends Thread
        * Il primo burst lo perdo sempre se perdo il primo pacchetto e gli altri non riesco a recuperarli: 
        * per ogni burst recupero sempre lo stesso insieme di byte che non corrisponde neppure 
        * ad un pacchetto del burst!
+       * 
+       * ANCHE SENZA BURST IL PACCHETTO NON VIENE DECODFICATO BENE ANCHE SE VIENE RECUPERATO IN MODO CORRETTO
+       * 
        */
       
             if (!lastQuery.equals(""))
@@ -153,6 +157,7 @@ public class RecoveryClientThread extends Thread
                 
                 for (int i = start; i <= end; i++)
                 {
+                    byte[] temp = new byte[pktSize];
                     try {
                     dis.read(temp, 0, pktSize);
                     } catch (IOException e) {
@@ -160,6 +165,7 @@ public class RecoveryClientThread extends Thread
                         e.printStackTrace();
                     }
                     RecConn.getRemoteCollection().recover(i, temp);
+                    //RecConn.getRemoteCollection().add(i, temp, zero);
                     
                     if (RecConn.getRemoteCollection().debug)
                         System.out.println("pkt recuperato dal ClientThread: " + i);
@@ -173,8 +179,18 @@ public class RecoveryClientThread extends Thread
                             System.out.print(temp[p] + " ");
                         }
                         
-                        System.out.println("");
+                        System.out.println("lunghezza=  " + temp.length);
+                        
+                        System.out.print("--CLIENT-- inserito Sn " + i + ": ");
+                        
+                        for (int p = 0; p <= RecConn.getRemoteCollection().read(i).length -1; p++)
+                        {
+                            System.out.print(RecConn.getRemoteCollection().read(i)[p] + " ");
                         }
+                        
+                        System.out.println("lunghezza=  " + temp.length);
+                        
+                     } //end if debug
                    
                 }
                 
