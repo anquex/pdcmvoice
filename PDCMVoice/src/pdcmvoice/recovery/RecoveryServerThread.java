@@ -45,6 +45,7 @@ public class RecoveryServerThread extends Thread
         {    
             int l = 0;
             boolean lineRead = false;
+            lastQuery = null;
             while (!lineRead)
             {
                 try {
@@ -79,7 +80,7 @@ public class RecoveryServerThread extends Thread
             
                 
             }
-            if (this.lastQuery != "")
+            if (!this.lastQuery.equals(""))
             {
                 if (RecConn.getLocalCollection().debug)
                     System.out.println("---RICEZIONE QUERY: " + this.lastQuery);
@@ -93,11 +94,11 @@ public class RecoveryServerThread extends Thread
                 StringTokenizer izer2;
                 int start;
                 int end;
-                int totalePkt = 0;
+                int totalePkt = 1;
                 
                 int pktSize = RecConn.getLocalCollection().getPktSize();
                 byte[] temp;//contiene il pacchetto associato ad ogni SN
-                byte[] send = new byte[20*pktSize];//contiene 20 pacchetti (da ritrasmettere)
+                byte[] send = new byte[(RecConn.getLocalCollection().getWindowWidth())*pktSize];//contiene al massimo windowWidth pacchetti (da ritrasmettere)
                 
                 while (izer.hasMoreTokens())
                 {
@@ -116,24 +117,37 @@ public class RecoveryServerThread extends Thread
                     
                     for (int i = start; i <= end; i++)
                     {
-                        if ((totalePkt+1)*pktSize + pktSize >= send.length -1)
-                            arrayResize(send, 2*send.length);
+                        if ((totalePkt-1)*pktSize + pktSize -1 >= send.length -1)
+                            send = arrayResize(send, 2*send.length);
                         temp = RecConn.getLocalCollection().read(i);
-                        System.arraycopy (temp, 0, send, totalePkt*pktSize, temp.length);
+                        System.arraycopy (temp, 0, send, (totalePkt-1)*pktSize, temp.length);
                         totalePkt++;
+                        
+                      //if (RecConn.debug)
+                        {
+                        System.out.print("--SERVER-- Inviato Sn " + i + ": ");
+                        
+                        for (int p = 0; p <= temp.length -1; p++)
+                        {
+                            System.out.print(temp[p] + " ");
+                        }
+                        
+                        System.out.println("");
+                        }
                        
                     }
                     
                 }
                 
                 try {
-                    dos.write(send, 0, totalePkt*pktSize);
+                    dos.write(send, 0, (totalePkt-1)*pktSize);
                     dos.flush();
                     lastQuery = null;
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                
             }
             
         }//end while (!stop)
