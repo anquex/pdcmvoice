@@ -196,12 +196,131 @@ public class RecoveryCollection
 	   
 	}
 	
+	public byte[] findHolesByte(int window, boolean untilEnd)
+    {
+        byte[] output = new byte[150];
+        int k = 3;
+        byte next = 0; //separatore
+        byte until = 1; //separatore per intervalli
+        byte endOfQuery = 2;
+        
+        //short e1 = 0;
+        //short e2 = 0;
+        Integer t = null;
+        
+        //byte mask = Byte.parseByte("1111111100000000", 2);
+        int hiMask = Integer.parseInt("130560", 10);//1111111100000000
+        int lowMask = Integer.parseInt("511", 10);//0000000011111111
+        
+        if (firstSnReceived >= 0)
+        {
+            int start = lastSn > 0 ? lastSn+1 : 0;
+            int end;
+            /*
+            if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
+            */
+            if(untilEnd)
+                end = lastSnReceived;
+            else
+                end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
+            lastSn = end;
+            
+            if (debug)
+                System.out.println("findHolesByte - start: " + start + ", end: " + end);
+            
+            int i, j;
+            int firstSnOfTheQuery = 0;
+            
+            
+            for (i = start; i <= end; i++ )
+            {
+                
+                boolean jNull = true;
+                if (collection[i] == null)
+                {
+                    System.out.println("firstSnOfTheQuery: " + firstSnOfTheQuery);
+                    if (i == end)
+                    {    
+                        k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), next);
+                        System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                    }
+                    else
+                    {
+                        j = i + 1;
+                        for (; j <= end; j++ )
+                        {
+                            if (collection[j] != null)
+                            {
+                                jNull = false; //j punta ad un valore non nullo
+                                break;
+                            }
+                        }
+                        
+                        if (!jNull)
+                        {
+                            if (i == j-1)
+                            {
+                                k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), next);
+                                System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                            }
+                            else
+                            {
+                                k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
+                                System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                                
+                                k = writeOutSn(output, k, (firstSnReceived + j-1 - firstSnOfTheQuery), next);
+                                System.out.println("query-write: " + (firstSnReceived + j-1 - firstSnOfTheQuery));
+                                
+                            }
+                            i = j; //deve partire da j+1, ma se ne occupa il i++ del for
+                        }
+                        else
+                        {
+                            k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
+                            System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                            
+                            k = writeOutSn(output, k, (firstSnReceived + j - firstSnOfTheQuery), next);
+                            System.out.println("query-write: " + (firstSnReceived + j - firstSnOfTheQuery));
+                            
+                            break; //j e' arrivato in fondo ed e' stato inserito nella richiesta
+                        }
+                    } //end else: i < end
+                    
+                    if (firstSnOfTheQuery == 0)
+                        firstSnOfTheQuery = firstSnReceived + i -1;
+                } // end if (collection[i] == null)
+            } //end for i
+            
+        }//end if
+        
+        //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa) 
+        System.out.println("lunghezza: " + (k-3));
+        writeOutSn(output, 0, (k-3), next);
+        //System.out.println("ultima k: " + k);
+        
+        //k = writeOutSn(output, k, -1000, endOfQuery);
+        
+        byte[] out = new byte[k];
+        System.arraycopy(output, 0, out, 0, k);
+        
+        return out;
+        
+       
+    }
+	
 	public String findAllHoles()
 	{
 	    if (lastSnReceived == -1)
 	        throw new IllegalStateException();
 	    return findHoles(0, true);
 	}
+	
+	public byte[] findAllHolesByte()
+    {
+        if (lastSnReceived == -1)
+            throw new IllegalStateException();
+        return findHolesByte(0, true);
+    }
 	
 	public byte[] read(int sn)
 	{
@@ -217,6 +336,26 @@ public class RecoveryCollection
 	    
 	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt); 
     }
+	
+	public int writeOutSn(byte[] array, int start, int sn, byte nextByte) //sn è sempre di 2 byte al massimo
+	{
+	    if (sn > 0)
+	    {
+    	    Integer t;
+    	    int hiMask = Integer.parseInt("130560", 10);//1111111100000000
+            int lowMask = Integer.parseInt("511", 10); //0000000011111111
+            
+    	    t = new Integer((hiMask & sn)>>8);
+    	    array[start++] = t.byteValue();
+            t = new Integer(lowMask & sn);
+            array[start++] = t.byteValue();
+            array[start++] = nextByte;
+	    }
+	    else
+	        array[start++] = nextByte;
+        
+        return start; //prossima posizione in cui scrivere 
+	}
 	
     /*
 	public boolean recover(String query, DataInputStream dis)
