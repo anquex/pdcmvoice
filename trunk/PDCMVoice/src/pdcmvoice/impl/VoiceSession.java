@@ -65,7 +65,7 @@ public class VoiceSession {
 
     }
     
-    public VoiceSession (VoiceSessionSettings settings, boolean withRecovery, int localPort, int encodedPacketSize) throws SocketException{
+    public VoiceSession (VoiceSessionSettings settings, boolean withRecovery, int localPort, int remotePort, int encodedPacketSize) throws SocketException{
 
         this.settings=settings;
 
@@ -79,12 +79,14 @@ public class VoiceSession {
         
         if (localPort <= 0)
             localPort = DEFAULT_RECOVERY_PORT_LOCAL;
+        if (remotePort <= 0)
+            remotePort = DEFAULT_RECOVERY_PORT_LOCAL;
         if (encodedPacketSize <= 0)
             encodedPacketSize = DEFAULT_ENCODED_PACKET_SIZE;
         
         try {
-            ServerSocket serverSocket = new ServerSocket(DEFAULT_RECOVERY_PORT_LOCAL);
-            client = new Socket(InetAddress.getByName(settings.getRemoteAddress()), DEFAULT_RECOVERY_PORT_LOCAL);
+            ServerSocket serverSocket = new ServerSocket(localPort);
+            client = new Socket(InetAddress.getByName(settings.getRemoteAddress()), remotePort);
             server = serverSocket.accept();
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
@@ -94,8 +96,8 @@ public class VoiceSession {
             e.printStackTrace();
         }
         
-        RecoveryCollection localCollection = new RecoveryCollection("local", DEFAULT_ENCODED_PACKET_SIZE, 1, RECOVERY_COLLECTION_DEBUG);
-        RecoveryCollection remoteCollection = new RecoveryCollection("remote", DEFAULT_ENCODED_PACKET_SIZE, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection localCollection = new RecoveryCollection("local", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
          
         RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
         
