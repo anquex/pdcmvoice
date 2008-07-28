@@ -65,7 +65,7 @@ public class VoiceSession {
 
     }
     
-    public VoiceSession (VoiceSessionSettings settings, boolean withRecovery) throws SocketException{
+    public VoiceSession (VoiceSessionSettings settings, boolean withRecovery, int localPort, int encodedPacketSize) throws SocketException{
 
         this.settings=settings;
 
@@ -76,6 +76,11 @@ public class VoiceSession {
         
         Socket client = null;
         Socket server = null;
+        
+        if (localPort <= 0)
+            localPort = DEFAULT_RECOVERY_PORT_LOCAL;
+        if (encodedPacketSize <= 0)
+            encodedPacketSize = DEFAULT_ENCODED_PACKET_SIZE;
         
         try {
             ServerSocket serverSocket = new ServerSocket(DEFAULT_RECOVERY_PORT_LOCAL);
@@ -137,9 +142,18 @@ public class VoiceSession {
             rtpSession.endSession();
             senderSession.stop();
             receiverSession.stop();
+            
             // recovery connection should still be running
-            //closeSockets();
+            rc.endOfStream = true;
+            try {
+                rc.join();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            //closeSockets(); -> rc...
             out ("Voice Session Stopped");
+            
 
     }
     public int setMinBufferedMillis(int n){
