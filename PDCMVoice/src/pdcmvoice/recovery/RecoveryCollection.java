@@ -209,8 +209,8 @@ public class RecoveryCollection
         Integer t = null;
         
         //byte mask = Byte.parseByte("1111111100000000", 2);
-        int hiMask = Integer.parseInt("130560", 10);//1111111100000000
-        int lowMask = Integer.parseInt("511", 10);//0000000011111111
+        int hiMask = Integer.parseInt("65280", 10);//1111111100000000
+        int lowMask = Integer.parseInt("255", 10);//0000000011111111
         
         if (firstSnReceived >= 0)
         {
@@ -350,18 +350,22 @@ public class RecoveryCollection
 	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt); 
     }
 	
-	public int writeOutSn(byte[] array, int start, int sn, byte nextByte) //sn è sempre di 2 byte al massimo
+	private int writeOutSn(byte[] array, int start, int sn, byte nextByte) //sn è sempre di 2 byte al massimo
 	{
 	    if (sn > 0)
 	    {
-    	    Integer t;
-    	    int hiMask = Integer.parseInt("130560", 10);//1111111100000000
-            int lowMask = Integer.parseInt("511", 10); //0000000011111111
+//    	    System.out.println("--writeOutSn-- sn: " + sn);
+	        
+	        Integer t;
+    	    int hiMask = Integer.parseInt("65280", 10);//1111111100000000
+            int lowMask = Integer.parseInt("255", 10); //0000000011111111
             
-    	    t = new Integer((hiMask & sn)>>8);
+            t = new Integer((hiMask & sn)>>8);
     	    array[start++] = t.byteValue();
+//    	    System.out.println("--writeOutSn-- bit più significativi: " + t.byteValue());
             t = new Integer(lowMask & sn);
             array[start++] = t.byteValue();
+//          System.out.println("--writeOutSn-- bit meno significativi: " + t.byteValue());
             array[start++] = nextByte;
 	    }
 	    else
@@ -369,6 +373,22 @@ public class RecoveryCollection
         
         return start; //prossima posizione in cui scrivere 
 	}
+	
+	public static int mergeBytes(byte a, byte b)
+    {
+//	    System.out.println("--mergeBytes-- a: " + a + " b: " + b);
+        
+	    int aM = (int) a & 0xff;
+	    int bM = (int) b & 0xff;
+        
+	    aM = aM << 8;
+//	    System.out.println("--mergeBytes-- bit più significativi: " + aM);
+//      System.out.println("--mergeBytes-- bit meno significativi: " + bM);
+	    return aM + bM;
+	    
+	    
+      
+    }
 	
     /*
 	public boolean recover(String query, DataInputStream dis)

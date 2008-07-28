@@ -49,6 +49,8 @@ public class RecoveryServerThread extends Thread
             boolean queryRead = false;
             boolean lengthRead = false;
             int queryLength = 0;
+            byte queryLength1 = 0;
+            byte queryLength2 = 0;
             int f = 0; //lettura lunghezza
             lastQueryByte = null;
             int k = 0; // indice lastQueryByte
@@ -72,7 +74,10 @@ public class RecoveryServerThread extends Thread
     //                        if (RecConn.debug)
     //                            System.out.println("br.ready...");
     //                        
-                            queryLength += dis.readByte();
+                            if (f == 0)
+                                queryLength1 = dis.readByte();
+                            else if (f == 1)
+                                queryLength2 = dis.readByte();
                             if (RecConn.debug)
                                 System.out.println("una parte della lunghezza e' stata letta");
                             f++;
@@ -80,7 +85,7 @@ public class RecoveryServerThread extends Thread
                             {
                                 lengthRead = true;
                                 //CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
-                                
+                                queryLength = RecoveryCollection.mergeBytes(queryLength1, queryLength2);
                                 if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
                                 {
                                     endServerThread = true;
@@ -151,9 +156,9 @@ public class RecoveryServerThread extends Thread
                 }
             }
             else
-                if (RecConn.getLocalCollection().debug)
+                if (RecConn.getLocalCollection().debug && !endServerThread)
                 {
-                    System.out.print("-------ERRORE RICEZIONE QUERY-------");
+                    System.out.println("-------ERRORE RICEZIONE QUERY-------");
                 }
             
             if (!endServerThread);
@@ -173,7 +178,7 @@ public class RecoveryServerThread extends Thread
                 
                 for (int j = 0; j<=queryLength -1; j++) //diverso dal for del RecoveryClientThread
                 {
-                    sn = lastQueryByte[j] + lastQueryByte[++j];
+                    sn = RecoveryCollection.mergeBytes(lastQueryByte[j], lastQueryByte[++j]);
                     separatore = lastQueryByte[++j];
                     
                     if (j == 2)
@@ -187,7 +192,7 @@ public class RecoveryServerThread extends Thread
                         end = start;
                     else if (separatore == 1)
                     {
-                        end = firstSnOfTheQuery + lastQueryByte[++j] + lastQueryByte[++j];
+                        end = firstSnOfTheQuery + RecoveryCollection.mergeBytes(lastQueryByte[++j], lastQueryByte[++j]);
                         j++; //salto il separatore successivo
                         
                         if (RecConn.getLocalCollection().debug)
@@ -230,21 +235,25 @@ public class RecoveryServerThread extends Thread
                     
                 }
                 
-                try {
-                    
-                    if (RecConn.getLocalCollection().debug)
-                        System.out.println("--SERVER-- tentativo invio pacchetti richiesti ");
-                    
-                    dos.write(send, 0, (totalePkt-1)*pktSize);
-                    dos.flush();
-                    
-                    if (RecConn.getLocalCollection().debug)
-                        System.out.println("--SERVER-- pacchetti INVIATI");
-                    
-                    lastQueryByte = null;
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                if (!endServerThread) 
+                {
+                    try {
+
+                        if (RecConn.getLocalCollection().debug)
+                            System.out
+                                    .println("--SERVER-- tentativo invio pacchetti richiesti ");
+
+                        dos.write(send, 0, (totalePkt - 1) * pktSize);
+                        dos.flush();
+
+                        if (RecConn.getLocalCollection().debug)
+                            System.out.println("--SERVER-- pacchetti INVIATI");
+
+                        lastQueryByte = null;
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
                 
             }
