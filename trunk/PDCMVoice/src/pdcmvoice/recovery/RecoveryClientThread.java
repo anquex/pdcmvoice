@@ -167,11 +167,11 @@ public class RecoveryClientThread extends Thread
                       else
                           sn += firstSnOfTheQuery; //considero vecchio sn come incremento
                       
-//                      if (RecConn.getRemoteCollection().debug)
-//                      {
-//                      System.out.println("--CLIENT-- firstSnOfTheQuery: " + firstSnOfTheQuery);
-//                      System.out.println("--CLIENT-- sn: " + sn);
-//                      }
+                      if (RecConn.getRemoteCollection().debug)
+                      {
+                      System.out.println("--CLIENT-- firstSnOfTheQuery: " + firstSnOfTheQuery);
+                      System.out.println("--CLIENT-- sn: " + sn);
+                      }
                       
                       start = sn;
                       if (separatore == 0)
@@ -179,6 +179,8 @@ public class RecoveryClientThread extends Thread
                       else if (separatore == 1)
                       {
                           end = sn + lastQueryByte[++j] + lastQueryByte[++j];
+                          j++; //salto il separatore successivo
+                          
                           if (RecConn.getRemoteCollection().debug)
                               System.out.println("--CLIENT-- end: " + end);
                       }
@@ -365,7 +367,10 @@ public class RecoveryClientThread extends Thread
         
         //informa il server dell'altro interlocutore che sono stati ricevuti tutti i pacchetti
         try {
-            dos.write(new byte[]{0, 0, 2}, 0, 3);
+            byte a, b, c;
+            a = 0; b = 0; c = 2;
+            
+            dos.write(new byte[]{a, b, c}, 0, 3);
             dos.flush();
             
         } catch (IOException e) {

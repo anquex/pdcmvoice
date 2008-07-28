@@ -82,15 +82,20 @@ public class RecoveryServerThread extends Thread
                                 //CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
                                 
                                 if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
+                                {
                                     endServerThread = true;
+                                    if (RecConn.getLocalCollection().debug)
+                                        System.out.println("--SERVER-- Client says: END OF QUERY ");
                                     //lastQueryByte rimane null
+                                }
                                 else
                                 {
                                     dis.readByte();//salto il byte di controllo
                                     lastQueryByte = new byte[queryLength];
                                     
                                     //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
-                                    System.out.println("queryLength: " + queryLength);
+                                    if (RecConn.getLocalCollection().debug)
+                                        System.out.println("--SERVER-- queryLength: " + queryLength);
                                 }
                             }
                         }
@@ -183,6 +188,10 @@ public class RecoveryServerThread extends Thread
                     else if (separatore == 1)
                     {
                         end = firstSnOfTheQuery + lastQueryByte[++j] + lastQueryByte[++j];
+                        j++; //salto il separatore successivo
+                        
+                        if (RecConn.getLocalCollection().debug)
+                            System.out.println("--SERVER-- end: " + end);
                     }
                     else
                         throw new IllegalArgumentException("posizione " + j);

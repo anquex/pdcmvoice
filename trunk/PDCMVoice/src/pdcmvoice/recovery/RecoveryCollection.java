@@ -198,7 +198,7 @@ public class RecoveryCollection
 	
 	public byte[] findHolesByte(int window, boolean untilEnd)
     {
-        byte[] output = new byte[150];
+        byte[] output = new byte[10*Math.max(window, windowWidth)];
         int k = 3;
         byte next = 0; //separatore
         byte until = 1; //separatore per intervalli
@@ -231,7 +231,7 @@ public class RecoveryCollection
             int i, j;
             int firstSnOfTheQuery = 0;
             
-            
+            System.out.println("firstSnReceived: " + firstSnReceived);
             for (i = start; i <= end; i++ )
             {
                 
@@ -262,16 +262,24 @@ public class RecoveryCollection
                             {
                                 k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), next);
                                 System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                                
+                                if (firstSnOfTheQuery == 0)
+                                    firstSnOfTheQuery = firstSnReceived + i;
                             }
                             else
                             {
                                 k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
                                 System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
                                 
+                                if (firstSnOfTheQuery == 0)
+                                    firstSnOfTheQuery = firstSnReceived + i;
+                                
                                 k = writeOutSn(output, k, (firstSnReceived + j-1 - firstSnOfTheQuery), next);
                                 System.out.println("query-write: " + (firstSnReceived + j-1 - firstSnOfTheQuery));
                                 
                             }
+                            
+                            
                             i = j; //deve partire da j+1, ma se ne occupa il i++ del for
                         }
                         else
@@ -279,15 +287,20 @@ public class RecoveryCollection
                             k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
                             System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
                             
+                            if (firstSnOfTheQuery == 0)
+                                firstSnOfTheQuery = firstSnReceived + i;
+                            
                             k = writeOutSn(output, k, (firstSnReceived + j - firstSnOfTheQuery), next);
                             System.out.println("query-write: " + (firstSnReceived + j - firstSnOfTheQuery));
                             
+                            
                             break; //j e' arrivato in fondo ed e' stato inserito nella richiesta
+                            
+                            
                         }
                     } //end else: i < end
                     
-                    if (firstSnOfTheQuery == 0)
-                        firstSnOfTheQuery = firstSnReceived + i -1;
+                    
                 } // end if (collection[i] == null)
             } //end for i
             
