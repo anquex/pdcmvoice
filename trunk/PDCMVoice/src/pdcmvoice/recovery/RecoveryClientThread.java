@@ -101,7 +101,7 @@ public class RecoveryClientThread extends Thread
      //       QUERY COSTITUITE DA BYTE
      //      ----------------------------       
             
-            if (writingTest++ >= 3 && RecConn.getRemoteCollection().debug)
+            if (writingTest++ >= 10 && RecConn.getRemoteCollection().debug)
             {
                 stopQuery = true;
                 lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
@@ -144,7 +144,7 @@ public class RecoveryClientThread extends Thread
                       System.out.println("ClientThread: nessun pkt perso dall'ultima ricerca");
                  
                   
-                  int length = lastQueryByte[0] + lastQueryByte[1] ;         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
+                  int length = RecoveryCollection.mergeBytes(lastQueryByte[0], lastQueryByte[1]) ;         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
 //                  if (RecConn.getRemoteCollection().debug)
 //                      System.out.println("--CLIENT-- length della query effettiva= " + length);
                   
@@ -159,7 +159,7 @@ public class RecoveryClientThread extends Thread
 //                      if (RecConn.getRemoteCollection().debug)
 //                          System.out.println("--CLIENT-- entro nel ciclo for con length = " + length);
                       
-                      sn = lastQueryByte[j] + lastQueryByte[++j];
+                      sn = RecoveryCollection.mergeBytes(lastQueryByte[j],  lastQueryByte[++j]);
                       separatore = lastQueryByte[++j];
                       
                       if (j == 5)
@@ -178,7 +178,7 @@ public class RecoveryClientThread extends Thread
                           end = start;
                       else if (separatore == 1)
                       {
-                          end = sn + lastQueryByte[++j] + lastQueryByte[++j];
+                          end = firstSnOfTheQuery + RecoveryCollection.mergeBytes(lastQueryByte[++j], lastQueryByte[++j]);
                           j++; //salto il separatore successivo
                           
                           if (RecConn.getRemoteCollection().debug)
@@ -1044,5 +1044,7 @@ public class RecoveryClientThread extends Thread
         System.arraycopy (b, 0, newArray, 0, b.length);
         return newArray;
     }
+	
+	
 	
 }
