@@ -83,7 +83,7 @@ public class RecoveryServerThread extends Thread
                             f++;
                             if (f >= 2)
                             {
-                                lengthRead = true;
+                                
                                 //CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
                                 queryLength = RecoveryCollection.mergeBytes(queryLength1, queryLength2);
                                 if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
@@ -93,8 +93,15 @@ public class RecoveryServerThread extends Thread
                                         System.out.println("--SERVER-- Client says: END OF QUERY ");
                                     //lastQueryByte rimane null
                                 }
+                                else if (queryLength == 0)
+                                {
+                                    System.out.println("--SERVER-- EMPTY QUERY RECEIVED");
+                                    dis.readByte();//salto il byte di controllo
+                                    f= 0; //pronto a leggere una nuova queryLength
+                                }
                                 else
                                 {
+                                    lengthRead = true;
                                     dis.readByte();//salto il byte di controllo
                                     lastQueryByte = new byte[queryLength];
                                     
