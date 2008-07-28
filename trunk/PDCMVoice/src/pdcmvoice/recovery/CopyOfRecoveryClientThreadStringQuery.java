@@ -15,17 +15,16 @@ import org.xiph.speex.spi.*;
  * 
  * @author Antonio
  */
-public class RecoveryClientThread extends Thread
+public class CopyOfRecoveryClientThreadStringQuery extends Thread
 {
     private RecoveryConnection RecConn;
     private String lastQuery;
-    private byte[] lastQueryByte;
     private boolean lastQueryDone;
     public boolean endOfStream;
     //private RecoveryServerThread server; //NO! il serverThread si ferma da solo quando legge lastQuery == "END OF QUERY"!!! - serve per interrompere l'esecuzione del ServerThread
     private boolean stopQuery;
     
-    public RecoveryClientThread(RecoveryConnection RecConn)
+    public CopyOfRecoveryClientThreadStringQuery(RecoveryConnection RecConn)
 	{
         this.RecConn = RecConn;
         lastQuery = null;
@@ -88,173 +87,12 @@ public class RecoveryClientThread extends Thread
             }
             
             rtpDown= RecConn.getRtpSession().isEnding() || RecConn.getRtpSession() == null;
-
-            
             
     /* ------------------- 
      * ATTENZIONE!!
-     * PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA TERZA QUERY
+     * PROVA SCRITTURA DELL'AUDIO RICEVUTO FINO ALLA QUINTA QUERY
      * -------------------
      */
-
-     //       ----------------------------
-     //       QUERY COSTITUITE DA BYTE
-     //      ----------------------------       
-            
-            if (writingTest++ >= 3 && RecConn.getRemoteCollection().debug)
-            {
-                stopQuery = true;
-                lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
-                System.out.println("lastSnReceived: " + RecConn.getRemoteCollection().lastSnReceived);
-            }
-            else
-            {      //if (!rtpDown)
-                  if (!endOfStream) //da impostare tramite classi condivise come VoiceSessionSettings
-                      lastQueryByte = RecConn.getRemoteCollection().findHolesByte(0, false);
-                  else
-                  {    
-                      lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
-                      stopQuery = true;
-                  }
-            }    
-                  
-            
-             // ATTENZIONE!
-             // Il primo burst lo perdo sempre se perdo il primo pacchetto
-             
-            
-                  if (lastQueryByte != null)
-                  {
-                      if (RecConn.getRemoteCollection().debug)
-                      {
-                          System.out.print("INVIO QUERY:");
-                          for (int k=0; k<=lastQueryByte.length-1; k++) //k <= lastQueryByte[0] + lastQueryByte[1]
-                              System.out.print(" " + lastQueryByte[k]);
-                          System.out.println("");
-                      }
-                      try {
-                          dos.write(lastQueryByte, 0, lastQueryByte.length);
-                          dos.flush();
-                      } catch (IOException e) {
-                          // TODO Auto-generated catch block
-                          e.printStackTrace();
-                      }
-                  }
-                  else if (RecConn.getRemoteCollection().debug)
-                      System.out.println("ClientThread: nessun pkt perso dall'ultima ricerca");
-                 
-                  
-                  int length = lastQueryByte[0] + lastQueryByte[1] ;         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
-//                  if (RecConn.getRemoteCollection().debug)
-//                      System.out.println("--CLIENT-- length della query effettiva= " + length);
-                  
-                  int sn  = 0;
-                  byte separatore = 0;
-                  int start, end;
-                  
-                  int firstSnOfTheQuery = 0;
-                  
-                  for (int j = 3; j<=(length+3) -1; j++) 
-                  {
-//                      if (RecConn.getRemoteCollection().debug)
-//                          System.out.println("--CLIENT-- entro nel ciclo for con length = " + length);
-                      
-                      sn = lastQueryByte[j] + lastQueryByte[++j];
-                      separatore = lastQueryByte[++j];
-                      
-                      if (j == 5)
-                          firstSnOfTheQuery = sn;
-                      else
-                          sn += firstSnOfTheQuery; //considero vecchio sn come incremento
-                      
-//                      if (RecConn.getRemoteCollection().debug)
-//                      {
-//                      System.out.println("--CLIENT-- firstSnOfTheQuery: " + firstSnOfTheQuery);
-//                      System.out.println("--CLIENT-- sn: " + sn);
-//                      }
-                      
-                      start = sn;
-                      if (separatore == 0)
-                          end = start;
-                      else if (separatore == 1)
-                      {
-                          end = sn + lastQueryByte[++j] + lastQueryByte[++j];
-                          if (RecConn.getRemoteCollection().debug)
-                              System.out.println("--CLIENT-- end: " + end);
-                      }
-                      else
-                          throw new IllegalArgumentException();
-                      
-                      
-                      for (int i = start; i <= end; i++)
-                      {
-                          byte[] temp = new byte[pktSize];
-                          try {
-//                              if (RecConn.getRemoteCollection().debug)
-//                                  System.out.println("--CLIENT-- tentativo lettura pacchetto " + i);
-                          dis.read(temp, 0, pktSize);
-//                          if (RecConn.getRemoteCollection().debug)
-//                              System.out.println("--CLIENT-- LETTO pacchetto " + i);
-                          
-                          } catch (IOException e) {
-                              // TODO Auto-generated catch block
-                              e.printStackTrace();
-                          }
-                          
-                          
-                          RecConn.getRemoteCollection().recover(i, temp);
-                          //RecConn.getRemoteCollection().add(i, temp, zero);
-                          
-                          if (RecConn.getRemoteCollection().debug)
-                              System.out.println("pkt recuperato dal ClientThread: " + i);
-                          
-                        //if (RecConn.debug)
-                          {
-                              System.out.print("--CLIENT-- Ricevuto Sn " + i + ": ");
-                              
-                              for (int p = 0; p <= temp.length -1; p++)
-                              {
-                                  System.out.print(temp[p] + " ");
-                              }
-                              
-                              System.out.println("lunghezza=  " + temp.length);
-                              
-                              System.out.print("--CLIENT-- inserito Sn " + i + ": ");
-                              
-                              for (int p = 0; p <= RecConn.getRemoteCollection().read(i).length -1; p++)
-                              {
-                                  System.out.print(RecConn.getRemoteCollection().read(i)[p] + " ");
-                              }
-                              
-                              System.out.println("lunghezza=  " + temp.length);
-                              
-                           } //end if debug
-                         
-                      }
-                      
-                  }
-                  
-                  lastQueryByte = null;
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-/* ----------------------------
-   QUERY COSTITUITE DA STRINGHE
-   ----------------------------
-             
       if (writingTest++ >= 3 && RecConn.getRemoteCollection().debug)
       {
           stopQuery = true;
@@ -272,10 +110,15 @@ public class RecoveryClientThread extends Thread
             }
       }    
             
-      
-       // ATTENZIONE!
-       // Il primo burst lo perdo sempre se perdo il primo pacchetto
-       
+      /*
+       * ATTENZIONE!
+       * Il primo burst lo perdo sempre se perdo il primo pacchetto e gli altri non riesco a recuperarli: 
+       * per ogni burst recupero sempre lo stesso insieme di byte che non corrisponde neppure 
+       * ad un pacchetto del burst!
+       * 
+       * ANCHE SENZA BURST IL PACCHETTO NON VIENE DECODFICATO BENE ANCHE SE VIENE RECUPERATO IN MODO CORRETTO
+       * 
+       */
       
             if (!lastQuery.equals(""))
             {
@@ -354,8 +197,7 @@ public class RecoveryClientThread extends Thread
             }
             
             lastQuery = null;
-*/
-
+               
         }
         
         /*
@@ -365,7 +207,7 @@ public class RecoveryClientThread extends Thread
         
         //informa il server dell'altro interlocutore che sono stati ricevuti tutti i pacchetti
         try {
-            dos.write(new byte[]{0, 0, 2}, 0, 3);
+            dos.writeBytes("END OF QUERY\n");
             dos.flush();
             
         } catch (IOException e) {
