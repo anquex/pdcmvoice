@@ -39,7 +39,7 @@ public class PacketizerTest extends Thread{
 
             Packetizer packetizer = s.getPacketizer();
             packetizer.framesPerPackets(2);
-            s.start();
+                s.start();
             while (true){
                 sleep(50);
                 packetizer.framesPerPackets(1);
