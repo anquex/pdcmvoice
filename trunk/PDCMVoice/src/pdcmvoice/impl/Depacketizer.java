@@ -25,18 +25,25 @@ public class Depacketizer implements RTPAppIntf{
     private RTPSession rtpSession;
     private Decoder decoder;
     private boolean registered;
-    private long lastReceivedSN=0;
+    private long lastReceivedSN=-1;
     private boolean inited;
 
     private RecoveryCollection remote;
 
     PlayoutBuffer playoutBuffer;
 
+    //Last ReceivedFrameInfo
+    private boolean lastPacketwasRDT;
+    private int lastAudioFrameSize;
+    private int lastFramesPerPacket;
+    private int lastPacketReceivedPayload;
+
 
     public Depacketizer(RTPSession s){
         rtpSession=s;
+        playoutBuffer=new PlayoutBuffer();
         // disable rtp buffering, recive all packets!
-        //rtpSession.packetBufferBehavior(-1); il recovery non funziona!
+        //rtpSession.packetBufferBehavior(-1); //il recovery non funziona!
         rtpSession.packetBufferBehavior(0);
 
 
@@ -50,15 +57,18 @@ public class Depacketizer implements RTPAppIntf{
          * 
          * //rtpSession.registerRTPSession(this, null, null); (vecchia rtpSession.RTPSessionRegister(this, null, null);)
          */
-        
-        rtpSession.registerRTPSession(this, null, null);
-        
+
+        // NON ABILITARE, LA REGISTRAZIONE VIENE EFFETTUATA IN VOICE SESSION!!!
+        // WARNING !!!!
+        //rtpSession.registerRTPSession(this, null, null);
         this.remote = remote;
     }
 
     public void receiveData(DataFrame frame, Participant participant)
     {
         if (!inited) return;
+
+        updateLastReceivedFrameInfo(frame);
 
         /*  ------------------------------
          *  --- SEND TO PLAYOUT BUFFER ---
@@ -173,7 +183,7 @@ public class Depacketizer implements RTPAppIntf{
                 registered = true;
                 //System.out.println("Decoder Registered");
                 this.decoder=d;
-                playoutBuffer=new PlayoutBuffer(d);
+                playoutBuffer.registerDecoder(d);
                 return true;
         }
     }
@@ -189,6 +199,38 @@ public class Depacketizer implements RTPAppIntf{
 
     public PlayoutBuffer getPlayoutBuffer() {
         return playoutBuffer;
+    }
+
+    public void updateLastReceivedFrameInfo(DataFrame frame){
+         lastPacketReceivedPayload=frame.payloadType();
+         lastReceivedSN=frame.sequenceNumbers()[0];
+         lastPacketwasRDT= isRDT(frame.payloadType());
+         if (lastPacketwasRDT || frame.marked()){
+             lastAudioFrameSize=frame.getConcatenatedData().length/2;
+             lastFramesPerPacket=2;
+         }
+         else{
+             lastAudioFrameSize=frame.getConcatenatedData().length;
+             lastFramesPerPacket=1;
+         }
+
+    }
+
+    public long lastPacketSN(){
+        return lastReceivedSN;
+    }
+    public boolean lastPacketRDT(){
+        return lastPacketwasRDT;
+    }
+    public int lastPacketFrames(){
+        return lastFramesPerPacket;
+    }
+    public int lastPacketFramesSize(){
+        return lastAudioFrameSize;
+    }
+
+    public int lastPacketPayload(){
+        return lastPacketReceivedPayload;
     }
 
 
