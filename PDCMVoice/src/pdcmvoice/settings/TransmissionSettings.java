@@ -14,7 +14,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class TransmissionSettings implements Serializable{
 
-    private boolean enabledDynamic=true;
+    private boolean enabledDynamic;
     private int minBufferSize;
     private int maxBufferSize;
     private int framesPerPacket;
@@ -68,7 +68,7 @@ public class TransmissionSettings implements Serializable{
     }
 
     public void setRDT(boolean enabled){
-        RDTenable=true;
+        RDTenable=enabled;
     }
     public boolean getRDT(){
         return RDTenable;

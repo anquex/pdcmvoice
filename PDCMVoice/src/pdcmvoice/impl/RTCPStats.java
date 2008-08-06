@@ -69,7 +69,10 @@ public class RTCPStats {
     }
 
     public void RRPktReceived(long reporterSsrc, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
-
+        if (lossFraction==null){
+            System.out.println("This should not happen!!!!");
+            return;
+        }
         receivedRR++;
         RRreporterSsrc=reporterSsrc;
         RRreporteeSsrc=reporteeSsrc;

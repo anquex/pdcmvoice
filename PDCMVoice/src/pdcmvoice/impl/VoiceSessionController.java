@@ -134,4 +134,8 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         return rtcpStats;
     }
 
+    public boolean isPaused(){
+        return paused;
+    }
+
 }// End VoiceSessionController

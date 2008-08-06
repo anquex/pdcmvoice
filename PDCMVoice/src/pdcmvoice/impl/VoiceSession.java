@@ -42,6 +42,8 @@ public class VoiceSession {
     DatagramSocket rtcpSocket = null;
     DatagramSocket recoverySocket = null; // still not used
 
+    private final boolean DEBUG=true;
+
     public VoiceSession (VoiceSessionSettings settings) throws SocketException{
 
             this.settings=settings;
@@ -60,7 +62,14 @@ public class VoiceSession {
             vsc=new VoiceSessionController(this);
             //rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
-            withRecovery = false;
+
+            setMinorSettings();
+
+            //RECOVERY COLLETION FROM SETTINGS
+            withRecovery = settings.withRecovery();
+            // TO COMPLETE
+            settings.getRemoteRecoveryPort();
+            settings.getLocalRecoveryPort();
 
 
     }
@@ -118,6 +127,7 @@ public class VoiceSession {
         rtpSession.addParticipant(settings.getPartecipant());
         
         this.withRecovery = withRecovery;
+        setMinorSettings();
 
 
 }
@@ -137,6 +147,7 @@ public class VoiceSession {
                 rc.start();
             }
             out ("Voice Session Started");
+            if (DEBUG) out(toString());
 
     }
 
@@ -146,12 +157,14 @@ public class VoiceSession {
             receiverSession.stop();
             
             // recovery connection should still be running
-            rc.endOfStream = true;
-            try {
-                rc.join();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (withRecovery){
+                rc.endOfStream = true;
+                try {
+                    rc.join();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             //closeSockets(); -> rc...
             out ("Voice Session Stopped");
@@ -163,13 +176,18 @@ public class VoiceSession {
                 .getPlayoutBuffer().setMinBufferedMillis(n);
     }
 
-    public int getMinBufferedMillis(int n){
+    public int getMinBufferedMillis(){
         return receiverSession.getDepacketizer()
                 .getPlayoutBuffer().getMinBufferedMillis();
     }
 
     public int setMaxBufferedMillis(int n){
-        return 0;
+          return receiverSession.getDepacketizer().
+                  getPlayoutBuffer().setMaxBufferedMillis(n);
+    }
+    public int getMaxBufferedMillis(){
+        return receiverSession.getDepacketizer()
+                .getPlayoutBuffer().getMaxBufferedMillis();
     }
 
     public int getBufferedFrames(){
@@ -197,4 +215,79 @@ public class VoiceSession {
         return vsc.getRTCPStats();
     }
 
+    public String toString(){
+        String out="";
+        out+="---- VOICE SESSION DESCRIPTION";
+        out+="\n---------- Send format code    : "+settings.getSendFormatCode();
+        out+="\n---------- Receiver format code: "+settings.getReceiveFormatCode();
+        out+="\n---------- Speex Quality       : "+settings.getLocalSpeexQuality();
+        out+="\n---------- Local RTP  port     : "+settings.getLocalRTPPort();
+        out+="\n---------- Local RTCP port     : "+settings.getLocalRTCPPort();
+        out+="\n---------- Local Recovery  port: "+settings.getLocalRecoveryPort();
+        out+="\n---------- Remote address      : "+settings.getRemoteAddress();
+        out+="\n---------- Remote RTP Port     : "+settings.getRemoteRTPPort();
+        out+="\n---------- Remote RTCP Port    : "+settings.getRemoteRTCPPort();
+        out+="\n---------- Remote Recovery Port: "+settings.getRemoteRecoveryPort();
+        return out;
+    }
+
+    // non avevo voglia di modificare i costruttori per cui c'è questa funzione
+    // che imposta i parametri minori (es frames per pachetto) presi dalla gui
+    private void setMinorSettings(){
+
+        setSpeexQuality(settings.getLocalSpeexQuality());
+        setFramesPerPacket(settings.framesPerPacket());
+        setMaxBufferedMillis(settings.getMaxBufferSize());
+        setMinBufferedMillis(settings.getMinBufferSize());
+        Dynamic(settings.isDynamic());
+        RDT(settings.isRDT());
+    }
+    
+    public void RDT(boolean enabled){
+        Packetizer p=senderSession.getPacketizer();
+        if(enabled)
+            p.enableRDT();
+        else
+            p.disableRDT();
+    }
+    public boolean isRDT(){
+        Packetizer p=senderSession.getPacketizer();
+        return p.isRDT();
+    }
+    
+    
+    public void setSpeexQuality(int n){
+        Encoder e=senderSession.getEncoder();
+        e.setSpeexQuality(n);
+    }
+    
+    public void Dynamic(boolean enabled){
+        if(enabled)
+           vsc.continueOptimizing();
+        else vsc.pauseOptimizing();
+    }
+    public boolean isDynamic(){
+        return !vsc.isPaused();
+    }
+
+    public long lastPacketSN(){
+        return receiverSession.getDepacketizer().lastPacketSN();
+    }
+    public boolean lastPacketRDT(){
+        return receiverSession.getDepacketizer().lastPacketRDT();
+    }
+    public int lastPacketFrames(){
+        return receiverSession.getDepacketizer().lastPacketFrames();
+    }
+    public int lastPacketFramesSize(){
+        return receiverSession.getDepacketizer().lastPacketFramesSize();
+    }
+
+    public int lastPacketPayload(){
+        return receiverSession.getDepacketizer().lastPacketPayload();
+    }
+    public int LastEncodedFrameSize(){
+        // could return 0 if no frame produced
+        return senderSession.getEncoder().getLastFrameSize();
+    }
 }// END VOICE SESSION

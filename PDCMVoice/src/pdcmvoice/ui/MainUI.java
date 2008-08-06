@@ -12,10 +12,6 @@
 package pdcmvoice.ui;
 
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JDialog;
 import pdcmvoice.impl.RTCPStats;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.AudioSettings;
@@ -23,6 +19,8 @@ import pdcmvoice.settings.ConnectionSettings;
 import pdcmvoice.settings.TransmissionSettings;
 import pdcmvoice.settings.VoiceSessionSettings;
 import static pdcmvoice.impl.Constants.*;
+
+import java.text.NumberFormat;
 
 /**
  *
@@ -46,6 +44,22 @@ public class MainUI extends javax.swing.JFrame {
 
     private RTCPStats rtcpStats;
 
+    private NumberFormat nf=NumberFormat.getPercentInstance();
+
+
+    private void renderStatus(){
+        if (voiceSession!=null){
+            RPPayload.setText(""+voiceSession.lastPacketPayload());
+            RPframesNumber.setText(""+voiceSession.lastPacketFrames());
+            RPframesSize.setText(""+voiceSession.lastPacketFramesSize());
+            LPSEncodedSize.setText(""+voiceSession.LastEncodedFrameSize());
+        }else{
+            RPPayload.setText("N/A");
+            RPframesNumber.setText("N/A");
+            RPframesSize.setText("N/A");
+            LPSEncodedSize.setText("N/A");
+        }
+    }
 
     private void renderLocalConnectionSettings(){
         UILocalMaster.setText(""+myConnectionSettings.getMaster());
@@ -114,7 +128,8 @@ public class MainUI extends javax.swing.JFrame {
             LRRDelay.setText(""+rtcpStats.RRdelayLastSR);
             RRSessionPL.setText(""+rtcpStats.RRcumulPacketsLost);
             RRJitter.setText(""+rtcpStats.RRinterArrivalJitter);
-            RRIntervalPL.setText(""+rtcpStats.RRlossFraction);
+            String iplp=nf.format(rtcpStats.RRlossFraction/256);
+            RRIntervalPL.setText(iplp);
 
         }else{
             SRBytesSent.setText("N/A");
@@ -135,8 +150,10 @@ public class MainUI extends javax.swing.JFrame {
         renderLocalTransmissionSettings();
         renderAudioSettings();
         renderDCTSettings();
+        renderStatus();
         UpdateGUI guiUpdater= new UpdateGUI();
         guiUpdater.start();
+
     }
 
     /** This method is called from within the constructor to
@@ -153,6 +170,21 @@ public class MainUI extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         MainTabbedPanel = new javax.swing.JTabbedPane();
         StatusPanel = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        RPframesNumber = new javax.swing.JTextField();
+        RPframesSize = new javax.swing.JTextField();
+        RPPayload = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel27 = new javax.swing.JLabel();
+        LPSEncodedSize = new javax.swing.JTextField();
         RTCPPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
@@ -168,6 +200,7 @@ public class MainUI extends javax.swing.JFrame {
         RRSessionPL = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
         SettingsMainPanel = new javax.swing.JPanel();
         AudioSettingsPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -227,8 +260,6 @@ public class MainUI extends javax.swing.JFrame {
         menuBar1 = new javax.swing.JMenuBar();
         fileMenu1 = new javax.swing.JMenu();
         openMenuItem1 = new javax.swing.JMenuItem();
-        saveMenuItem1 = new javax.swing.JMenuItem();
-        saveAsMenuItem1 = new javax.swing.JMenuItem();
         exitMenuItem1 = new javax.swing.JMenuItem();
         editMenu1 = new javax.swing.JMenu();
         cutMenuItem1 = new javax.swing.JMenuItem();
@@ -264,22 +295,139 @@ public class MainUI extends javax.swing.JFrame {
             .add(OnlineListLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLabel6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 330, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 365, Short.MAX_VALUE)
                 .add(jButton4)
                 .addContainerGap())
         );
 
         StatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Last Received Packet"));
+
+        jLabel22.setText("Audio Frames");
+
+        jLabel23.setText("Audio Frame Size");
+
+        jLabel26.setText("Playload");
+
+        RPframesNumber.setText("jTextField1");
+
+        RPframesSize.setText("jTextField2");
+
+        RPPayload.setText("jTextField3");
+
+        org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel4Layout.createSequentialGroup()
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel22)
+                    .add(jLabel23)
+                    .add(jLabel26))
+                .add(36, 36, 36)
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(RPPayload, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(RPframesSize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(RPframesNumber, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(95, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel4Layout.createSequentialGroup()
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel22)
+                    .add(RPframesNumber, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel23)
+                    .add(RPframesSize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel26)
+                    .add(RPPayload, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Playout Buffer"));
+
+        jLabel24.setText("Buffered ms");
+
+        jLabel25.setText("min/Max");
+
+        jTextField5.setText("jTextField5");
+
+        jTextField6.setText("jTextField6");
+
+        org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel5Layout.createSequentialGroup()
+                .add(jLabel24)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(11, 11, 11)
+                .add(jLabel25)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jTextField6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel5Layout.createSequentialGroup()
+                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel24)
+                    .add(jLabel25)
+                    .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jTextField6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(46, Short.MAX_VALUE))
+        );
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
+
+        jLabel27.setText("Last Encoded Frame Size");
+
+        LPSEncodedSize.setText("jTextField4");
+
+        org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel6Layout.createSequentialGroup()
+                .add(jLabel27)
+                .add(18, 18, 18)
+                .add(LPSEncodedSize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(76, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel6Layout.createSequentialGroup()
+                .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel27)
+                    .add(LPSEncodedSize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(86, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout StatusPanelLayout = new org.jdesktop.layout.GroupLayout(StatusPanel);
         StatusPanel.setLayout(StatusPanelLayout);
         StatusPanelLayout.setHorizontalGroup(
             StatusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 284, Short.MAX_VALUE)
+            .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(StatusPanelLayout.createSequentialGroup()
+                .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         StatusPanelLayout.setVerticalGroup(
             StatusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 349, Short.MAX_VALUE)
+            .add(StatusPanelLayout.createSequentialGroup()
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(21, 21, 21))
         );
 
         MainTabbedPanel.addTab("Status", StatusPanel);
@@ -335,7 +483,7 @@ public class MainUI extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Last Receiver Report"));
 
-        jLabel18.setText("Interval PL Ratio*256");
+        jLabel18.setText("Interval PL Ratio");
         jLabel18.setToolTipText("packet loss in the inverval between previous and current report");
 
         RRIntervalPL.setHighlighter(null);
@@ -362,22 +510,18 @@ public class MainUI extends javax.swing.JFrame {
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(jLabel18)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(RRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel20)
-                            .add(jLabel19))
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jPanel3Layout.createSequentialGroup()
-                                .add(12, 12, 12)
-                                .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jPanel3Layout.createSequentialGroup()
-                                .add(18, 18, 18)
-                                .add(RRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(77, Short.MAX_VALUE))
+                    .add(jLabel18)
+                    .add(jLabel20)
+                    .add(jLabel19))
+                .add(33, 33, 33)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(jPanel3Layout.createSequentialGroup()
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                            .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(RRSessionPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
+                    .add(RRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(62, 62, 62))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -391,9 +535,22 @@ public class MainUI extends javax.swing.JFrame {
                     .add(RRSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel20))
-                .addContainerGap(99, Short.MAX_VALUE))
+                    .add(jLabel20)
+                    .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Calculated Stats"));
+
+        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 264, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 147, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout RTCPPanelLayout = new org.jdesktop.layout.GroupLayout(RTCPPanel);
@@ -403,6 +560,7 @@ public class MainUI extends javax.swing.JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, RTCPPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(RTCPPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -412,8 +570,10 @@ public class MainUI extends javax.swing.JFrame {
             .add(RTCPPanelLayout.createSequentialGroup()
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(71, 71, 71))
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         MainTabbedPanel.addTab("RTCP Stats", RTCPPanel);
@@ -457,7 +617,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel15))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         ConnectionSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Connection Settings"));
@@ -513,7 +673,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalRTCP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel10)
                     .add(UILocalRecovery, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         ApplySettingsButton.setText("Apply");
@@ -638,7 +798,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(UIRDT)
                     .add(UIBackgroundRecovery))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout SettingsMainPanelLayout = new org.jdesktop.layout.GroupLayout(SettingsMainPanel);
@@ -762,7 +922,7 @@ public class MainUI extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel5)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
         );
 
         MainTabbedPanel.addTab("DC Test", DCTestPanel);
@@ -816,14 +976,8 @@ public class MainUI extends javax.swing.JFrame {
 
         fileMenu1.setText("File");
 
-        openMenuItem1.setText("Open");
+        openMenuItem1.setText("Connect");
         fileMenu1.add(openMenuItem1);
-
-        saveMenuItem1.setText("Save");
-        fileMenu1.add(saveMenuItem1);
-
-        saveAsMenuItem1.setText("Save As ...");
-        fileMenu1.add(saveAsMenuItem1);
 
         exitMenuItem1.setText("Exit");
         exitMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -835,7 +989,7 @@ public class MainUI extends javax.swing.JFrame {
 
         menuBar1.add(fileMenu1);
 
-        editMenu1.setText("Edit");
+        editMenu1.setText("Preferences");
 
         cutMenuItem1.setText("Cut");
         editMenu1.add(cutMenuItem1);
@@ -878,7 +1032,7 @@ public class MainUI extends javax.swing.JFrame {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                    .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                     .add(OnlineList, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1005,9 +1159,13 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel ConnectionSettingsPanel;
     private javax.swing.JPanel DCTestPanel;
     private javax.swing.JCheckBox DynamicAdaptation;
+    private javax.swing.JTextField LPSEncodedSize;
     private javax.swing.JTextField LRRDelay;
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JPanel OnlineList;
+    private javax.swing.JTextField RPPayload;
+    private javax.swing.JTextField RPframesNumber;
+    private javax.swing.JTextField RPframesSize;
     private javax.swing.JTextField RRIntervalPL;
     private javax.swing.JTextField RRJitter;
     private javax.swing.JTextField RRSessionPL;
@@ -1065,6 +1223,12 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1075,10 +1239,16 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuBar menuBar1;
     private javax.swing.JMenuItem openMenuItem;
@@ -1086,9 +1256,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JMenuItem pasteMenuItem1;
     private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JMenuItem saveAsMenuItem1;
     private javax.swing.JMenuItem saveMenuItem;
-    private javax.swing.JMenuItem saveMenuItem1;
     private javax.swing.JButton transmitButton;
     // End of variables declaration//GEN-END:variables
 
@@ -1099,6 +1267,7 @@ public class MainUI extends javax.swing.JFrame {
                 try {
                     // do updates
                     renderRTCPStats();
+                    renderStatus();
                     sleep(1000);
                 } catch (InterruptedException ignore) {
                     ignore.printStackTrace();

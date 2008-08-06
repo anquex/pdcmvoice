@@ -202,7 +202,7 @@ public class CopyOfRecoveryClientThreadStringQuery extends Thread
         
         /*
          * TODO prima di finire le richieste DEVO RECUPERARE CON UN'ULTIMA RICHIESTA GLI EVENTUALI PACCHETTI INIZIALI NON ARRIVATI.
-         * li richiedo al serverThread dell'interlocutore che cercher‡ fino all'inizio della propria localCollection e li invier‡ in sequenza in modo da permettere al mio client di concatenare questo insieme di pacchetto con quello da lui posseduto (la mia remote collection)
+         * li richiedo al serverThread dell'interlocutore che cercher√† fino all'inizio della propria localCollection e li invier√† in sequenza in modo da permettere al mio client di concatenare questo insieme di pacchetto con quello da lui posseduto (la mia remote collection)
          */
         
         //informa il server dell'altro interlocutore che sono stati ricevuti tutti i pacchetti

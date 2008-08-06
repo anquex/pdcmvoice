@@ -49,8 +49,7 @@ public class PlayoutBuffer{
 
 
 
-    public PlayoutBuffer(Decoder d) {
-        decoder=d;
+    public PlayoutBuffer() {
         listBuffer=Collections.synchronizedSortedSet(new TreeSet<VoiceFrame>(new VoiceFrameComparator()));
         listBuffer=new TreeSet<VoiceFrame>(new VoiceFrameComparator());
         isFirst=true;
@@ -60,6 +59,10 @@ public class PlayoutBuffer{
         timer=new Timer("Playout Buffer Timer");
         //timer.schedule(decoderDeliver,0,20);
         timer.scheduleAtFixedRate(decoderDeliver,0,20);
+    }
+
+    public void registerDecoder(Decoder d){
+        decoder=d;
     }
 
     /**
