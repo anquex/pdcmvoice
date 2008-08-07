@@ -291,6 +291,7 @@ public class RTPSession {
      * @return	null if there was a problem sending the packets, 2-dim array with {RTP Timestamp, Sequence number}
      */
     public long[][] sendData(byte[][] buffers, long[] csrcArray, boolean[] markers, long rtpTimestamp, long[] seqNumbers) {
+        int PacketPayloadBytes=0;
         if(LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("-> RTPSession.sendData(byte[])");
         }
@@ -304,7 +305,7 @@ public class RTPSession {
 
         for(int i=0; i<buffers.length; i++) {
             byte[] buf = buffers[i];
-
+            PacketPayloadBytes+=buf.length;
             boolean marker = false;
             if(markers != null)
                 marker = markers[i];
@@ -402,7 +403,7 @@ public class RTPSession {
 
             //Update our stats
             this.sentPktCount++;
-            this.sentOctetCount++;
+            this.sentOctetCount+=PacketPayloadBytes;
 
             if(LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest("<- RTPSession.sendData(byte[]) " + pkt.getSeqNumber());

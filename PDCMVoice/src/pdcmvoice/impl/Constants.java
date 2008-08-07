@@ -120,8 +120,8 @@ public class Constants {
     public static final int PAYLOAD_iLBC_RDT=98;
     public static final int PAYLOAD_SPEEX_RDT=99;
 
-    public static final int DEFAULT_MIN_BUFFER_SIZE=100;
-    public static final int DEFAULT_MAX_BUFFER_SIZE=120;
+    public static final int DEFAULT_MIN_BUFFER_SIZE=60;
+    public static final int DEFAULT_MAX_BUFFER_SIZE=100;
 
     public static final boolean DEFAULT_DYNAMIC_ADAPTATION=false;
     public static final boolean DEFAULT_BACKGROUND_RECOVERY=false;

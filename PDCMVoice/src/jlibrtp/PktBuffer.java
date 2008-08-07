@@ -130,13 +130,14 @@ public class PktBuffer {
         }
         //No magic, just add to the end
         if(oldest != null) {
-            oldest.nextFrameQueueNode = newNode;
-            newNode.prevFrameQueueNode = oldest;
-            oldest = newNode;
+            newNode.nextFrameQueueNode = newest;
+            newest.prevFrameQueueNode = newNode;
+            newest = newNode;
         } else {
             oldest = newNode;
             newest = newNode;
         }
+        length++;
         return 0;
     }
 

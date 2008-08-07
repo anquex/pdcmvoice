@@ -290,4 +290,9 @@ public class VoiceSession {
         // could return 0 if no frame produced
         return senderSession.getEncoder().getLastFrameSize();
     }
+
+    public int getBufferedMillis(){
+        return receiverSession.getDepacketizer().
+                getPlayoutBuffer().getBufferedMillis();
+    }
 }// END VOICE SESSION

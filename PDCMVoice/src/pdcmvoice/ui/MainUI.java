@@ -53,11 +53,13 @@ public class MainUI extends javax.swing.JFrame {
             RPframesNumber.setText(""+voiceSession.lastPacketFrames());
             RPframesSize.setText(""+voiceSession.lastPacketFramesSize());
             LPSEncodedSize.setText(""+voiceSession.LastEncodedFrameSize());
+            PBbufferedMillis.setText(""+voiceSession.getBufferedMillis());
         }else{
             RPPayload.setText("N/A");
             RPframesNumber.setText("N/A");
             RPframesSize.setText("N/A");
             LPSEncodedSize.setText("N/A");
+            PBbufferedMillis.setText("N/A");
         }
     }
 
@@ -180,7 +182,7 @@ public class MainUI extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        PBbufferedMillis = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel27 = new javax.swing.JLabel();
@@ -355,7 +357,7 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel25.setText("min/Max");
 
-        jTextField5.setText("jTextField5");
+        PBbufferedMillis.setText("jTextField5");
 
         jTextField6.setText("jTextField6");
 
@@ -366,7 +368,7 @@ public class MainUI extends javax.swing.JFrame {
             .add(jPanel5Layout.createSequentialGroup()
                 .add(jLabel24)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(PBbufferedMillis, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(11, 11, 11)
                 .add(jLabel25)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -379,7 +381,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel24)
                     .add(jLabel25)
-                    .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(PBbufferedMillis, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextField6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(46, Short.MAX_VALUE))
         );
@@ -1163,6 +1165,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTextField LRRDelay;
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JPanel OnlineList;
+    private javax.swing.JTextField PBbufferedMillis;
     private javax.swing.JTextField RPPayload;
     private javax.swing.JTextField RPframesNumber;
     private javax.swing.JTextField RPframesSize;
@@ -1247,7 +1250,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuBar menuBar1;

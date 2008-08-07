@@ -41,7 +41,7 @@ public class PlayoutBuffer{
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
     
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
 
     //CONSTANTS
 
@@ -85,6 +85,7 @@ public class PlayoutBuffer{
         if (timestamp<decoderDeliver.getNextTimestampToPlay()){
             //packet arrived too late!
             // ignore it
+            if (DEBUG) out("BUFFER: OUT OF TIME... frame dropped");
             return;
         }
 
@@ -229,6 +230,10 @@ public class PlayoutBuffer{
     
     public synchronized  int size(){
         return listBuffer.size();
+    }
+
+    public synchronized int getBufferedMillis(){
+        return size()*TIME_PER_FRAME;
     }
 
     public synchronized  boolean isEmpty(){

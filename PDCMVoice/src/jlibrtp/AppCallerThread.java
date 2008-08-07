@@ -87,14 +87,13 @@ public class AppCallerThread extends Thread {
 
                 while(enu.hasMoreElements()) {
                     Participant p = enu.nextElement();
-
                     boolean done = false;
                     //System.out.println(p.ssrc + " " + !done +" " + p.rtpAddress
                     //		+ " " + rtpSession.naiveReception + " " + p.pktBuffer);
                     //System.out.println("done: " + done + "  p.unexpected: " + p.unexpected);
+                    System.out.println(p.pktBuffer.length);
                     while(!done && (!p.unexpected || rtpSession.naiveReception)
                             && p.pktBuffer != null && p.pktBuffer.length > 0) {
-
                         DataFrame aFrame = p.pktBuffer.popOldestFrame();
                         if(aFrame == null) {
                             done = true;

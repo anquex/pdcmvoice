@@ -59,7 +59,7 @@ public class Decoder {
             // do nothing (create in init)
         }
         else throw new IllegalArgumentException();
-        cBuffer=new CircularByteBuffer(161);
+        cBuffer=new CircularByteBuffer(641);
         input=cBuffer.getInputStream();
         output=cBuffer.getOutputStream();
     }
