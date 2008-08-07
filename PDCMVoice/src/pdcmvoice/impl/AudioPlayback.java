@@ -33,6 +33,8 @@
 package pdcmvoice.impl;
 
 import	java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import	javax.sound.sampled.*;
 import static pdcmvoice.impl.Constants.*;
 
@@ -40,10 +42,13 @@ import static pdcmvoice.impl.Constants.*;
 public class AudioPlayback extends AudioBase {
 
     private static final boolean DEBUG_TRANSPORT = false;
+    private static final boolean RECORDING = true;
 
     protected AudioInputStream ais;
     private PlayThread thread;
     SourceDataLine sdl;
+
+    private SpeakerRecoder sr;
 
     public AudioPlayback(int formatCode, Mixer mixer, int bufferSizeMillis) {
 	super("Speaker", formatCode, mixer, bufferSizeMillis);
@@ -116,6 +121,10 @@ public class AudioPlayback extends AudioBase {
             sdl = (SourceDataLine) line;
 //            Meter m=new Meter();
 //            m.start();
+            if (RECORDING){
+                sr= new SpeakerRecoder();
+                sr.start();
+            }
 	    try {
 		while (!doTerminate) {
                     //out("do terminate? "+doTerminate);
@@ -138,6 +147,8 @@ public class AudioPlayback extends AudioBase {
 			    calcCurrVol(buffer, 0, r);
 			    if (sdl != null) {
 			    	sdl.write(buffer, 0, r);
+                                if (RECORDING)
+                                    sr.write(buffer, 0, r);
 			    }
 			} else {
 			    if (r == 0) {
@@ -209,6 +220,42 @@ public class AudioPlayback extends AudioBase {
 
             }
         }catch(Exception e){e.printStackTrace();}
+        }
+    }
+
+    class SpeakerRecoder extends Thread{
+
+        AudioFileFormat.Type fileTypeWAV = null;
+        File audioFileWAV = null;
+        PipedInputStream in;
+        PipedOutputStream out;
+
+
+        public void run(){
+            in= new PipedInputStream();
+            out=new PipedOutputStream();
+            try {
+                in.connect(out);
+            } catch (IOException ex) {
+                Logger.getLogger(AudioPlayback.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            AudioFormat format=line.getFormat();
+            AudioInputStream ais=new AudioInputStream(in, format, AudioSystem.NOT_SPECIFIED);
+            fileTypeWAV = AudioFileFormat.Type.WAVE;
+            audioFileWAV = new File("C:\\lastSpeaker.wav");
+            try {
+                AudioSystem.write(ais, fileTypeWAV, audioFileWAV);
+            } catch (IOException ex) {
+                Logger.getLogger(AudioPlayback.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        public void write(byte[] b, int offset, int len){
+            try {
+                out.write(b, offset, len);
+            } catch (IOException ex) {
+                Logger.getLogger(AudioPlayback.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
