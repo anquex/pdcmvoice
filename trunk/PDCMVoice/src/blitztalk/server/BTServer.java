@@ -124,7 +124,8 @@ public class BTServer {
 			} else {
 				// Add client if valid
 				//--String[] validateResult = dnd.validateUser(request[1], client);
-				String[] validateResult = new String[]{"VALIDATE","dawdw","ddww"};
+				
+                                String[] validateResult = new String[]{"VALIDATE",request[1],"ddww"};
 
 				// If user validate, add, otherwise return ERR
 				if (validateResult != null) {
