@@ -11,6 +11,8 @@ package pdcmvoice.test;
  */
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jlibrtp.Participant;
 import jlibrtp.RTPSession;
 import pdcmvoice.impl.VoiceSessionSender;
@@ -19,9 +21,10 @@ import static pdcmvoice.impl.Constants.*;
 import pdcmvoice.recovery.*; 
 
 
-public class VoiceSessionSenderLoopBackTest {
-    
-    public static void main (String[] args) throws Exception{
+public class VoiceSessionSenderLoopBackTest extends Thread{
+
+    public void run() {
+        try {
             DatagramSocket rtpSocket = null;
             DatagramSocket rtcpSocket = null;
             try {
@@ -38,6 +41,21 @@ public class VoiceSessionSenderLoopBackTest {
             //s.getPacketizer().framesPerPackets(2);
             s.getPacketizer().enableRDT();
             s.start();
+            sleep(10000);
+            s.getPacketizer().disableRDT();
+        } catch (Exception ex) {
+            Logger.getLogger(VoiceSessionSenderLoopBackTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+    }
+    
+    
+    
+    public static void main (String[] args) throws Exception{
+        VoiceSessionSenderLoopBackTest t= new VoiceSessionSenderLoopBackTest();
+        t.start();
+        
+
             
           //RECOVERY
             /*
