@@ -90,16 +90,16 @@ public class Packetizer {
             else{// other RDT frames
                  // get a packet with last 2 encoded frames
                 
-                if (n %2==0){
-                    n=1;
-                } else{
+//                if (n %2==0){
+//                    n=1;
+//                } else{
                 rtpSession.payloadType(getRDTPayloadType(initialPayloadType));
 
                 byte[] frame=forgeBigFrame(currentEncodedFrame, previousEncodedFrame);
                 // set RDT values???
                 sendFrames(frame, false);
-                    n=0;
-                }
+//                    n=0;
+//                }
             }
 
             // RDT sessions sends packets each sendVoice call
@@ -223,7 +223,7 @@ public class Packetizer {
             out+=" PAYLOAD: "+rtpSession.payloadType();
             out+=" AUDIO :"+frames.length;
             out+=" MARKED :"+marked;
-            out+=" TIMESTAMP :"+(short)currentTimeStamp;
+            out+=" TIMESTAMP :"+currentTimeStamp;
             out+=" SN :"+r[0][1];
             out(out);
         }
@@ -244,7 +244,8 @@ public class Packetizer {
 
     private void updateTimestamp(){
         if (isFirst){
-            currentTimeStamp=System.currentTimeMillis();
+            // get only last least significant 32 bit
+            currentTimeStamp=(long) (System.currentTimeMillis() % Math.pow(2, 32));
             isFirst=false;
         }
         else{

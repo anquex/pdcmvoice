@@ -50,7 +50,7 @@ public class PlayoutBuffer{
 
 
     public PlayoutBuffer() {
-        listBuffer=Collections.synchronizedSortedSet(new TreeSet<VoiceFrame>(new VoiceFrameComparator()));
+//        listBuffer=Collections.synchronizedSortedSet(new TreeSet<VoiceFrame>(new VoiceFrameComparator()));
         listBuffer=new TreeSet<VoiceFrame>(new VoiceFrameComparator());
         isFirst=true;
         isBuffering=true;
@@ -88,8 +88,11 @@ public class PlayoutBuffer{
             if (DEBUG) out("BUFFER: OUT OF TIME... frame dropped");
             return;
         }
-
-        listBuffer.add(v);
+        if (listBuffer.contains(v)){
+            out("contenuto cazzo!!!");
+            return;
+        }else
+            listBuffer.add(v);
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
 
