@@ -35,7 +35,7 @@ public class VoiceSessionSenderLoopBackTest {
             //Participant p = new Participant("10.0.0.100", 9000, 9001); //RTCP Port
             rtpsession.addParticipant(p);
             VoiceSessionSender s = new VoiceSessionSender(1, rtpsession);
-            s.getPacketizer().framesPerPackets(2);
+            //s.getPacketizer().framesPerPackets(2);
             s.start();
             
           //RECOVERY

@@ -144,4 +144,12 @@ public class Constants {
     public static void out(int n) {
 	System.out.println(""+n);
     }
+    
+    public static String byteToString(byte[] b){
+        String out="";
+        for (int i=0;i<b.length;i++){
+            out+=b[i]+" ";
+        }
+        return out;
+    }
 }
