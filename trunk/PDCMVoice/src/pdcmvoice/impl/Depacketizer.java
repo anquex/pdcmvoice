@@ -20,7 +20,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class Depacketizer implements RTPAppIntf{
 
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
 
     private RTPSession rtpSession;
     private Decoder decoder;
@@ -80,7 +80,7 @@ public class Depacketizer implements RTPAppIntf{
         if (DEBUG){
             String out="";
             out+="Received Packet with";
-            out+=" PAYLOAD: "+ rtpSession.payloadType();
+            out+=" PAYLOAD: "+ frame.payloadType();
             out+=" AUDIO :"+ voice.length;
             out+=" MARKED :"+ frame.marked();
             out+=" TIMESTAMP :"+ frame.rtpTimestamp();
@@ -144,19 +144,44 @@ public class Depacketizer implements RTPAppIntf{
          * ---------------------------------------*/
 
         if (isRDT(frame.payloadType()) || frame.marks()[0]){
+//            out("2 frame");
             lenght=voice.length/2;
             byte[] v=new byte[voice.length/2];
             // first add older packet (see playout buffer why)
             System.arraycopy(voice, lenght, v, 0, lenght);
-            playoutBuffer.add(frame.rtpTimestamp()-20, v);
+//            playoutBuffer.add(frame.rtpTimestamp()-20, v);
+            new Action(frame.rtpTimestamp()-20, voice).start();
             // then add new packet
+            
+//            out("Frame arrivato "+(frame.rtpTimestamp()-20)+
+//                    " byte "+byteToString(v));
             System.arraycopy(voice, 0, v, 0, lenght);
-            playoutBuffer.add(frame.rtpTimestamp(), v);
+//            playoutBuffer.add(frame.rtpTimestamp(), v);
+            new Action(frame.rtpTimestamp(), voice).start();
+            
+//            out("Frame arrivato "+frame.rtpTimestamp()+
+//                    " byte "+byteToString(v));
         }
         else{
-            playoutBuffer.add(frame.rtpTimestamp(), voice);
+//            out("1 frame");
+            //playoutBuffer.add(frame.rtpTimestamp(), voice);
+            new Action(frame.rtpTimestamp(), voice).start();
         }
 
+    }
+    
+    class Action extends Thread{
+        
+        private byte[]b;
+        private long t;
+
+        public Action(long t,byte[] b) {
+            this.b = b;
+            this.t = t;
+        }
+        public void run(){
+            playoutBuffer.add(t, b);
+        }
     }
 
     // to prevent null pointer exception

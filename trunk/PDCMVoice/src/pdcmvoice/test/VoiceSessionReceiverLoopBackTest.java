@@ -33,10 +33,10 @@ public class VoiceSessionReceiverLoopBackTest {
             DatagramSocket rtpSocket = null;
             DatagramSocket rtcpSocket = null;
             try {
-                rtpSocket = new DatagramSocket(DEFAULT_RTP_PORT);
-                rtcpSocket = new DatagramSocket(DEFAULT_RTCP_PORT);
-//                rtpSocket = new DatagramSocket(9000);
-//                rtcpSocket = new DatagramSocket(9001);
+//                rtpSocket = new DatagramSocket(DEFAULT_RTP_PORT);
+//                rtcpSocket = new DatagramSocket(DEFAULT_RTCP_PORT);
+                rtpSocket = new DatagramSocket(9000);
+                rtcpSocket = new DatagramSocket(9001);
             } catch (SocketException e) {
                 e.printStackTrace();
             }
@@ -44,7 +44,7 @@ public class VoiceSessionReceiverLoopBackTest {
             Participant p = new Participant("127.0.0.1", 7000, 7100); //RTCP Port
             //rtpsession.addParticipant(p);
             rtpsession.naivePktReception(true);
-            VoiceSessionReceiver r = new VoiceSessionReceiver(1, rtpsession);
+            VoiceSessionReceiver r = new VoiceSessionReceiver(2, rtpsession);
             rtpsession.registerRTPSession(r.getDepacketizer(),
             null, //to be implemented
             null);
