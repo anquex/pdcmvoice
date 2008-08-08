@@ -29,7 +29,7 @@ public class Packetizer {
     // start supposing not having voice frames waiting to be sent
     private boolean lastEncodedHasBeenSent=true;
 
-    private final int DEFAULT_FRAMES_PER_PACKET=1;
+    private final int DEFAULT_FRAMES_PER_PACKET=ALLOWED_FRAMES_PER_PACKET[DEFAULT_FRAMES_PER_PACKET_INDEX];
 
     private static final boolean DEBUG=true;
 
