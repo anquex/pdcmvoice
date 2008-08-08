@@ -33,8 +33,10 @@ public class VoiceSessionReceiverLoopBackTest {
             DatagramSocket rtpSocket = null;
             DatagramSocket rtcpSocket = null;
             try {
-                rtpSocket = new DatagramSocket(9000);
-                rtcpSocket = new DatagramSocket(9001);
+                rtpSocket = new DatagramSocket(DEFAULT_RTP_PORT);
+                rtcpSocket = new DatagramSocket(DEFAULT_RTCP_PORT);
+//                rtpSocket = new DatagramSocket(9000);
+//                rtcpSocket = new DatagramSocket(9001);
             } catch (SocketException e) {
                 e.printStackTrace();
             }
