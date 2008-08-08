@@ -23,6 +23,8 @@ public class VoiceSessionSender {
     private int formatCode;
     private boolean RDTForced; // RDT enable/disable RDT autoactivation
     
+    public final boolean DEBUG=true;
+    
     public VoiceSessionSender(int formatCode, RTPSession rtp){
         
         this.formatCode=formatCode;
@@ -48,7 +50,7 @@ public class VoiceSessionSender {
         encoder=new Encoder(formatCode, ais);
         encoder.registerPacketizer(packetizer);
         
-
+//        if (DEBUG) System.out.println(toString());
 //        packetizer.framesPerPackets(2);
 
 //        packetizer.enableRDT();
@@ -172,4 +174,10 @@ public class VoiceSessionSender {
         return encoder;
     }
 
+    public String toString(){
+        String out="";
+        out+="--  Voice Session Sender\n";
+        out+="-----Format Code "+formatCode;
+        return out;   
+    }
 }

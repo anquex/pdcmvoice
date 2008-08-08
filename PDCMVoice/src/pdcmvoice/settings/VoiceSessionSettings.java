@@ -18,26 +18,26 @@ public class VoiceSessionSettings implements Serializable{
 
         public  static final boolean DEBUG=true;
         
-        private int sendFormatCode;
-        private int receiveFormatCode;
+        private int sendFormatCode=DEFAULT_FORMAT_CODE;
+        private int receiveFormatCode=DEFAULT_FORMAT_CODE;
         
         private String remoteAddr;
-        private int  remoteRTPPort;
-        private int  remoteRTCPPort;
-        private int  remoteRecoveryPort;
-        private int  remoteSpeexQuality;
+        private int  remoteRTPPort=DEFAULT_RTP_PORT;
+        private int  remoteRTCPPort=DEFAULT_RTCP_PORT;
+        private int  remoteRecoveryPort=DEFAULT_RECOVERY_PORT;
+        private int  remoteSpeexQuality=3;
         
-        private int  localRTPPort;
-        private int  localRTCPPort;
-        private int  localRecoveryPort;
-        private int  localSpeexQuality;
+        private int  localRTPPort=DEFAULT_RTP_PORT;
+        private int  localRTCPPort=DEFAULT_RTCP_PORT;
+        private int  localRecoveryPort=DEFAULT_RECOVERY_PORT;
+        private int  localSpeexQuality=3;
 
-        private boolean localDynamicAdaptation;
-        private boolean localEnabledRDT;
-        private int localFramesPerPacket;
-        private boolean localEnabledRecovery;
-        private int localMaxBuferSizeMS;
-        private int localMinBuferSizeMS;
+        private boolean localDynamicAdaptation=DEFAULT_DYNAMIC_ADAPTATION;
+        private boolean localEnabledRDT=DEFAULT_RDT_ENABLED;
+        private int localFramesPerPacket=ALLOWED_FRAMES_PER_PACKET[DEFAULT_FRAMES_PER_PACKET_INDEX];
+        private boolean localEnabledRecovery=DEFAULT_BACKGROUND_RECOVERY;
+        private int localMaxBuferSizeMS=DEFAULT_MAX_BUFFER_SIZE;
+        private int localMinBuferSizeMS=DEFAULT_MIN_BUFFER_SIZE;
         
 
         public VoiceSessionSettings(AudioSettings la,
