@@ -109,7 +109,7 @@ public class PlayoutBuffer{
         {
             if (DEBUG)
                     out("PLAYOUT BUFFER : Maximum Delay Reached: "+
-                    (getHigherTimestamp()-getLowerTimestamp()+20));
+                    (getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME));
 
             // drop the older packet
 

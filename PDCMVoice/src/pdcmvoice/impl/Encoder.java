@@ -36,8 +36,11 @@ public class Encoder extends Thread {
     private int producedFrames;
     private int producedBytes;
     private int lastFrameSize;
-    private long firsttimeStamp;
-    private long lasttimeStamp;
+    //DEBUG
+//    private long firsttimeStamp;
+//    private long lasttimeStamp;
+//    private int actionRunning;
+    
 
     public Encoder(int encoded_format_code, AudioInputStream ais) {
 
@@ -136,6 +139,7 @@ public class Encoder extends Thread {
         out("Encoder: Encoding Started...");
             while (nReadBytes != 0) {
                 // READ FROM THE STREAM 20 MS OF AUDIO
+                long t=System.currentTimeMillis();
                 try {
                     nReadBytes = ais.read(buffer);
                 } catch (IOException e) {
@@ -154,9 +158,11 @@ public class Encoder extends Thread {
                     if (encoding_format == FORMAT_CODE_SPEEX_NB ||
                         encoding_format == FORMAT_CODE_SPEEX_WB)
                     {
+//                        long t=System.currentTimeMillis();
                         speexEncoder.processData(buffer, 0, nReadBytes);
                         encodedFrame = new byte[speexEncoder.getProcessedDataByteSize()];
                         speexEncoder.getProcessedData(encodedFrame, 0);
+//                        out("Encoding took "+(System.currentTimeMillis()-t));
                     }
                     else
                     // iLBC Encoding
@@ -165,7 +171,12 @@ public class Encoder extends Thread {
                         encodedFrame = new byte[ilbcEncoder.getProcessedDataByteSize()];
                         ilbcEncoder.getProcessedData(encodedFrame, 0);
                     }
+//                  long t=System.currentTimeMillis();
+//                    Action a= new Action(encodedFrame);
+//                    a.start();
                     packetizer.sendVoice(encodedFrame);
+//                  out("Sending took "+(System.currentTimeMillis()-t));
+                  out("Total time was took "+(System.currentTimeMillis()-t));
 
                     // UPDATE STATS
                     producedBytes+=encodedFrame.length;
@@ -183,6 +194,23 @@ public class Encoder extends Thread {
      * @return speex quality
      */
     
+//    class Action extends Thread{
+//        byte[] b;
+//        
+//        Action(byte[] b){
+//            this.b=b;
+//        }
+//        public void run(){
+//            synchronized(Encoder.class){
+//                actionRunning++;
+//            }
+//            out("Action Running "+actionRunning);
+//            packetizer.sendVoice(b);
+//            synchronized(Encoder.class){
+//                actionRunning--;
+//            }
+//        }
+//    }
     public int getSpeexQuality() {
         return speexquality;
     }
