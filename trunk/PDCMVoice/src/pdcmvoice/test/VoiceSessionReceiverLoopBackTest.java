@@ -42,7 +42,6 @@ public class VoiceSessionReceiverLoopBackTest {
             Participant p = new Participant("127.0.0.1", 7000, 7100); //RTCP Port
             //rtpsession.addParticipant(p);
             rtpsession.naivePktReception(true);
-            rtpsession.payloadType(PAYLOAD_SPEEX);
             VoiceSessionReceiver r = new VoiceSessionReceiver(1, rtpsession);
             rtpsession.registerRTPSession(r.getDepacketizer(),
             null, //to be implemented
