@@ -134,12 +134,11 @@ public class Encoder extends Thread {
 
         byte[] buffer = new byte[PCMbytesPerFrame];
         int nReadBytes = -1;
-        int encodedDataBytes = 0;
         byte encodedFrame[] = null;
         out("Encoder: Encoding Started...");
             while (nReadBytes != 0) {
                 // READ FROM THE STREAM 20 MS OF AUDIO
-                long t=System.currentTimeMillis();
+//                long t=System.currentTimeMillis();
                 try {
                     nReadBytes = ais.read(buffer);
                 } catch (IOException e) {
@@ -176,7 +175,7 @@ public class Encoder extends Thread {
 //                    a.start();
                     packetizer.sendVoice(encodedFrame);
 //                  out("Sending took "+(System.currentTimeMillis()-t));
-                  out("Total time was took "+(System.currentTimeMillis()-t));
+//                  out("Total time was took "+(System.currentTimeMillis()-t));
 
                     // UPDATE STATS
                     producedBytes+=encodedFrame.length;
