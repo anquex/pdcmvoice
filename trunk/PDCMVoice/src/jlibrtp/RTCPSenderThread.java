@@ -281,9 +281,6 @@ public class RTCPSenderThread extends Thread {
         if(rtpSession.sentPktCount > 0 && regular) {
             incSR = true;
         }
-        String out=""+part.getRtcpReceivedFromAddress();
-        out+="\n RR "+ incRR+ " SR " +incSR;
-        System.out.println(out);
 
 
         /*********** Actually create the packet ***********/

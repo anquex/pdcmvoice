@@ -46,7 +46,6 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
 
     public VoiceSessionController(VoiceSession parent){
         rtcpStats=new RTCPStats();
-
     }
 
     /**

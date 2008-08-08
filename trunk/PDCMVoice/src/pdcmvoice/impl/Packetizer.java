@@ -31,7 +31,7 @@ public class Packetizer {
 
     private final int DEFAULT_FRAMES_PER_PACKET=1;
 
-    private static final boolean DEBUG=false;
+    private static final boolean DEBUG=true;
 
 
     //RECOVERY COLLECTION VARIABLES
@@ -252,7 +252,7 @@ public class Packetizer {
     public int framesPerPackets(int n){
         if (n==1)
             framesPerPacket=1;
-        else
+        if(n==2 && !isRDT())
             framesPerPacket=2;
         return framesPerPacket;
     }

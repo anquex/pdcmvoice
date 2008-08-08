@@ -236,11 +236,14 @@ public class VoiceSession {
     private void setMinorSettings(){
 
         setSpeexQuality(settings.getLocalSpeexQuality());
+        //setFramesPerPacket(1);
         setFramesPerPacket(settings.framesPerPacket());
         setMaxBufferedMillis(settings.getMaxBufferSize());
         setMinBufferedMillis(settings.getMinBufferSize());
         Dynamic(settings.isDynamic());
         RDT(settings.isRDT());
+        //RDT(true);
+        //out (""+settings.framesPerPacket()+" "+settings.isRDT());
     }
     
     public void RDT(boolean enabled){
