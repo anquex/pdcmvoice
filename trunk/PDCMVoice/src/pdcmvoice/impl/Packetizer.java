@@ -32,6 +32,7 @@ public class Packetizer {
     private final int DEFAULT_FRAMES_PER_PACKET=ALLOWED_FRAMES_PER_PACKET[DEFAULT_FRAMES_PER_PACKET_INDEX];
 
     private static final boolean DEBUG=true;
+    int n;
 
 
     //RECOVERY COLLECTION VARIABLES
@@ -88,11 +89,17 @@ public class Packetizer {
             }
             else{// other RDT frames
                  // get a packet with last 2 encoded frames
+                
+                if (n %2==0){
+                    n=1;
+                } else{
                 rtpSession.payloadType(getRDTPayloadType(initialPayloadType));
 
                 byte[] frame=forgeBigFrame(currentEncodedFrame, previousEncodedFrame);
                 // set RDT values???
                 sendFrames(frame, false);
+                    n=0;
+                }
             }
 
             // RDT sessions sends packets each sendVoice call
