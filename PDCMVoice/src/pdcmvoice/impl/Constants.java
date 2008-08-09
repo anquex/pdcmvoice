@@ -66,7 +66,7 @@ public class Constants {
 
     };
 
-    public static final int DEFAULT_FORMAT_CODE = FORMAT_CODE_SPEEX_WB;
+    public static final int DEFAULT_FORMAT_CODE = FORMAT_CODE_SPEEX_NB;
 
     public static final int[] BUFFER_SIZE_MILLIS = {
     	30, 40, 50, 70, 85, 100, 130, 150, 180, 220, 400

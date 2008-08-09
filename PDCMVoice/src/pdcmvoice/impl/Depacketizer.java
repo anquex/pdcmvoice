@@ -69,7 +69,7 @@ public class Depacketizer implements RTPAppIntf{
     {
         if (!inited) return;
 
-        //updateLastReceivedFrameInfo(frame);
+        updateLastReceivedFrameInfo(frame);
 
         /*  ------------------------------
          *  --- SEND TO PLAYOUT BUFFER ---
