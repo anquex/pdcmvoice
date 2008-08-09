@@ -289,6 +289,25 @@ public class VoiceSession {
     public int lastReceivedPacketPayload(){
         return receiverSession.getDepacketizer().lastPacketPayload();
     }
+
+    public long lastSentPacketSN(){
+        return senderSession.getPacketizer().lastPacketSN();
+
+    }
+    public boolean lastSentPacketRDT(){
+        return senderSession.getPacketizer().lastPacketRDT();
+    }
+    public int lastSentPacketFrames(){
+        return senderSession.getPacketizer().lastPacketFrames();
+    }
+    public int lastSentPacketFramesSize(){
+        return senderSession.getPacketizer().lastPacketFramesSize();
+    }
+
+    public int lastSentPacketPayload(){
+        return senderSession.getPacketizer().lastPacketPayload();
+    }
+
     public int LastEncodedFrameSize(){
         // could return 0 if no frame produced
         return senderSession.getEncoder().getLastFrameSize();
@@ -297,5 +316,14 @@ public class VoiceSession {
     public int getBufferedMillis(){
         return receiverSession.getDepacketizer().
                 getPlayoutBuffer().getBufferedMillis();
+    }
+
+    public float getPercivedPacketLoss(){
+        int n1=receiverSession.getDepacketizer().getPlayoutBuffer().getTotalPlayed();
+        int n2=receiverSession.getDepacketizer().getPlayoutBuffer().getTotalLoss();
+        if (n1!=0){
+            return (float)n2 / (float)n1;
+        }else
+            return 0;
     }
 }// END VOICE SESSION

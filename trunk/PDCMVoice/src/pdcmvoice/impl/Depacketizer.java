@@ -34,9 +34,9 @@ public class Depacketizer implements RTPAppIntf{
 
     //Last ReceivedFrameInfo
     private boolean lastPacketwasRDT;
-    private int lastAudioFrameSize;
-    private int lastFramesPerPacket;
-    private int lastPacketReceivedPayload;
+    private int lastAudioFrameSize=-1;
+    private int lastFramesPerPacket=-1;
+    private int lastPacketReceivedPayload=-1;
 
 
     public Depacketizer(RTPSession s){
@@ -93,52 +93,52 @@ public class Depacketizer implements RTPAppIntf{
          * --- RECOVERY COLLECTION CODE BEGINS ---
          * ---------------------------------------*/
 
-//        // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
-//        if (remote!=null){
-//            byte[] toSend = new byte[remote.getPktSize()];
-//            System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
-//            //ATTENZIONE!!!
-//            //SIMULAZIONE PERDITA PACCHETTI
-////            if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-//
-//            if (((int)frame.sequenceNumbers()[0] < 5
-//                ||
-//                (int)frame.sequenceNumbers()[0] > 10 && (int)frame.sequenceNumbers()[0] <= 30
-//                ||
-//                (int)frame.sequenceNumbers()[0] > 40 && (int)frame.sequenceNumbers()[0] <= 60
-//                ||
-//                (int)frame.sequenceNumbers()[0] > 70 && (int)frame.sequenceNumbers()[0] <= 90
-//                ||
-//                (int)frame.sequenceNumbers()[0] > 120)
-//                    && (int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-//
-////            if ((int)frame.sequenceNumbers()[0] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
-//
-//            this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
-//
-//            if (frame.marked())
-//            {
-//                System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
-//                //ATTENZIONE!!!
-//                //SIMULAZIONE PERDITA PACCHETTI
-////                if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-//
-//                if (((int)frame.sequenceNumbers()[1] < 5
-//                        ||
-//                        (int)frame.sequenceNumbers()[1] > 10 && (int)frame.sequenceNumbers()[1] <= 30
-//                        ||
-//                       (int)frame.sequenceNumbers()[1] > 40 && (int)frame.sequenceNumbers()[1] <= 60
-//                       ||
-//                       (int)frame.sequenceNumbers()[1] > 70 && (int)frame.sequenceNumbers()[1] <= 90
-//                       ||
-//                       (int)frame.sequenceNumbers()[1] > 120)
-//                               && (int)frame.sequenceNumbers()[1] % 10 != 0) //SIMULAZIONE PERDITA PACCHETTI
-//
-////                if ((int)frame.sequenceNumbers()[1] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
-//
-//                this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
-//            }
-//        }
+        // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
+        if (remote!=null){
+            byte[] toSend = new byte[remote.getPktSize()];
+            System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
+            //ATTENZIONE!!!
+            //SIMULAZIONE PERDITA PACCHETTI
+//            if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+
+            if (((int)frame.sequenceNumbers()[0] < 5
+                ||
+                (int)frame.sequenceNumbers()[0] > 10 && (int)frame.sequenceNumbers()[0] <= 30
+                ||
+                (int)frame.sequenceNumbers()[0] > 40 && (int)frame.sequenceNumbers()[0] <= 60
+                ||
+                (int)frame.sequenceNumbers()[0] > 70 && (int)frame.sequenceNumbers()[0] <= 90
+                ||
+                (int)frame.sequenceNumbers()[0] > 120)
+                    && (int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+
+//            if ((int)frame.sequenceNumbers()[0] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
+
+            this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+
+            if (frame.marked())
+            {
+                System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
+                //ATTENZIONE!!!
+                //SIMULAZIONE PERDITA PACCHETTI
+//                if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+
+                if (((int)frame.sequenceNumbers()[1] < 5
+                        ||
+                        (int)frame.sequenceNumbers()[1] > 10 && (int)frame.sequenceNumbers()[1] <= 30
+                        ||
+                       (int)frame.sequenceNumbers()[1] > 40 && (int)frame.sequenceNumbers()[1] <= 60
+                       ||
+                       (int)frame.sequenceNumbers()[1] > 70 && (int)frame.sequenceNumbers()[1] <= 90
+                       ||
+                       (int)frame.sequenceNumbers()[1] > 120)
+                               && (int)frame.sequenceNumbers()[1] % 10 != 0) //SIMULAZIONE PERDITA PACCHETTI
+
+//                if ((int)frame.sequenceNumbers()[1] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
+
+                this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
+            }
+        }
 
         /* ---------------------------------------
          * --- RECOVERY COLLECTION CODE ENDS -----

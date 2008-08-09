@@ -47,6 +47,10 @@ public class PlayoutBuffer{
 
     public final int TIME_PER_FRAME = 20; // in ms
 
+    // STATS VARIABLES
+    int nPlayed;
+    int nLoss;
+
 
 
     public PlayoutBuffer() {
@@ -55,10 +59,10 @@ public class PlayoutBuffer{
         isFirst=true;
         isBuffering=true;
         decoderDeliver= new Deliver();
-        // send a frame to decoder each 20 ms
-        timer=new Timer("Playout Buffer Timer");
-        //timer.schedule(decoderDeliver,0,20);
-        timer.scheduleAtFixedRate(decoderDeliver,0,20);
+//        // send a frame to decoder each 20 ms
+//        timer=new Timer("Playout Buffer Timer");
+//        //timer.schedule(decoderDeliver,0,20);
+//        timer.scheduleAtFixedRate(decoderDeliver,0,20);
     }
 
     public void registerDecoder(Decoder d){
@@ -160,11 +164,11 @@ public class PlayoutBuffer{
                         }
 //
 //                        // send a frame to decoder each 20 ms
-//                        if(timer==null){
-//                            timer=new Timer("Playout Buffer Timer");
-//                           //timer.schedule(decoderDeliver,0,20);
-//                            timer.scheduleAtFixedRate(decoderDeliver,0,20);
-//                        }
+                        if(timer==null){
+                            timer=new Timer("Playout Buffer Timer");
+                           //timer.schedule(decoderDeliver,0,20);
+                            timer.scheduleAtFixedRate(decoderDeliver,0,20);
+                        }
 
                         // start playing from older frame
 
@@ -244,7 +248,7 @@ public class PlayoutBuffer{
         private int samplesPlayed;
         private long nextTimestampToPlay=-1;
         private boolean first=true;
-        private boolean isPlaying;
+        private boolean isPlaying=true;
 
         public synchronized void startPlaying(long firstTimestamp){
             if (DEBUG)
@@ -276,6 +280,7 @@ public class PlayoutBuffer{
 
 
         public  void run() {
+            nPlayed++;
             if (isPlaying()){
                 synchronized(PlayoutBuffer.this){
                     if(isEmpty()){
@@ -284,6 +289,7 @@ public class PlayoutBuffer{
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
                         stopPlaying();
+                        nLoss++;
                         return;
                     }
     //                out("lower"+getLowerTimestamp());
@@ -317,6 +323,8 @@ public class PlayoutBuffer{
                     }
                     nextTimestampToPlay+=TIME_PER_FRAME;
                 }
+            }else{
+                nLoss++;
             }
         }
     }//Deliver
@@ -343,5 +351,12 @@ public class PlayoutBuffer{
         byte[] getContent(){
             return frame;
         }
+    }
+    public int getTotalPlayed(){
+        return nPlayed;
+    }
+
+    public int getTotalLoss(){
+        return nLoss;
     }
 }//Playout Buffer
