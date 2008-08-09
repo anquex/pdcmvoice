@@ -94,6 +94,7 @@ public class VoiceSessionSender {
      */
     
     public void start() throws Exception{
+            encoder.init();
             capture.start();
             encoder.start();
         }

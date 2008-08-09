@@ -25,6 +25,12 @@ public class Packetizer {
 
     // negative value used to see it is not valid
     private long firstFrameTimestamp=-1;
+    private long firstPacketTimestamp=-1;
+    private int lastPacketSN=-1;
+    private boolean lastPacketwasRDT;
+    private int lastFramesPerPacket=-1;
+    private int lastAudioFrameSize=-1;
+    private int lastPacketPayload=-1;
 
     // start supposing not having voice frames waiting to be sent
     private boolean lastEncodedHasBeenSent=true;
@@ -195,26 +201,38 @@ public class Packetizer {
         boolean[] markers= new boolean[1];
         markers[0]=marked;
         f[0]=frames;
+        if(firstPacketTimestamp==-1)
+            firstPacketTimestamp=currentTimeStamp;
         long[][] r=rtpSession.sendData(f, null, markers, currentTimeStamp, null);
+        lastPacketSN=(int) r[0][1];
+        lastPacketwasRDT=isRDT();
+        lastPacketPayload=rtpSession.payloadType();
+        if(isRDT() || framesPerPackets()==2){
+            lastFramesPerPacket=2;
+            lastAudioFrameSize=frames.length/2;
+        }else{
+            lastAudioFrameSize=frames.length;
+            lastFramesPerPacket=framesPerPackets();
+        }
 
         /* ---------------------------------------
          * --- RECOVERY COLLECTION CODE BEGINS ---
          * ---------------------------------------*/
 
-//        // collection.add((int)r[1],f, r[0]);
-//        if (local!=null){
-//            //this means recovery mode is active
-//
-//            byte[] toSend = new byte[local.getPktSize()];
-//            System.arraycopy(frames, 0, toSend, 0, local.getPktSize()); //singolo pacchetto voce: 20Byte
-//            this.local.add((int)r[0][1], toSend, r[0][0]);
-//
-//           if (marked)
-//            {
-//                System.arraycopy(frames, local.getPktSize(), toSend, 0, local.getPktSize());
-//                this.local.add((int)r[1][1], toSend, r[1][0]);
-//            }
-//        }
+        // collection.add((int)r[1],f, r[0]);
+        if (local!=null){
+            //this means recovery mode is active
+
+            byte[] toSend = new byte[local.getPktSize()];
+            System.arraycopy(frames, 0, toSend, 0, local.getPktSize()); //singolo pacchetto voce: 20Byte
+            this.local.add((int)r[0][1], toSend, r[0][0]);
+
+           if (marked)
+            {
+                System.arraycopy(frames, local.getPktSize(), toSend, 0, local.getPktSize());
+                this.local.add((int)r[1][1], toSend, r[1][0]);
+            }
+        }
         /* ---------------------------------------
          * --- RECOVERY COLLECTION CODE ENDS   ---
          * ---------------------------------------*/
@@ -234,11 +252,7 @@ public class Packetizer {
             }
             out(out);
         }
-
         return r;
-
-
-
     }
 
     private static byte[] forgeBigFrame(byte[] currEncoded,byte[] prevEncoded){
@@ -279,5 +293,29 @@ public class Packetizer {
     public long getFirstFrameTimestamp(){
         // -1 means never updated
         return firstFrameTimestamp;
+    }
+    public long getFirstPacketTimestamp(){
+        // -1 means never updated
+        return firstPacketTimestamp;
+    }
+
+    private void updateLastPacketInfo(){
+
+    }
+    public long lastPacketSN(){
+        return lastPacketSN;
+    }
+    public boolean lastPacketRDT(){
+        return lastPacketwasRDT;
+    }
+    public int lastPacketFrames(){
+        return lastFramesPerPacket;
+    }
+    public int lastPacketFramesSize(){
+        return lastAudioFrameSize;
+    }
+
+    public int lastPacketPayload(){
+        return lastPacketPayload;
     }
 }

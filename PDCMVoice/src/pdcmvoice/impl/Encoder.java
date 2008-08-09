@@ -58,17 +58,20 @@ public class Encoder extends Thread {
             throw new IllegalArgumentException();
         }
 
-        init();
-
     }
 
     /** Initialize encoder according to selected format
-     * 
-     * All codecs encoded 20ms of PCM audio per encoded frame
+     *
+     *  This allows for changing encoding settings (such as SPEEX.QUALITY
+     *  before starting encoding. Once encoding is started changing is ignored.
+     *
+     *  All codecs encoded 20ms of PCM audio per encoded frame
      */
-    private void init() {
+
+    public void init() {
         //set encoder and coding parameters according to 
         //selected format
+        out("Encoder Inited");
         if (inited) {
             throw new RuntimeException("Init Already Done");
         }
@@ -232,7 +235,10 @@ public class Encoder extends Thread {
 
     public int setSpeexQuality(int n) {
         if (n >= 0 && n <= 10) {
-            return speexquality = n;
+            if (speexquality!=n){
+                speexquality = n;
+            }
+            return speexquality;
         } else {
             return speexquality;
         }
