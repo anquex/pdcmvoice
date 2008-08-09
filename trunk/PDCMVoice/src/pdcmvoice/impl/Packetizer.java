@@ -31,7 +31,8 @@ public class Packetizer {
 
     private final int DEFAULT_FRAMES_PER_PACKET=ALLOWED_FRAMES_PER_PACKET[DEFAULT_FRAMES_PER_PACKET_INDEX];
 
-    private static final boolean DEBUG=true;
+    private static final boolean DEBUG=false;
+    private static final boolean VERBOSE=false;
     int n;
 
 
@@ -225,6 +226,12 @@ public class Packetizer {
             out+=" MARKED :"+marked;
             out+=" TIMESTAMP :"+currentTimeStamp;
             out+=" SN :"+r[0][1];
+            if (VERBOSE){
+                out+="\n   Content: ";
+                for (int i=0;i<frames.length;i++){
+                    out+=" "+frames[i];
+                }
+            }
             out(out);
         }
 

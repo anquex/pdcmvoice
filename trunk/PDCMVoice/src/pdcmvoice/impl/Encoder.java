@@ -31,6 +31,7 @@ public class Encoder extends Thread {
     private int speexquality = SPEEX_QUALITIES[DEFAULT_SPEEX_QUALITY_INDEX];
 
     private final boolean DEBUG = false;
+    private final boolean VERBOSE = false;
 
     
     private int producedFrames;
@@ -146,7 +147,7 @@ public class Encoder extends Thread {
                     break; //let process die
                 }
                 // ENCODE READED BYTES
-                if (DEBUG)
+                if (DEBUG && VERBOSE)
                     out("Encoder Read: "+ nReadBytes+" Bytes");
                 if (nReadBytes >= PCMbytesPerFrame) {
                     // encoding need at least 20 ms audio
@@ -181,6 +182,14 @@ public class Encoder extends Thread {
                     producedBytes+=encodedFrame.length;
                     producedFrames++;
                     lastFrameSize=encodedFrame.length;
+
+                    if (DEBUG){
+                        String out="Frame "+producedFrames+" lenght "+encodedFrame.length+" Content: ";
+                        for (int i=0;i<encodedFrame.length;i++){
+                            out+=" "+encodedFrame[i];
+                        }
+                        out(out);
+                    }
                 }
             }
             out("Encoder: Encoding Stopped...");

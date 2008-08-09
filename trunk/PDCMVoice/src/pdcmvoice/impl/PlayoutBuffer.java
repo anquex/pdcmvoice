@@ -37,11 +37,11 @@ public class PlayoutBuffer{
 
     private SortedSet<VoiceFrame> listBuffer; // frame container sorted by time
                                               // stamp
-    
+
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
-    
-    private final boolean DEBUG=true;
+
+    private final boolean DEBUG=false;
 
     //CONSTANTS
 
@@ -74,9 +74,9 @@ public class PlayoutBuffer{
 
 
     public synchronized void add(long timestamp, byte[] frame){
-        
+
         /* We consider the timestamp of the first packet received as first*/
-        
+
 //        if(timestamp<=decoderDeliver.getNextTimestampToPlay())
 //            return;
 
@@ -88,11 +88,7 @@ public class PlayoutBuffer{
             if (DEBUG) out("BUFFER: OUT OF TIME... frame dropped");
             return;
         }
-        if (listBuffer.contains(v)){
-            out("contenuto cazzo!!!");
-            return;
-        }else
-            listBuffer.add(v);
+        listBuffer.add(v);
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
 
@@ -144,9 +140,9 @@ public class PlayoutBuffer{
                 VoiceFrame next=iter.next();
 
                 long nextstamp=next.getTimestamp();
-                
+
                 if (nextstamp==currentExpectedTimestamp){
-                    
+
                     bufferedMillis+=TIME_PER_FRAME;
 
                     // next packet referst to istant t+20
@@ -155,7 +151,7 @@ public class PlayoutBuffer{
  //                   if (DEBUG) out("BUFFER : Buffered "+bufferedMillis+" millis" );
 
                     if(bufferedMillis>=minBufferedMillis){
-                        // I have enought consecutive voice frame 
+                        // I have enought consecutive voice frame
                         // in the buffer to start playback
                         isBuffering=false;
 
@@ -183,19 +179,19 @@ public class PlayoutBuffer{
             }
         }
         // Have to manage brust lenght
-        
+
         //decoder.decodeFrame(frame, 0, timestamp);
-        
+
     }
-    
+
     public synchronized  long getLowerTimestamp(){
         return listBuffer.first().getTimestamp();
     }
-    
+
     public synchronized  long getHigherTimestamp(){
         return listBuffer.last().getTimestamp();
     }
-    
+
     private synchronized  VoiceFrame remove(){
         if (isEmpty()){
             // nothing to play or remove
@@ -230,7 +226,7 @@ public class PlayoutBuffer{
         int i= Math.max(n, minBufferedMillis);
         return maxBufferedMillis=i;
     }
-    
+
     public synchronized  int size(){
         return listBuffer.size();
     }
@@ -244,12 +240,12 @@ public class PlayoutBuffer{
     }
 
     class Deliver extends TimerTask {
-        
+
         private int samplesPlayed;
         private long nextTimestampToPlay=-1;
         private boolean first=true;
         private boolean isPlaying;
-        
+
         public synchronized void startPlaying(long firstTimestamp){
             if (DEBUG)
                 if(first){
@@ -273,11 +269,11 @@ public class PlayoutBuffer{
         public synchronized  long getNextTimestampToPlay(){
             return nextTimestampToPlay;
         }
-        
+
         public synchronized  boolean isPlaying(){
             return isPlaying;
-        }  
-               
+        }
+
 
         public  void run() {
             if (isPlaying()){
@@ -324,8 +320,8 @@ public class PlayoutBuffer{
             }
         }
     }//Deliver
-    
-   
+
+
     class VoiceFrameComparator implements Comparator<VoiceFrame>{
 
         public int compare(PlayoutBuffer.VoiceFrame o1, PlayoutBuffer.VoiceFrame o2) {
@@ -336,10 +332,10 @@ public class PlayoutBuffer{
     class VoiceFrame{
         private long timestamp;
         private byte[] frame;
-        
+
         VoiceFrame(long timestamp, byte[] frame){
             this.timestamp=timestamp;
-            this.frame=frame;  
+            this.frame=frame;
         }
         long getTimestamp(){
             return timestamp;

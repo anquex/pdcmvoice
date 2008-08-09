@@ -44,6 +44,7 @@ public class Decoder {
     private int encodedFormat;
 
     private boolean inited;
+    private int decodedFrames;
 
     private final boolean DEBUG=false;
 
@@ -124,8 +125,10 @@ public class Decoder {
         // If decoder is not ready then drop
         if (!inited) return;
 
+        decodedFrames++;
+
         if (DEBUG){
-            String out="";
+            String out="Frame "+decodedFrames+" lenght "+frame.length+" Content: ";
             for (int i=0;i<frame.length;i++){
                 out+=" "+frame[i];
             }

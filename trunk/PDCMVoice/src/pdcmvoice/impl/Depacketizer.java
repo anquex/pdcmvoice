@@ -20,7 +20,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class Depacketizer implements RTPAppIntf{
 
-    private final boolean DEBUG=true;
+    private final boolean DEBUG=false;
 
     private RTPSession rtpSession;
     private Decoder decoder;
@@ -43,8 +43,9 @@ public class Depacketizer implements RTPAppIntf{
         rtpSession=s;
         playoutBuffer=new PlayoutBuffer();
         // disable rtp buffering, recive all packets!
-        rtpSession.packetBufferBehavior(-1); //il recovery non funziona!
-        //rtpSession.packetBufferBehavior(0);
+        rtpSession.packetBufferBehavior(-1);
+        // corretto l'errore in jlibrtp che non ritornava i pacchetti
+        // se -1 !! (che libreria feccia)
 
 
     }
@@ -147,17 +148,18 @@ public class Depacketizer implements RTPAppIntf{
 //            out("2 frame");
             lenght=voice.length/2;
             byte[] v=new byte[voice.length/2];
+            byte[] v2=new byte[voice.length/2];
             // first add older packet (see playout buffer why)
             System.arraycopy(voice, lenght, v, 0, lenght);
 //            playoutBuffer.add(frame.rtpTimestamp()-20, v);
-            new Action(frame.rtpTimestamp()-20, voice).start();
+            new Action(frame.rtpTimestamp()-20, v).start();
             // then add new packet
             
 //            out("Frame arrivato "+(frame.rtpTimestamp()-20)+
 //                    " byte "+byteToString(v));
-            System.arraycopy(voice, 0, v, 0, lenght);
+            System.arraycopy(voice, 0, v2, 0, lenght);
 //            playoutBuffer.add(frame.rtpTimestamp(), v);
-            new Action(frame.rtpTimestamp(), voice).start();
+            new Action(frame.rtpTimestamp(), v2).start();
             
 //            out("Frame arrivato "+frame.rtpTimestamp()+
 //                    " byte "+byteToString(v));
@@ -171,7 +173,8 @@ public class Depacketizer implements RTPAppIntf{
     }
     
     class Action extends Thread{
-        
+        // using Action we hope order is mantained
+        // usually yes :)
         private byte[]b;
         private long t;
 
