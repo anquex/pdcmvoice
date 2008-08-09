@@ -49,9 +49,9 @@ public class MainUI extends javax.swing.JFrame {
 
     private void renderStatus(){
         if (voiceSession!=null){
-            RPPayload.setText(""+voiceSession.lastPacketPayload());
-            RPframesNumber.setText(""+voiceSession.lastPacketFrames());
-            RPframesSize.setText(""+voiceSession.lastPacketFramesSize());
+            RPPayload.setText(""+voiceSession.lastReceivedPacketPayload());
+            RPframesNumber.setText(""+voiceSession.lastReceivedPacketFrames());
+            RPframesSize.setText(""+voiceSession.lastReceivedPacketFramesSize());
             LPSEncodedSize.setText(""+voiceSession.LastEncodedFrameSize());
             PBbufferedMillis.setText(""+voiceSession.getBufferedMillis());
         }else{
@@ -1269,8 +1269,9 @@ public class MainUI extends javax.swing.JFrame {
                 try {
                     // do updates
                     renderRTCPStats();
+                    sleep(500);
                     renderStatus();
-                    sleep(1000);
+                    sleep(500);
                 } catch (InterruptedException ignore) {
                     ignore.printStackTrace();
                     break;

@@ -273,20 +273,20 @@ public class VoiceSession {
         return !vsc.isPaused();
     }
 
-    public long lastPacketSN(){
+    public long lastReceivedPacketSN(){
         return receiverSession.getDepacketizer().lastPacketSN();
     }
-    public boolean lastPacketRDT(){
+    public boolean lastReceivedPacketRDT(){
         return receiverSession.getDepacketizer().lastPacketRDT();
     }
-    public int lastPacketFrames(){
+    public int lastReceivedPacketFrames(){
         return receiverSession.getDepacketizer().lastPacketFrames();
     }
-    public int lastPacketFramesSize(){
+    public int lastReceivedPacketFramesSize(){
         return receiverSession.getDepacketizer().lastPacketFramesSize();
     }
 
-    public int lastPacketPayload(){
+    public int lastReceivedPacketPayload(){
         return receiverSession.getDepacketizer().lastPacketPayload();
     }
     public int LastEncodedFrameSize(){
