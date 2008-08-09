@@ -243,7 +243,7 @@ public class VoiceSession {
         setFramesPerPacket(settings.framesPerPacket());
         setMaxBufferedMillis(settings.getMaxBufferSize());
         setMinBufferedMillis(settings.getMinBufferSize());
-        Dynamic(settings.isDynamic());
+        dynamic(settings.isDynamic());
         RDT(settings.isRDT());
         //RDT(true);
         //out (""+settings.framesPerPacket()+" "+settings.isRDT());
@@ -267,7 +267,7 @@ public class VoiceSession {
         e.setSpeexQuality(n);
     }
     
-    public void Dynamic(boolean enabled){
+    public void dynamic(boolean enabled){
         if(enabled)
            vsc.continueOptimizing();
         else vsc.pauseOptimizing();
