@@ -122,7 +122,8 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
     }
 
     public void BYEPktReceived(Participant[] relevantParticipants, String reason) {
-        //DO NOTHING
+        
+        //parent.stop();
     }
 
     public void APPPktReceived(Participant part, int subtype, byte[] name, byte[] data) {

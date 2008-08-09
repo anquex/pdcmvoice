@@ -42,6 +42,8 @@ public class VoiceSession {
     DatagramSocket rtcpSocket = null;
     DatagramSocket recoverySocket = null; // still not used
 
+    private long startTimestamp;
+
     private final boolean DEBUG=true;
 
     public VoiceSession (VoiceSessionSettings settings) throws SocketException{
@@ -146,6 +148,7 @@ public class VoiceSession {
                 rs.start();
                 rc.start();
             }
+            startTimestamp=System.currentTimeMillis();
             out ("Voice Session Started");
             if (DEBUG) out(toString());
 
@@ -326,4 +329,18 @@ public class VoiceSession {
         }else
             return 0;
     }
+
+    public long getSessionDurationMillis(){
+        return System.currentTimeMillis()-startTimestamp;
+    }
+
+    public String getElapsed(){
+        long t=getSessionDurationMillis();
+        int minutes;
+        minutes=(int) (t / (1000 * 60));
+        String seconds=""+(int) ((t - (minutes * 60 * 1000)) / 1000);
+        if (seconds.length()==1) seconds="0"+seconds;
+        return ""+minutes+":"+seconds;
+    }
+
 }// END VOICE SESSION
