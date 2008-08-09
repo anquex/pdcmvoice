@@ -150,7 +150,7 @@ public class MainUI extends javax.swing.JFrame {
             LRRDelay.setText(""+rtcpStats.RRdelayLastSR);
             RRSessionPL.setText(""+rtcpStats.RRcumulPacketsLost);
             RRJitter.setText(""+rtcpStats.RRinterArrivalJitter);
-            String iplp=nf.format(rtcpStats.RRlossFraction/256);
+            String iplp=nf.format((float)rtcpStats.RRlossFraction/256);
             RRIntervalPL.setText(iplp);
 
         }else{
