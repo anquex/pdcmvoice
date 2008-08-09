@@ -80,14 +80,14 @@ public class RTCPStats {
         RRreporterSsrc=reporterSsrc;
         RRreporteeSsrc=reporteeSsrc;
         if(lossFraction.length>0){
-            RRlossFraction=lossFraction[0];
+            RRlossFraction=Math.abs(lossFraction[0]);
             plossAVG.add(RRlossFraction);
         }
         if(cumulPacketsLost.length>0)
             RRcumulPacketsLost=cumulPacketsLost[0];
         RRextHighSeq=extHighSeq;
         if(interArrivalJitter.length>0){
-            RRinterArrivalJitter=interArrivalJitter[0];
+            RRinterArrivalJitter=Math.abs(interArrivalJitter[0]);
             jitterAVG.add((int)RRinterArrivalJitter);
         }
         RRlastSRTimeStamp=lastSRTimeStamp;
@@ -118,6 +118,7 @@ public class RTCPStats {
         }
 
         synchronized void add(int i){
+            System.out.println(i);
             buffer[index]=i;
             index= (index++) % n;
             received++;
