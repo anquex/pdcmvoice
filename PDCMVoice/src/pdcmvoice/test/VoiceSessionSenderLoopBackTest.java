@@ -39,10 +39,10 @@ public class VoiceSessionSenderLoopBackTest extends Thread{
             rtpsession.addParticipant(p);
             VoiceSessionSender s = new VoiceSessionSender(1, rtpsession);
             //s.getPacketizer().framesPerPackets(2);
-            s.getPacketizer().enableRDT();
+            //s.enableRDT();
             s.start();
-            sleep(10000);
-            s.getPacketizer().disableRDT();
+            //sleep(10000);
+            //s.getPacketizer().disableRDT();
         } catch (Exception ex) {
             Logger.getLogger(VoiceSessionSenderLoopBackTest.class.getName()).log(Level.SEVERE, null, ex);
         }

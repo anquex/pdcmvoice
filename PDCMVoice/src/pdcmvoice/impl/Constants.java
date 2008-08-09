@@ -134,7 +134,7 @@ public class Constants {
     {
         "1","2"
     };
-    public static final int DEFAULT_FRAMES_PER_PACKET_INDEX=1;
+    public static final int DEFAULT_FRAMES_PER_PACKET_INDEX=0;
 
     //  FEC ENABLE?
 
