@@ -121,7 +121,9 @@ public class Constants {
     public static final int PAYLOAD_SPEEX_RDT=99;
 
     public static final int DEFAULT_MIN_BUFFER_SIZE=60;
-    public static final int DEFAULT_MAX_BUFFER_SIZE=DEFAULT_MIN_BUFFER_SIZE+80;
+    public static final int MAX_MIN_BUFFER_PLUS=80;
+    public static final int DEFAULT_MAX_BUFFER_SIZE=
+            DEFAULT_MIN_BUFFER_SIZE+MAX_MIN_BUFFER_PLUS;
 
     public static final boolean DEFAULT_DYNAMIC_ADAPTATION=false;
     public static final boolean DEFAULT_BACKGROUND_RECOVERY=false;

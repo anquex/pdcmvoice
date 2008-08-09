@@ -216,6 +216,9 @@ public class PlayoutBuffer{
     public synchronized int setMinBufferedMillis(int n){
         if (minBufferedMillis>=0)
             minBufferedMillis=n;
+        int expecetedMax=minBufferedMillis+MAX_MIN_BUFFER_PLUS;
+        if(getMaxBufferedMillis()<expecetedMax)
+            setMaxBufferedMillis(expecetedMax);
         return minBufferedMillis;
     }
 
