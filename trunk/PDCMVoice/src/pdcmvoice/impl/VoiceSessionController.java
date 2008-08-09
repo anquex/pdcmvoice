@@ -5,6 +5,8 @@
 
 package pdcmvoice.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jlibrtp.Participant;
 import jlibrtp.RTCPAppIntf;
 import static pdcmvoice.impl.Constants.*;
@@ -43,6 +45,8 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
     // causes process to die
     private boolean doTerminate=false;
 
+    private boolean maxBufferOptimizationRunning;
+
 
     public VoiceSessionController(VoiceSession parent){
         rtcpStats=new RTCPStats();
@@ -70,7 +74,9 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
                     setBest();
                 try {
                     sleep(WAIT_FOR_OPTIMIZE);
-                } catch (InterruptedException ex) {}
+                } catch (InterruptedException ex) {
+                    out("Ho dormito male e mi tocca anche lavorare :(");
+                }
             }
             else{
                 try {
@@ -85,8 +91,22 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
      */
 
     private void setBest(){
-        // Optimize Voice Session
-        // Enable/disable/pause Recovery
+        // Optimize playout buffer
+        int avg=rtcpStats.getAverageJitter();
+        if(avg!=-1){
+            parent.setMinBufferedMillis(Math.max(60, avg));
+            if(parent.getMaxBufferedMillis()-parent.getMinBufferedMillis()>80)
+                new MaxBufferOptimizer().start();
+        }
+        // Optimize FEC/Recovery
+        avg=rtcpStats.getAveragePloss();
+        if(avg!=-1){
+            if (avg>(2*256))
+                parent.RDT(true);
+            else
+                parent.RDT(false);
+        }
+
     }
 
     public void terminate(){
@@ -138,4 +158,38 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         return paused;
     }
 
+    private class MaxBufferOptimizer extends Thread{
+
+        // only 1 thread is running at once
+        public void run(){
+            while(true){
+                synchronized(VoiceSessionController.this){
+                    if (maxBufferOptimizationRunning)
+                        //another thread is running... die
+                        break;
+                    else
+                        maxBufferOptimizationRunning=true;
+                }
+                // me was running
+                int max=parent.getMaxBufferedMillis();
+                if (max-parent.getMinBufferedMillis()>80){
+                    // riduci dolcemente...
+                    parent.setMaxBufferedMillis(max-20);
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(VoiceSessionController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    // finished
+                    synchronized(VoiceSessionController.this){
+                        if (maxBufferOptimizationRunning)
+                            maxBufferOptimizationRunning=false;
+                    }
+                    break;
+                }
+            }
+
+        }
+    }
 }// End VoiceSessionController

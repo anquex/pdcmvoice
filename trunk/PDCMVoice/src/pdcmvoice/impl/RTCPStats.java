@@ -12,7 +12,6 @@ package pdcmvoice.impl;
 public class RTCPStats {
 
     // source Reports
-
     public long SRssrc;
     public long SRntpHighOrder;
     public long SRntpLowOrder;
@@ -40,8 +39,12 @@ public class RTCPStats {
 
     // AVG (RR based)
 
-    private int AVGJitter=-1;
-    private int AVGPLoss =-1; // from loss fraction
+    // how many reports use to calculate average
+    public int reportsAVG=5;
+    public int minReports=3;
+
+    private AverageContainer jitterAVG= new AverageContainer(reportsAVG,minReports);
+    private AverageContainer plossAVG = new AverageContainer(reportsAVG,minReports);;
 
     // counters
 
@@ -76,26 +79,60 @@ public class RTCPStats {
         receivedRR++;
         RRreporterSsrc=reporterSsrc;
         RRreporteeSsrc=reporteeSsrc;
-        if(lossFraction.length>0)
+        if(lossFraction.length>0){
             RRlossFraction=lossFraction[0];
+            plossAVG.add(RRlossFraction);
+        }
         if(cumulPacketsLost.length>0)
             RRcumulPacketsLost=cumulPacketsLost[0];
         RRextHighSeq=extHighSeq;
-        if(interArrivalJitter.length>0)
+        if(interArrivalJitter.length>0){
             RRinterArrivalJitter=interArrivalJitter[0];
+            jitterAVG.add((int)RRinterArrivalJitter);
+        }
         RRlastSRTimeStamp=lastSRTimeStamp;
         if(delayLastSR.length>0)
             RRdelayLastSR=delayLastSR[0];
-
-        updateAVG();
     }
 
-    private void updateAVG(){
-        // do avg update,
-        // should last n samples be remembered?
-
-        //avg variables to be defined
-
+    public int getAveragePloss(){
+        return plossAVG.getAverage();
     }
 
-}
+    public int getAverageJitter(){
+        return jitterAVG.getAverage();
+    }
+
+    class AverageContainer{
+
+        private int buffer[];
+        private int n; //samples 
+        private int index=0;
+        private int received=0;
+        private int min=0;
+
+        AverageContainer(int n, int k) {
+            this.n=n;
+            buffer=new int[n];
+            min=k;
+        }
+
+        synchronized void add(int i){
+            buffer[index]=i;
+            index= (index++) % n;
+            received++;
+        }
+
+        int getAverage(){
+            if(received<min) return -1;
+            int sum=0;
+            for (int i=0;i<n;i++)
+                sum+=i;
+            if (received<n)
+                return sum/received;
+            else
+                return sum/n;
+        }
+    }//Average Container
+
+}//RTCTStats
