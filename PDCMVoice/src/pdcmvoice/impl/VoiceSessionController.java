@@ -94,7 +94,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         // Optimize playout buffer
         int avg=rtcpStats.getAverageJitter();
         if(avg!=-1){
-            parent.setMinBufferedMillis(Math.max(60, avg));
+            parent.setMinBufferedMillis(Math.max(60, avg*3));
             if(parent.getMaxBufferedMillis()-parent.getMinBufferedMillis()>80)
                 new MaxBufferOptimizer().start();
         }
