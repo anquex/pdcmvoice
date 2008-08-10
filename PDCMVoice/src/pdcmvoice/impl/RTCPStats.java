@@ -118,7 +118,6 @@ public class RTCPStats {
         }
 
         synchronized void add(int i){
-            System.out.println(i);
             buffer[index]=i;
             index= (index++) % n;
             received++;
