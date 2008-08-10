@@ -362,7 +362,7 @@ public class PlayoutBuffer{
     public synchronized void updateSessionPloss(){
         float expected=(higherReceivedTimestamp-startFrameTimestamp)/TIME_PER_FRAME+1;
         //
-        out("Expected "+expected+" received "+totalAdded);
+        //out("Expected "+expected+" received "+totalAdded);
         sessionPloss=(expected-totalAdded)/expected;
     }
     
