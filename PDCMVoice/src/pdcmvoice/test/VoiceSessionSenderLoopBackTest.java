@@ -39,7 +39,7 @@ public class VoiceSessionSenderLoopBackTest extends Thread{
             rtpsession.addParticipant(p);
             VoiceSessionSender s = new VoiceSessionSender(1, rtpsession);
             //s.getPacketizer().framesPerPackets(2);
-            //s.enableRDT();
+            s.enableRDT();
             s.start();
             //sleep(10000);
             //s.getPacketizer().disableRDT();

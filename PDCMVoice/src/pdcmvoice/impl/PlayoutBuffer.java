@@ -13,6 +13,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static pdcmvoice.impl.Constants.*;
 
 /**
@@ -64,6 +66,7 @@ public class PlayoutBuffer{
 //        timer=new Timer("Playout Buffer Timer");
 //        //timer.schedule(decoderDeliver,0,20);
 //        timer.scheduleAtFixedRate(decoderDeliver,0,20);
+        new BrustKiller().start();
     }
 
     public void registerDecoder(Decoder d){
@@ -79,14 +82,7 @@ public class PlayoutBuffer{
 
 
     public synchronized void add(long timestamp, byte[] frame){
-        out("is buffering "+isBuffering);
 
-        /* We consider the timestamp of the first packet received as first*/
-
-//        if(timestamp<=decoderDeliver.getNextTimestampToPlay())
-//            return;
-
-        VoiceFrame v=new VoiceFrame(timestamp, frame);
         // protect playout from late frames
         if (timestamp<decoderDeliver.getNextTimestampToPlay()){
             //packet arrived too late!
@@ -94,6 +90,8 @@ public class PlayoutBuffer{
             if (DEBUG) out("BUFFER: OUT OF TIME... frame dropped");
             return;
         }
+
+        VoiceFrame v=new VoiceFrame(timestamp, frame);
         listBuffer.add(v);
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
@@ -104,32 +102,6 @@ public class PlayoutBuffer{
                 if (DEBUG) out("BUFFER: First Frame recived: First timestamp "
                                +startFrameTimestamp);
             }
-        }
-
-        // bound max delay
-
-        // bursts arrivals produces more packets are dropped at once
-        // I never get null pointer since I have at least 1 packet at
-        // this point in the buffer
-        
-        while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>maxBufferedMillis
-                //&& !isBuffering
-                )
-        {
-            if (DEBUG)
-                    out("PLAYOUT BUFFER : Maximum Delay Reached: "+
-                    (getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME));
-
-            // drop the older packet
-
-            remove();
-
-            if(DEBUG)  out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
-
-            // start playing from the older packet
-
-            decoderDeliver.startPlaying(getLowerTimestamp());
-
         }
 
         if (isBuffering){
@@ -251,6 +223,32 @@ public class PlayoutBuffer{
     public synchronized  boolean isEmpty(){
         return listBuffer.isEmpty();
     }
+    /**
+     *  Remove a frame if latency is too high
+     */
+    
+    public synchronized void checkAndFixBrusts(){
+            // bound max delay
+
+           if(size()<=1) return;
+            
+            if(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>getMaxBufferedMillis()
+                    //&& !isBuffering
+                    )
+            {
+                if (DEBUG)
+                        out("PLAYOUT BUFFER : Maximum Delay Reached: "+
+                        (getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME));
+
+                // drop the older packet
+                remove();
+
+                if(DEBUG)  out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
+
+                // start playing from the older packet
+                decoderDeliver.startPlaying(getLowerTimestamp());
+            }
+    }// checkAndFixBrusts
 
     class Deliver extends TimerTask {
 
@@ -302,20 +300,6 @@ public class PlayoutBuffer{
                         nLoss++;
                         return;
                     }
-    //                out("lower"+getLowerTimestamp());
-    //                out("next"+nextTimestampToPlay);
-                    // if a packet is missing it meeans that getLowerTimestamp()
-                    // is higher than nextTimestampToPlay
-                    // if it is lower it means that I'm introducing unnecessary
-                    // delay
-    //                if (getLowerTimestamp()<nextTimestampToPlay)
-    //                    nextTimestampToPlay=getLowerTimestamp();
-                    // I want to have bounded delay, max acceptable delay is
-                    // maxBufferedMillis
-                    // max delay should be managed by add method
-    //                if (getHigherTimestamp()>maxBufferedMillis+nextTimestampToPlay)
-    //                    nextTimestampToPlay=getLowerTimestamp();
-
 
                     if (getLowerTimestamp()==nextTimestampToPlay){
                         samplesPlayed++;
@@ -369,4 +353,21 @@ public class PlayoutBuffer{
     public int getTotalLoss(){
         return nLoss;
     }
+    
+    class BrustKiller extends Thread{
+        
+        public void run(){
+           if(DEBUG) out("BRUST KILLER started...");
+            while(true){
+                try {
+                    checkAndFixBrusts();
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    if(DEBUG) out("BRUST KILLER died!");
+                    break;
+                }
+            }//while
+        }//run
+    }// BrustKiller
+    
 }//Playout Buffer
