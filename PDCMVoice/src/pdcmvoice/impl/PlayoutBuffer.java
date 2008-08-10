@@ -46,6 +46,7 @@ public class PlayoutBuffer{
     //CONSTANTS
 
     public final int TIME_PER_FRAME = 20; // in ms
+    public final boolean WANTCONSECUTIVE=true;
 
     // STATS VARIABLES
     int nPlayed;
@@ -108,8 +109,9 @@ public class PlayoutBuffer{
         // bound max delay
 
         // bursts arrivals produces more packets are dropped at once
-        // I neve get null pointer since I have at least 1 packet at
+        // I never get null pointer since I have at least 1 packet at
         // this point in the buffer
+        
         while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>maxBufferedMillis
                 //&& !isBuffering
                 )
@@ -131,68 +133,66 @@ public class PlayoutBuffer{
         }
 
         if (isBuffering){
-            Iterator<VoiceFrame> iter=listBuffer.iterator();
-
-            // at least 1 element is present since I just made an add
-
-            long currentExpectedTimestamp=getLowerTimestamp();
-
-            // count how many millis I have in the buffer
-
-            // I want to have consecutive packets before starting
-            // playing back
-
             int bufferedMillis=0; // millis in buffer
-            while(iter.hasNext()){
+            if(isFirstBuffering && WANTCONSECUTIVE ){
+                
+                    // I want consecutive frame to get bounded delay
+                    Iterator<VoiceFrame> iter=listBuffer.iterator();
 
-                VoiceFrame next=iter.next();
+                    // at least 1 element is present since I just made an add
+                    long currentExpectedTimestamp=getLowerTimestamp();
 
-                long nextstamp=next.getTimestamp();
+                    // count how many millis I have in the buffer
+                    while(iter.hasNext()){
 
-                if (nextstamp==currentExpectedTimestamp){
+                        VoiceFrame next=iter.next();
 
-                    bufferedMillis+=TIME_PER_FRAME;
+                        long nextstamp=next.getTimestamp();
 
-                    // next packet referst to istant t+20
-                    currentExpectedTimestamp=nextstamp+TIME_PER_FRAME;
+                        if (nextstamp==currentExpectedTimestamp){
+                            // consecutive yes!
+                            bufferedMillis+=TIME_PER_FRAME;
 
- //                   if (DEBUG) out("BUFFER : Buffered "+bufferedMillis+" millis" );
+                            // next packet refers to istant t+TIME_PER_FRAME
+                            currentExpectedTimestamp=nextstamp+TIME_PER_FRAME;
 
-                    if(bufferedMillis>=minBufferedMillis){
-                        // I have enought consecutive voice frame
-                        // in the buffer to start playback
-                        if (isFirstBuffering) isFirstBuffering=false;
-                        
-                        isBuffering=false;
+                            //if (DEBUG) out("BUFFER : Buffered "+bufferedMillis+" millis" );
 
-                        if(DEBUG){
-                            out("-------   Buffering Complete   --------");
+                            if(bufferedMillis>=getMinBufferedMillis()){
+                                // I have enought consecutive voice frame
+                                // in the buffer to start playback
+                                if (DEBUG) out("Packets are consecutive, nice :) ");
+                                break;
+                            }
+                            else{
+        //                       if(DEBUG)
+        //                       out("Still Buffering...");
+                            }
                         }
-//
-//                        // send a frame to decoder each 20 ms
-                        if(timer==null){
-                            timer=new Timer("Playout Buffer Timer");
-                           //timer.schedule(decoderDeliver,0,20);
-                            timer.scheduleAtFixedRate(decoderDeliver,0,20);
-                        }
-
-                        // start playing from older frame
-
-                        decoderDeliver.startPlaying(getLowerTimestamp());
-                        break;
                     }
-                    else{
-//                       if(DEBUG)
-//                       out("Still Buffering...");
-                    }
-                }
+                
+            }else{
+                bufferedMillis=size()*TIME_PER_FRAME;
             }
-        }
-        // Have to manage brust lenght
+            
+            if(bufferedMillis>=getMinBufferedMillis()){
+                    isFirstBuffering=false;
+                    isBuffering=false;
 
-        //decoder.decodeFrame(frame, 0, timestamp);
+                    if(DEBUG)  out("-------   Buffering Complete   --------");
+                    
+                    // send a frame to decoder each 20 ms
+                    if(timer==null){
+                        timer=new Timer("Playout Buffer Timer");
+                       //timer.schedule(decoderDeliver,0,20);
+                        timer.scheduleAtFixedRate(decoderDeliver,0,20);
+                    }
 
-    }
+                    // start playing from older frame
+                    decoderDeliver.startPlaying(getLowerTimestamp());
+            }// end buffering complete
+        }// end isBuffering
+    }// end add
 
     public synchronized  long getLowerTimestamp(){
         return listBuffer.first().getTimestamp();
