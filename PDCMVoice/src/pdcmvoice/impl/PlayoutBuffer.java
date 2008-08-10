@@ -43,7 +43,7 @@ public class PlayoutBuffer{
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
 
-    private final boolean DEBUG=true;
+    private final boolean DEBUG=false;
 
     //CONSTANTS
 
@@ -87,7 +87,7 @@ public class PlayoutBuffer{
         if (timestamp<decoderDeliver.getNextTimestampToPlay()){
             //packet arrived too late!
             // ignore it
-            if (DEBUG) out("BUFFER: OUT OF TIME... frame dropped");
+            out("BUFFER: OUT OF TIME... frame "+timestamp+" dropped");
             return;
         }
 
@@ -243,7 +243,7 @@ public class PlayoutBuffer{
                 // drop the older packet
                 remove();
 
-                if(DEBUG)  out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
+                out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
 
                 // start playing from the older packet
                 decoderDeliver.startPlaying(getLowerTimestamp());
@@ -271,7 +271,7 @@ public class PlayoutBuffer{
             isPlaying=true;
         }
         public synchronized  void stopPlaying(){
-            if (DEBUG) out ("DELIVER: Stop  Playing");
+            out ("DELIVER: Stop  Playing");
             isPlaying=false;
             nextTimestampToPlay=-1;
             first=true;
@@ -288,6 +288,7 @@ public class PlayoutBuffer{
 
         public  void run() {
             nPlayed++;
+            byte[] audio=null;
             if (isPlaying()){
                 synchronized(PlayoutBuffer.this){
                     if(isEmpty()){
@@ -296,7 +297,6 @@ public class PlayoutBuffer{
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
                         stopPlaying();
-                        out("Stopped by myself");
                         nLoss++;
                         return;
                     }
@@ -306,17 +306,17 @@ public class PlayoutBuffer{
                         // in the buffer there is what i want to play
                         //send to the decoder
                         VoiceFrame vf=remove();
-                        decoder.decodeFrame(vf.getContent());
+                        audio=vf.getContent();
                         if (DEBUG) out("DELIVER: Playing Frame : "+nextTimestampToPlay);
                     }
                     else{
                         //notify the decoder of the problem (PL?)
                         if (DEBUG) out("DELIVER: Packet loss , " +
                                        "expeted Frame :"+nextTimestampToPlay);
-                        decoder.decodeFrame(null);
                     }
                     nextTimestampToPlay+=TIME_PER_FRAME;
                 }
+                decoder.decodeFrame(audio);
             }else{
                 nLoss++;
             }
