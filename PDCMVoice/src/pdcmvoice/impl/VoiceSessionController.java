@@ -93,8 +93,11 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
 
     private void setBest(){
         // Optimize playout buffer
+        //out("doing my best");
         int avg=rtcpStats.getAverageJitter();
+        out(avg);
         if(avg!=-1){
+            //out("Jitter medio "+avg);
             parent.setMinBufferedMillis(Math.max(60, avg*3));
         }
         // Optimize FEC/Recovery
@@ -129,6 +132,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         receivedRR++;
         rtcpStats.RRPktReceived(reporterSsrc, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
         parent.updateSessionPercivedPloss();
+        rtcpStats.getAvgJitterCont().add(parent.myJitter());
     }
 
     public void SDESPktReceived(Participant[] relevantParticipants) {
