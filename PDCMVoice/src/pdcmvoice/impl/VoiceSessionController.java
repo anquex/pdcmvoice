@@ -95,7 +95,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         // Optimize playout buffer
         //out("doing my best");
         int avg=rtcpStats.getAverageJitter();
-        out(avg);
+        //out(avg);
         if(avg!=-1){
             //out("Jitter medio "+avg);
             parent.setMinBufferedMillis(Math.max(60, avg*3));
@@ -103,7 +103,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
         // Optimize FEC/Recovery
         avg=rtcpStats.getAveragePloss();
         if(avg!=-1){
-            if (avg>(2*256))
+            if (100*avg/256>3)
                 parent.RDT(true);
             else
                 parent.RDT(false);

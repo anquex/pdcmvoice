@@ -42,7 +42,7 @@ import static pdcmvoice.impl.Constants.*;
 public class AudioPlayback extends AudioBase {
 
     private static final boolean DEBUG_TRANSPORT = false;
-    private static final boolean RECORDING = true;
+    private static final boolean RECORDING = false;
 
     protected AudioInputStream ais;
     private PlayThread thread;
