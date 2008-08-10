@@ -21,8 +21,8 @@ import static pdcmvoice.impl.Constants.*;
  */
 public class PlayoutBuffer{
 
-    private boolean isFirst;          //is true for the first packet
-    private long startPacketTimestamp;
+    private boolean isFirstBuffering;          //is true if I'm buffering for the first time
+    private long startFrameTimestamp=Long.MAX_VALUE;
     private boolean isBuffering;      //true if buffer is waiting to fill up
     private Decoder decoder;
     private int minBufferedMillis=DEFAULT_MIN_BUFFER_SIZE;
@@ -41,7 +41,7 @@ public class PlayoutBuffer{
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
 
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
 
     //CONSTANTS
 
@@ -56,7 +56,7 @@ public class PlayoutBuffer{
     public PlayoutBuffer() {
 //        listBuffer=Collections.synchronizedSortedSet(new TreeSet<VoiceFrame>(new VoiceFrameComparator()));
         listBuffer=new TreeSet<VoiceFrame>(new VoiceFrameComparator());
-        isFirst=true;
+        isFirstBuffering=true;
         isBuffering=true;
         decoderDeliver= new Deliver();
 //        // send a frame to decoder each 20 ms
@@ -78,6 +78,7 @@ public class PlayoutBuffer{
 
 
     public synchronized void add(long timestamp, byte[] frame){
+        out("is buffering "+isBuffering);
 
         /* We consider the timestamp of the first packet received as first*/
 
@@ -96,11 +97,12 @@ public class PlayoutBuffer{
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
 
-        if (isFirst){
-            startPacketTimestamp=timestamp;
-            isFirst=false;
-            if (DEBUG) out("BUFFER: First Frame recived: First timestamp "
-                           +startPacketTimestamp);
+        if (isFirstBuffering){
+            if(startFrameTimestamp>timestamp){
+                startFrameTimestamp=timestamp;
+                if (DEBUG) out("BUFFER: First Frame recived: First timestamp "
+                               +startFrameTimestamp);
+            }
         }
 
         // bound max delay
@@ -108,7 +110,9 @@ public class PlayoutBuffer{
         // bursts arrivals produces more packets are dropped at once
         // I neve get null pointer since I have at least 1 packet at
         // this point in the buffer
-        while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>maxBufferedMillis)
+        while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>maxBufferedMillis
+                //&& !isBuffering
+                )
         {
             if (DEBUG)
                     out("PLAYOUT BUFFER : Maximum Delay Reached: "+
@@ -157,6 +161,8 @@ public class PlayoutBuffer{
                     if(bufferedMillis>=minBufferedMillis){
                         // I have enought consecutive voice frame
                         // in the buffer to start playback
+                        if (isFirstBuffering) isFirstBuffering=false;
+                        
                         isBuffering=false;
 
                         if(DEBUG){
@@ -292,6 +298,7 @@ public class PlayoutBuffer{
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
                         stopPlaying();
+                        out("Stopped by myself");
                         nLoss++;
                         return;
                     }
