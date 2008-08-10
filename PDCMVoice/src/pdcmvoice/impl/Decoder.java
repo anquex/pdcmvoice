@@ -150,7 +150,10 @@ public class Decoder {
             speexDecoder.getProcessedData(PCMFrame, 0);
        }       // iLBC Encoding
         else{   //to be implemented
-            ilbcDecoder.processData(frame, 0, frame.length);
+            if (frame==null)
+                ilbcDecoder.processData(true);
+            else
+                ilbcDecoder.processData(frame, 0, frame.length);
             PCMFrame=new byte[ilbcDecoder.getProcessedDataByteSize()];
             ilbcDecoder.getProcessedData(PCMFrame, 0);
        }
