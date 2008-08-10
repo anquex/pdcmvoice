@@ -114,6 +114,7 @@ public class Participant {
     /** Unix time of second to last time we sent and RR to this user */
     protected long secondLastRtcpRRPkt = -1; //Timestamp of 2nd to last time we sent this person an RR Packet
 
+    private int lastCalculatedFraction;
     /**
      * Create a basic participant. If this is a <b>unicast</b> session you must provide network address (ipv4 or ipv6) and ports for RTP and RTCP,
      * as well as a cname for this contact. These things should be negotiated through SIP or a similar protocol.
@@ -366,7 +367,8 @@ public class Participant {
         //Clear counters
         receivedSinceLastSR = 0;
         lastSRRseqNumber = lastSeqNumber;
-
+        
+        lastCalculatedFraction=fraction;
         return fraction;
     }
 
@@ -444,5 +446,9 @@ public class Participant {
     
     public  int interArvJitter(){
         return (int) interArrivalJitter;
+    }
+    
+    public int myFractionLoss(){
+        return lastCalculatedFraction;
     }
 }

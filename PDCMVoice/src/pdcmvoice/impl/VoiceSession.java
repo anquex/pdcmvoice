@@ -355,5 +355,13 @@ public class VoiceSession {
         }
         return 0;
     }
+    
+    public int myFractionLoss(){
+        Enumeration<Participant> participants = rtpSession.getParticipants();
+        while(participants.hasMoreElements()){
+            return participants.nextElement().myFractionLoss();
+        }
+        return 0;
+    }
 
 }// END VOICE SESSION
