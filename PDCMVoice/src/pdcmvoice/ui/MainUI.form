@@ -103,7 +103,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="MainTabbedPanel" alignment="0" pref="417" max="32767" attributes="1"/>
+          <Component id="MainTabbedPanel" alignment="0" max="32767" attributes="1"/>
           <Component id="OnlineList" alignment="0" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
@@ -136,7 +136,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="353" max="32767" attributes="0"/>
+                  <EmptySpace pref="363" max="32767" attributes="0"/>
                   <Component id="jButton4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -222,7 +222,7 @@
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="jLabel31" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel23" alignment="1" min="-2" max="-2" attributes="1"/>
-                                      <Component id="jLabel22" alignment="1" pref="102" max="32767" attributes="1"/>
+                                      <Component id="jLabel22" alignment="1" pref="85" max="32767" attributes="1"/>
                                       <Component id="jLabel26" alignment="1" min="-2" pref="52" max="-2" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -490,7 +490,7 @@
                               <Component id="PBbufferedMillis" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                               <Component id="PBMinMax" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="47" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -531,23 +531,23 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel28" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="timeElapsed1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel27" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="PercivedIntervalPL" alignment="0" pref="64" max="32767" attributes="0"/>
+                              <Component id="PercivedSessionPL" alignment="0" pref="64" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="146" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel28" min="-2" max="-2" attributes="0"/>
-                              <Component id="timeElapsed1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="timeElapsed" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="PercivedPL" pref="93" max="32767" attributes="0"/>
-                                  <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <EmptySpace min="61" pref="61" max="61" attributes="0"/>
+                          <Component id="timeElapsed" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="152" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -555,15 +555,20 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="timeElapsed" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                               <Component id="timeElapsed1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="timeElapsed" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="PercivedPL" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                               <Component id="jLabel28" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="PercivedSessionPL" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="27" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="PercivedIntervalPL" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
+                              <Component id="jLabel27" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -571,10 +576,10 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel28">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Percived PL"/>
+                    <Property name="text" type="java.lang.String" value="Percived Ses PL"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="PercivedPL">
+                <Component class="javax.swing.JTextField" name="PercivedSessionPL">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="jTextField1"/>
@@ -591,6 +596,20 @@
                 <Component class="javax.swing.JLabel" name="timeElapsed1">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Elapsed:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel27">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Percived Int PL"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="PercivedIntervalPL">
+                  <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="jTextField1"/>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[64, 19]"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -614,7 +633,7 @@
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="jPanel7" alignment="0" max="32767" attributes="1"/>
                           <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jPanel2" alignment="0" pref="298" max="32767" attributes="1"/>
+                          <Component id="jPanel2" alignment="0" pref="304" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -760,7 +779,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="RRJitter" min="-2" max="-2" attributes="1"/>
                                   </Group>
-                                  <Component id="RRSessionPL" max="32767" attributes="1"/>
+                                  <Component id="RRSessionPL" pref="83" max="32767" attributes="1"/>
                               </Group>
                               <Component id="RRIntervalPL" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -861,7 +880,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="134" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="125" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -931,7 +950,7 @@
                           <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="UILocalEncoding" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace pref="75" max="32767" attributes="0"/>
+                          <EmptySpace pref="68" max="32767" attributes="0"/>
                           <Component id="jLabel15" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="UILocalQuality" min="-2" max="-2" attributes="1"/>
@@ -948,7 +967,7 @@
                               <Component id="UILocalQuality" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="43" max="32767" attributes="0"/>
+                          <EmptySpace pref="37" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1020,7 +1039,7 @@
                               <Component id="UILocalRecovery" max="32767" attributes="1"/>
                               <Component id="UILocalRTP" alignment="0" pref="45" max="32767" attributes="3"/>
                           </Group>
-                          <EmptySpace pref="56" max="32767" attributes="0"/>
+                          <EmptySpace pref="36" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1040,7 +1059,7 @@
                               <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="UILocalRecovery" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="24" max="32767" attributes="0"/>
+                          <EmptySpace pref="17" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1113,10 +1132,10 @@
                                   <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                                   <Component id="DynamicAdaptation" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jSeparator2" alignment="0" pref="305" max="32767" attributes="0"/>
+                              <Component id="jSeparator2" alignment="0" pref="256" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel12" pref="108" max="32767" attributes="0"/>
+                                      <Component id="jLabel12" pref="89" max="32767" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                                           <Component id="UIRDT" alignment="0" max="32767" attributes="1"/>
                                           <Component id="jLabel14" alignment="0" max="32767" attributes="1"/>
@@ -1124,7 +1143,7 @@
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="UIBackgroundRecovery" pref="185" max="32767" attributes="1"/>
+                                      <Component id="UIBackgroundRecovery" pref="163" max="32767" attributes="1"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="1" attributes="0">
@@ -1166,7 +1185,7 @@
                               <Component id="UIRDT" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="UIBackgroundRecovery" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="30" max="32767" attributes="0"/>
+                          <EmptySpace pref="23" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1287,7 +1306,7 @@
                                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="53" max="32767" attributes="0"/>
+                              <EmptySpace pref="64" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="UIRemoteEncoding" max="32767" attributes="1"/>
                                   <Component id="UIRemoteAddress" alignment="1" max="32767" attributes="1"/>
@@ -1298,12 +1317,12 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="287" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="281" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" pref="287" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="281" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -1335,7 +1354,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="190" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="182" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

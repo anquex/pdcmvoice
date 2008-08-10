@@ -51,8 +51,12 @@ public class PlayoutBuffer{
     public final boolean WANTCONSECUTIVE=true;
 
     // STATS VARIABLES
-    int nPlayed;
-    int nLoss;
+    private int totalAdded;
+    private long higherReceivedTimestamp=-1;
+    private long lastIntervalTimestamp=0;
+    private int previousTotalAdded;
+    private float intervalPloss;
+    private float sessionPloss;
 
 
 
@@ -90,9 +94,12 @@ public class PlayoutBuffer{
             out("BUFFER: OUT OF TIME... frame "+timestamp+" dropped");
             return;
         }
-
+        
         VoiceFrame v=new VoiceFrame(timestamp, frame);
-        listBuffer.add(v);
+        if(listBuffer.add(v)){
+            totalAdded++;
+            higherReceivedTimestamp=Math.max(higherReceivedTimestamp, timestamp);
+        }
 
         if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
 
@@ -287,7 +294,6 @@ public class PlayoutBuffer{
 
 
         public  void run() {
-            nPlayed++;
             byte[] audio=null;
             if (isPlaying()){
                 synchronized(PlayoutBuffer.this){
@@ -297,9 +303,12 @@ public class PlayoutBuffer{
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
                         stopPlaying();
-                        nLoss++;
                         return;
                     }
+                    // this happens if speakers runs faster than 
+                    // microphone... just wait
+                    if(higherReceivedTimestamp==nextTimestampToPlay && size()>1)
+                        return;
 
                     if (getLowerTimestamp()==nextTimestampToPlay){
                         samplesPlayed++;
@@ -318,7 +327,6 @@ public class PlayoutBuffer{
                 }
                 decoder.decodeFrame(audio);
             }else{
-                nLoss++;
             }
         }
     }//Deliver
@@ -346,12 +354,28 @@ public class PlayoutBuffer{
             return frame;
         }
     }
-    public int getTotalPlayed(){
-        return nPlayed;
+    
+    public float sessionPloss(){
+        return sessionPloss;
     }
-
-    public int getTotalLoss(){
-        return nLoss;
+    
+    public synchronized void updateSessionPloss(){
+        float expected=(higherReceivedTimestamp-startFrameTimestamp)/TIME_PER_FRAME+1;
+        //
+        out("Expected "+expected+" received "+totalAdded);
+        sessionPloss=(expected-totalAdded)/expected;
+    }
+    
+    public float intervalPloss(){
+        return intervalPloss;
+    }
+    
+    public synchronized void updateIntervalPloss(){
+        lastIntervalTimestamp=Math.max(lastIntervalTimestamp, startFrameTimestamp);
+        float expected= ((higherReceivedTimestamp - lastIntervalTimestamp) / TIME_PER_FRAME);
+        intervalPloss=(expected-(totalAdded-previousTotalAdded))/expected;
+        lastIntervalTimestamp=higherReceivedTimestamp;
+        previousTotalAdded=totalAdded;
     }
     
     class BrustKiller extends Thread{

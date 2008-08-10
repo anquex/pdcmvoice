@@ -49,7 +49,8 @@ public class MainUI extends javax.swing.JFrame {
 
     private void renderStatus(){
         String bufferInfo="N/A";
-        String ppl="N/A";
+        String pspl="N/A";
+        String pipl="N/A";
         if (voiceSession!=null){
             RPPayload.setText(""+voiceSession.lastReceivedPacketPayload());
             RPframesNumber.setText(""+voiceSession.lastReceivedPacketFrames());
@@ -65,7 +66,8 @@ public class MainUI extends javax.swing.JFrame {
             bufferInfo=voiceSession.getMinBufferedMillis()+" | ";
             bufferInfo+=voiceSession.getMaxBufferedMillis();
 
-            ppl=nf.format(voiceSession.getPercivedPacketLoss());
+            pspl=nf.format(voiceSession.getPercivedSessionPLoss());
+            pipl=nf.format(voiceSession.getPercivedIntervalPLoss());
         }else{
             RPPayload.setText("N/A");
             RPframesNumber.setText("N/A");
@@ -80,7 +82,8 @@ public class MainUI extends javax.swing.JFrame {
             PBbufferedMillis.setText("N/A");
         }
         PBMinMax.setText(bufferInfo);
-        PercivedPL.setText(ppl);
+        PercivedSessionPL.setText(pspl);
+        PercivedIntervalPL.setText(pipl);
     }
 
     private void renderLocalConnectionSettings(){
@@ -218,9 +221,11 @@ public class MainUI extends javax.swing.JFrame {
         PBMinMax = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel28 = new javax.swing.JLabel();
-        PercivedPL = new javax.swing.JTextField();
+        PercivedSessionPL = new javax.swing.JTextField();
         timeElapsed = new javax.swing.JLabel();
         timeElapsed1 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        PercivedIntervalPL = new javax.swing.JTextField();
         RTCPPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
@@ -331,7 +336,7 @@ public class MainUI extends javax.swing.JFrame {
             .add(OnlineListLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLabel6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 353, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 363, Short.MAX_VALUE)
                 .add(jButton4)
                 .addContainerGap())
         );
@@ -449,7 +454,7 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jLabel31)
                             .add(jLabel23)
-                            .add(jLabel22, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .add(jLabel22, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
                             .add(jLabel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 52, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -521,50 +526,61 @@ public class MainUI extends javax.swing.JFrame {
                     .add(jLabel25)
                     .add(PBbufferedMillis, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(PBMinMax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
 
-        jLabel28.setText("Percived PL");
+        jLabel28.setText("Percived Ses PL");
 
-        PercivedPL.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        PercivedPL.setText("jTextField1");
-        PercivedPL.setMinimumSize(new java.awt.Dimension(64, 19));
+        PercivedSessionPL.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        PercivedSessionPL.setText("jTextField1");
+        PercivedSessionPL.setMinimumSize(new java.awt.Dimension(64, 19));
 
         timeElapsed.setText("Not Started");
 
         timeElapsed1.setText("Elapsed:");
+
+        jLabel27.setText("Percived Int PL");
+
+        PercivedIntervalPL.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        PercivedIntervalPL.setText("jTextField1");
+        PercivedIntervalPL.setMinimumSize(new java.awt.Dimension(64, 19));
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
-                .add(28, 28, 28)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel28)
-                    .add(timeElapsed1))
-                .add(31, 31, 31)
+                    .add(timeElapsed1)
+                    .add(jLabel27))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel6Layout.createSequentialGroup()
-                        .add(timeElapsed)
-                        .addContainerGap())
-                    .add(jPanel6Layout.createSequentialGroup()
-                        .add(PercivedPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                        .add(91, 91, 91))))
+                    .add(PercivedIntervalPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                    .add(PercivedSessionPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE))
+                .add(146, 146, 146))
+            .add(jPanel6Layout.createSequentialGroup()
+                .add(61, 61, 61)
+                .add(timeElapsed)
+                .addContainerGap(152, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(timeElapsed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(timeElapsed1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(timeElapsed1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(timeElapsed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(PercivedPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel28))
-                .addContainerGap(27, Short.MAX_VALUE))
+                    .add(jLabel28)
+                    .add(PercivedSessionPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(PercivedIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel27))
+                .addContainerGap())
         );
 
         org.jdesktop.layout.GroupLayout StatusPanelLayout = new org.jdesktop.layout.GroupLayout(StatusPanel);
@@ -685,7 +701,7 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jPanel3Layout.createSequentialGroup()
                             .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                             .add(RRJitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(RRSessionPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(RRSessionPL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))
                     .add(RRIntervalPL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(63, 63, 63))
         );
@@ -716,7 +732,7 @@ public class MainUI extends javax.swing.JFrame {
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 134, Short.MAX_VALUE)
+            .add(0, 125, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout RTCPPanelLayout = new org.jdesktop.layout.GroupLayout(RTCPPanel);
@@ -728,7 +744,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(RTCPPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         RTCPPanelLayout.setVerticalGroup(
@@ -769,7 +785,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 75, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 68, Short.MAX_VALUE)
                 .add(jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -783,7 +799,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel15))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         ConnectionSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Connection Settings"));
@@ -823,7 +839,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(UILocalRecovery)
                     .add(UILocalRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         ConnectionSettingsPanelLayout.setVerticalGroup(
             ConnectionSettingsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -839,7 +855,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalRTCP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel10)
                     .add(UILocalRecovery, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         ApplySettingsButton.setText("Apply");
@@ -923,16 +939,16 @@ public class MainUI extends javax.swing.JFrame {
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(50, 50, 50)
                         .add(DynamicAdaptation))
-                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+                            .add(jLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                                 .add(org.jdesktop.layout.GroupLayout.LEADING, UIRDT, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel14, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(UIBackgroundRecovery, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .add(UIBackgroundRecovery, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
@@ -964,7 +980,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(UIRDT)
                     .add(UIBackgroundRecovery))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout SettingsMainPanelLayout = new org.jdesktop.layout.GroupLayout(SettingsMainPanel);
@@ -1050,18 +1066,18 @@ public class MainUI extends javax.swing.JFrame {
                             .add(jLabel1)
                             .add(jLabel2)
                             .add(jLabel4))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 53, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 64, Short.MAX_VALUE)
                         .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(UIRemoteEncoding, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteAddress)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTCP)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
                 .addContainerGap())
-            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
             .add(DCTestPanelLayout.createSequentialGroup()
                 .add(jLabel5)
                 .addContainerGap())
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
         );
         DCTestPanelLayout.setVerticalGroup(
             DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1088,7 +1104,7 @@ public class MainUI extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel5)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
         );
 
         MainTabbedPanel.addTab("DC Test", DCTestPanel);
@@ -1194,7 +1210,7 @@ public class MainUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+            .add(MainTabbedPanel)
             .add(OnlineList, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -1325,7 +1341,8 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel OnlineList;
     private javax.swing.JTextField PBMinMax;
     private javax.swing.JTextField PBbufferedMillis;
-    private javax.swing.JTextField PercivedPL;
+    private javax.swing.JTextField PercivedIntervalPL;
+    private javax.swing.JTextField PercivedSessionPL;
     private javax.swing.JTextField RPPayload;
     private javax.swing.JTextField RPRDT;
     private javax.swing.JTextField RPframesNumber;
@@ -1396,6 +1413,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;

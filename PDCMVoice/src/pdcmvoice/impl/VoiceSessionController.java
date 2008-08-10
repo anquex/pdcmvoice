@@ -128,6 +128,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
     public void RRPktReceived(long reporterSsrc, long[] reporteeSsrc, int[] lossFraction, int[] cumulPacketsLost, long[] extHighSeq, long[] interArrivalJitter, long[] lastSRTimeStamp, long[] delayLastSR) {
         receivedRR++;
         rtcpStats.RRPktReceived(reporterSsrc, reporteeSsrc, lossFraction, cumulPacketsLost, extHighSeq, interArrivalJitter, lastSRTimeStamp, delayLastSR);
+        parent.updateSessionPercivedPloss();
     }
 
     public void SDESPktReceived(Participant[] relevantParticipants) {

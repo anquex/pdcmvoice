@@ -321,13 +321,17 @@ public class VoiceSession {
                 getPlayoutBuffer().getBufferedMillis();
     }
 
-    public float getPercivedPacketLoss(){
-        int n1=receiverSession.getDepacketizer().getPlayoutBuffer().getTotalPlayed();
-        int n2=receiverSession.getDepacketizer().getPlayoutBuffer().getTotalLoss();
-        if (n1!=0){
-            return (float)n2 / (float)n1;
-        }else
-            return 0;
+    public float getPercivedSessionPLoss(){
+            return receiverSession.getDepacketizer().getPlayoutBuffer().sessionPloss();
+    }
+    public float getPercivedIntervalPLoss(){
+            return receiverSession.getDepacketizer().getPlayoutBuffer().intervalPloss();
+    }
+    
+    public void updateSessionPercivedPloss(){
+        receiverSession.getDepacketizer().getPlayoutBuffer().updateIntervalPloss();
+        receiverSession.getDepacketizer().getPlayoutBuffer().updateSessionPloss();
+        
     }
 
     public long getSessionDurationMillis(){
