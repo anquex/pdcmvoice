@@ -30,7 +30,7 @@ public class VoiceSessionReceiver {
         decoder=new Decoder(formatCode);
         player= new AudioPlayback(formatCode, //fortmato in cui codificare
                           null, //default mixer
-                          50   //buffer size
+                          100   //buffer size
                             );  //input queue
     }
 
