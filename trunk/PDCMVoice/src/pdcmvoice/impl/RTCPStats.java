@@ -106,5 +106,8 @@ public class RTCPStats {
     public AverageContainer getAvgJitterCont(){
         return jitterAVG;
     }
+    public AverageContainer getAvgPlossCont(){
+        return plossAVG;
+    }
 
 }//RTCTStats

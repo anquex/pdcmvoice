@@ -363,5 +363,13 @@ public class VoiceSession {
         }
         return 0;
     }
+    
+    public int avgJitterSeen(){
+        return vsc.getRTCPStats().getAverageJitter();
+    }
+    
+    public int avgFractionLossSeen(){
+        return vsc.getRTCPStats().getAveragePloss();
+    }
 
 }// END VOICE SESSION
