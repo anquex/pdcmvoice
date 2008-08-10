@@ -21,6 +21,7 @@ public class IlbcDecoder {
     private boolean little;
     private int EncodedShortBlockLeght;
     private short[] decodedData;
+    private short[] lastencoded;
     
     public IlbcDecoder(int mode,boolean little)
   {
@@ -56,10 +57,14 @@ public class IlbcDecoder {
                                  d,           // compressed audio frame
                                  (short) 1);  // 0: bad packet, PLC,
                                               // 1: normal 
+      lastencoded=d;
   }
   
   public void processData(final boolean lost){
-      // to be done
+            int  decodedShorts=decoder.decode(decodedData, // uncompressed Audio Frame
+                                 lastencoded,           // compressed audio frame
+                                 (short) 0);  // 0: bad packet, PLC,
+                                              // 1: normal 
   
   }
   

@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import java.util.Enumeration;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import jlibrtp.Participant;
 import pdcmvoice.settings.VoiceSessionSettings;
@@ -345,6 +346,14 @@ public class VoiceSession {
         String seconds=""+(int) ((t - (minutes * 60 * 1000)) / 1000);
         if (seconds.length()==1) seconds="0"+seconds;
         return ""+minutes+":"+seconds;
+    }
+    
+    public int myJitter(){
+        Enumeration<Participant> participants = rtpSession.getParticipants();
+        while(participants.hasMoreElements()){
+            return participants.nextElement().interArvJitter();
+        }
+        return 0;
     }
 
 }// END VOICE SESSION

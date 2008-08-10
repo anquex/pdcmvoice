@@ -441,4 +441,8 @@ public class Participant {
 
         LOGGER.finest("                          Packets received:"+this.receivedPkts);
     }
+    
+    public  int interArvJitter(){
+        return (int) interArrivalJitter;
+    }
 }
