@@ -58,6 +58,8 @@ public class PlayoutBuffer{
     private float intervalPloss;
     private float sessionPloss;
 
+    // prova
+    private long[] lastSeenTimestamps=new long[256];
 
 
     public PlayoutBuffer() {
@@ -87,11 +89,20 @@ public class PlayoutBuffer{
 
     public synchronized void add(long timestamp, byte[] frame){
 
+        // ricordo gli ultimi 256 frame ed evito di aggiungere
+        // va bene fino a 5 secondi di jitter
+        int index=(int) (timestamp/20) %256;
+        if(lastSeenTimestamps[index]==timestamp){
+            return;
+        }else{
+            lastSeenTimestamps[index]=timestamp;
+        }
         // protect playout from late frames
         if (timestamp<decoderDeliver.getNextTimestampToPlay()){
             //packet arrived too late!
             // ignore it
-            out("BUFFER: OUT OF TIME... frame "+timestamp+" dropped");
+            out("BUFFER: OUT OF TIME... frame "+timestamp+" dropped" +
+                    " (Should already been played)");
             return;
         }
         
