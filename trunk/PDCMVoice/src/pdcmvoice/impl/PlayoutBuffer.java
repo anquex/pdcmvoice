@@ -122,7 +122,7 @@ public class PlayoutBuffer{
             }
         }
 
-        if (isBuffering){
+        if (isBuffering()){
             int bufferedMillis=0; // millis in buffer
             if(isFirstBuffering && WANTCONSECUTIVE ){
                 
@@ -241,6 +241,11 @@ public class PlayoutBuffer{
     public synchronized  boolean isEmpty(){
         return listBuffer.isEmpty();
     }
+
+    public synchronized boolean isBuffering(){
+        return isBuffering;
+    }
+
     /**
      *  Remove a frame if latency is too high
      */
@@ -396,7 +401,10 @@ public class PlayoutBuffer{
             while(true){
                 try {
                     checkAndFixBrusts();
-                    sleep(1000);
+                    // se sto bufferizzando (quindi la riproduzione è interrotta
+                    // svuoto il più possibile
+                    if(!isBuffering())
+                        sleep(1000);
                 } catch (InterruptedException ex) {
                     if(DEBUG) out("BRUST KILLER died!");
                     break;
