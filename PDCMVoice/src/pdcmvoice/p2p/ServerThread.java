@@ -52,6 +52,7 @@ public class ServerThread extends Thread{
                 server.removeServerThread(this);
                 if(associatedUser!=null)
                     server.userExit(associatedUser);
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
                 break;
             }catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);

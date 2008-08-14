@@ -49,12 +49,12 @@ public class Server extends Thread{
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 out("impossibile stabilire la connessione con il client");
             }
-            try {
-                socket.setKeepAlive(true);
-                socket.setTcpNoDelay(true);
-            } catch (SocketException ex) {
-                out("impostazione keep alive fallita");
-            }
+//            try {
+//                //socket.setKeepAlive(true);
+//                //socket.setTcpNoDelay(true);
+//            } catch (SocketException ex) {
+//                out("impostazione keep alive fallita");
+//            }
             if (socket!=null){
                 ServerThread se=new ServerThread(this, socket);
                 servants.add(se);

@@ -46,13 +46,15 @@ public class VoiceSession {
     private long startTimestamp;
 
     private final boolean DEBUG=true;
+    private boolean listeningStarted;
+    private boolean transmittingStarted;
 
     public VoiceSession (VoiceSessionSettings settings) throws SocketException{
 
             this.settings=settings;
 
-             rtpSocket = new DatagramSocket(settings.getLocalRTPPort());
-             rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
+            rtpSocket = new DatagramSocket(settings.getLocalRTPPort());
+            rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
 
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
 
@@ -63,7 +65,7 @@ public class VoiceSession {
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
             vsc=new VoiceSessionController(this);
-            //rtpSession.naivePktReception(true);
+            rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
 
             setMinorSettings();
@@ -136,29 +138,23 @@ public class VoiceSession {
 }
 
     public void start() throws UnsupportedAudioFileException, Exception{
-            receiverSession.init();
-            rtpSession.registerRTPSession(receiverSession.getDepacketizer(),
-                              vsc, //to be implemented
-                              null);
-            receiverSession.start();
-            senderSession.start();
-            vsc.start();
-            
+            startListening();
+            starTransmitting();
             if (withRecovery)
             {
                 rs.start();
                 rc.start();
             }
-            startTimestamp=System.currentTimeMillis();
-            out ("Voice Session Started");
-            if (DEBUG) out(toString());
 
     }
 
     public void stop(){
+        if(listeningStarted||transmittingStarted)
             rtpSession.endSession();
-            senderSession.stop();
+        if(listeningStarted)
             receiverSession.stop();
+        if(transmittingStarted)
+            senderSession.stop();
             
             // recovery connection should still be running
             if (withRecovery){
@@ -370,6 +366,30 @@ public class VoiceSession {
     
     public int avgFractionLossSeen(){
         return vsc.getRTCPStats().getAveragePloss();
+    }
+
+    public void startListening() throws UnsupportedAudioFileException, Exception{
+        receiverSession.init();
+        rtpSession.registerRTPSession(receiverSession.getDepacketizer(),
+                          vsc, //to be implemented
+                          null);
+        receiverSession.start();
+        startTimestamp=System.currentTimeMillis();
+        out ("Voice Session Started Listening");
+        if (DEBUG) out(toString());
+        listeningStarted=true;
+    }
+    public void starTransmitting() throws Exception{
+        vsc.start();
+        senderSession.start();
+        out ("Voice Session Started Transmitting");
+        if (DEBUG) out(toString());
+        transmittingStarted=true;
+    }
+
+    public boolean isActive(){
+        //TO DO
+        return transmittingStarted && listeningStarted;
     }
 
 }// END VOICE SESSION
