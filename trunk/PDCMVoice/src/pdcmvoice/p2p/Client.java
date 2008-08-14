@@ -58,8 +58,8 @@ public class Client extends Thread{
         if (server==null) server="127.0.0.1";
         try {
             socket = new Socket(server, port);
-            socket.setTcpNoDelay(true);
-            socket.setKeepAlive(true);
+            //socket.setTcpNoDelay(true);
+            //socket.setKeepAlive(true);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
