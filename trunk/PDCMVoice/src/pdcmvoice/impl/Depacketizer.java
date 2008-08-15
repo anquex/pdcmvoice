@@ -53,9 +53,9 @@ public class Depacketizer implements RTPAppIntf{
     public Depacketizer(RTPSession s, RecoveryCollection remote){
         this(s);
         /*
-         * ATTENZIONE!! ABILITARE LA PROSSIMA ISTRUZIONE SOLO 
+         * ATTENZIONE!! ABILITARE LA PROSSIMA ISTRUZIONE SOLO
          * PER L'ESECUZIONE DI RecoverySystemLoopBackTest.java
-         * 
+         *
          * //rtpSession.registerRTPSession(this, null, null); (vecchia rtpSession.RTPSessionRegister(this, null, null);)
          */
 
@@ -154,13 +154,13 @@ public class Depacketizer implements RTPAppIntf{
 //            playoutBuffer.add(frame.rtpTimestamp()-20, v);
             new Action(frame.rtpTimestamp()-20, v).start();
             // then add new packet
-            
+
 //            out("Frame arrivato "+(frame.rtpTimestamp()-20)+
 //                    " byte "+byteToString(v));
             System.arraycopy(voice, 0, v2, 0, lenght);
 //            playoutBuffer.add(frame.rtpTimestamp(), v);
             new Action(frame.rtpTimestamp(), v2).start();
-            
+
 //            out("Frame arrivato "+frame.rtpTimestamp()+
 //                    " byte "+byteToString(v));
         }
@@ -171,7 +171,7 @@ public class Depacketizer implements RTPAppIntf{
         }
 
     }
-    
+
     class Action extends Thread{
         // using Action we hope order is mantained
         // usually yes :)
@@ -261,7 +261,9 @@ public class Depacketizer implements RTPAppIntf{
         return lastPacketReceivedPayload;
     }
 
-
+    public void terminate(){
+        playoutBuffer.stop();
+    }
 
 
 

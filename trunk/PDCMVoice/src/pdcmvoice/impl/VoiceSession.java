@@ -20,7 +20,7 @@ import static pdcmvoice.impl.Constants.*;
 //RECOVERY
 import java.net.Socket;
 import java.net.ServerSocket;
-import pdcmvoice.recovery.*; 
+import pdcmvoice.recovery.*;
 
 /**
  *
@@ -33,7 +33,7 @@ public class VoiceSession {
     private VoiceSessionController vsc;
     private RTPSession rtpSession;
     private VoiceSessionSettings settings;
-    
+
     //RECOVERY
     private RecoveryServerThread rs;
     private RecoveryClientThread rc;
@@ -64,7 +64,7 @@ public class VoiceSession {
             receiverSession=new VoiceSessionReceiver(
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
-            vsc=new VoiceSessionController(this);
+            //vsc=new VoiceSessionController(this);
             rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
 
@@ -78,7 +78,7 @@ public class VoiceSession {
 
 
     }
-    
+
     public VoiceSession (VoiceSessionSettings settings, boolean withRecovery, int localPort, int remotePort, int encodedPacketSize) throws SocketException{
 
         this.settings=settings;
@@ -87,17 +87,17 @@ public class VoiceSession {
          rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
 
         rtpSession = new RTPSession(rtpSocket, rtcpSocket);
-        
+
         Socket client = null;
         Socket server = null;
-        
+
         if (localPort <= 0)
             localPort = DEFAULT_RECOVERY_PORT_LOCAL;
         if (remotePort <= 0)
             remotePort = DEFAULT_RECOVERY_PORT_LOCAL;
         if (encodedPacketSize <= 0)
             encodedPacketSize = DEFAULT_ENCODED_PACKET_SIZE;
-        
+
         try {
             ServerSocket serverSocket = new ServerSocket(localPort);
             client = new Socket(InetAddress.getByName(settings.getRemoteAddress()), remotePort);
@@ -109,12 +109,12 @@ public class VoiceSession {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         RecoveryCollection localCollection = new RecoveryCollection("local", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
         RecoveryCollection remoteCollection = new RecoveryCollection("remote", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
-         
+
         RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
-        
+
         rs = new RecoveryServerThread(recoveryConnection);
         rc = new RecoveryClientThread(recoveryConnection);
 
@@ -130,7 +130,7 @@ public class VoiceSession {
         vsc=new VoiceSessionController(this);
         rtpSession.naivePktReception(true);
         rtpSession.addParticipant(settings.getPartecipant());
-        
+
         this.withRecovery = withRecovery;
         setMinorSettings();
 
@@ -151,11 +151,15 @@ public class VoiceSession {
     public void stop(){
         if(listeningStarted||transmittingStarted)
             rtpSession.endSession();
-        if(listeningStarted)
-            receiverSession.stop();
-        if(transmittingStarted)
+        if(transmittingStarted){
             senderSession.stop();
-            
+            out("Receiving Stopped");
+        }
+        if(listeningStarted){
+            receiverSession.stop();
+            out("Sending Stopped");
+        }
+
             // recovery connection should still be running
             if (withRecovery){
                 rc.endOfStream = true;
@@ -168,7 +172,7 @@ public class VoiceSession {
             }
             //closeSockets(); -> rc...
             out ("Voice Session Stopped");
-            
+
 
     }
     public int setMinBufferedMillis(int n){
@@ -245,7 +249,7 @@ public class VoiceSession {
         //RDT(true);
         //out (""+settings.framesPerPacket()+" "+settings.isRDT());
     }
-    
+
     public void RDT(boolean enabled){
         Packetizer p=senderSession.getPacketizer();
         if(enabled)
@@ -257,17 +261,19 @@ public class VoiceSession {
         Packetizer p=senderSession.getPacketizer();
         return p.isRDT();
     }
-    
-    
+
+
     public void setSpeexQuality(int n){
         Encoder e=senderSession.getEncoder();
         e.setSpeexQuality(n);
     }
-    
+
     public void dynamic(boolean enabled){
-        if(enabled)
-           vsc.continueOptimizing();
-        else vsc.pauseOptimizing();
+        if(vsc!=null){
+            if(enabled)
+               vsc.continueOptimizing();
+            else vsc.pauseOptimizing();
+        }
     }
     public boolean isDynamic(){
         return !vsc.isPaused();
@@ -324,11 +330,11 @@ public class VoiceSession {
     public float getPercivedIntervalPLoss(){
             return receiverSession.getDepacketizer().getPlayoutBuffer().intervalPloss();
     }
-    
+
     public void updateSessionPercivedPloss(){
         receiverSession.getDepacketizer().getPlayoutBuffer().updateIntervalPloss();
         receiverSession.getDepacketizer().getPlayoutBuffer().updateSessionPloss();
-        
+
     }
 
     public long getSessionDurationMillis(){
@@ -343,7 +349,7 @@ public class VoiceSession {
         if (seconds.length()==1) seconds="0"+seconds;
         return ""+minutes+":"+seconds;
     }
-    
+
     public int myJitter(){
         Enumeration<Participant> participants = rtpSession.getParticipants();
         while(participants.hasMoreElements()){
@@ -351,7 +357,7 @@ public class VoiceSession {
         }
         return 0;
     }
-    
+
     public int myFractionLoss(){
         Enumeration<Participant> participants = rtpSession.getParticipants();
         while(participants.hasMoreElements()){
@@ -359,11 +365,11 @@ public class VoiceSession {
         }
         return 0;
     }
-    
+
     public int avgJitterSeen(){
         return vsc.getRTCPStats().getAverageJitter();
     }
-    
+
     public int avgFractionLossSeen(){
         return vsc.getRTCPStats().getAveragePloss();
     }
@@ -380,7 +386,8 @@ public class VoiceSession {
         listeningStarted=true;
     }
     public void starTransmitting() throws Exception{
-        vsc.start();
+        if(vsc!=null)
+            vsc.start();
         senderSession.start();
         out ("Voice Session Started Transmitting");
         if (DEBUG) out(toString());
