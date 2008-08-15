@@ -1418,7 +1418,6 @@ public class MainUI extends javax.swing.JFrame {
                                                               remoteAddress
                                                               );
                 voiceSession=new VoiceSession(voiceSessionSettings);
-                rtcpStats=voiceSession.getRTCPStats();
                 transmitButton.setText("Stop Transmitting");
                 voiceSession.start();
             }
@@ -1627,8 +1626,11 @@ public class MainUI extends javax.swing.JFrame {
                         voiceSession=null;
                         isClientSessionActive=false;
                     }
-                    if (voiceSession!=null  )
+                    if (voiceSession!=null  ){
                         timeElapsed.setText(voiceSession.getElapsed());
+                        rtcpStats=voiceSession.getRTCPStats();
+                    }else
+                        rtcpStats=null;
                     if(client.getVoiceSession()==null){
                         directCallButton.setText("Call");
                     }else
