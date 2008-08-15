@@ -6,6 +6,7 @@
 package pdcmvoice.client;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -112,23 +113,19 @@ public class Client extends Thread{
             new CallManager(this, socket,launchedManagers,false).start();
     }
 
-    public synchronized void call(String address,int port) {
+    public synchronized void call(String address,int port) throws UnknownHostException, IOException {
         if(launchedManagers>0) return; //ci sono già altre chiamate...
         out("Calling "+address+":"+port);
-        launchedManagers++;
         Socket socket=null;
-        try {
-            socket = new Socket(address, port);
+            socket = new Socket();
+            InetSocketAddress host=new InetSocketAddress(address, port);
+            socket.connect(host, 10000);
             socket.setKeepAlive(false);
             socket.setTcpNoDelay(true);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if(socket!=null)
+        if(socket!=null){
+            launchedManagers++;
             new CallManager(this, socket,launchedManagers,true).start();
-
+        }
     }
 
     public VoiceSession getVoiceSession(){
@@ -142,5 +139,12 @@ public class Client extends Thread{
     public void hangup(){
         if(runningCallManager!=null)
             runningCallManager.hangup();
+    }
+
+    public boolean isCalling(){
+        if(runningCallManager!=null)
+            return true;
+        else
+            return false;
     }
 }

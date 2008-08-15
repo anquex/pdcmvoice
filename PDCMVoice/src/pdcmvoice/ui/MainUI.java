@@ -1453,10 +1453,17 @@ public class MainUI extends javax.swing.JFrame {
     private void directCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directCallButtonActionPerformed
         updateDCTSettings();
         renderDCTSettings();
-        if(client.getVoiceSession()==null){
-            client.call(remoteAddress, DCTremoteConnectionSettings.getMaster());
-        }else{
-            client.hangup();
+        try{
+            if(client.getVoiceSession()==null){
+                client.call(remoteAddress, DCTremoteConnectionSettings.getMaster());
+            }else{
+                client.hangup();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Fatal Error", JOptionPane.ERROR_MESSAGE);
+
         }
 
 }//GEN-LAST:event_directCallButtonActionPerformed
