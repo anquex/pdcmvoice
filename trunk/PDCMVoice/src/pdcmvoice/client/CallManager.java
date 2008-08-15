@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.AudioSettings;
 import pdcmvoice.settings.ConnectionSettings;
@@ -284,7 +285,16 @@ public class CallManager extends Thread{
         sendMessage("ACK");
     }
     private boolean AskForAccept(){
-        return true;
+        String strMessage = "Do you accept call from "+remoteUser+" ?";
+        int nAnswer = JOptionPane.showConfirmDialog(null, new Object[]{strMessage}, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (nAnswer == JOptionPane.YES_OPTION)
+            {
+            return true;
+            }
+        else
+            {
+            return false;
+            }
     }
 
     private void sendAccept(){
