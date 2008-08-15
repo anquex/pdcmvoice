@@ -77,6 +77,7 @@ public class Client extends Thread{
             try {
                 socket = serverSocket.accept();
                 socket.setTcpNoDelay(true);
+                socket.setKeepAlive(true);
             } catch (IOException ex) {
                 out("Impossibile ricevere la connessione");
             }
@@ -114,13 +115,16 @@ public class Client extends Thread{
     }
 
     public synchronized void call(String address,int port) throws UnknownHostException, IOException {
-        if(launchedManagers>0) return; //ci sono già altre chiamate...
+        if(launchedManagers>0) {
+            out ("Other calls are running...");
+            return; //ci sono già altre chiamate...
+        }
         out("Calling "+address+":"+port);
         Socket socket=null;
             socket = new Socket();
             InetSocketAddress host=new InetSocketAddress(address, port);
             socket.connect(host, 10000);
-            socket.setKeepAlive(false);
+            socket.setKeepAlive(true);
             socket.setTcpNoDelay(true);
         if(socket!=null){
             launchedManagers++;

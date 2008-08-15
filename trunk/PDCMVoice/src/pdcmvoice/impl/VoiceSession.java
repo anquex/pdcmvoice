@@ -64,7 +64,7 @@ public class VoiceSession {
             receiverSession=new VoiceSessionReceiver(
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
-            //vsc=new VoiceSessionController(this);
+            vsc=new VoiceSessionController(this);
             rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
 
