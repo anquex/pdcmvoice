@@ -71,7 +71,7 @@ public class VoiceSession {
             setMinorSettings();
 
             //RECOVERY COLLETION FROM SETTINGS
-            withRecovery = settings.withRecovery();
+            withRecovery = false;
             // TO COMPLETE
             settings.getRemoteRecoveryPort();
             settings.getLocalRecoveryPort();
