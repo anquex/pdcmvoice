@@ -139,7 +139,7 @@ public class RecoveryCollection
     	    if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
     	    */
     	    if(untilEnd)
-    	        end = lastSnReceived;
+    	        end = lastSnReceived - firstSnReceived;
     	    else
     	        end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
     	    lastSn = end;
@@ -220,7 +220,7 @@ public class RecoveryCollection
             if (lastSnReceived > 0 || lastSnReceived > 0 && untilEnd)
             */
             if(untilEnd)
-                end = lastSnReceived;
+                end = lastSnReceived - firstSnReceived;
             else
                 end = window > 0 ?  (start-1 + window) : (start-1 + windowWidth);
             lastSn = end;
