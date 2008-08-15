@@ -1411,35 +1411,49 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="transmitButton" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="64" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="UIRemoteEncoding" max="32767" attributes="1"/>
-                                  <Component id="UIRemoteAddress" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="UIRemoteRTCP" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="UIRemoteRTP" alignment="1" pref="118" max="32767" attributes="1"/>
-                              </Group>
+                              <EmptySpace pref="54" max="32767" attributes="0"/>
                           </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jLabel1" alignment="1" pref="102" max="32767" attributes="0"/>
+                                  <Component id="jLabel37" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="UIRemoteRTP" alignment="0" min="-2" pref="118" max="-2" attributes="1"/>
+                          <Component id="UIRemoteMaster" alignment="0" pref="118" max="32767" attributes="1"/>
+                          <Component id="UIRemoteAddress" alignment="0" pref="118" max="32767" attributes="1"/>
+                          <Component id="UIRemoteRTCP" alignment="0" pref="118" max="32767" attributes="1"/>
+                          <Component id="UIRemoteEncoding" alignment="0" pref="118" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" pref="281" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="directCallButton" pref="124" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="transmitButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jSeparator1" pref="271" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jScrollPane1" alignment="0" pref="281" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -1448,6 +1462,11 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="UIRemoteAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel37" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="UIRemoteMaster" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -1465,8 +1484,11 @@
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-                      <Component id="transmitButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="63" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="transmitButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="directCallButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="38" max="32767" attributes="0"/>
                       <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -1550,6 +1572,21 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JTextField" name="UIRemoteMaster">
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel37">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Remote Master  Port"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="directCallButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Call"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="directCallButtonActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

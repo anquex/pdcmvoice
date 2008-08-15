@@ -51,6 +51,7 @@ public class MainUI extends javax.swing.JFrame {
     public final String DEFAULT_USERNAME="Default Username";
     private String username=DEFAULT_USERNAME;
     private Client client;
+    private boolean isClientSessionActive;
 
 
     private void renderStatus(){
@@ -141,7 +142,7 @@ public class MainUI extends javax.swing.JFrame {
 
     private void  updateDCTSettings(){
         remoteAddress=UIRemoteAddress.getText();
-
+        DCTremoteConnectionSettings.setMaster(UIRemoteMaster.getText());
         DCTremoteConnectionSettings.setRTP(UIRemoteRTP.getText());
         DCTremoteConnectionSettings.setRTCP(UIRemoteRTCP.getText());
         DCTremoteAudioSettings.setFormat(FORMAT_CODES[UIRemoteEncoding.getSelectedIndex()]);
@@ -150,7 +151,7 @@ public class MainUI extends javax.swing.JFrame {
 
     private void renderDCTSettings(){
         UIRemoteAddress.setText(remoteAddress);
-
+        UIRemoteMaster.setText(""+DCTremoteConnectionSettings.getMaster());
         UIRemoteRTP.setText(""+ DCTremoteConnectionSettings.getRTP());
         UIRemoteRTCP.setText(""+DCTremoteConnectionSettings.getRTCP());
         UIRemoteEncoding.setSelectedIndex(DCTremoteAudioSettings.getFormat()-1);
@@ -199,6 +200,7 @@ public class MainUI extends javax.swing.JFrame {
         nf.setMaximumFractionDigits(1);
         nf.setMaximumIntegerDigits(2);
         client=new Client(null, myAudioSettings, myConnectionSettings, myTransmissionSettings);
+        client.start();
     }
 
     /** This method is called from within the constructor to
@@ -312,6 +314,9 @@ public class MainUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        UIRemoteMaster = new javax.swing.JTextField();
+        jLabel37 = new javax.swing.JLabel();
+        directCallButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -1146,33 +1151,53 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea1.setWrapStyleWord(true);
         jScrollPane1.setViewportView(jTextArea1);
 
+        jLabel37.setText("Remote Master  Port");
+
+        directCallButton.setText("Call");
+        directCallButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                directCallButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout DCTestPanelLayout = new org.jdesktop.layout.GroupLayout(DCTestPanel);
         DCTestPanel.setLayout(DCTestPanelLayout);
         DCTestPanelLayout.setHorizontalGroup(
             DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(DCTestPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, transmitButton)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, DCTestPanelLayout.createSequentialGroup()
+                    .add(DCTestPanelLayout.createSequentialGroup()
                         .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel3)
-                            .add(jLabel1)
                             .add(jLabel2)
                             .add(jLabel4))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 64, Short.MAX_VALUE)
-                        .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(UIRemoteEncoding, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteAddress)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTCP)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 54, Short.MAX_VALUE))
+                    .add(DCTestPanelLayout.createSequentialGroup()
+                        .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel37))
+                        .add(41, 41, 41)))
+                .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(UIRemoteRTP, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(UIRemoteMaster, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                    .add(UIRemoteAddress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                    .add(UIRemoteRTCP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                    .add(UIRemoteEncoding, 0, 118, Short.MAX_VALUE))
                 .addContainerGap())
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
-            .add(DCTestPanelLayout.createSequentialGroup()
-                .add(jLabel5)
-                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, DCTestPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(directCallButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                .add(18, 18, 18)
+                .add(transmitButton)
+                .add(10, 10, 10))
             .add(DCTestPanelLayout.createSequentialGroup()
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
                 .addContainerGap())
+            .add(DCTestPanelLayout.createSequentialGroup()
+                .add(jLabel5)
+                .addContainerGap())
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
         );
         DCTestPanelLayout.setVerticalGroup(
             DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1180,6 +1205,10 @@ public class MainUI extends javax.swing.JFrame {
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
                     .add(UIRemoteAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel37)
+                    .add(UIRemoteMaster, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel2)
@@ -1193,8 +1222,10 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UIRemoteEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel4))
                 .add(23, 23, 23)
-                .add(transmitButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 63, Short.MAX_VALUE)
+                .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(transmitButton)
+                    .add(directCallButton))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 38, Short.MAX_VALUE)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel5)
@@ -1411,10 +1442,22 @@ public class MainUI extends javax.swing.JFrame {
 }//GEN-LAST:event_RRJitterActionPerformed
 
     private void setUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setUsernameActionPerformed
-        String message="";
-        username = (String)JOptionPane.showInputDialog(this,  "Provide your name", username);
 
+        String temp = (String)JOptionPane.showInputDialog(this,  "Provide your name", username);
+        if(!temp.equals(username)){
+            username=temp;
+            client.setUsername(username);
+        }
     }//GEN-LAST:event_setUsernameActionPerformed
+
+    private void directCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directCallButtonActionPerformed
+        if(client.getVoiceSession()==null){
+            client.call(remoteAddress, DCTremoteConnectionSettings.getMaster());
+        }else{
+            client.hangup();
+        }
+
+}//GEN-LAST:event_directCallButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -1470,6 +1513,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JCheckBox UIRDT;
     private javax.swing.JTextField UIRemoteAddress;
     private javax.swing.JComboBox UIRemoteEncoding;
+    private javax.swing.JTextField UIRemoteMaster;
     private javax.swing.JTextField UIRemoteRTCP;
     private javax.swing.JTextField UIRemoteRTP;
     private javax.swing.JTextField UImaxBuf;
@@ -1484,6 +1528,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
+    private javax.swing.JButton directCallButton;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenu editMenu1;
     private javax.swing.JMenuItem exitMenuItem;
@@ -1523,6 +1568,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1565,8 +1611,19 @@ public class MainUI extends javax.swing.JFrame {
                     sleep(500);
                     renderStatus();
                     sleep(500);
+                    if(client.getVoiceSession()!=null && !isClientSessionActive){
+                        voiceSession=client.getVoiceSession();
+                        isClientSessionActive=true;
+                    }else if(isClientSessionActive && client.getVoiceSession()==null){
+                        voiceSession=null;
+                        isClientSessionActive=false;
+                    }
                     if (voiceSession!=null  )
                         timeElapsed.setText(voiceSession.getElapsed());
+                    if(client.getVoiceSession()==null){
+                        directCallButton.setText("Call");
+                    }else
+                        directCallButton.setText("Hangup");
                 } catch (InterruptedException ignore) {
                     ignore.printStackTrace();
                     break;
