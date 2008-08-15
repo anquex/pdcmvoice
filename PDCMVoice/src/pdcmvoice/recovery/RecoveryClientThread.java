@@ -67,7 +67,7 @@ public class RecoveryClientThread extends Thread
         boolean rtpDown;
         
         try {
-            Thread.sleep(2000); //attesa prima di partire
+            Thread.sleep(7000); //attesa prima di partire
         } catch (InterruptedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -101,7 +101,7 @@ public class RecoveryClientThread extends Thread
      //       QUERY COSTITUITE DA BYTE
      //      ----------------------------       
             
-            if (writingTest++ >= 10 && RecConn.getRemoteCollection().debug)
+            if (writingTest++ >= 7 && RecConn.getRemoteCollection().debug)
             {
                 stopQuery = true;
                 lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
@@ -358,7 +358,7 @@ public class RecoveryClientThread extends Thread
             lastQuery = null;
 */
 
-        }
+        }//end while
         
         /*
          * TODO prima di finire le richieste DEVO RECUPERARE CON UN'ULTIMA RICHIESTA GLI EVENTUALI PACCHETTI INIZIALI NON ARRIVATI.

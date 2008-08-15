@@ -41,6 +41,15 @@ public class RecoveryServerThread extends Thread
             e.printStackTrace();
         }
         
+        
+//        try {
+//            Thread.sleep(2000); //attesa prima di partire
+//        } catch (InterruptedException e1) {
+//            // TODO Auto-generated catch block
+//            e1.printStackTrace();
+//        }
+        
+        
         boolean endServerThread = false; 
         
         while (!endServerThread)
@@ -213,8 +222,24 @@ public class RecoveryServerThread extends Thread
                         if ((totalePkt-1)*pktSize + pktSize -1 >= send.length -1)
                             send = arrayResize(send, 2*send.length);
                         
+                        //temp = RecConn.getLocalCollection().read(i);
+                        while (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0)
+                        {
+                            try {
+                              Thread.sleep(100); //attesa durante la lettura dei pacchetti richiesti
+                              } catch (InterruptedException e1) {
+                                  // TODO Auto-generated catch block
+                                  e1.printStackTrace();
+                              }
+                                
+                            if (RecConn.getLocalCollection().debug)
+                                System.out.println("--SERVER-- Attesa lettura pacchetto " + i);
+                        }
+                        
                         temp = RecConn.getLocalCollection().read(i);
                         
+//                        if (temp != null)
+//                        {
                         try {
                             System.arraycopy (temp, 0, send, (totalePkt-1)*pktSize, temp.length);
                         } catch (NullPointerException e) {
@@ -225,6 +250,7 @@ public class RecoveryServerThread extends Thread
                         }
                         
                         totalePkt++;
+//                        }
                         
                       if (RecConn.getLocalCollection().debug && temp != null)
                         {
