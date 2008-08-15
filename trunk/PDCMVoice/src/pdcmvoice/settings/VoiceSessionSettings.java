@@ -179,6 +179,9 @@ public class VoiceSessionSettings implements Serializable{
         public boolean withRecovery(){
             return localEnabledRecovery;
         }
+        public boolean withRecovery(boolean enabled){
+            return localEnabledRecovery=enabled;
+        }
         public int framesPerPacket(){
             return localFramesPerPacket;
         }

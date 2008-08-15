@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.AudioSettings;
 import pdcmvoice.settings.ConnectionSettings;
@@ -28,7 +29,7 @@ import static pdcmvoice.impl.Constants.*;
  */
 
 public class CallManager extends Thread{
-    
+
     private Client client;
     private Socket socket;
     private int id;
@@ -262,7 +263,7 @@ public class CallManager extends Thread{
         //return true;
         return false;
     }
-    
+
     private synchronized void sendParameters(){
         parametersSent=true;
         String msg="PARAMETERS:";
@@ -277,7 +278,7 @@ public class CallManager extends Thread{
         value=""+client.transmissionSettings.getRecovery();
         msg+="WITH_BACKGROUND,"+value+";";
         sendMessage(msg);
-       
+
     }
 
     private void sendAck(){
@@ -286,6 +287,11 @@ public class CallManager extends Thread{
     }
     private boolean AskForAccept(){
         String strMessage = "Do you accept call from "+remoteUser+" ?";
+        try {
+          UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            }
         int nAnswer = JOptionPane.showConfirmDialog(null, new Object[]{strMessage}, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (nAnswer == JOptionPane.YES_OPTION)
             {
