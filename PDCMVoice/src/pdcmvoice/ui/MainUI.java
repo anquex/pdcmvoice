@@ -21,6 +21,8 @@ import pdcmvoice.settings.VoiceSessionSettings;
 import static pdcmvoice.impl.Constants.*;
 
 import java.text.NumberFormat;
+import javax.swing.JOptionPane;
+import pdcmvoice.client.Client;
 
 /**
  *
@@ -46,6 +48,10 @@ public class MainUI extends javax.swing.JFrame {
 
     private NumberFormat nf=NumberFormat.getPercentInstance();
 
+    public final String DEFAULT_USERNAME="Default Username";
+    private String username=DEFAULT_USERNAME;
+    private Client client;
+
 
     private void renderStatus(){
         String bufferInfo="N/A";
@@ -58,7 +64,7 @@ public class MainUI extends javax.swing.JFrame {
             RPframesNumber.setText(""+voiceSession.lastReceivedPacketFrames());
             RPframesSize.setText(""+voiceSession.lastReceivedPacketFramesSize());
             RPRDT.setText(""+voiceSession.lastReceivedPacketRDT());
-            
+
             SPframesNumber.setText(""+voiceSession.lastSentPacketFrames());
             SPPayload.setText(""+voiceSession.lastSentPacketPayload());
             SPframesSize.setText(""+voiceSession.lastSentPacketFramesSize());
@@ -77,7 +83,7 @@ public class MainUI extends javax.swing.JFrame {
             RPframesNumber.setText("N/A");
             RPframesSize.setText("N/A");
             RPRDT.setText("N/A");
-            
+
             SPframesNumber.setText("N/A");
             SPPayload.setText("N/A");
             SPframesSize.setText("N/A");
@@ -155,7 +161,7 @@ public class MainUI extends javax.swing.JFrame {
         if (rtcpStats!=null){
             SRBytesSent.setText(""+rtcpStats.SRoctetCount);
             SRPacketsSent.setText(""+rtcpStats.SRpacketCount);
-           
+
             LRRDelay.setText(""+rtcpStats.RRdelayLastSR);
             RRSessionPL.setText(""+rtcpStats.RRcumulPacketsLost);
             RRJitter.setText(""+rtcpStats.RRinterArrivalJitter);
@@ -192,7 +198,7 @@ public class MainUI extends javax.swing.JFrame {
         guiUpdater.start();
         nf.setMaximumFractionDigits(1);
         nf.setMaximumIntegerDigits(2);
-
+        client=new Client(null, myAudioSettings, myConnectionSettings, myTransmissionSettings);
     }
 
     /** This method is called from within the constructor to
@@ -325,10 +331,7 @@ public class MainUI extends javax.swing.JFrame {
         openMenuItem1 = new javax.swing.JMenuItem();
         exitMenuItem1 = new javax.swing.JMenuItem();
         editMenu1 = new javax.swing.JMenu();
-        cutMenuItem1 = new javax.swing.JMenuItem();
-        copyMenuItem1 = new javax.swing.JMenuItem();
-        pasteMenuItem1 = new javax.swing.JMenuItem();
-        deleteMenuItem1 = new javax.swing.JMenuItem();
+        setUsername = new javax.swing.JMenuItem();
         helpMenu1 = new javax.swing.JMenu();
         contentsMenuItem1 = new javax.swing.JMenuItem();
         aboutMenuItem1 = new javax.swing.JMenuItem();
@@ -393,7 +396,7 @@ public class MainUI extends javax.swing.JFrame {
             .add(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, RPframesNumber, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, RPframesNumber, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, RPframesSize, 0, 0, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, RPPayload, 0, 0, Short.MAX_VALUE)
                     .add(RPRDT, 0, 0, Short.MAX_VALUE))
@@ -901,6 +904,7 @@ public class MainUI extends javax.swing.JFrame {
 
         jLabel11.setText("Master Port");
 
+        UILocalMaster.setToolTipText("Changing Master Port require restarting");
         UILocalMaster.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UILocalMasterActionPerformed(evt);
@@ -1138,7 +1142,7 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea1.setFont(new java.awt.Font("Courier", 0, 12));
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("Simply starts transmitting and receiving without caring about settings and host status.\n");
+        jTextArea1.setText("Tranmission Test: Simply starts transmitting and receiving without caring about settings and host status.\nCall : complete call management\n");
         jTextArea1.setWrapStyleWord(true);
         jScrollPane1.setViewportView(jTextArea1);
 
@@ -1162,11 +1166,13 @@ public class MainUI extends javax.swing.JFrame {
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTCP)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, UIRemoteRTP, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
                 .addContainerGap())
-            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
             .add(DCTestPanelLayout.createSequentialGroup()
                 .add(jLabel5)
                 .addContainerGap())
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+            .add(DCTestPanelLayout.createSequentialGroup()
+                .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                .addContainerGap())
         );
         DCTestPanelLayout.setVerticalGroup(
             DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1188,12 +1194,12 @@ public class MainUI extends javax.swing.JFrame {
                     .add(jLabel4))
                 .add(23, 23, 23)
                 .add(transmitButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 63, Short.MAX_VALUE)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel5)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         MainTabbedPanel.addTab("DC Test", DCTestPanel);
@@ -1262,17 +1268,13 @@ public class MainUI extends javax.swing.JFrame {
 
         editMenu1.setText("Preferences");
 
-        cutMenuItem1.setText("Cut");
-        editMenu1.add(cutMenuItem1);
-
-        copyMenuItem1.setText("Copy");
-        editMenu1.add(copyMenuItem1);
-
-        pasteMenuItem1.setText("Paste");
-        editMenu1.add(pasteMenuItem1);
-
-        deleteMenuItem1.setText("Delete");
-        editMenu1.add(deleteMenuItem1);
+        setUsername.setText("Set Username");
+        setUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setUsernameActionPerformed(evt);
+            }
+        });
+        editMenu1.add(setUsername);
 
         menuBar1.add(editMenu1);
 
@@ -1377,10 +1379,10 @@ public class MainUI extends javax.swing.JFrame {
         renderDCTSettings();
         if(voiceSession==null){
             try{
-                voiceSessionSettings=new VoiceSessionSettings(myAudioSettings, 
-                                                              myConnectionSettings, 
-                                                              myTransmissionSettings, 
-                                                              DCTremoteAudioSettings, 
+                voiceSessionSettings=new VoiceSessionSettings(myAudioSettings,
+                                                              myConnectionSettings,
+                                                              myTransmissionSettings,
+                                                              DCTremoteAudioSettings,
                                                               DCTremoteConnectionSettings,
                                                               remoteAddress
                                                               );
@@ -1407,6 +1409,12 @@ public class MainUI extends javax.swing.JFrame {
     private void RRJitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RRJitterActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_RRJitterActionPerformed
+
+    private void setUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setUsernameActionPerformed
+        String message="";
+        username = (String)JOptionPane.showInputDialog(this,  "Provide your name", username);
+
+    }//GEN-LAST:event_setUsernameActionPerformed
 
     /**
     * @param args the command line arguments
@@ -1474,11 +1482,8 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem contentsMenuItem1;
     private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem copyMenuItem1;
     private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem cutMenuItem1;
     private javax.swing.JMenuItem deleteMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem1;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenu editMenu1;
     private javax.swing.JMenuItem exitMenuItem;
@@ -1542,9 +1547,9 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem openMenuItem1;
     private javax.swing.JMenuItem pasteMenuItem;
-    private javax.swing.JMenuItem pasteMenuItem1;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenuItem setUsername;
     private javax.swing.JLabel timeElapsed;
     private javax.swing.JLabel timeElapsed1;
     private javax.swing.JButton transmitButton;
