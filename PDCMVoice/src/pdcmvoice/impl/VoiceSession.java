@@ -71,10 +71,14 @@ public class VoiceSession {
             setMinorSettings();
 
             //RECOVERY COLLETION FROM SETTINGS
-            withRecovery = false;
+            withRecovery=settings.withRecovery();
             // TO COMPLETE
-            settings.getRemoteRecoveryPort();
-            settings.getLocalRecoveryPort();
+            if (withRecovery){
+
+                settings.getRemoteRecoveryPort();
+                settings.getLocalRecoveryPort();
+
+            }
 
 
     }
@@ -100,7 +104,7 @@ public class VoiceSession {
 
         try {
             ServerSocket serverSocket = new ServerSocket(localPort);
-            client = new Socket(InetAddress.getByName(settings.getRemoteAddress()), remotePort);
+            client = new Socket(settings.getRemoteAddress(), remotePort);
             server = serverSocket.accept();
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
@@ -160,18 +164,18 @@ public class VoiceSession {
             out("Sending Stopped");
         }
 
-            // recovery connection should still be running
-            if (withRecovery){
-                rc.endOfStream = true;
-                try {
-                    rc.join();
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+        // recovery connection should still be running
+        if (withRecovery){
+            rc.endOfStream = true;
+            try {
+                rc.join();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-            //closeSockets(); -> rc...
-            out ("Voice Session Stopped");
+        }
+        //closeSockets(); -> rc...
+        out ("Voice Session Stopped");
 
 
     }
@@ -314,7 +318,7 @@ public class VoiceSession {
         return senderSession.getPacketizer().lastPacketPayload();
     }
 
-    public int LastEncodedFrameSize(){
+    public int lastEncodedFrameSize(){
         // could return 0 if no frame produced
         return senderSession.getEncoder().getLastFrameSize();
     }
