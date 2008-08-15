@@ -75,7 +75,6 @@ public class CallManager extends Thread{
         }
         sendInvite();
         while(callActive){
-            out("running");
             String message=null;
             try {
                 message = in.readLine();

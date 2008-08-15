@@ -42,6 +42,7 @@ public class PlayoutBuffer{
 
     private Timer timer;            // popout a frame every 20ms
     private Deliver decoderDeliver; // does the pop out work
+    private BrustKiller brustKiller;
 
     private final boolean DEBUG=false;
 
@@ -72,7 +73,8 @@ public class PlayoutBuffer{
 //        timer=new Timer("Playout Buffer Timer");
 //        //timer.schedule(decoderDeliver,0,20);
 //        timer.scheduleAtFixedRate(decoderDeliver,0,20);
-        new BrustKiller().start();
+        brustKiller=new BrustKiller();
+        brustKiller.start();
     }
 
     public void registerDecoder(Decoder d){
@@ -105,7 +107,7 @@ public class PlayoutBuffer{
                     " (Should already been played)");
             return;
         }
-        
+
         VoiceFrame v=new VoiceFrame(timestamp, frame);
         if(listBuffer.add(v)){
             totalAdded++;
@@ -125,7 +127,7 @@ public class PlayoutBuffer{
         if (isBuffering()){
             int bufferedMillis=0; // millis in buffer
             if(isFirstBuffering && WANTCONSECUTIVE ){
-                
+
                     // I want consecutive frame to get bounded delay
                     Iterator<VoiceFrame> iter=listBuffer.iterator();
 
@@ -160,17 +162,17 @@ public class PlayoutBuffer{
                             }
                         }
                     }
-                
+
             }else{
                 bufferedMillis=size()*TIME_PER_FRAME;
             }
-            
+
             if(bufferedMillis>=getMinBufferedMillis()){
                     isFirstBuffering=false;
                     isBuffering=false;
 
                     if(DEBUG)  out("-------   Buffering Complete   --------");
-                    
+
                     // send a frame to decoder each 20 ms
                     if(timer==null){
                         timer=new Timer("Playout Buffer Timer");
@@ -249,12 +251,12 @@ public class PlayoutBuffer{
     /**
      *  Remove a frame if latency is too high
      */
-    
+
     public synchronized void checkAndFixBrusts(){
             // bound max delay
 
            if(size()<=1) return;
-            
+
             if(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>getMaxBufferedMillis()
                     //&& !isBuffering
                     )
@@ -321,7 +323,7 @@ public class PlayoutBuffer{
                         stopPlaying();
                         return;
                     }
-                    // this happens if speakers runs faster than 
+                    // this happens if speakers runs faster than
                     // microphone... just wait
                     if(higherReceivedTimestamp==nextTimestampToPlay && size()>1)
                         return;
@@ -370,22 +372,22 @@ public class PlayoutBuffer{
             return frame;
         }
     }
-    
+
     public float sessionPloss(){
         return sessionPloss;
     }
-    
+
     public synchronized void updateSessionPloss(){
         float expected=(higherReceivedTimestamp-startFrameTimestamp)/TIME_PER_FRAME+1;
         //
         //out("Expected "+expected+" received "+totalAdded);
         sessionPloss=(expected-totalAdded)/expected;
     }
-    
+
     public float intervalPloss(){
         return intervalPloss;
     }
-    
+
     public synchronized void updateIntervalPloss(){
         lastIntervalTimestamp=Math.max(lastIntervalTimestamp, startFrameTimestamp);
         float expected= ((higherReceivedTimestamp - lastIntervalTimestamp) / TIME_PER_FRAME);
@@ -393,24 +395,41 @@ public class PlayoutBuffer{
         lastIntervalTimestamp=higherReceivedTimestamp;
         previousTotalAdded=totalAdded;
     }
-    
+
     class BrustKiller extends Thread{
-        
+
+        private boolean doTerminate;
+
         public void run(){
-           if(DEBUG) out("BRUST KILLER started...");
-            while(true){
+
+            if(DEBUG) out("BRUST KILLER started...");
+            
+           while(!doTerminate){
                 try {
                     checkAndFixBrusts();
                     // se sto bufferizzando (quindi la riproduzione è interrotta
                     // svuoto il più possibile
                     if(!isBuffering())
                         sleep(1000);
+                    else if(isBuffering)
+                        sleep(20);
                 } catch (InterruptedException ex) {
                     if(DEBUG) out("BRUST KILLER died!");
                     break;
                 }
             }//while
         }//run
+
+        public void terminate(){
+            doTerminate=true;
+        }
     }// BrustKiller
-    
+
+    public synchronized void stop(){
+        if(timer!=null)
+            timer.cancel();
+        if(brustKiller!=null)
+            brustKiller.terminate();
+    }
+
 }//Playout Buffer

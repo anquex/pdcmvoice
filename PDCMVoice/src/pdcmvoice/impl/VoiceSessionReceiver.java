@@ -59,12 +59,11 @@ public class VoiceSessionReceiver {
     }
 
     public void stop(){
-            player.close();
+        depacketizer.terminate();
+        player.close();
     }
 
     public Depacketizer getDepacketizer(){
         return depacketizer;
     }
-
-
 }
