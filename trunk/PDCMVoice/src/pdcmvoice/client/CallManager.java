@@ -80,7 +80,7 @@ public class CallManager extends Thread{
             String message=null;
             try {
                 message = in.readLine();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 out("La connessione è stata interrotta improvvisamente");
                 break;
             }
@@ -88,6 +88,10 @@ public class CallManager extends Thread{
         }
         exit();
     }// end run
+
+    public void hangup(){
+        sendBye();
+    }
 
     private synchronized void exitNotValid(String error){
         callActive=false;
@@ -145,6 +149,8 @@ public class CallManager extends Thread{
                     if (voiceSession!=null){
                 try {
                     voiceSession.starTransmitting();
+                    client.vs=voiceSession;
+                    client.runningCallManager=this;
                 } catch (Exception ex) {
                     Logger.getLogger(CallManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -156,13 +162,14 @@ public class CallManager extends Thread{
 
     private synchronized void exit(){
         callActive=false;
-        client.setFree();
         if(voiceSession!=null){
             if(voiceSession.isActive())
                 voiceSession.stop();
+            client.vs=null;
             voiceSession=null;
         }
         close();
+        client.setFree();
         out("Call Manager quit...");
     }
 

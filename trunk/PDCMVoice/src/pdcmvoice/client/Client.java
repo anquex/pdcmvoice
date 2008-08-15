@@ -29,6 +29,7 @@ public class Client extends Thread{
     ConnectionSettings connectionSettings;
     TransmissionSettings transmissionSettings;
     VoiceSession vs;
+    CallManager runningCallManager;
 
     //STATUS
     private boolean isListening;
@@ -130,5 +131,16 @@ public class Client extends Thread{
 
     }
 
+    public VoiceSession getVoiceSession(){
+        return vs;
+    }
 
+    public void setUsername(String username){
+        this.username=username;
+    }
+
+    public void hangup(){
+        if(runningCallManager!=null)
+            runningCallManager.hangup();
+    }
 }
