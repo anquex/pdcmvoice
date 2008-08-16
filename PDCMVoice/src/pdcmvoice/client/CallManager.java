@@ -51,7 +51,8 @@ public class CallManager extends Thread{
     private int RemoteEncoding;
     private boolean withRemoteBackground;
 
-    private long activityTimestamp;
+    private long receiveTimestamp;
+    private long sendTimestamp;
     public final int  ALIVE_INTERVAL=10000;
     public final int  TIMEOUT=30000;
     public final String HEARTBEAT="SCARLET FIGA";
@@ -111,12 +112,10 @@ public class CallManager extends Thread{
     }
     private synchronized void processMessage(String msg){
         if (msg==null) {
-            exitNotValid("messaggio null. Esco");
+            return;
         }
-        activityTimestamp=System.currentTimeMillis();
+        receiveTimestamp=System.currentTimeMillis();
         if(msg.equals(HEARTBEAT)){
-            if(activityTimestamp+ALIVE_INTERVAL<System.currentTimeMillis())
-                sendHeartBeat();
             return;
         }
         if(msg.equals("BYE")){
@@ -204,6 +203,7 @@ public class CallManager extends Thread{
 
     private void sendMessage(String s){
         if(out!=null && !socket.isClosed()){
+            sendTimestamp=System.currentTimeMillis();
             out.println(s);
             out("Sending: "+s);
         }
@@ -358,10 +358,10 @@ public class CallManager extends Thread{
                     Logger.getLogger(CallManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 long current=System.currentTimeMillis();
-                if(activityTimestamp+ALIVE_INTERVAL<=current){
+                if(sendTimestamp+ALIVE_INTERVAL<=current){
                     sendHeartBeat();
                 }
-                if(activityTimestamp+TIMEOUT<current){
+                if(receiveTimestamp+TIMEOUT<current){
                     exit();
                 }
             }
