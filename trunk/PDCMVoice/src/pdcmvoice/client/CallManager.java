@@ -51,6 +51,13 @@ public class CallManager extends Thread{
     private int RemoteEncoding;
     private boolean withRemoteBackground;
 
+    private long activityTimestamp;
+    public final int  ALIVE_INTERVAL=10000;
+    public final int  TIMEOUT=30000;
+    public final String HEARTBEAT="SCARLET FIGA";
+    private TimeoutDetector td;
+    private boolean exited;
+
     AudioSettings remoteAudioSettings;
     ConnectionSettings remoteConnectionSettings;
     TransmissionSettings remoteTransmissionSettings;
@@ -64,6 +71,8 @@ public class CallManager extends Thread{
         this.id=id;
         address=socket.getInetAddress().getHostAddress();
         this.isCaller=isCaller;
+        td=new TimeoutDetector();
+        out("Call Manager Id "+id);
 
 
     }
@@ -75,12 +84,14 @@ public class CallManager extends Thread{
         } catch (IOException ex) {
             out(" Impossbile ottenere gli stream");
         }
+        td.start();
         sendInvite();
         while(callActive){
             String message=null;
             try {
                 message = in.readLine();
             } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Connection Lost", "connection error", JOptionPane.WARNING_MESSAGE);
                 out("La connessione è stata interrotta improvvisamente");
                 break;
             }
@@ -101,6 +112,12 @@ public class CallManager extends Thread{
     private synchronized void processMessage(String msg){
         if (msg==null) {
             exitNotValid("messaggio null. Esco");
+        }
+        activityTimestamp=System.currentTimeMillis();
+        if(msg.equals(HEARTBEAT)){
+            if(activityTimestamp+ALIVE_INTERVAL<System.currentTimeMillis())
+                sendHeartBeat();
+            return;
         }
         if(msg.equals("BYE")){
             if(!sentBye)
@@ -161,7 +178,11 @@ public class CallManager extends Thread{
     }
 
     private synchronized void exit(){
+        if (exited) return;
+        exited=true;
         callActive=false;
+        if(td!=null)
+            td.terminate();
         if(voiceSession!=null){
             if(voiceSession.isActive())
                 voiceSession.stop();
@@ -319,5 +340,36 @@ public class CallManager extends Thread{
 
     private void sendInvite(){
         sendMessage("CALLER:"+client.username);
+    }
+    
+    private void sendHeartBeat(){
+        sendMessage(HEARTBEAT);
+    }
+
+    class TimeoutDetector extends Thread{
+
+        private boolean doTermiante;
+
+        public void run(){
+            while(!doTermiante){
+                try {
+                    sleep(ALIVE_INTERVAL);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(CallManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                long current=System.currentTimeMillis();
+                if(activityTimestamp+ALIVE_INTERVAL<=current){
+                    sendHeartBeat();
+                }
+                if(activityTimestamp+TIMEOUT<current){
+                    exit();
+                }
+            }
+        }
+
+        void terminate(){
+            doTermiante=true;
+        }
+
     }
 }
