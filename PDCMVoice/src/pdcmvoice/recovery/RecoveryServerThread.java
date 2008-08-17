@@ -2,6 +2,7 @@ package pdcmvoice.recovery;
 
 import java.net.Socket;
 import jlibrtp.RTPSession;
+import pdcmvoice.impl.*;
 
 import java.io.*;
 import java.util.StringTokenizer;
@@ -16,19 +17,41 @@ public class RecoveryServerThread extends Thread
     private String lastQuery;
     private boolean lastQueryDone;
     private byte[] lastQueryByte;
+    private VoiceSession voiceSession;
     public boolean stop; 
     
-    public RecoveryServerThread(RecoveryConnection RecConn)
+    public RecoveryServerThread(RecoveryConnection RecConn, VoiceSession voiceSession)
 	{
 		this.RecConn = RecConn;
 		lastQuery = null;
 		lastQueryByte = null;
 		lastQueryDone = false;
 		stop = false; 
+		this.voiceSession = voiceSession;
 	}
 	
 	public void run()
 	{
+	    
+	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
+	    */
+	    while(voiceSession.lastEncodedFrameSize() <= 0)
+	    {
+	        if (RecConn.debug)
+                System.out.println("--SERVER-- Acquisizione dimensione pacchetto codificato");
+	        
+	        try {
+                Thread.sleep(1000); //attesa durante la ricezione
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+	    }
+	    
+	    this.RecConn.getLocalCollection().setPktSize(voiceSession.lastEncodedFrameSize());
+	    if (RecConn.debug)
+            System.out.println("--SERVER-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize()); 
+	    
 	    DataInputStream dis = null;
 	    DataOutputStream dos = null;
 	    
@@ -43,7 +66,7 @@ public class RecoveryServerThread extends Thread
         
         
 //        try {
-//            Thread.sleep(2000); //attesa prima di partire
+//            Thread.sleep(500); //attesa prima di partire
 //        } catch (InterruptedException e1) {
 //            // TODO Auto-generated catch block
 //            e1.printStackTrace();
@@ -66,20 +89,21 @@ public class RecoveryServerThread extends Thread
             
             while (!endServerThread && (!lengthRead || !queryRead))
             {
-//                try {
-//                    Thread.sleep(5); //attesa durante la ricezione
-//                } catch (InterruptedException e1) {
-//                    // TODO Auto-generated catch block
-//                    e1.printStackTrace();
-//                }
+                try {
+                    Thread.sleep(100); //attesa durante la ricezione
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 
                 if (!lengthRead)
                 {
                     try {
+                        if (dis.available() > 0)
+                        {
                         if (RecConn.debug)
                             System.out.println("attesa lunghezza query..." + l++);
-                        //if (dis.available() > 0)
-                        {
+                        
     //                        if (RecConn.debug)
     //                            System.out.println("br.ready...");
     //                        
@@ -119,7 +143,12 @@ public class RecoveryServerThread extends Thread
                                         System.out.println("--SERVER-- queryLength: " + queryLength);
                                 }
                             }
+                        }//end if (dis.available() > 0)
+                        else if (RecConn.getLocalCollection().debug)
+                        {
+                            System.out.println("--SERVER-- DATA INPUT STREAM (lettura length) ASSENTE");
                         }
+                     
                     } catch (IOException e) {
                         
                         if (RecConn.debug)
@@ -133,7 +162,7 @@ public class RecoveryServerThread extends Thread
                     try {
 //                        if (RecConn.debug)
 //                            System.out.println("attesa query..." + l++);
-                        //if (dis.available() > 0)
+                        if (dis.available() > 0)
                         {
     //                        if (RecConn.debug)
     //                            System.out.println("br.ready...");
@@ -148,6 +177,10 @@ public class RecoveryServerThread extends Thread
                                 queryRead = true;
                                 //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
                             }
+                        }//end if (dis.available() > 0)
+                        else if (RecConn.getLocalCollection().debug)
+                        {
+                            System.out.println("--SERVER-- DATA INPUT STREAM (lettura query) ASSENTE");
                         }
                     } catch (IOException e) {
                         
@@ -271,7 +304,8 @@ public class RecoveryServerThread extends Thread
                 if (!endServerThread) 
                 {
                     try {
-
+                        if (RecConn.getClientSocket().isConnected())
+                        {
                         if (RecConn.getLocalCollection().debug)
                             System.out
                                     .println("--SERVER-- tentativo invio pacchetti richiesti ");
@@ -283,6 +317,11 @@ public class RecoveryServerThread extends Thread
                             System.out.println("--SERVER-- pacchetti INVIATI");
 
                         lastQueryByte = null;
+                        }
+                        else if (RecConn.getLocalCollection().debug)
+                        {
+                            System.out.println("--SERVER-- CONNESSIONE RECOVERY ASSENTE");
+                        }
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -305,6 +344,7 @@ public class RecoveryServerThread extends Thread
         }
 		
 	}
+	
 	
 	private static byte[] arrayResize(byte[] b, int newSize)
 	{

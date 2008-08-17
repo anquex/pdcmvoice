@@ -24,21 +24,42 @@ public class RecoveryClientThread extends Thread
     public boolean endOfStream;
     //private RecoveryServerThread server; //NO! il serverThread si ferma da solo quando legge lastQuery == "END OF QUERY"!!! - serve per interrompere l'esecuzione del ServerThread
     private boolean stopQuery;
+    private VoiceSession voiceSession;
     
-    public RecoveryClientThread(RecoveryConnection RecConn)
+    public RecoveryClientThread(RecoveryConnection RecConn, VoiceSession voiceSession)
 	{
         this.RecConn = RecConn;
         lastQuery = null;
         lastQueryDone = false;
         endOfStream = false;
         stopQuery = false;
+        this.voiceSession = voiceSession;
 	}
 	
     //GESTIRE LA VITA DEL THREAD (ciclo while sullo stato della sessione rtp, ad esempio, ) e degli Stream e dei socket
     //ATTENZIONE AD ASPETTARE UN PO' PRIMA DI INIZIARE A FARE LE RICHIESTE DI RECOVERY!!
 	public void run()
 	{
-		//deve scrivere con writeUTF oppure con writeBytes di DataOutputStream e concludere la stringa di richiesta con \n
+		
+	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
+        */
+        while(voiceSession.lastEncodedFrameSize() <= 0)
+        {
+            if (RecConn.debug)
+                System.out.println("--CLIENT-- Acquisizione dimensione pacchetto codificato");
+            
+            try {
+                Thread.sleep(1000); //attesa durante la ricezione
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+        this.RecConn.getRemoteCollection().setPktSize(voiceSession.lastEncodedFrameSize());
+        if (RecConn.debug)
+            System.out.println("--CLIENT-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
+	    
+	    //deve scrivere con writeUTF oppure con writeBytes di DataOutputStream e concludere la stringa di richiesta con \n
 	    //deve leggere con read(byte[] b, int off, int len)  di DataInputStream in base alla richiesta effettuata
 	    
 	    
@@ -133,8 +154,16 @@ public class RecoveryClientThread extends Thread
                           System.out.println("");
                       }
                       try {
-                          dos.write(lastQueryByte, 0, lastQueryByte.length);
-                          dos.flush();
+                          if (RecConn.getServerSocket().isConnected())
+                          {
+                              dos.write(lastQueryByte, 0, lastQueryByte.length);
+                              dos.flush();
+                          }
+                          else if (RecConn.getRemoteCollection().debug)
+                          {
+                              System.out.println("--CLIENT-- CONNESSIONE RECOVERY ASSENTE");
+                          }
+                          
                       } catch (IOException e) {
                           // TODO Auto-generated catch block
                           e.printStackTrace();
@@ -194,7 +223,21 @@ public class RecoveryClientThread extends Thread
                           try {
 //                              if (RecConn.getRemoteCollection().debug)
 //                                  System.out.println("--CLIENT-- tentativo lettura pacchetto " + i);
-                          dis.read(temp, 0, pktSize);
+                           while (dis.available() <= 0)
+                           {
+                               try {
+                                   Thread.sleep(50); //attendi che il dis diventi available
+                               } catch (InterruptedException e1) {
+                                   // TODO Auto-generated catch block
+                                   e1.printStackTrace();
+                               }
+                               
+                               if (RecConn.getRemoteCollection().debug)
+                                  System.out.println("--CLIENT-- DATA INPUT STREAM ASSENTE");
+                               
+                           }//end while (dis.available() > 0)
+                           dis.read(temp, 0, pktSize);
+                           
 //                          if (RecConn.getRemoteCollection().debug)
 //                              System.out.println("--CLIENT-- LETTO pacchetto " + i);
                           
@@ -369,9 +412,15 @@ public class RecoveryClientThread extends Thread
         try {
             byte a, b, c;
             a = 0; b = 0; c = 2;
-            
-            dos.write(new byte[]{a, b, c}, 0, 3);
-            dos.flush();
+            if (RecConn.getServerSocket().isConnected())
+            {
+                dos.write(new byte[]{a, b, c}, 0, 3);
+                dos.flush();
+            }
+            else if (RecConn.getRemoteCollection().debug)
+            {
+                System.out.println("--CLIENT-- CONNESSIONE RECOVERY ASSENTE");
+            }
             
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -840,7 +889,9 @@ public class RecoveryClientThread extends Thread
                 System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
                 
                    
-        
+                
+                
+                this.endOfStream = false; //informa VoiceSession che si è terminato di svolgere le attività di recovery
         
         
 /* PROVA DECODIFICA E CONVERSIONE IN PCM
@@ -1037,6 +1088,11 @@ public class RecoveryClientThread extends Thread
         
         
 	}
+	
+	public RecoveryConnection getRecConn()
+    {
+        return this.RecConn;
+    }
 	
 	private static byte[] arrayResize(byte[] b, int newSize)
     {
