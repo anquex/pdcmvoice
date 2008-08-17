@@ -92,13 +92,13 @@ public class RecoverySystemLoopBackTest {
                                                                         //Sostituire "localhost" con l'ip di questo Interlocutore
         
         int pktSize = 20;
-        RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, RECOVERY_COLLECTION_DEBUG);
-        RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection localCollection = new RecoveryCollection("local", pktSize, 1, RECOVERY_LOCAL_COLLECTION_DEBUG);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", pktSize, 1, RECOVERY_REMOTE_COLLECTION_DEBUG);
          
         RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocketA, localCollection, clientB, remoteCollection, rtpsessionR, RECOVERY_CONNECTION_DEBUG);
         
-        RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
-        RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection);
+        RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection, null);
+        RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, null);
         rs.start();
         rc.start();
         
