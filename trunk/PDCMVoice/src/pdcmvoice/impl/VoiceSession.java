@@ -64,21 +64,60 @@ public class VoiceSession {
             receiverSession=new VoiceSessionReceiver(
                                                    settings.getReceiveFormatCode(),
                                                    rtpSession);
+
+
+            //RECOVERY COLLETION FROM SETTINGS
+            withRecovery=settings.withRecovery();
+
+            if (withRecovery)
+            {
+
+                
+                Socket client = null;
+                Socket server = null;
+
+                try {
+                    ServerSocket serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
+                    client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
+                    server = serverSocket.accept();
+                } catch (UnknownHostException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getReceiveFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
+                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getSendFormatCode(), RECOVERY_REMOTE_COLLECTION_DEBUG);
+
+                RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
+
+                rs = new RecoveryServerThread(recoveryConnection, this);
+                rc = new RecoveryClientThread(recoveryConnection, this);
+
+                senderSession= new VoiceSessionSender(
+                                                        settings.getSendFormatCode(),
+                                                        rtpSession,
+                                                        localCollection
+                                                        );
+                receiverSession=new VoiceSessionReceiver(
+                                                       settings.getReceiveFormatCode(),
+                                                       rtpSession,
+                                                       remoteCollection);
+
+             
+                
+//                settings.getRemoteRecoveryPort();
+//                settings.getLocalRecoveryPort();
+
+            }
+            
             vsc=new VoiceSessionController(this);
             rtpSession.naivePktReception(true);
             rtpSession.addParticipant(settings.getPartecipant());
 
             setMinorSettings();
-
-            //RECOVERY COLLETION FROM SETTINGS
-            withRecovery=settings.withRecovery();
-            // TO COMPLETE
-            if (withRecovery){
-
-                settings.getRemoteRecoveryPort();
-                settings.getLocalRecoveryPort();
-
-            }
 
 
     }
@@ -114,13 +153,13 @@ public class VoiceSession {
             e.printStackTrace();
         }
 
-        RecoveryCollection localCollection = new RecoveryCollection("local", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
-        RecoveryCollection remoteCollection = new RecoveryCollection("remote", encodedPacketSize, 1, RECOVERY_COLLECTION_DEBUG);
+        RecoveryCollection localCollection = new RecoveryCollection("local", encodedPacketSize, 1, RECOVERY_LOCAL_COLLECTION_DEBUG);
+        RecoveryCollection remoteCollection = new RecoveryCollection("remote", encodedPacketSize, 1, RECOVERY_REMOTE_COLLECTION_DEBUG);
 
         RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
 
-        rs = new RecoveryServerThread(recoveryConnection);
-        rc = new RecoveryClientThread(recoveryConnection);
+        rs = new RecoveryServerThread(recoveryConnection, this);
+        rc = new RecoveryClientThread(recoveryConnection, this);
 
         senderSession= new VoiceSessionSender(
                                                 settings.getSendFormatCode(),
@@ -165,14 +204,26 @@ public class VoiceSession {
         }
 
         // recovery connection should still be running
-        if (withRecovery){
+        if (withRecovery)
+        {
             rc.endOfStream = true;
-            try {
-                rc.join();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            
+            while (rc.endOfStream)
+            {
+                //if (rc.getRecConn().debug)
+                    System.out.println("--VOICE SESSION-- ATTESA DI RecoveryClientThread...");
+                
+                try {
+                    Thread.sleep(500); //attesa durante la ricezione
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
+            
+            
+            
+            
         }
         //closeSockets(); -> rc...
         out ("Voice Session Stopped");
