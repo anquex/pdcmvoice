@@ -41,23 +41,26 @@ public class RecoveryClientThread extends Thread
 	public void run()
 	{
 		
-	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
-        */
-        while(voiceSession.lastEncodedFrameSize() <= 0)
-        {
-            if (RecConn.debug)
-                System.out.println("--CLIENT-- Acquisizione dimensione pacchetto codificato");
-            
-            try {
-                Thread.sleep(1000); //attesa durante la ricezione
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+	    if (voiceSession != null && RecConn.getRemoteCollection().getPktSize() <= 0)
+	    {
+    	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
+            */
+            while(voiceSession.lastEncodedFrameSize() <= 0)
+            {
+                if (RecConn.debug)
+                    System.out.println("--CLIENT-- Acquisizione dimensione pacchetto codificato");
+                
+                try {
+                    Thread.sleep(500); //attesa durante l'acquisizione della dimensione
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
-        }
-        this.RecConn.getRemoteCollection().setPktSize(voiceSession.lastEncodedFrameSize());
-        if (RecConn.debug)
-            System.out.println("--CLIENT-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
+            this.RecConn.getRemoteCollection().setPktSize(voiceSession.lastEncodedFrameSize());
+            if (RecConn.debug)
+                System.out.println("--CLIENT-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
+	    }
 	    
 	    //deve scrivere con writeUTF oppure con writeBytes di DataOutputStream e concludere la stringa di richiesta con \n
 	    //deve leggere con read(byte[] b, int off, int len)  di DataInputStream in base alla richiesta effettuata
@@ -226,7 +229,7 @@ public class RecoveryClientThread extends Thread
                            while (dis.available() <= 0)
                            {
                                try {
-                                   Thread.sleep(50); //attendi che il dis diventi available
+                                   Thread.sleep(20); //attendi che il dis diventi available
                                } catch (InterruptedException e1) {
                                    // TODO Auto-generated catch block
                                    e1.printStackTrace();
