@@ -446,6 +446,11 @@ public class RecoveryCollection
     {
         return this.pktSize;
     }
+	
+	public void setPktSize(int newSize)
+	{
+	    this.pktSize = newSize;
+	}
 
 	public void setWindow(int window)
 	{
