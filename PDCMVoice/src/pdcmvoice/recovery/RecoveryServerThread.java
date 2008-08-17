@@ -32,25 +32,27 @@ public class RecoveryServerThread extends Thread
 	
 	public void run()
 	{
-	    
-	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
-	    */
-	    while(voiceSession.lastEncodedFrameSize() <= 0)
-	    {
-	        if (RecConn.debug)
-                System.out.println("--SERVER-- Acquisizione dimensione pacchetto codificato");
-	        
-	        try {
-                Thread.sleep(1000); //attesa durante la ricezione
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-	    }
-	    
-	    this.RecConn.getLocalCollection().setPktSize(voiceSession.lastEncodedFrameSize());
-	    if (RecConn.debug)
-            System.out.println("--SERVER-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize()); 
+	    if (voiceSession != null && RecConn.getRemoteCollection().getPktSize() <= 0)
+        {
+    	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
+    	    */
+    	    while(voiceSession.lastEncodedFrameSize() <= 0)
+    	    {
+    	        if (RecConn.debug)
+                    System.out.println("--SERVER-- Acquisizione dimensione pacchetto codificato");
+    	        
+    	        try {
+                    Thread.sleep(500); //attesa durante l'acquisizione della dimensione
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+    	    }
+    	    
+    	    this.RecConn.getLocalCollection().setPktSize(voiceSession.lastEncodedFrameSize());
+    	    if (RecConn.debug)
+                System.out.println("--SERVER-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
+        }
 	    
 	    DataInputStream dis = null;
 	    DataOutputStream dos = null;
@@ -90,7 +92,7 @@ public class RecoveryServerThread extends Thread
             while (!endServerThread && (!lengthRead || !queryRead))
             {
                 try {
-                    Thread.sleep(100); //attesa durante la ricezione
+                    Thread.sleep(20); //attesa durante la ricezione
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
