@@ -1373,10 +1373,12 @@ public class ilbc_decoder {
        }
 
        /* do actual decoding of block */
-       for (k = 0; k < encoded_data.length; k++) {
-	   en_data.buffer[2*k+1] = (char) (encoded_data[k] & 0xff);
-	   en_data.buffer[2*k] = (char) ((encoded_data[k] >> 8) & 0xff);
-// 	   System.out.println("on decode " + (en_data.buffer[2*k]+0) + " et " + (en_data.buffer[2*k+1]+0));
+       if (encoded_data!=null){
+           for (k = 0; k < encoded_data.length; k++) {
+               en_data.buffer[2*k+1] = (char) (encoded_data[k] & 0xff);
+               en_data.buffer[2*k] = (char) ((encoded_data[k] >> 8) & 0xff);
+    // 	   System.out.println("on decode " + (en_data.buffer[2*k]+0) + " et " + (en_data.buffer[2*k+1]+0));
+           }
        }
 
        iLBC_decode(decblock, en_data, mode);

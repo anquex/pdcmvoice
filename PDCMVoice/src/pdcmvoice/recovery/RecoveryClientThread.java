@@ -894,7 +894,7 @@ public class RecoveryClientThread extends Thread
                    
                 
                 
-                this.endOfStream = false; //informa VoiceSession che si è terminato di svolgere le attività di recovery
+                this.endOfStream = false; //informa VoiceSession che si Ã¨ terminato di svolgere le attivitï¿½ di recovery
         
         
 /* PROVA DECODIFICA E CONVERSIONE IN PCM

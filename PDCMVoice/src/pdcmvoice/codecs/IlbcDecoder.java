@@ -62,7 +62,8 @@ public class IlbcDecoder {
   
   public void processData(final boolean lost){
             int  decodedShorts=decoder.decode(decodedData, // uncompressed Audio Frame
-                                 lastencoded,           // compressed audio frame
+                                 null,           // compressed audio frame
+                               //  lastencoded,           // compressed audio frame
                                  (short) 0);  // 0: bad packet, PLC,
                                               // 1: normal 
   

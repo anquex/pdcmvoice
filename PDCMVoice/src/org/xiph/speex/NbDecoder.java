@@ -612,13 +612,13 @@ public class NbDecoder
     return 0;
   }
 
-  /**
-   * Decode the given bits to stereo.
-   * @param data - float array of size 2*frameSize, that contains the mono
-   * audio samples in the first half. When the function has completed, the
-   * array will contain the interlaced stereo audio samples.
-   * @param frameSize - the size of a frame of mono audio samples.
-   */
+    /**
+    * Decode the given bits to stereo.
+    * @param data - float array of size 2*frameSize, that contains the mono
+    * audio samples in the first half. When the function has completed, the
+    * array will contain the interlaced stereo audio samples.
+    * @param frameSize - the size of a frame of mono audio samples.
+    */
   public void decodeStereo(final float[] data, final int frameSize)
   {
     stereo.decode(data, frameSize);
