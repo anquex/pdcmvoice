@@ -88,8 +88,8 @@ public class VoiceSession {
                     e.printStackTrace();
                 }
 
-                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getReceiveFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
-                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getSendFormatCode(), RECOVERY_REMOTE_COLLECTION_DEBUG);
+                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
+                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), RECOVERY_REMOTE_COLLECTION_DEBUG);
 
                 RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
 
@@ -99,7 +99,7 @@ public class VoiceSession {
                 senderSession= new VoiceSessionSender(
                                                         settings.getSendFormatCode(),
                                                         rtpSession,
-                                                        localCollection
+                                                        localCollection 
                                                         );
                 receiverSession=new VoiceSessionReceiver(
                                                        settings.getReceiveFormatCode(),
@@ -108,7 +108,7 @@ public class VoiceSession {
 
              
                 
-//                settings.getRemoteRecoveryPort();
+//                settings.getRemoteRecoveryPort(); 
 //                settings.getLocalRecoveryPort();
 
             }

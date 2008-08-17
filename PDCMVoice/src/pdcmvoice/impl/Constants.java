@@ -103,7 +103,7 @@ public class Constants {
     public static final int DEFAULT_RECOVERY_PORT = DEFAULT_RECOVERY_PORT_LOCAL;
     public static final int DEFAULT_RECOVERY_PORT_REMOTE = 8770;//inutilizzata
 
-    public static final int DEFAULT_ENCODED_PACKET_SIZE = 20;
+    public static final int DEFAULT_ENCODED_PACKET_SIZE = 25;
 
     public static final int[] SPEEX_QUALITIES=
     {
