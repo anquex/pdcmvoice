@@ -69,10 +69,10 @@ public class RecoveryVoiceSessionSenderLoopBackTest {
 // DA FARE //EVENTUALE SOLUZIONE 2: creare i due thread di recovery e i due thread VoiceSessionReceiver e VoiceSessionSender all'interno dello stesso main in modo da creare solo le due collezioni che servono ed un0unica RecoveryConnection. E' necessario per le operazioni di salvataggio eseguite dal ClientThread
             RecoveryConnection recoveryConnection = new RecoveryConnection(serverSocket, localCollection, client, remoteCollection, rtpsession, true);
             
-            RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
-            //RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
-            rs.start();
-            //rc.start();
+//            RecoveryServerThread rs = new RecoveryServerThread(recoveryConnection);
+//            //RecoveryClientThread rc = new RecoveryClientThread(recoveryConnection, rs);
+//            rs.start();
+//            //rc.start();
             
           //END RECOVERY
             

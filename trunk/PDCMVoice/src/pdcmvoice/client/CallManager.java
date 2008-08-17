@@ -185,9 +185,10 @@ public class CallManager extends Thread{
         if(voiceSession!=null){
             if(voiceSession.isActive())
                 voiceSession.stop();
-            client.vs=null;
             voiceSession=null;
         }
+        if(client.runningCallManager==this)
+            client.vs=null;
         close();
         client.setFree();
         out("Call Manager quit...");
