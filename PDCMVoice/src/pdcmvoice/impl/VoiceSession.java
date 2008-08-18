@@ -59,7 +59,7 @@ public class VoiceSession {
 
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
             
-            if (!withRecovery)
+            if (!settings.withRecovery())
             {
                 senderSession= new VoiceSessionSender(
                                                         settings.getSendFormatCode(),
@@ -299,6 +299,7 @@ public class VoiceSession {
             starTransmitting();
             if (withRecovery)
             {
+                System.out.println("--RECOVERY-- Avvio thread client e server");
                 rs.start();
                 rc.start();
             }
