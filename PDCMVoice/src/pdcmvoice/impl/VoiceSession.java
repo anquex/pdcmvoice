@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.net.SocketTimeoutException;
 
 import java.util.Enumeration;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -57,13 +58,16 @@ public class VoiceSession {
             rtcpSocket = new DatagramSocket(settings.getLocalRTCPPort());
 
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
-
-            senderSession= new VoiceSessionSender(
-                                                    settings.getSendFormatCode(),
-                                                    rtpSession);
-            receiverSession=new VoiceSessionReceiver(
-                                                   settings.getReceiveFormatCode(),
-                                                   rtpSession);
+            
+            if (!withRecovery)
+            {
+                senderSession= new VoiceSessionSender(
+                                                        settings.getSendFormatCode(),
+                                                        rtpSession);
+                receiverSession=new VoiceSessionReceiver(
+                                                       settings.getReceiveFormatCode(),
+                                                       rtpSession);
+            }
 
 
             //RECOVERY COLLETION FROM SETTINGS
@@ -71,21 +75,69 @@ public class VoiceSession {
 
             if (withRecovery)
             {
-
-                
                 Socket client = null;
                 Socket server = null;
+                
+                ServerSocket serverSocket = null;
 
                 try {
-                    ServerSocket serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
-                    client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
-                    server = serverSocket.accept();
-                } catch (UnknownHostException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
+                    serverSocket.setSoTimeout(1000);
+                    
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                }
+                
+                while (client == null || server == null)
+                {
+                    try {
+                        Thread.sleep(500);
+                        System.out.println("--RECOVERY-- Connessione in corso...");
+                    } catch (InterruptedException e2) {
+                        // TODO Auto-generated catch block
+                        e2.printStackTrace();
+                    }
+                    
+                    if (client == null)
+                    {
+                        try {
+                            client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
+                            System.out.println("--RECOVERY-- socket CLIENT ok");
+                        } catch (UnknownHostException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                            client = null;
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                            client = null;
+                        }
+                    }
+                    
+                        
+                    
+                    if (server == null)
+                    {
+                        try {
+                            server = serverSocket.accept();
+                            System.out.println("--RECOVERY-- socket SERVER ok");
+                        }
+                        
+                        catch (SocketTimeoutException e) {
+                            // TODO Auto-generated catch block
+                            System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
+                            e.printStackTrace();
+                            server = null;
+                        }
+                        catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            server = null;
+                        }
+                    }
+                    
+                        
                 }
 
                 RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
@@ -99,7 +151,7 @@ public class VoiceSession {
                 senderSession= new VoiceSessionSender(
                                                         settings.getSendFormatCode(),
                                                         rtpSession,
-                                                        localCollection 
+                                                        localCollection  
                                                         );
                 receiverSession=new VoiceSessionReceiver(
                                                        settings.getReceiveFormatCode(),
@@ -141,16 +193,78 @@ public class VoiceSession {
         if (encodedPacketSize <= 0)
             encodedPacketSize = DEFAULT_ENCODED_PACKET_SIZE;
 
+//        try {
+//            ServerSocket serverSocket = new ServerSocket(localPort);
+//            client = new Socket(settings.getRemoteAddress(), remotePort);
+//            server = serverSocket.accept();
+//        } catch (UnknownHostException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+        
+        ServerSocket serverSocket = null;
+
         try {
-            ServerSocket serverSocket = new ServerSocket(localPort);
-            client = new Socket(settings.getRemoteAddress(), remotePort);
-            server = serverSocket.accept();
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
+            serverSocket.setSoTimeout(2000);
+            
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        
+        while (client == null || server == null)
+        {
+            try {
+                Thread.sleep(500);
+                System.out.println("--RECOVERY-- Connessione in corso...");
+            } catch (InterruptedException e2) {
+                // TODO Auto-generated catch block
+                e2.printStackTrace();
+            }
+            
+            if (client == null)
+            {
+                try {
+                    client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
+                    System.out.println("--RECOVERY-- socket CLIENT ok");
+                } catch (UnknownHostException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                    client = null;
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                    client = null;
+                }
+            }
+            
+                
+            
+            if (server == null)
+            {
+                try {
+                    server = serverSocket.accept();
+                    System.out.println("--RECOVERY-- socket SERVER ok");
+                }
+                
+                catch (SocketTimeoutException e) {
+                    // TODO Auto-generated catch block
+                    System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
+                    e.printStackTrace();
+                    server = null;
+                }
+                catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    server = null;
+                }
+            }
+            
+                
         }
 
         RecoveryCollection localCollection = new RecoveryCollection("local", encodedPacketSize, 1, RECOVERY_LOCAL_COLLECTION_DEBUG);
