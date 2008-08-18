@@ -258,7 +258,8 @@ public class RecoveryServerThread extends Thread
                             send = arrayResize(send, 2*send.length);
                         
                         //temp = RecConn.getLocalCollection().read(i);
-                        while (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0)
+                        int n = 1;
+                        while (n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
                         {
                             try {
                               Thread.sleep(100); //attesa durante la lettura dei pacchetti richiesti
@@ -269,9 +270,21 @@ public class RecoveryServerThread extends Thread
                                 
                             if (RecConn.getLocalCollection().debug)
                                 System.out.println("--SERVER-- Attesa lettura pacchetto " + i);
+                            
+                            n++;
                         }
+                        n = 0;
                         
-                        temp = RecConn.getLocalCollection().read(i);
+                        if (RecConn.getLocalCollection().read(i) != null && RecConn.getLocalCollection().read(i).length >= 0)
+                            temp = RecConn.getLocalCollection().read(i);
+                        else if (RecConn.getLocalCollection().read(i-1) != null && RecConn.getLocalCollection().read(i-1).length >= 0)
+                            temp = RecConn.getLocalCollection().read(i-1);
+                        else if (RecConn.getLocalCollection().read(i-2) != null && RecConn.getLocalCollection().read(i-2).length >= 0)
+                            temp = RecConn.getLocalCollection().read(i-2);
+                        else if (RecConn.getLocalCollection().read(i-3) != null && RecConn.getLocalCollection().read(i-3).length >= 0)
+                            temp = RecConn.getLocalCollection().read(i-3);
+                        else 
+                            temp = RecConn.getLocalCollection().read(i-4);
                         
 //                        if (temp != null)
 //                        {
