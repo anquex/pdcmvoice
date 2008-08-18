@@ -22,19 +22,24 @@ public class VoiceSessionRecoveryTest extends Thread{
 
     public VoiceSessionRecoveryTest() {
         try {
-            s = new VoiceSessionSettings(2, 2, "192.168.0.2");
+            s = new VoiceSessionSettings(2, 2, "192.168.0.3");
+            s.withRecovery(true);
+            //s.setRemote(s.getReceiveFormatCode(), s.getRemoteAddress(), 8866, 8867, 8869); //.., RTP, RTCP, RECOVERY.
+            //s.setLocal(s.getSendFormatCode(), 8766, 8767, 8769); //.., RTP, RTCP, RECOVERY.
             
             /*
-             * ATTENZIONE! per l'esecuzione su LAN decommentare le prossime 3 istruzioni, commentare la quarta
-             * ed aprire le porte del firewall (da 8765 a 8770 su un client e da 8865 a 8870 sull'altro e cambiare i parametri delle due istruzioni seguenti)
+             * ATTENZIONE! A volte la prossima istruzione comporta l'impossibilità di inizializzare la linea del microfono. 
+             * In tal caso usare l'istruzione successiva, modificando, se serve, le porte per il recovery
              */
-            s.withRecovery(true);
-            s.setRemote(s.getReceiveFormatCode(), s.getRemoteAddress(), 8866, 8867, 8869); //.., RTP, RTCP, RECOVERY.
-            s.setLocal(s.getSendFormatCode(), 8766, 8767, 8769); //.., RTP, RTCP, RECOVERY.
-            
-            //ss = new VoiceSession(s, true, 8769, 8869, 0); //PER IL RECOVERY: .., local, remote, 0.
-            //ss = new VoiceSession(s, true, 0, 0, 0);
             ss = new VoiceSession(s);
+            //ss = new VoiceSession(s, true, 0, 0, 0); //PER IL RECOVERY: .., local, remote, 0.
+            
+            
+            //PROVA
+            //ss = new VoiceSession(s, true, 8769, 8869, 0); //PER IL RECOVERY: .., local, remote, 0.
+            
+           
+            
                     
             /*
              * ATTENZIONE!! DISABILITARE LA PROSSIMA ISTRUZIONE (in Depacketizer.java) 
