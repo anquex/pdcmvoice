@@ -102,6 +102,7 @@ public class RecoveryCollection
 
 	        collection[i] = new RecoverySample(sn, pkt);
 
+	        if (debug)
 	        System.out.println(type + ": inserito sn " + sn);
 	    }
 

@@ -38,6 +38,7 @@ public class VoiceSession {
     //RECOVERY
     private RecoveryServerThread rs;
     private RecoveryClientThread rc;
+    public boolean rcHasFinished;
     private RecoveryConnectionThread rct;
     boolean withRecovery;
 
@@ -61,6 +62,7 @@ public class VoiceSession {
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
             
             this.withRecovery = settings.withRecovery();
+            rcHasFinished = false;
             
             if (!settings.withRecovery())
             {
@@ -336,36 +338,41 @@ public class VoiceSession {
 
     public void start() throws UnsupportedAudioFileException, Exception{
             
+        startListening();
+        starTransmitting();
+        startRecovery();
         
+    }
+    
+    public void startRecovery() throws Exception
+    {
         if (settings.withRecovery())
         {
-            System.out.println("--RECOVERY-- Avvio thread client e server in corso...");
+            if (RECOVERY_CONNECTION_DEBUG)
+                System.out.println("--RECOVERY-- Avvio thread client e server in corso...");
             while (rs == null)
             {
                 rs = rct.getRs();
                 Thread.sleep(50);
-                System.out.println("--RECOVERY-- Tentativo di avvio thread SERVER...");
+                if (RECOVERY_CONNECTION_DEBUG)
+                    System.out.println("--RECOVERY-- Tentativo di avvio thread SERVER...");
             }
             rs.start();
-            System.out.println("--RECOVERY-- Thread SERVER avviato");
+            if (RECOVERY_CONNECTION_DEBUG)
+                System.out.println("--RECOVERY-- Thread SERVER avviato");
             
             while (rc == null)
             {
                 rc = rct.getRc();
                 Thread.sleep(50);
-                System.out.println("--RECOVERY-- Tentativo di avvio thread CLIENT");
+                if (RECOVERY_CONNECTION_DEBUG)
+                    System.out.println("--RECOVERY-- Tentativo di avvio thread CLIENT");
             }
             rc.start();
-            System.out.println("--RECOVERY-- Thread CLIENT avviato");
+            if (RECOVERY_CONNECTION_DEBUG)
+                System.out.println("--RECOVERY-- Thread CLIENT avviato");
             
         }
-        
-        startListening();
-            starTransmitting();
-            
-            
-            
-
     }
 
     public void stop(){
@@ -385,7 +392,7 @@ public class VoiceSession {
         {
             rc.endOfStream = true;
             
-            while (rc.endOfStream)
+            while (!rcHasFinished)
             {
                 //if (rc.getRecConn().debug)
                     System.out.println("--VOICE SESSION-- ATTESA DI RecoveryClientThread...");
