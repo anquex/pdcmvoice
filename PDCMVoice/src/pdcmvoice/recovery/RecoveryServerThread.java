@@ -378,7 +378,7 @@ public class RecoveryServerThread extends Thread
         //##CHIUSURA DEGLI STREAM TRA SERVER LOCALE E CLIENT REMOTO
         try {
             if (RecConn.getLocalCollection().debug)
-                System.out.println("_____________________________ServerThread: chiusura stream sul socket del client");
+                System.out.println("_____________________________RecoveryServerThread: chiusura stream sul socket del client");
             RecConn.getClientSocket().getInputStream().close();//interrompe la connessione (anche l'outputStream viene chiuso)
             //RecConn.getClientSocket().getOutputStream().close();
         } catch (IOException e) {

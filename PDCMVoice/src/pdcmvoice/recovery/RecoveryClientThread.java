@@ -111,12 +111,13 @@ public class RecoveryClientThread extends Thread
      //      ----------------------------       
 
           //##LIMITAZIONE AUTOMATICA DELLA VITA DEL THREAD DOPO UN TOT DI QUERY INVIATE
-            if (pdcmvoice.impl.Constants.RECOVERY_CLIENT_THREAD_LIMITED_LIFE_DEBUG && writingTest++ >= 7 && RecConn.getRemoteCollection().debug)
-            {
-                System.out.println("--CLIENT-- [**DEBUG**] INTERRUZIONE DELLE RICHIESTE: writingTest HA RAGGGIUNTO IL VALORE PREIMPOSTATO");
+            if (pdcmvoice.impl.Constants.RECOVERY_CLIENT_THREAD_LIMITED_LIFE_DEBUG && writingTest++ >= 7)
+            {   
+                System.out.println("--CLIENT-- [**DEBUG**] INTERRUZIONE DELLE RICHIESTE: RECOVERY_CLIENT_THREAD_LIMITED_LIFE_DEBUG = true");
+                System.out.println("--CLIENT-- [**DEBUG**]                               writingTest HA RAGGGIUNTO IL VALORE PREIMPOSTATO");
                 stopQuery = true;
                 lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
-                System.out.println("lastSnReceived: " + RecConn.getRemoteCollection().lastSnReceived);
+                System.out.println("--CLIENT-- [**DEBUG**] lastSnReceived: " + RecConn.getRemoteCollection().lastSnReceived);
             }
             else
           //##FORMULAZIONE STANDARD DELLE QUERY
@@ -301,7 +302,7 @@ public class RecoveryClientThread extends Thread
             }
             else if (RecConn.getRemoteCollection().debug)
             {
-                System.out.println("--CLIENT-- CONNESSIONE RECOVERY ASSENTE");
+                System.out.println("--CLIENT-- CONNESSIONE RECOVERY ASSENTE, IMPOSSIBILE COMUNICARE \"END OF STREAM\" AL SERVER REMOTO");
             }
             
         } catch (IOException e) {
@@ -752,13 +753,18 @@ public class RecoveryClientThread extends Thread
                     e.printStackTrace();
                 }
            
-            if (RecConn.getLocalCollection().debug)
+            //if (RecConn.getLocalCollection().debug)
+                System.out.println("");
+                System.out.println("");
+                System.out.println("---------------------------------------------------------");
                 System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
-            
+                System.out.println("---------------------------------------------------------");
+                System.out.println("");
+                System.out.println("");
                
             
             
-            this.endOfStream = false; //informa VoiceSession che si e' terminato di svolgere le attivit� di recovery
+            voiceSession.rcHasFinished = true; //informa VoiceSession che si e' terminato di svolgere le attivit� di recovery
         
      }
 	

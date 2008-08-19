@@ -165,6 +165,11 @@ public class CallManager extends Thread{
                     if (voiceSession!=null){
                 try {
                     voiceSession.starTransmitting();
+                    
+                    //START RECOVERY CODE
+                    voiceSession.startRecovery();
+                    //END RECOVERY CODE
+                    
                     client.vs=voiceSession;
                     client.runningCallManager=this;
                 } catch (Exception ex) {
