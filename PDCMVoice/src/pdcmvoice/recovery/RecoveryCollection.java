@@ -22,6 +22,7 @@ nelle richieste TCP devo richiedere il SN di partenza + offset dato dall'indice 
  */
 import java.io.IOException;
 //import java.io.DataInputStream;
+import pdcmvoice.impl.Constants;
 
 import jlibrtp.RTPSession;
 
@@ -231,7 +232,8 @@ public class RecoveryCollection
             int i, j;
             int firstSnOfTheQuery = 0;
 
-            System.out.println("firstSnReceived: " + firstSnReceived);
+            if (pdcmvoice.impl.Constants.RECOVERY_CONNECTION_DEBUG)
+                System.out.println("firstSnReceived: " + firstSnReceived);
             for (i = start; i <= end; i++ )
             {
 
@@ -307,7 +309,7 @@ public class RecoveryCollection
         }//end if
 
         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
-        System.out.println("lunghezza: " + (k-3));
+        //System.out.println("lunghezza: " + (k-3));
         writeOutSn(output, 0, (k-3), next);
         //System.out.println("ultima k: " + k);
 

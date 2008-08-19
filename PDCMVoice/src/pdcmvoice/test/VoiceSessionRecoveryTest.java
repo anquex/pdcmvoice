@@ -48,6 +48,8 @@ public class VoiceSessionRecoveryTest extends Thread{
              */ 
             
             ss.start();
+            Thread.sleep(15000);
+            ss.stop();
 
         } catch (UnsupportedAudioFileException ex) {
             Logger.getLogger(VoiceSessionRecoveryTest.class.getName()).log(Level.SEVERE, null, ex);
