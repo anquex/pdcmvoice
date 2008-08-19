@@ -136,7 +136,7 @@ public class RecoveryClientThread extends Thread
              // Il primo burst lo perdo sempre se perdo il primo pacchetto
              
             //##INVIO DELLA QUERY
-              if (lastQueryByte != null)
+              if (lastQueryByte != null && lastQueryByte.length >= 4)
               {
                 //##DEBUG
                   if (RecConn.getRemoteCollection().debug)
@@ -297,8 +297,10 @@ public class RecoveryClientThread extends Thread
             a = 0; b = 0; c = 2;
             if (RecConn.getServerSocket().isConnected())
             {
+                System.out.println("--CLIENT-- I'm going to say END OF QUERY");
                 dos.write(new byte[]{a, b, c}, 0, 3);
                 dos.flush();
+                System.out.println("--CLIENT-- I say END OF QUERY");
             }
             else if (RecConn.getRemoteCollection().debug)
             {
@@ -315,7 +317,7 @@ public class RecoveryClientThread extends Thread
       //##ELABORAZIONE DELLE COLLEZIONI E SCRITTURA DEL FILE DI SALVATAGGIO DELLA CONVERSAZIONE
          
         
-        if (RecConn.getRemoteCollection().debug)
+        //if (RecConn.getRemoteCollection().debug)
             System.out.println("--ELAB-- INIZIO ELABORAZIONE DELLE COLLEZIONI");
         
         RecoveryCollection local = RecConn.getLocalCollection();
@@ -718,7 +720,7 @@ public class RecoveryClientThread extends Thread
             {
                 System.out.println("-------------------------------------------------");
                 //if (RecConn.getLocalCollection().debug)
-                System.out.println("ATTENZIONE! Non e' possibile scrivere nel file:");
+                System.out.println("ATTENZIONE! Non e' stato possibile scrivere nel file:");
                 System.out.println(percorso);
                 System.out.println("-------------------------------------------------");
                 
@@ -731,7 +733,7 @@ public class RecoveryClientThread extends Thread
                 // TODO Auto-generated catch block
                 System.out.println("-----------------------------------------------------");
                 //if (RecConn.getLocalCollection().debug)
-                System.out.println("ATTENZIONE! Non e' stato possibile trovare il file:");
+                System.out.println("ATTENZIONE! Non e' stato possibile scrivere nel file:");
                 System.out.println(percorso);
                 System.out.println("-----------------------------------------------------");
                 
@@ -757,7 +759,7 @@ public class RecoveryClientThread extends Thread
                 System.out.println("");
                 System.out.println("");
                 System.out.println("---------------------------------------------------------");
-                System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+                System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wav");
                 System.out.println("---------------------------------------------------------");
                 System.out.println("");
                 System.out.println("");
@@ -765,6 +767,9 @@ public class RecoveryClientThread extends Thread
             
             
             voiceSession.rcHasFinished = true; //informa VoiceSession che si e' terminato di svolgere le attivit� di recovery
+            
+            System.out.println("--RECOVERY-- RecoveryClientThread END");
+            
         
      }
 	

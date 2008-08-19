@@ -123,20 +123,21 @@ public class RecoveryServerThread extends Thread
                                 
                               //##CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
                                 queryLength = RecoveryCollection.mergeBytes(queryLength1, queryLength2);
-                                if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
+                                //if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
+                                if (queryLength == 0)
                                 {
                                     endServerThread = true;
                                     if (RecConn.getLocalCollection().debug)
                                         System.out.println("--SERVER-- Client says: END OF QUERY ");
                                     //lastQueryByte rimane null
                                 }
-                                else if (queryLength == 0)
-                                {
-                                    if (RecConn.getLocalCollection().debug)
-                                        System.out.println("--SERVER-- EMPTY QUERY RECEIVED");
-                                    dis.readByte();//salto il byte di controllo
-                                    f= 0; //pronto a leggere una nuova queryLength
-                                }
+//                                else if (queryLength == 0)
+//                                {
+//                                    if (RecConn.getLocalCollection().debug)
+//                                        System.out.println("--SERVER-- EMPTY QUERY RECEIVED");
+//                                    dis.readByte();//salto il byte di controllo
+//                                    f= 0; //pronto a leggere una nuova queryLength
+//                                }
                                 else
                                 {
                                     lengthRead = true;
@@ -385,6 +386,8 @@ public class RecoveryServerThread extends Thread
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        System.out.println("--RECOVERY-- RecoveryServerThread END");
 		
 	}
 	
