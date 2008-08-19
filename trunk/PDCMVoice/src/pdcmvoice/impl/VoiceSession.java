@@ -86,17 +86,23 @@ public class VoiceSession {
                     
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    if (RECOVERY_CONNECTION_DEBUG)
+                        e.printStackTrace();
                 }
+                
+              //##CONNESSIONE PER IL SISYEMA DI RECOVERY
+                System.out.println("--RECOVERY-- Connessione in corso...");
                 
                 while (client == null || server == null)
                 {
                     try {
                         Thread.sleep(500);
-                        System.out.println("--RECOVERY-- Connessione in corso...");
+                        if (RECOVERY_CONNECTION_DEBUG)
+                           System.out.println("--RECOVERY-- Tentativo di connessione");
                     } catch (InterruptedException e2) {
                         // TODO Auto-generated catch block
-                        e2.printStackTrace();
+                        if (RECOVERY_CONNECTION_DEBUG)
+                            e2.printStackTrace();
                     }
                     
                     if (client == null)
@@ -110,7 +116,8 @@ public class VoiceSession {
                             client = null;
                         } catch (IOException e1) {
                             // TODO Auto-generated catch block
-                            e1.printStackTrace();
+                            if (RECOVERY_CONNECTION_DEBUG)
+                                e1.printStackTrace();
                             client = null;
                         }
                     }
@@ -126,13 +133,16 @@ public class VoiceSession {
                         
                         catch (SocketTimeoutException e) {
                             // TODO Auto-generated catch block
-                            System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
-                            e.printStackTrace();
+                            if (RECOVERY_CONNECTION_DEBUG)
+                                System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
+                            if (RECOVERY_CONNECTION_DEBUG)
+                                e.printStackTrace();
                             server = null;
                         }
                         catch (IOException e) {
                             // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            if (RECOVERY_CONNECTION_DEBUG)
+                                e.printStackTrace();
                             server = null;
                         }
                     }

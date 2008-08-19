@@ -99,22 +99,28 @@ public class Depacketizer implements RTPAppIntf{
             System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
             //ATTENZIONE!!!
             //SIMULAZIONE PERDITA PACCHETTI
+            
+            if (RECOVERY_PACKET_LOSS_SIMULATION_DEBUG)
+            {
 //            if ((int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-
-            if (((int)frame.sequenceNumbers()[0] < 5
-                ||
-                (int)frame.sequenceNumbers()[0] > 10 && (int)frame.sequenceNumbers()[0] <= 30
-                ||
-                (int)frame.sequenceNumbers()[0] > 40 && (int)frame.sequenceNumbers()[0] <= 60
-                ||
-                (int)frame.sequenceNumbers()[0] > 70 && (int)frame.sequenceNumbers()[0] <= 90
-                ||
-                (int)frame.sequenceNumbers()[0] > 120)
-                    && (int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-
+    
+                if (((int)frame.sequenceNumbers()[0] < 5
+                    ||
+                    (int)frame.sequenceNumbers()[0] > 10 && (int)frame.sequenceNumbers()[0] <= 30
+                    ||
+                    (int)frame.sequenceNumbers()[0] > 40 && (int)frame.sequenceNumbers()[0] <= 60
+                    ||
+                    (int)frame.sequenceNumbers()[0] > 70 && (int)frame.sequenceNumbers()[0] <= 90
+                    ||
+                    (int)frame.sequenceNumbers()[0] > 120)
+                        && (int)frame.sequenceNumbers()[0] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+    
 //            if ((int)frame.sequenceNumbers()[0] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
 
-            this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+            }
+            else
+                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
 
 //            if (frame.marked())
 //            {

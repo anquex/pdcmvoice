@@ -34,8 +34,7 @@ public class RecoveryServerThread extends Thread
 	{
 	    if (voiceSession != null && RecConn.getRemoteCollection().getPktSize() <= 0)
         {
-    	    /*ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
-    	    */
+    	  //##ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
     	    while(voiceSession.lastEncodedFrameSize() <= 0)
     	    {
     	        if (RecConn.debug)
@@ -54,6 +53,7 @@ public class RecoveryServerThread extends Thread
                 System.out.println("--SERVER-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
         }
 	    
+	  //##APERTURA DEGLI STREAM SUL CLIENTSOCKET
 	    DataInputStream dis = null;
 	    DataOutputStream dos = null;
 	    
@@ -89,6 +89,7 @@ public class RecoveryServerThread extends Thread
             lastQueryByte = null;
             int k = 0; // indice lastQueryByte
             
+          //##ANALISI DELLO STREAM IN INPUT: VERIFICA FINE RICHIESTE DA PARTE DEL CLIENT REMOTO E ANALISI LUNGHEZZA E CONTENUTO DELLA QUERY
             while (!endServerThread && (!lengthRead || !queryRead))
             {
                 try {
@@ -98,6 +99,7 @@ public class RecoveryServerThread extends Thread
                     e1.printStackTrace();
                 }
                 
+              //##LETTURA LUNGHEZZA QUERY E VERIFICA DELL'EVENTUALE COMUNICAZIONE "END OF QUERY" 
                 if (!lengthRead)
                 {
                     try {
@@ -119,7 +121,7 @@ public class RecoveryServerThread extends Thread
                             if (f >= 2)
                             {
                                 
-                                //CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
+                              //##CONTROLLO COMUNICAZIONE "FINE DELLE RICHIESTE" DA PARTE DEL CLIENT
                                 queryLength = RecoveryCollection.mergeBytes(queryLength1, queryLength2);
                                 if (queryLength == 0 && dis.readByte() == 2) //salto il byte di controllo
                                 {
@@ -159,6 +161,7 @@ public class RecoveryServerThread extends Thread
                     }
                 }// end if (!lengthRead)
                 
+              //##RICEZIONE DELLA QUERY
                 else if (!queryRead)
                 {
                     try {
@@ -194,6 +197,7 @@ public class RecoveryServerThread extends Thread
                 
             }
             
+          //##DEBUG
             if (this.lastQueryByte != null)
             {
                 if (RecConn.getLocalCollection().debug)
@@ -212,6 +216,7 @@ public class RecoveryServerThread extends Thread
                     System.out.println("-------ERRORE RICEZIONE QUERY-------");
                 }
             
+          //##ELABORAZIONE DELLA QUERY
             if (!endServerThread);
             {
                 //queryLength = lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
@@ -225,19 +230,22 @@ public class RecoveryServerThread extends Thread
                 byte[] temp;//contiene il pacchetto associato ad ogni SN
                 byte[] send = new byte[(RecConn.getLocalCollection().getWindowWidth())*pktSize];//contiene al massimo windowWidth pacchetti (da ritrasmettere)
                 
-                int firstSnOfTheQuery = 0;
+                int firstSnOfTheQuery = 0;//significato locale alla query
                 
+              //##ELABORAZIONE DELLA QUERY RICEVUTA
                 for (int j = 0; j<=queryLength -1; j++) //diverso dal for del RecoveryClientThread
                 {
+                  //##LETTURA DEL VALORE SUCCESSIVO
                     sn = RecoveryCollection.mergeBytes(lastQueryByte[j], lastQueryByte[++j]);
                     separatore = lastQueryByte[++j];
                     
+                  //##DETERMINAZIONE DEL PRIMO SN DELLA QUERY A CUI TUTTI I SUCCESSIVI VALORI DI OFFSET DELLA QUERY STESSA FARANNO RIFERIMENTO
                     if (j == 2)
                         firstSnOfTheQuery = sn;
                     else
                         sn += firstSnOfTheQuery; //considero vecchio sn come incremento
                     
-                    
+                  //##DETERMINAZIONE DEGLI INDICI START ED END
                     start = sn;
                     if (separatore == 0)
                         end = start;
@@ -252,12 +260,15 @@ public class RecoveryServerThread extends Thread
                     else
                         throw new IllegalArgumentException("posizione " + j);
                     
+                  //##RECUPERO PACCHETTI TRA GLI INDICI START ED END (AL LIMITE START = END ==> PACCHETTO ISOLATO)
                     for (int i = start; i <= end; i++)
                     {
                         if ((totalePkt-1)*pktSize + pktSize -1 >= send.length -1)
                             send = arrayResize(send, 2*send.length);
                         
                         //temp = RecConn.getLocalCollection().read(i);
+                        
+                        //##LEGGI IL PACCHETTO DALLA COLLEZIONE
                         int n = 1;
                         while (n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
                         {
@@ -273,19 +284,33 @@ public class RecoveryServerThread extends Thread
                             
                             n++;
                         }
-                        n = 0;
                         
-                        if (RecConn.getLocalCollection().read(i) != null && RecConn.getLocalCollection().read(i).length >= 0)
-                            temp = RecConn.getLocalCollection().read(i);
-                        else if (RecConn.getLocalCollection().read(i-1) != null && RecConn.getLocalCollection().read(i-1).length >= 0)
-                            temp = RecConn.getLocalCollection().read(i-1);
-                        else if (RecConn.getLocalCollection().read(i-2) != null && RecConn.getLocalCollection().read(i-2).length >= 0)
-                            temp = RecConn.getLocalCollection().read(i-2);
-                        else if (RecConn.getLocalCollection().read(i-3) != null && RecConn.getLocalCollection().read(i-3).length >= 0)
-                            temp = RecConn.getLocalCollection().read(i-3);
-                        else 
-                            temp = RecConn.getLocalCollection().read(i-4);
+                        n = i;
                         
+                        //##SE LA LETTURA NON E' ANTATA BUON FINE, LEGGI IL PRIMO PACCHETTO VALIDO SUBITO PRECEDENTE A QUELLO RICHIESTO (i)
+                        if (RecConn.getLocalCollection().read(n) == null || RecConn.getLocalCollection().read(n).length <= 0)
+                        {
+                            while (n >= RecConn.getLocalCollection().getFirstSnReceived() && (RecConn.getLocalCollection().read(n)== null || RecConn.getLocalCollection().read(n).length == 0))
+                                n--;
+                            
+                            //##SE NON NE E' STATO TROVATO UNO PRIMA DI AVER RAGGIUNTO L'INIZIO DELLA COLLEZIONE, GENERA UN PACCHETTO VUOTO
+                            if (n < RecConn.getLocalCollection().getFirstSnReceived())
+                            {    
+                                n = i;
+                                byte[] emptyPkt = new byte[RecConn.getLocalCollection().getPktSize()];
+                                for(int s = 0; s <= RecConn.getLocalCollection().getPktSize()-1; s++)
+                                {
+                                    emptyPkt[s] = 0;
+                                }
+                                RecConn.getLocalCollection().recover(n, emptyPkt);
+                            }
+                        }
+                            
+                            
+                            
+                       temp = RecConn.getLocalCollection().read(n);
+                        
+                       //##AGGIUNGI IL CONTENUTO DEL PACCHETTO ALL'ARRAY DI BYTE DA INVIARE AL THREAD CLIENT DELL'INTERLOCUTORE CHE HA FORMULATO LA RICHIESTA 
 //                        if (temp != null)
 //                        {
                         try {
@@ -299,7 +324,8 @@ public class RecoveryServerThread extends Thread
                         
                         totalePkt++;
 //                        }
-                        
+                      
+                      //##DEBUG  
                       if (RecConn.getLocalCollection().debug && temp != null)
                         {
                         System.out.print("--SERVER-- Inviato Sn " + i + ": ");
@@ -316,6 +342,7 @@ public class RecoveryServerThread extends Thread
                     
                 }
                 
+                //##INVIO DELL'ARRAY SEND
                 if (!endServerThread) 
                 {
                     try {
@@ -347,7 +374,7 @@ public class RecoveryServerThread extends Thread
             
         }//end while (!lengthRead || !queryRead)
 		
-        //chiusura degli stream tra server locale e client remoto
+        //##CHIUSURA DEGLI STREAM TRA SERVER LOCALE E CLIENT REMOTO
         try {
             if (RecConn.getLocalCollection().debug)
                 System.out.println("_____________________________ServerThread: chiusura stream sul socket del client");
