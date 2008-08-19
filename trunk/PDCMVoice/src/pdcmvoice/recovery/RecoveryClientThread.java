@@ -707,44 +707,58 @@ public class RecoveryClientThread extends Thread
         
         
 //SCRITTURA del mixedAis
+          
+            String percorso = "F:\\mixed.wav";
+            File file= new File(percorso);
+            if (RecConn.getLocalCollection().debug)
+              System.out.println("--ELAB-- File aperto");
+            
+            if (!file.canWrite())
+            {
+                System.out.println("-------------------------------------------------");
+                //if (RecConn.getLocalCollection().debug)
+                System.out.println("ATTENZIONE! Non e' possibile scrivere nel file:");
+                System.out.println(percorso);
+                System.out.println("-------------------------------------------------");
                 
-                File file= new File("F:\\mixed.wav");
-              if (RecConn.getLocalCollection().debug)
-                System.out.println("--ELAB-- File aperto");
+            }
+            
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                System.out.println("-----------------------------------------------------");
+                //if (RecConn.getLocalCollection().debug)
+                System.out.println("ATTENZIONE! Non e' stato possibile trovare il file:");
+                System.out.println(percorso);
+                System.out.println("-----------------------------------------------------");
                 
-                if (!file.canWrite())
-                  if (RecConn.getLocalCollection().debug)
-                    System.out.println("--ELAB-- ATTENZIONE! Non e' possibile scrivere nel file.");
-                
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(file);
-                } catch (FileNotFoundException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                
-                int byteWritten = 0;
-                try {
-                  if (RecConn.getLocalCollection().debug)
-                    System.out.println("--ELAB-- Inizio scrittura del file");
-                    
-                    byteWritten = AudioSystem.write(mixedAis, AudioFileFormat.Type.WAVE, fos);
-                    
-                    fos.flush();
-                    fos.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-               
                 if (RecConn.getLocalCollection().debug)
-                    System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+                        e1.printStackTrace();
+            }
+            
+            int byteWritten = 0;
+            try {
+              if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Inizio scrittura del file");
                 
-                   
+                byteWritten = AudioSystem.write(mixedAis, AudioFileFormat.Type.WAVE, fos);
                 
-                
-                this.endOfStream = false; //informa VoiceSession che si e' terminato di svolgere le attivit� di recovery
+                fos.flush();
+                fos.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+           
+            if (RecConn.getLocalCollection().debug)
+                System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
+            
+               
+            
+            
+            this.endOfStream = false; //informa VoiceSession che si e' terminato di svolgere le attivit� di recovery
         
      }
 	

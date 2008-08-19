@@ -20,6 +20,12 @@ public class VoiceSessionRecoveryTest extends Thread{
     VoiceSessionSettings s;
     VoiceSession ss;
 
+    /*
+     * OPERAZIONI PRELLIMINARI 
+     * - inserire IP in "s = new VoiceSessionSettings(2, 2, "xxx.xxx.xxx.xxx");"
+     * - verificare il percorso per il file mixed.wav, RecoveryClientThread.java, intorno alla riga 711.
+     */
+    
     public VoiceSessionRecoveryTest() {
         try {
             s = new VoiceSessionSettings(2, 2, "192.168.0.3");
