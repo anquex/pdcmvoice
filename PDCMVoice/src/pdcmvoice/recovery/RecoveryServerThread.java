@@ -132,7 +132,8 @@ public class RecoveryServerThread extends Thread
                                 }
                                 else if (queryLength == 0)
                                 {
-                                    System.out.println("--SERVER-- EMPTY QUERY RECEIVED");
+                                    if (RecConn.getLocalCollection().debug)
+                                        System.out.println("--SERVER-- EMPTY QUERY RECEIVED");
                                     dis.readByte();//salto il byte di controllo
                                     f= 0; //pronto a leggere una nuova queryLength
                                 }

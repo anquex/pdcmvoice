@@ -38,6 +38,7 @@ public class VoiceSession {
     //RECOVERY
     private RecoveryServerThread rs;
     private RecoveryClientThread rc;
+    private RecoveryConnectionThread rct;
     boolean withRecovery;
 
     DatagramSocket rtpSocket = null;
@@ -59,8 +60,12 @@ public class VoiceSession {
 
             rtpSession = new RTPSession(rtpSocket, rtcpSocket);
             
+            this.withRecovery = settings.withRecovery();
+            
             if (!settings.withRecovery())
             {
+                System.out.println("RECOVERY SYSTEM ENABLED");
+                
                 senderSession= new VoiceSessionSender(
                                                         settings.getSendFormatCode(),
                                                         rtpSession);
@@ -71,109 +76,134 @@ public class VoiceSession {
 
 
             //RECOVERY COLLETION FROM SETTINGS
-            withRecovery=settings.withRecovery();
-
-            if (withRecovery)
+            
+            if (settings.withRecovery())
             {
-                Socket client = null;
-                Socket server = null;
+                rs = null;
+                rc = null;
                 
-                ServerSocket serverSocket = null;
-
-                try {
-                    serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
-                    serverSocket.setSoTimeout(1000);
-                    
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    if (RECOVERY_CONNECTION_DEBUG)
-                        e.printStackTrace();
-                }
+                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), pdcmvoice.impl.Constants.RECOVERY_LOCAL_COLLECTION_DEBUG);
+                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), pdcmvoice.impl.Constants.RECOVERY_REMOTE_COLLECTION_DEBUG);
                 
-              //##CONNESSIONE PER IL SISYEMA DI RECOVERY
-                System.out.println("--RECOVERY-- Connessione in corso...");
-                
-                while (client == null || server == null)
-                {
-                    try {
-                        Thread.sleep(500);
-                        if (RECOVERY_CONNECTION_DEBUG)
-                           System.out.println("--RECOVERY-- Tentativo di connessione");
-                    } catch (InterruptedException e2) {
-                        // TODO Auto-generated catch block
-                        if (RECOVERY_CONNECTION_DEBUG)
-                            e2.printStackTrace();
-                    }
-                    
-                    if (client == null)
-                    {
-                        try {
-                            client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
-                            System.out.println("--RECOVERY-- socket CLIENT ok");
-                        } catch (UnknownHostException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                            client = null;
-                        } catch (IOException e1) {
-                            // TODO Auto-generated catch block
-                            if (RECOVERY_CONNECTION_DEBUG)
-                                e1.printStackTrace();
-                            client = null;
-                        }
-                    }
-                    
-                        
-                    
-                    if (server == null)
-                    {
-                        try {
-                            server = serverSocket.accept();
-                            System.out.println("--RECOVERY-- socket SERVER ok");
-                        }
-                        
-                        catch (SocketTimeoutException e) {
-                            // TODO Auto-generated catch block
-                            if (RECOVERY_CONNECTION_DEBUG)
-                                System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
-                            if (RECOVERY_CONNECTION_DEBUG)
-                                e.printStackTrace();
-                            server = null;
-                        }
-                        catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            if (RECOVERY_CONNECTION_DEBUG)
-                                e.printStackTrace();
-                            server = null;
-                        }
-                    }
-                    
-                        
-                }
-
-                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
-                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), RECOVERY_REMOTE_COLLECTION_DEBUG);
-
-                RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
-
-                rs = new RecoveryServerThread(recoveryConnection, this);
-                rc = new RecoveryClientThread(recoveryConnection, this);
-
                 senderSession= new VoiceSessionSender(
-                                                        settings.getSendFormatCode(),
-                                                        rtpSession,
-                                                        localCollection  
-                                                        );
+                                                    settings.getSendFormatCode(),
+                                                    rtpSession,
+                                                    localCollection  
+                                                    );
                 receiverSession=new VoiceSessionReceiver(
-                                                       settings.getReceiveFormatCode(),
-                                                       rtpSession,
-                                                       remoteCollection);
-
-             
+                                                   settings.getReceiveFormatCode(),
+                                                   rtpSession,
+                                                   remoteCollection);
                 
-//                settings.getRemoteRecoveryPort(); 
-//                settings.getLocalRecoveryPort();
-
+                
+                rct = new RecoveryConnectionThread(settings, rtpSession, this, localCollection, remoteCollection);
+                rct.start();
+                
             }
+            
+//            withRecovery=settings.withRecovery();
+//
+//            if (withRecovery)
+//            {
+//                Socket client = null;
+//                Socket server = null;
+//                
+//                ServerSocket serverSocket = null;
+//
+//                try {
+//                    serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
+//                    serverSocket.setSoTimeout(1000);
+//                    
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    if (RECOVERY_CONNECTION_DEBUG)
+//                        e.printStackTrace();
+//                }
+//                
+//              //##CONNESSIONE PER IL SISYEMA DI RECOVERY
+//                System.out.println("--RECOVERY-- Connessione in corso...");
+//                
+//                while (client == null || server == null)
+//                {
+//                    try {
+//                        Thread.sleep(500);
+//                        if (RECOVERY_CONNECTION_DEBUG)
+//                           System.out.println("--RECOVERY-- Tentativo di connessione");
+//                    } catch (InterruptedException e2) {
+//                        // TODO Auto-generated catch block
+//                        if (RECOVERY_CONNECTION_DEBUG)
+//                            e2.printStackTrace();
+//                    }
+//                    
+//                    if (client == null)
+//                    {
+//                        try {
+//                            client = new Socket(settings.getRemoteAddress(), settings.getRemoteRecoveryPort());
+//                            System.out.println("--RECOVERY-- socket CLIENT ok");
+//                        } catch (UnknownHostException e1) {
+//                            // TODO Auto-generated catch block
+//                            e1.printStackTrace();
+//                            client = null;
+//                        } catch (IOException e1) {
+//                            // TODO Auto-generated catch block
+//                            if (RECOVERY_CONNECTION_DEBUG)
+//                                e1.printStackTrace();
+//                            client = null;
+//                        }
+//                    }
+//                    
+//                        
+//                    
+//                    if (server == null)
+//                    {
+//                        try {
+//                            server = serverSocket.accept();
+//                            System.out.println("--RECOVERY-- socket SERVER ok");
+//                        }
+//                        
+//                        catch (SocketTimeoutException e) {
+//                            // TODO Auto-generated catch block
+//                            if (RECOVERY_CONNECTION_DEBUG)
+//                                System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
+//                            if (RECOVERY_CONNECTION_DEBUG)
+//                                e.printStackTrace();
+//                            server = null;
+//                        }
+//                        catch (IOException e) {
+//                            // TODO Auto-generated catch block
+//                            if (RECOVERY_CONNECTION_DEBUG)
+//                                e.printStackTrace();
+//                            server = null;
+//                        }
+//                    }
+//                    
+//                        
+//                }
+//
+//                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), RECOVERY_LOCAL_COLLECTION_DEBUG);
+//                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), RECOVERY_REMOTE_COLLECTION_DEBUG);
+//
+//                RecoveryConnection recoveryConnection = new RecoveryConnection(server, localCollection, client, remoteCollection, rtpSession, RECOVERY_CONNECTION_DEBUG);
+//
+//                rs = new RecoveryServerThread(recoveryConnection, this);
+//                rc = new RecoveryClientThread(recoveryConnection, this);
+//
+//                senderSession= new VoiceSessionSender(
+//                                                        settings.getSendFormatCode(),
+//                                                        rtpSession,
+//                                                        localCollection  
+//                                                        );
+//                receiverSession=new VoiceSessionReceiver(
+//                                                       settings.getReceiveFormatCode(),
+//                                                       rtpSession,
+//                                                       remoteCollection);
+//
+//             
+//                
+////                settings.getRemoteRecoveryPort(); 
+////                settings.getLocalRecoveryPort();
+//
+//            }
             
             vsc=new VoiceSessionController(this);
             rtpSession.naivePktReception(true);
@@ -305,14 +335,36 @@ public class VoiceSession {
 }
 
     public void start() throws UnsupportedAudioFileException, Exception{
-            startListening();
-            starTransmitting();
-            if (withRecovery)
+            
+        
+        if (settings.withRecovery())
+        {
+            System.out.println("--RECOVERY-- Avvio thread client e server in corso...");
+            while (rs == null)
             {
-                System.out.println("--RECOVERY-- Avvio thread client e server");
-                rs.start();
-                rc.start();
+                rs = rct.getRs();
+                Thread.sleep(50);
+                System.out.println("--RECOVERY-- Tentativo di avvio thread SERVER...");
             }
+            rs.start();
+            System.out.println("--RECOVERY-- Thread SERVER avviato");
+            
+            while (rc == null)
+            {
+                rc = rct.getRc();
+                Thread.sleep(50);
+                System.out.println("--RECOVERY-- Tentativo di avvio thread CLIENT");
+            }
+            rc.start();
+            System.out.println("--RECOVERY-- Thread CLIENT avviato");
+            
+        }
+        
+        startListening();
+            starTransmitting();
+            
+            
+            
 
     }
 

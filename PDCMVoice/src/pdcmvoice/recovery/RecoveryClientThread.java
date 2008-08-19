@@ -161,124 +161,124 @@ public class RecoveryClientThread extends Thread
                       // TODO Auto-generated catch block
                       e.printStackTrace();
                   }
+                  
+                 
+                //##ELABORAZIONE DELLA QUERY
+                  
+                //##LUNGHEZZA
+                  int length = RecoveryCollection.mergeBytes(lastQueryByte[0], lastQueryByte[1]) ;         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
+    //                  if (RecConn.getRemoteCollection().debug)
+    //                      System.out.println("--CLIENT-- length della query effettiva= " + length);
+                  
+                  int sn  = 0;
+                  byte separatore = 0;
+                  int start, end;
+                  
+                  int firstSnOfTheQuery = 0;
+                  
+                //##CONTENUTO DELLA QUERY
+                  for (int j = 3; j<=(length+3) -1; j++) //i primi 3 elementi della query rappresentano la sua lunghezza e sono già stati elaborati
+                  {
+    //                      if (RecConn.getRemoteCollection().debug)
+    //                          System.out.println("--CLIENT-- entro nel ciclo for con length = " + length);
+                      
+                      sn = RecoveryCollection.mergeBytes(lastQueryByte[j],  lastQueryByte[++j]);
+                      separatore = lastQueryByte[++j];
+                      
+                      if (j == 5)
+                          firstSnOfTheQuery = sn;
+                      else
+                          sn += firstSnOfTheQuery; //considero vecchio sn come incremento
+                      
+                      if (RecConn.getRemoteCollection().debug)
+                      {
+                      System.out.println("--CLIENT-- firstSnOfTheQuery: " + firstSnOfTheQuery);
+                      System.out.println("--CLIENT-- sn: " + sn);
+                      }
+                      
+                    //##INDIVIDUAZIONE DI START ED END
+                      start = sn;
+                      if (separatore == 0)
+                          end = start;
+                      else if (separatore == 1)
+                      {
+                          end = firstSnOfTheQuery + RecoveryCollection.mergeBytes(lastQueryByte[++j], lastQueryByte[++j]);
+                          j++; //salto il separatore successivo
+                          
+                          if (RecConn.getRemoteCollection().debug)
+                              System.out.println("--CLIENT-- end: " + end);
+                      }
+                      else
+                          throw new IllegalArgumentException();
+                      
+                    //##LETTURA DEI PACCHETTI TRA GLI INDICI START ED END COMPRESI DALLO STREAM DI INPUT: LI HA INVIATI COME RISPOSTA ALLA QUERY IL SERVER DELL'INTERLOCUTORE
+                      for (int i = start; i <= end; i++)
+                      {
+                          byte[] temp = new byte[pktSize];
+                          try {
+    //                              if (RecConn.getRemoteCollection().debug)
+    //                                  System.out.println("--CLIENT-- tentativo lettura pacchetto " + i);
+                           while (dis.available() <= 0)
+                           {
+                               try {
+                                   Thread.sleep(20); //attendi che il dis diventi available
+                               } catch (InterruptedException e1) {
+                                   // TODO Auto-generated catch block
+                                   e1.printStackTrace();
+                               }
+                               
+                               if (RecConn.getRemoteCollection().debug)
+                                  System.out.println("--CLIENT-- DATA INPUT STREAM ASSENTE");
+                               
+                           }//end while (dis.available() > 0)
+                           dis.read(temp, 0, pktSize);
+                           
+    //                          if (RecConn.getRemoteCollection().debug)
+    //                              System.out.println("--CLIENT-- LETTO pacchetto " + i);
+                          
+                          } catch (IOException e) {
+                              // TODO Auto-generated catch block
+                              e.printStackTrace();
+                          }
+                          
+                        //##RECUPERO EFFETTIVO DEL PACCHETTO: AGGIUNTA ALLA COLLEZIONE
+                          RecConn.getRemoteCollection().recover(i, temp);
+                          //RecConn.getRemoteCollection().add(i, temp, zero);
+                        
+                        //##DEBUG
+                          if (RecConn.getRemoteCollection().debug)
+                              System.out.println("pkt recuperato dal ClientThread: " + i);
+                          
+                        if (RecConn.debug)
+                          {
+                              System.out.print("--CLIENT-- Ricevuto Sn " + i + ": ");
+                              
+                              for (int p = 0; p <= temp.length -1; p++)
+                              {
+                                  System.out.print(temp[p] + " ");
+                              }
+                              
+                              System.out.println("lunghezza=  " + temp.length);
+                              
+                              System.out.print("--CLIENT-- inserito Sn " + i + ": ");
+                              
+                              for (int p = 0; p <= RecConn.getRemoteCollection().read(i).length -1; p++)
+                              {
+                                  System.out.print(RecConn.getRemoteCollection().read(i)[p] + " ");
+                              }
+                              
+                              System.out.println("lunghezza=  " + temp.length);
+                              
+                           } //end if debug
+                         
+                      }
+                      
+                  }
+                  
+                  lastQueryByte = null;
               }
               else if (RecConn.getRemoteCollection().debug)
                   System.out.println("ClientThread: nessun pkt perso dall'ultima ricerca");
-             
-            //##ELABORAZIONE DELLA QUERY
-              
-            //##LUNGHEZZA
-              int length = RecoveryCollection.mergeBytes(lastQueryByte[0], lastQueryByte[1]) ;         //lunghezza della query vera e propria (esclusi i 3 byte che indicano la lunghezza stessa)
-//                  if (RecConn.getRemoteCollection().debug)
-//                      System.out.println("--CLIENT-- length della query effettiva= " + length);
-              
-              int sn  = 0;
-              byte separatore = 0;
-              int start, end;
-              
-              int firstSnOfTheQuery = 0;
-              
-            //##CONTENUTO DELLA QUERY
-              for (int j = 3; j<=(length+3) -1; j++) //i primi 3 elementi della query rappresentano la sua lunghezza e sono già stati elaborati
-              {
-//                      if (RecConn.getRemoteCollection().debug)
-//                          System.out.println("--CLIENT-- entro nel ciclo for con length = " + length);
-                  
-                  sn = RecoveryCollection.mergeBytes(lastQueryByte[j],  lastQueryByte[++j]);
-                  separatore = lastQueryByte[++j];
-                  
-                  if (j == 5)
-                      firstSnOfTheQuery = sn;
-                  else
-                      sn += firstSnOfTheQuery; //considero vecchio sn come incremento
-                  
-                  if (RecConn.getRemoteCollection().debug)
-                  {
-                  System.out.println("--CLIENT-- firstSnOfTheQuery: " + firstSnOfTheQuery);
-                  System.out.println("--CLIENT-- sn: " + sn);
-                  }
-                  
-                //##INDIVIDUAZIONE DI START ED END
-                  start = sn;
-                  if (separatore == 0)
-                      end = start;
-                  else if (separatore == 1)
-                  {
-                      end = firstSnOfTheQuery + RecoveryCollection.mergeBytes(lastQueryByte[++j], lastQueryByte[++j]);
-                      j++; //salto il separatore successivo
-                      
-                      if (RecConn.getRemoteCollection().debug)
-                          System.out.println("--CLIENT-- end: " + end);
-                  }
-                  else
-                      throw new IllegalArgumentException();
-                  
-                //##LETTURA DEI PACCHETTI TRA GLI INDICI START ED END COMPRESI DALLO STREAM DI INPUT: LI HA INVIATI COME RISPOSTA ALLA QUERY IL SERVER DELL'INTERLOCUTORE
-                  for (int i = start; i <= end; i++)
-                  {
-                      byte[] temp = new byte[pktSize];
-                      try {
-//                              if (RecConn.getRemoteCollection().debug)
-//                                  System.out.println("--CLIENT-- tentativo lettura pacchetto " + i);
-                       while (dis.available() <= 0)
-                       {
-                           try {
-                               Thread.sleep(20); //attendi che il dis diventi available
-                           } catch (InterruptedException e1) {
-                               // TODO Auto-generated catch block
-                               e1.printStackTrace();
-                           }
-                           
-                           if (RecConn.getRemoteCollection().debug)
-                              System.out.println("--CLIENT-- DATA INPUT STREAM ASSENTE");
-                           
-                       }//end while (dis.available() > 0)
-                       dis.read(temp, 0, pktSize);
-                       
-//                          if (RecConn.getRemoteCollection().debug)
-//                              System.out.println("--CLIENT-- LETTO pacchetto " + i);
-                      
-                      } catch (IOException e) {
-                          // TODO Auto-generated catch block
-                          e.printStackTrace();
-                      }
-                      
-                    //##RECUPERO EFFETTIVO DEL PACCHETTO: AGGIUNTA ALLA COLLEZIONE
-                      RecConn.getRemoteCollection().recover(i, temp);
-                      //RecConn.getRemoteCollection().add(i, temp, zero);
-                    
-                    //##DEBUG
-                      if (RecConn.getRemoteCollection().debug)
-                          System.out.println("pkt recuperato dal ClientThread: " + i);
-                      
-                    if (RecConn.debug)
-                      {
-                          System.out.print("--CLIENT-- Ricevuto Sn " + i + ": ");
-                          
-                          for (int p = 0; p <= temp.length -1; p++)
-                          {
-                              System.out.print(temp[p] + " ");
-                          }
-                          
-                          System.out.println("lunghezza=  " + temp.length);
-                          
-                          System.out.print("--CLIENT-- inserito Sn " + i + ": ");
-                          
-                          for (int p = 0; p <= RecConn.getRemoteCollection().read(i).length -1; p++)
-                          {
-                              System.out.print(RecConn.getRemoteCollection().read(i)[p] + " ");
-                          }
-                          
-                          System.out.println("lunghezza=  " + temp.length);
-                          
-                       } //end if debug
-                     
-                  }
-                  
-              }
-              
-              lastQueryByte = null;
-            
         
         }//end while
         
