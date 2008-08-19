@@ -358,7 +358,7 @@ public class VoiceSession {
                     System.out.println("--RECOVERY-- Tentativo di avvio thread SERVER...");
             }
             rs.start();
-            if (RECOVERY_CONNECTION_DEBUG)
+            //if (RECOVERY_CONNECTION_DEBUG)
                 System.out.println("--RECOVERY-- Thread SERVER avviato");
             
             while (rc == null)
@@ -369,7 +369,7 @@ public class VoiceSession {
                     System.out.println("--RECOVERY-- Tentativo di avvio thread CLIENT");
             }
             rc.start();
-            if (RECOVERY_CONNECTION_DEBUG)
+            //if (RECOVERY_CONNECTION_DEBUG)
                 System.out.println("--RECOVERY-- Thread CLIENT avviato");
             
         }
@@ -395,7 +395,7 @@ public class VoiceSession {
             while (!rcHasFinished)
             {
                 //if (rc.getRecConn().debug)
-                    System.out.println("--VOICE SESSION-- ATTESA DI RecoveryClientThread...");
+                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread...");
                 
                 try {
                     Thread.sleep(1000); //attesa del thread che completa la scrittura del file

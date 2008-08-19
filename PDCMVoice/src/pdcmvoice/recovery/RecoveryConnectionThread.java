@@ -127,7 +127,7 @@ public class RecoveryConnectionThread extends Thread {
             rc = new RecoveryClientThread(recoveryConnection, voiceSession);
   
             
-  
+            System.out.println("--RECOVERY-- RecoveryConnectionThread END");
          
             
             
