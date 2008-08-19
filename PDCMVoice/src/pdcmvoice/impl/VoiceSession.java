@@ -339,7 +339,7 @@ public class VoiceSession {
                     System.out.println("--VOICE SESSION-- ATTESA DI RecoveryClientThread...");
                 
                 try {
-                    Thread.sleep(500); //attesa durante la ricezione
+                    Thread.sleep(1000); //attesa del thread che completa la scrittura del file
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();

@@ -232,7 +232,7 @@ public class RecoveryCollection
             int i, j;
             int firstSnOfTheQuery = 0;
 
-            if (pdcmvoice.impl.Constants.RECOVERY_CONNECTION_DEBUG)
+            if (debug)
                 System.out.println("firstSnReceived: " + firstSnReceived);
             for (i = start; i <= end; i++ )
             {
@@ -240,11 +240,13 @@ public class RecoveryCollection
                 boolean jNull = true;
                 if (collection[i] == null)
                 {
-                    System.out.println("firstSnOfTheQuery: " + firstSnOfTheQuery);
+                    if (debug)
+                        System.out.println("firstSnOfTheQuery: " + firstSnOfTheQuery);
                     if (i == end)
                     {
                         k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), next);
-                        System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                        if (debug)
+                            System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
                     }
                     else
                     {
@@ -263,7 +265,8 @@ public class RecoveryCollection
                             if (i == j-1)
                             {
                                 k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), next);
-                                System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                                if (debug)
+                                    System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
 
                                 if (firstSnOfTheQuery == 0)
                                     firstSnOfTheQuery = firstSnReceived + i;
@@ -271,13 +274,15 @@ public class RecoveryCollection
                             else
                             {
                                 k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
-                                System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                                if (debug)
+                                    System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
 
                                 if (firstSnOfTheQuery == 0)
                                     firstSnOfTheQuery = firstSnReceived + i;
 
                                 k = writeOutSn(output, k, (firstSnReceived + j-1 - firstSnOfTheQuery), next);
-                                System.out.println("query-write: " + (firstSnReceived + j-1 - firstSnOfTheQuery));
+                                if (debug)
+                                    System.out.println("query-write: " + (firstSnReceived + j-1 - firstSnOfTheQuery));
 
                             }
 
@@ -287,13 +292,15 @@ public class RecoveryCollection
                         else
                         {
                             k = writeOutSn(output, k, (firstSnReceived + i - firstSnOfTheQuery), until);
-                            System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
+                            if (debug)
+                                System.out.println("query-write: " + (firstSnReceived + i - firstSnOfTheQuery));
 
                             if (firstSnOfTheQuery == 0)
                                 firstSnOfTheQuery = firstSnReceived + i;
 
                             k = writeOutSn(output, k, (firstSnReceived + j - firstSnOfTheQuery), next);
-                            System.out.println("query-write: " + (firstSnReceived + j - firstSnOfTheQuery));
+                            if (debug)
+                                System.out.println("query-write: " + (firstSnReceived + j - firstSnOfTheQuery));
 
 
                             break; //j e' arrivato in fondo ed e' stato inserito nella richiesta
