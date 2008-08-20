@@ -55,7 +55,7 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = false;
 
-        collection = new RecoverySample[6000]; //spazio per 2 minuti di audio
+        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio
 
 	}
 
@@ -200,7 +200,7 @@ public class RecoveryCollection
 
 	public byte[] findHolesByte(int window, boolean untilEnd)
     {
-        byte[] output = new byte[10*Math.max(window, windowWidth)];
+        byte[] output = new byte[50*Math.max(window, windowWidth)];
         int k = 3;
         byte next = 0; //separatore
         byte until = 1; //separatore per intervalli

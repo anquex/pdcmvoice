@@ -65,8 +65,8 @@ public class VoiceSession {
             rcHasFinished = false;
             
             if (!settings.withRecovery())
-            {
-                out("RECOVERY SYSTEM DISABLED");
+            {   
+                System.out.println("RECOVERY SYSTEM DISABLED");
                 
                 senderSession= new VoiceSessionSender(
                                                         settings.getSendFormatCode(),
@@ -80,8 +80,9 @@ public class VoiceSession {
             //RECOVERY COLLETION FROM SETTINGS
             
             if (settings.withRecovery())
-            {
-                out("RECOVERY SYSTEM ENABLED");
+            {   
+                System.out.println("RECOVERY SYSTEM ENABLED");
+
                 rs = null;
                 rc = null;
                 
