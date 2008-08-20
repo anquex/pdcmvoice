@@ -42,7 +42,7 @@ public class RecoveryClientThread extends Thread
 	    if (voiceSession != null && RecConn.getRemoteCollection().getPktSize() <= 0)
 	    {
 	      //##ACQUISIZIONE DIMENSIONE IN BYTE DI UN PACCHETTO VOCE CODIFICATO
-            while(voiceSession.lastEncodedFrameSize() <= 0)
+            while(voiceSession.lastReceivedPacketFramesSize() <= 0)
             {
                 if (RecConn.debug)
                     System.out.println("--CLIENT-- Acquisizione dimensione pacchetto codificato");
@@ -347,7 +347,8 @@ public class RecoveryClientThread extends Thread
         int localSn;
         int remoteSn;
         
-        AudioFormat targetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(16000.0), localAis.getFormat().getSampleSizeInBits(), localAis.getFormat().getChannels(), localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
+        //AudioFormat targetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(8000.0), localAis.getFormat().getSampleSizeInBits(), localAis.getFormat().getChannels(), localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
+        
         
         byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
@@ -652,7 +653,68 @@ public class RecoveryClientThread extends Thread
 //            System.out.println("--ELAB-- Scritti " + byteWritten + " byte nel file .wave");
 //        
 //      }
-        
+    
+      
+     //##CONVERSIONE DEI 2 STREAM DI PARTENZA SE HANNO FORMATO DIVERSO (ENTRAMBI A 8kHz)
+   
+//      TargetAudioFormat:
+//      AudioFormat.Encoding.PCM_SIGNED 
+//      new Float(8000.0) 
+//      localAis.getFormat().getSampleSizeInBits() 
+//      localAis.getFormat().getChannels() 
+//      localAis.getFormat().getFrameSize() 
+//      localAis.getFormat().getFrameRate() 
+//      localAis.getFormat().isBigEndian()
+//      
+//      if (    !localAis.getFormat().getEncoding().equals(remoteAis.getFormat().getEncoding())
+//              ||
+//              localAis.getFormat().getSampleRate() !=  remoteAis.getFormat().getSampleRate()
+//              ||
+//              localAis.getFormat().getSampleSizeInBits() != remoteAis.getFormat().getSampleSizeInBits()
+//              ||
+//              localAis.getFormat().getChannels() != remoteAis.getFormat().getChannels()
+//              ||
+//              localAis.getFormat().getFrameSize() != remoteAis.getFormat().getFrameSize()
+//              ||
+//              localAis.getFormat().getFrameRate() !=remoteAis.getFormat().getFrameRate()
+//              ||
+//              localAis.getFormat().isBigEndian() != remoteAis.getFormat().isBigEndian()
+//          )
+//          {
+//              
+//              AudioFormat localTargetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(8000.0), (int) 16, (int) 1, localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
+//              AudioFormat remoteTargetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(8000.0), (int) 16, (int) 1, remoteAis.getFormat().getFrameSize(), remoteAis.getFormat().getFrameRate(), remoteAis.getFormat().isBigEndian());
+//          
+//      
+////              if (  AudioSystem.isConversionSupported(localTargetAudioFormat, localAis.getFormat())
+////                    &&
+////                    AudioSystem.isConversionSupported(remoteTargetAudioFormat, remoteAis.getFormat())
+////                  )
+//                  {
+//                      localAis = AudioSystem.getAudioInputStream(localTargetAudioFormat, localAis);
+//                      remoteAis = AudioSystem.getAudioInputStream(remoteTargetAudioFormat, remoteAis);
+//                  }
+//      
+//              if (RecConn.getLocalCollection().debug)
+//              {
+//                  System.out.println("--CLIENT-- locaAis FORMAT: " + localAis.getFormat().toString());
+//                  System.out.println("--CLIENT-- remoteAis FORMAT: " + remoteAis.getFormat().toString());
+//              }
+//      
+//      
+//          }
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
     //##MIXAGGIO DEI DUE FLUSSI AUDIO
         List collectionAisList = new ArrayList();
         //ATTENZIONE! prova registrazione del solo remoteAis recuperato
@@ -661,7 +723,7 @@ public class RecoveryClientThread extends Thread
         
         AudioInputStream mixedAis = new MixingAudioInputStream(localAis.getFormat(), collectionAisList);
         
-      if (RecConn.getRemoteCollection().debug)
+      if (RecConn.getLocalCollection().debug)
         {
         System.out.println("--ELAB-- formato mixedAis: " + mixedAis.getFormat().toString());
         try {
@@ -683,13 +745,13 @@ public class RecoveryClientThread extends Thread
         }
         
         
-      //Aggiornamento lunghezza IN FRAME dello stream mixedAis (necessaria per la scrittura del file .wav)
-        try {
-            remoteAis = new AudioInputStream(mixedAis, mixedAis.getFormat(), mixedAis.available()/mixedAis.getFormat().getFrameSize());
-        } catch (IOException e2) {
-            // TODO Auto-generated catch block
-            e2.printStackTrace();
-        }
+//      //Aggiornamento lunghezza IN FRAME dello stream mixedAis (necessaria per la scrittura del file .wav)
+//        try {
+//            remoteAis = new AudioInputStream(mixedAis, mixedAis.getFormat(), mixedAis.available()/mixedAis.getFormat().getFrameSize());
+//        } catch (IOException e2) {
+//            // TODO Auto-generated catch block
+//            e2.printStackTrace();
+//        }
         
         //visualizzazione info sul NUOVO mixedAis
       if (RecConn.getRemoteCollection().debug)
@@ -709,7 +771,7 @@ public class RecoveryClientThread extends Thread
         
 //SCRITTURA del mixedAis
           
-            String percorso = "C:\\mixed.wav";
+            String percorso = "F:\\mixed.wav";
             File file= new File(percorso);
             if (RecConn.getLocalCollection().debug)
               System.out.println("--ELAB-- File aperto");
