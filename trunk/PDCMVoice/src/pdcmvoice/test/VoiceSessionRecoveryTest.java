@@ -34,7 +34,7 @@ public class VoiceSessionRecoveryTest extends Thread{
             //s.setLocal(s.getSendFormatCode(), 8766, 8767, 8769); //.., RTP, RTCP, RECOVERY.
             
             /*
-             * ATTENZIONE! A volte la prossima istruzione comporta l'impossibilit‡ di inizializzare la linea del microfono. 
+             * ATTENZIONE! A volte la prossima istruzione comporta l'impossibilit√† di inizializzare la linea del microfono.
              * In tal caso usare l'istruzione successiva, modificando, se serve, le porte per il recovery
              */
             ss = new VoiceSession(s);

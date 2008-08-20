@@ -129,7 +129,7 @@ public class Constants {
             DEFAULT_MIN_BUFFER_SIZE+MAX_MIN_BUFFER_PLUS;
 
     public static final boolean DEFAULT_DYNAMIC_ADAPTATION=false;
-    public static final boolean DEFAULT_BACKGROUND_RECOVERY=false;
+    public static final boolean DEFAULT_BACKGROUND_RECOVERY=true;
     public static final boolean DEFAULT_RDT_ENABLED=false;
     public static final int[] ALLOWED_FRAMES_PER_PACKET=
     {
