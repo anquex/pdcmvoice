@@ -178,7 +178,7 @@ public class RecoveryClientThread extends Thread
                   int firstSnOfTheQuery = 0;
                   
                 //##CONTENUTO DELLA QUERY
-                  for (int j = 3; j<=(length+3) -1; j++) //i primi 3 elementi della query rappresentano la sua lunghezza e sono già stati elaborati
+                  for (int j = 3; j<=(length+3) -1; j++) //i primi 3 elementi della query rappresentano la sua lunghezza e sono giÃ  stati elaborati
                   {
     //                      if (RecConn.getRemoteCollection().debug)
     //                          System.out.println("--CLIENT-- entro nel ciclo for con length = " + length);
@@ -711,7 +711,7 @@ public class RecoveryClientThread extends Thread
         
 //SCRITTURA del mixedAis
           
-            String percorso = "F:\\mixed.wav";
+            String percorso = "C:\\mixed.wav";
             File file= new File(percorso);
             if (RecConn.getLocalCollection().debug)
               System.out.println("--ELAB-- File aperto");
