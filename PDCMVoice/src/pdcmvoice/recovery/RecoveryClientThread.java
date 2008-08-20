@@ -54,7 +54,7 @@ public class RecoveryClientThread extends Thread
                     e1.printStackTrace();
                 }
             }
-            this.RecConn.getRemoteCollection().setPktSize(voiceSession.lastEncodedFrameSize());
+            this.RecConn.getRemoteCollection().setPktSize(voiceSession.lastReceivedPacketFramesSize());
             if (RecConn.debug)
                 System.out.println("--CLIENT-- Dimensione pacchetto codificato: " + voiceSession.lastEncodedFrameSize());
 	    }
