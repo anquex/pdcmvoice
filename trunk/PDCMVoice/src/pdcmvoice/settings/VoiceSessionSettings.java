@@ -77,7 +77,7 @@ public class VoiceSessionSettings implements Serializable{
                  String out="";
                  out+="-------- VOICE SESSION SETTINGS --------\n";
                  out+="-------- Remote host: "+getRemoteAddress()+":"+getRemoteRTPPort()+":"+getRemoteRTCPPort()+"\n";
-                 out+="-------- Local  Settings: RTP "+getLocalRTPPort()+" RTCP "+getLocalRTCPPort();
+                 out+="-------- Local  Settings: RTP "+getLocalRTPPort()+" RTCP "+getLocalRTCPPort()+" Recovery "+localEnabledRecovery;
                  out(out);
             }
         }
