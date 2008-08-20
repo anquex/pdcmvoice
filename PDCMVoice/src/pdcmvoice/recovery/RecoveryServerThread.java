@@ -272,7 +272,7 @@ public class RecoveryServerThread extends Thread
                         
                         //##LEGGI IL PACCHETTO DALLA COLLEZIONE
                         int n = 1;
-                        while (n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
+                        while (i >= 0 && n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
                         {
                             try {
                               Thread.sleep(100); //attesa durante la lettura dei pacchetti richiesti
@@ -290,11 +290,14 @@ public class RecoveryServerThread extends Thread
                         n = i;
                         
                         //##SE LA LETTURA NON E' ANTATA BUON FINE, LEGGI IL PRIMO PACCHETTO VALIDO SUBITO PRECEDENTE A QUELLO RICHIESTO (i)
+                        if (n < 0)
+                            n = RecConn.getLocalCollection().getFirstSnReceived();
+                        
                         if (RecConn.getLocalCollection().read(n) == null || RecConn.getLocalCollection().read(n).length <= 0)
                         {
                             while (n >= RecConn.getLocalCollection().getFirstSnReceived() && (RecConn.getLocalCollection().read(n)== null || RecConn.getLocalCollection().read(n).length == 0))
                                 n--;
-                            
+
                             //##SE NON NE E' STATO TROVATO UNO PRIMA DI AVER RAGGIUNTO L'INIZIO DELLA COLLEZIONE, GENERA UN PACCHETTO VUOTO
                             if (n < RecConn.getLocalCollection().getFirstSnReceived())
                             {    
@@ -307,8 +310,7 @@ public class RecoveryServerThread extends Thread
                                 RecConn.getLocalCollection().recover(n, emptyPkt);
                             }
                         }
-                            
-                            
+                        
                             
                        temp = RecConn.getLocalCollection().read(n);
                         

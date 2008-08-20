@@ -51,7 +51,7 @@ public class RecoveryConnectionThread extends Thread {
   
             try {
                 serverSocket = new ServerSocket(settings.getLocalRecoveryPort());
-                serverSocket.setSoTimeout(1000);
+                serverSocket.setSoTimeout(5000);
                 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -106,7 +106,7 @@ public class RecoveryConnectionThread extends Thread {
                             System.out.println("TENTATIVO DI RICONNESSIONE socket server per Timeout (RECOVERY)...");
                         if (pdcmvoice.impl.Constants.RECOVERY_CONNECTION_DEBUG)
                             e.printStackTrace();
-                        server = null;
+                        //server = null;
                     }
                     catch (IOException e) {
                         // TODO Auto-generated catch block

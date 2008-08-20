@@ -297,10 +297,8 @@ public class RecoveryClientThread extends Thread
             a = 0; b = 0; c = 2;
             if (RecConn.getServerSocket().isConnected())
             {
-                System.out.println("--CLIENT-- I'm going to say END OF QUERY");
                 dos.write(new byte[]{a, b, c}, 0, 3);
                 dos.flush();
-                System.out.println("--CLIENT-- I say END OF QUERY");
             }
             else if (RecConn.getRemoteCollection().debug)
             {
@@ -317,7 +315,7 @@ public class RecoveryClientThread extends Thread
       //##ELABORAZIONE DELLE COLLEZIONI E SCRITTURA DEL FILE DI SALVATAGGIO DELLA CONVERSAZIONE
          
         
-        //if (RecConn.getRemoteCollection().debug)
+        if (RecConn.getRemoteCollection().debug)
             System.out.println("--ELAB-- INIZIO ELABORAZIONE DELLE COLLEZIONI");
         
         RecoveryCollection local = RecConn.getLocalCollection();
