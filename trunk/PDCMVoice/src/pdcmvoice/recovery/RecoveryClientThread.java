@@ -118,6 +118,10 @@ public class RecoveryClientThread extends Thread
                 stopQuery = true;
                 lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
                 System.out.println("--CLIENT-- [**DEBUG**] lastSnReceived: " + RecConn.getRemoteCollection().lastSnReceived);
+                
+                System.out.println("--BackgroundRecoverySystem-- Fine della sessione voce. Recupero degli ultimi frame in corso...");
+                
+                
             }
             else
           //##FORMULAZIONE STANDARD DELLE QUERY
@@ -128,6 +132,7 @@ public class RecoveryClientThread extends Thread
                   {    
                       lastQueryByte = RecConn.getRemoteCollection().findAllHolesByte();
                       stopQuery = true;
+                      System.out.println("--BackgroundRecoverySystem-- Fine della sessione voce. Recupero degli ultimi frame in corso...");
                   }
             }    
                   
@@ -313,7 +318,8 @@ public class RecoveryClientThread extends Thread
         
          
       //##ELABORAZIONE DELLE COLLEZIONI E SCRITTURA DEL FILE DI SALVATAGGIO DELLA CONVERSAZIONE
-         
+        
+        System.out.println("--BackgroundRecoverySystem-- Elaborazione dei flussi audio in corso...");
         
         if (RecConn.getRemoteCollection().debug)
             System.out.println("--ELAB-- INIZIO ELABORAZIONE DELLE COLLEZIONI");
@@ -717,7 +723,6 @@ public class RecoveryClientThread extends Thread
       
     //##MIXAGGIO DEI DUE FLUSSI AUDIO
         List collectionAisList = new ArrayList();
-        //ATTENZIONE! prova registrazione del solo remoteAis recuperato
         collectionAisList.add(localAis);
         collectionAisList.add(remoteAis);
         
@@ -815,6 +820,8 @@ public class RecoveryClientThread extends Thread
                     e.printStackTrace();
                 }
            
+                System.out.println("--BackgroundRecoverySystem-- ELABORAZIONE COMPLETATA");
+                
             //if (RecConn.getLocalCollection().debug)
                 System.out.println("");
                 System.out.println("");

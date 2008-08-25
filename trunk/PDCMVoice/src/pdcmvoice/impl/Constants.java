@@ -45,7 +45,7 @@ public class Constants {
 
     public static boolean DEBUG = true;
     public static boolean VERBOSE = true;
-    public static boolean RECOVERY_CONNECTION_DEBUG = true;
+    public static boolean RECOVERY_CONNECTION_DEBUG = false;
     public static boolean RECOVERY_LOCAL_COLLECTION_DEBUG = false;
     public static boolean RECOVERY_REMOTE_COLLECTION_DEBUG = false;
     public static boolean RECOVERY_CLIENT_THREAD_LIMITED_LIFE_DEBUG = false;
