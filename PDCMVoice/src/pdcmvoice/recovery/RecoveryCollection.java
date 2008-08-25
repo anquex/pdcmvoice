@@ -200,7 +200,7 @@ public class RecoveryCollection
 
 	public byte[] findHolesByte(int window, boolean untilEnd)
     {
-        byte[] output = new byte[50*Math.max(window, windowWidth)];
+        byte[] output = new byte[100*Math.max(window, windowWidth)];
         int k = 3;
         byte next = 0; //separatore
         byte until = 1; //separatore per intervalli
