@@ -7,7 +7,7 @@ package pdcmvoice.impl;
 
 import javax.swing.UIManager;
 import pdcmvoice.ui.MainUI;
-
+import pdcmvoice.p2p.UserNodeListModel;
 /**
  *
  * @author marco

@@ -12,6 +12,7 @@
 package pdcmvoice.ui;
 
 import java.net.SocketException;
+import pdcmvoice.p2p.*;
 import pdcmvoice.impl.RTCPStats;
 import pdcmvoice.impl.VoiceSession;
 import pdcmvoice.settings.AudioSettings;
@@ -21,7 +22,10 @@ import pdcmvoice.settings.VoiceSessionSettings;
 import static pdcmvoice.impl.Constants.*;
 
 import java.text.NumberFormat;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import pdcmvoice.client.Client;
 
 /**
@@ -53,7 +57,7 @@ public class MainUI extends javax.swing.JFrame {
     private Client client;
     private boolean isClientSessionActive;
 
-
+   
     private void renderStatus(){
         String bufferInfo="N/A";
         String pspl="N/A";
@@ -199,6 +203,7 @@ public class MainUI extends javax.swing.JFrame {
         guiUpdater.start();
         nf.setMaximumFractionDigits(1);
         nf.setMaximumIntegerDigits(2);
+        onlinelist.addListSelectionListener(new ListListener());
         client=new Client(null, myAudioSettings, myConnectionSettings, myTransmissionSettings);
         client.start();
     }
@@ -215,6 +220,8 @@ public class MainUI extends javax.swing.JFrame {
         OnlineList = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        onlinelist = new javax.swing.JList();
         MainTabbedPanel = new javax.swing.JTabbedPane();
         StatusPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -350,15 +357,20 @@ public class MainUI extends javax.swing.JFrame {
 
         jButton4.setText("Call");
 
+        onlinelist.setModel(new UserNodeListModel());
+        onlinelist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(onlinelist);
+
         org.jdesktop.layout.GroupLayout OnlineListLayout = new org.jdesktop.layout.GroupLayout(OnlineList);
         OnlineList.setLayout(OnlineListLayout);
         OnlineListLayout.setHorizontalGroup(
             OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(OnlineListLayout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, OnlineListLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jButton4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .add(jLabel6))
+                .add(OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jButton4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel6))
                 .addContainerGap())
         );
         OnlineListLayout.setVerticalGroup(
@@ -366,7 +378,9 @@ public class MainUI extends javax.swing.JFrame {
             .add(OnlineListLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLabel6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 363, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 326, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 26, Short.MAX_VALUE)
                 .add(jButton4)
                 .addContainerGap())
         );
@@ -521,7 +535,7 @@ public class MainUI extends javax.swing.JFrame {
                         .add(jLabel23)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jLabel26)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 18, Short.MAX_VALUE)
                         .add(jLabel31)
                         .add(23, 23, 23))))
         );
@@ -559,7 +573,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(jLabel25)
                     .add(PBbufferedMillis, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(PBMinMax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
@@ -882,7 +896,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 68, Short.MAX_VALUE)
                 .add(jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -896,7 +910,7 @@ public class MainUI extends javax.swing.JFrame {
                     .add(UILocalEncoding, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(UILocalQuality, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel15))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         ConnectionSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Connection Settings"));
@@ -1225,7 +1239,7 @@ public class MainUI extends javax.swing.JFrame {
                 .add(DCTestPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(transmitButton)
                     .add(directCallButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 36, Short.MAX_VALUE)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel5)
@@ -1472,7 +1486,7 @@ public class MainUI extends javax.swing.JFrame {
     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            public void run() {                
                 new MainUI().setVisible(true);
             }
         });
@@ -1593,11 +1607,13 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuBar menuBar1;
+    private javax.swing.JList onlinelist;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem openMenuItem1;
     private javax.swing.JMenuItem pasteMenuItem;
@@ -1608,7 +1624,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel timeElapsed1;
     private javax.swing.JButton transmitButton;
     // End of variables declaration//GEN-END:variables
-
+ 
     class UpdateGUI extends Thread{
 
         public void run(){
@@ -1642,4 +1658,26 @@ public class MainUI extends javax.swing.JFrame {
             }
         }
     }
+    }
+class ListListener implements ListSelectionListener{
+   
+    String address ;
+    
+//    public ListListener(JList online){
+//        this.online = online;
+//    }
+    
+    public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()){
+            JList online = (JList)e.getSource();
+            //preleva il nome dell'utente selezionato nella lista
+            String selectedItem = (String)online.getSelectedValue();          
+            //con lo username estraggo lo userNode
+            UserNode user  = UserNode.getUserNode(selectedItem);
+            address = user.getAddress();
+        }
+        
+    }
+
 }
+

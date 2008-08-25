@@ -4,6 +4,8 @@
  */
 
 package pdcmvoice.p2p;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +26,7 @@ import static pdcmvoice.p2p.Constants.*;
  *
  * @author marco
  */
-public class Client extends Thread{
+public class Client extends Thread implements ActionListener{
 
     String username;
     int masterPort;
@@ -37,21 +39,28 @@ public class Client extends Thread{
 
     private JList visualList;
     private JFrame frame;
+    private ProvaJpanelList userlist;
+    private UserNodeListModel listmodel;
 
 
     public Client(String username, int masterport){
         this.username=username;
         this.masterPort=masterport;
         online= new ArrayList<UserNode>();
-
-        DefaultListModel listModel = new DefaultListModel();
-
-        visualList= new JList(online.toArray());
-        visualList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        visualList.setLayoutOrientation(JList.VERTICAL);
+        
+        //DefaultListModel listModel = new DefaultListModel();
+        listmodel = new UserNodeListModel();
+        userlist = new ProvaJpanelList(this, listmodel);//serve la JLIST del MAINUI
+        userlist.setVisible(true);
+    
+        //visualList= new JList(online.toArray());
+//        visualList = new JList(listmodel);
+//        visualList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        visualList.setLayoutOrientation(JList.VERTICAL);
     }
 
     public void connect(String server){
+        if(server == null) server= "127.0.0.1";
         connect(server, P2PPORT);
     }
     public void connect(String server, int port){
@@ -113,9 +122,9 @@ public class Client extends Thread{
                                 }
 
                             }else if(action.equals("USERLEAVE")){
-                                UserNode u =makeUserNode(description);
+                               UserNode u =makeUserNode(description);
                                 if(u!=null){
-                                    remove(u);
+                                    remove(u);                                        
                                 }else{
                                     out("Bad Parsing o bad USERLEAVE");
                                 }
@@ -127,7 +136,7 @@ public class Client extends Thread{
 
 
                     }
-
+      
                     }
                     close();
                 }
@@ -155,8 +164,10 @@ public class Client extends Thread{
     public void add(UserNode u){
         if(DEBUG)
             out("Client "+username+": aggiunto "+u.toString());
-        online.add(u);
-
+        online.add(u);        
+        listmodel.addUser(u);
+        updateList();
+        
 
     }
 
@@ -164,6 +175,8 @@ public class Client extends Thread{
         if(DEBUG)
             out("Client "+username+": rimosso "+u.toString());
         online.remove(u);
+        listmodel.removeUserNode(u);
+        updateList();
 
     }
     private UserNode makeUserNode(String description){
@@ -175,4 +188,17 @@ public class Client extends Thread{
         return new UserNode(username,address,port);
     }
 
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+//public static void main(String[] args) throws IOException{
+//    Client c = new Client("laura",P2PPORT);
+//    c.connect("127.0.0.1",P2PPORT);
+//    System.in.read();
+//}
+
+    private void updateList() {
+        userlist.update();
+    }
 }
