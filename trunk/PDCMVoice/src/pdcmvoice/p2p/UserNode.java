@@ -48,5 +48,14 @@ public class UserNode implements Comparable<UserNode>{
     public boolean equals(UserNode u){
         return username.equals(u.username);
     }
+    public String getAddress(){
+        return address;
+    }
+    public String getUserName(){
+      return username;
+    }
+    public int getPort(){
+        return masterport;
+    }
 
-}
+ }
