@@ -269,7 +269,7 @@ public class RecoveryServerThread extends Thread
                   //##RECUPERO PACCHETTI TRA GLI INDICI START ED END (AL LIMITE START = END ==> PACCHETTO ISOLATO)
                     for (int i = start; i <= end; i++)
                     {
-                        if (totaleByteRisposta + 2*pktSize +8 -1 >= send.length -1)// il +1 server per il separatoreMarked o NonMarked
+                        if (totaleByteRisposta + 2*pktSize +1 -1 >= send.length -1)// il +1 server per il separatoreMarked o NonMarked
                             send = arrayResize(send, 2*send.length);
                         
                         //temp = RecConn.getLocalCollection().read(i);
@@ -307,6 +307,8 @@ public class RecoveryServerThread extends Thread
                             {    
                                 n = i;
                                 byte[] emptyPkt = new byte[RecConn.getLocalCollection().getPktSize()];
+                                if (RecConn.getLocalCollection().debug)
+                                    System.out.println("--SERVER-- crazione emptyPkt");
                                 for(int s = 0; s <= RecConn.getLocalCollection().getPktSize()-1; s++)
                                 {
                                     emptyPkt[s] = 0;
@@ -327,7 +329,7 @@ public class RecoveryServerThread extends Thread
                            send[totaleByteRisposta] = separatoreNonMarked;
                            lunghezzaTemp = pktSize;
                        }
-                       totaleByteRisposta += 8;
+                       totaleByteRisposta += 1;
                        
                        //##AGGIUNGI IL CONTENUTO DEL PACCHETTO ALL'ARRAY DI BYTE DA INVIARE AL THREAD CLIENT DELL'INTERLOCUTORE CHE HA FORMULATO LA RICHIESTA 
 //                        if (temp != null)

@@ -393,18 +393,20 @@ public class VoiceSession {
         if (withRecovery)
         {
             rc.endOfStream = true;
-            
-            while (!rcHasFinished)
+            int i = 1;
+            while (!rcHasFinished && i <= 4)
             {
                 //if (rc.getRecConn().debug)
                     System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread...");
                 
                 try {
-                    Thread.sleep(1000); //attesa del thread che completa la scrittura del file
+                    Thread.sleep(3000); //attesa del thread che completa la scrittura del file
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
+                
+                i++;
             }
             
             

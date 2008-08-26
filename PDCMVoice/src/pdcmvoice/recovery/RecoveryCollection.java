@@ -84,26 +84,30 @@ public class RecoveryCollection
 	 */
 	public void add(int sn, byte[] pkt, long timestamp, boolean marked)
 	{
-
-	    if (firstSnReceived < 0)
+	    if (pktSize > 0)
 	    {
-    	    firstSnReceived = sn;
-            startTimestamp = timestamp;
-        }
-
-	    if (sn > lastSnReceived)
-	        lastSnReceived = sn;
-
-	    int i = sn - firstSnReceived;
-	    if (i  > lastSn) //aggiungi solo fuori dalla finestra di ricerca dei pkt mancanti
-	    {
-	        if (i >= collection.length - 40)
-	            collection = collectionResize(collection, 2 * collection.length);
-
-	        collection[i] = new RecoverySample(sn, pkt, marked);
-
-	        if (debug)
-	        System.out.println(type + ": inserito sn " + sn);
+            if (firstSnReceived < 0)
+    	    {
+        	    firstSnReceived = sn;
+        	    if (debug)
+                    System.out.println(type + ": firstSnReceived = " + firstSnReceived);
+                startTimestamp = timestamp;
+            }
+    
+    	    if (sn > lastSnReceived)
+    	        lastSnReceived = sn;
+    
+    	    int i = sn - firstSnReceived;
+    	    if (i  > lastSn) //aggiungi solo fuori dalla finestra di ricerca dei pkt mancanti
+    	    {
+    	        if (i >= collection.length - 40)
+    	            collection = collectionResize(collection, 2 * collection.length);
+    
+    	        collection[i] = new RecoverySample(sn, pkt, marked);
+    
+    	        if (debug)
+    	        System.out.println(type + ": inserito sn " + sn + ", length = " + pkt.length);
+    	    }
 	    }
 
 	}
@@ -393,8 +397,8 @@ public class RecoveryCollection
     {
 //	    System.out.println("--mergeBytes-- a: " + a + " b: " + b);
 
-	    int aM = (int) a & 0xff;
-	    int bM = (int) b & 0xff;
+	    int aM = (int) (a & 0x00ff);
+	    int bM = (int) (b & 0x00ff);
 
 	    aM = aM << 8;
 //	    System.out.println("--mergeBytes-- bit pi significativi: " + aM);
