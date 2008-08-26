@@ -77,7 +77,7 @@ public class RecoveryClientThread extends Thread
         }
         
 	    
-	    int pktSize = RecConn.getRemoteCollection().getPktSize();
+	    int pktSize = RecConn.getRemoteCollection().getPktSize(); //pacchetto singolo
 	    //byte[] temp = new byte[pktSize];  NON QUI'!!!!!
         long zero = 0;
         boolean rtpDown;
@@ -220,7 +220,11 @@ public class RecoveryClientThread extends Thread
                     //##LETTURA DEI PACCHETTI TRA GLI INDICI START ED END COMPRESI DALLO STREAM DI INPUT: LI HA INVIATI COME RISPOSTA ALLA QUERY IL SERVER DELL'INTERLOCUTORE
                       for (int i = start; i <= end; i++)
                       {
-                          byte[] temp = new byte[pktSize];
+                          byte[] temp = null;
+                          int lunghezzaTemp = pktSize;;
+                          byte[] separatoreMarked = new byte[1];
+                          boolean isMarked = false;
+                          
                           try {
     //                              if (RecConn.getRemoteCollection().debug)
     //                                  System.out.println("--CLIENT-- tentativo lettura pacchetto " + i);
@@ -237,7 +241,19 @@ public class RecoveryClientThread extends Thread
                                   System.out.println("--CLIENT-- DATA INPUT STREAM ASSENTE");
                                
                            }//end while (dis.available() > 0)
-                           dis.read(temp, 0, pktSize);
+                           
+                           dis.read(separatoreMarked, 0, 1);
+                           if (separatoreMarked[0] == 3) //valore prescelto per indicare pacchetto marked (lungo il doppio, cioè 2*pktSize)
+                           {
+                               isMarked = true;
+                               lunghezzaTemp = 2*pktSize;
+                           }
+                           else
+                               lunghezzaTemp = pktSize;
+                           
+                           temp = new byte[lunghezzaTemp]; //contiene il singolo pacchetto
+                           
+                           dis.read(temp, 0, lunghezzaTemp);
                            
     //                          if (RecConn.getRemoteCollection().debug)
     //                              System.out.println("--CLIENT-- LETTO pacchetto " + i);
@@ -248,7 +264,7 @@ public class RecoveryClientThread extends Thread
                           }
                           
                         //##RECUPERO EFFETTIVO DEL PACCHETTO: AGGIUNTA ALLA COLLEZIONE
-                          RecConn.getRemoteCollection().recover(i, temp);
+                          RecConn.getRemoteCollection().recover(i, temp, isMarked);
                           //RecConn.getRemoteCollection().add(i, temp, zero);
                         
                         //##DEBUG

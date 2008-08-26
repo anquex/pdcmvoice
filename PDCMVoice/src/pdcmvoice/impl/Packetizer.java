@@ -223,9 +223,15 @@ public class Packetizer {
         if (local!=null){
             //this means recovery mode is active
 
-            byte[] toSend = new byte[local.getPktSize()];
-            System.arraycopy(frames, 0, toSend, 0, local.getPktSize()); //singolo pacchetto voce: 20Byte
-            this.local.add((int)r[0][1], toSend, r[0][0]);
+            int frameLength = 0;
+            if (!marked)
+                frameLength = local.getPktSize();
+            else
+                frameLength = 2* local.getPktSize();
+            
+            byte[] toSend = new byte[frameLength];
+            System.arraycopy(frames, 0, toSend, 0, frameLength); //singolo pacchetto voce: 20Byte
+            this.local.add((int)r[0][1], toSend, r[0][0], marked);
 
 //           if (marked)
 //            {

@@ -227,10 +227,14 @@ public class RecoveryServerThread extends Thread
                 int start, end;
                 
                 int totalePkt = 1;
+                int totaleByteRisposta = 0;
+                byte separatoreMarked = 3;
+                byte separatoreNonMarked = 0;
                 
-                int pktSize = RecConn.getLocalCollection().getPktSize();
-                byte[] temp;//contiene il pacchetto associato ad ogni SN
-                byte[] send = new byte[(RecConn.getLocalCollection().getWindowWidth())*pktSize];//contiene al massimo windowWidth pacchetti (da ritrasmettere)
+                int pktSize = RecConn.getLocalCollection().getPktSize(); //dimensione PACCHETTO SINGOLO e non doppio
+                byte[] temp;//contiene il pacchetto associato ad ogni SN; può essere lungo pktSize o 2*pktSize
+                int lunghezzaTemp = pktSize;
+                byte[] send = new byte[(RecConn.getLocalCollection().getWindowWidth())*pktSize*2];//contiene al massimo windowWidth pacchetti doppi (da ritrasmettere)
                 
                 int firstSnOfTheQuery = 0;//significato locale alla query
                 
@@ -265,7 +269,7 @@ public class RecoveryServerThread extends Thread
                   //##RECUPERO PACCHETTI TRA GLI INDICI START ED END (AL LIMITE START = END ==> PACCHETTO ISOLATO)
                     for (int i = start; i <= end; i++)
                     {
-                        if ((totalePkt-1)*pktSize + pktSize -1 >= send.length -1)
+                        if (totaleByteRisposta + 2*pktSize +8 -1 >= send.length -1)// il +1 server per il separatoreMarked o NonMarked
                             send = arrayResize(send, 2*send.length);
                         
                         //temp = RecConn.getLocalCollection().read(i);
@@ -307,18 +311,29 @@ public class RecoveryServerThread extends Thread
                                 {
                                     emptyPkt[s] = 0;
                                 }
-                                RecConn.getLocalCollection().recover(n, emptyPkt);
+                                RecConn.getLocalCollection().recover(n, emptyPkt, false); //il pacchetto vuoto è "singolo" (lungo pktSize)
                             }
                         }
                         
                             
                        temp = RecConn.getLocalCollection().read(n);
-                        
+                       if (RecConn.getLocalCollection().isMarked(n))
+                       {
+                           send[totaleByteRisposta] = separatoreMarked;
+                           lunghezzaTemp = 2*pktSize;
+                       }
+                       else 
+                       {
+                           send[totaleByteRisposta] = separatoreNonMarked;
+                           lunghezzaTemp = pktSize;
+                       }
+                       totaleByteRisposta += 8;
+                       
                        //##AGGIUNGI IL CONTENUTO DEL PACCHETTO ALL'ARRAY DI BYTE DA INVIARE AL THREAD CLIENT DELL'INTERLOCUTORE CHE HA FORMULATO LA RICHIESTA 
 //                        if (temp != null)
 //                        {
                         try {
-                            System.arraycopy (temp, 0, send, (totalePkt-1)*pktSize, temp.length);
+                            System.arraycopy (temp, 0, send, totaleByteRisposta, lunghezzaTemp);
                         } catch (NullPointerException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -327,6 +342,7 @@ public class RecoveryServerThread extends Thread
                         }
                         
                         totalePkt++;
+                        totaleByteRisposta += lunghezzaTemp;
 //                        }
                       
                       //##DEBUG  
@@ -356,7 +372,7 @@ public class RecoveryServerThread extends Thread
                             System.out
                                     .println("--SERVER-- tentativo invio pacchetti richiesti ");
 
-                        dos.write(send, 0, (totalePkt - 1) * pktSize);
+                        dos.write(send, 0, totaleByteRisposta);
                         dos.flush();
 
                         if (RecConn.getLocalCollection().debug)

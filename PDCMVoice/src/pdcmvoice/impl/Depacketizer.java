@@ -96,8 +96,14 @@ public class Depacketizer implements RTPAppIntf{
         // collection.add(frame.sequenceNumbers()[0], voice, frame.rtpTimestamp());
         if (remote!=null)
         {
-            byte[] toSend = new byte[remote.getPktSize()];
-            System.arraycopy(voice, 0, toSend, 0, remote.getPktSize()); //singolo pacchetto voce: 20Byte
+            int frameLength = 0;
+            if (!frame.marked())
+                frameLength = remote.getPktSize();
+            else
+                frameLength = 2* remote.getPktSize();
+                
+            byte[] toSend = new byte[frameLength];
+            System.arraycopy(voice, 0, toSend, 0, frameLength); //singolo pacchetto voce: 20Byte
             //ATTENZIONE!!!
             //SIMULAZIONE PERDITA PACCHETTI
             
@@ -118,40 +124,41 @@ public class Depacketizer implements RTPAppIntf{
     
 //            if ((int)frame.sequenceNumbers()[0] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
 
-                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp(), frame.marked());
             }
             else
-                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp());
+                this.remote.add((int)frame.sequenceNumbers()[0], toSend, frame.rtpTimestamp(), frame.marked());
 
-            if (frame.marked())
-            {
-                System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
-                //ATTENZIONE!!!
-                //SIMULAZIONE PERDITA PACCHETTI
-                if (RECOVERY_PACKET_LOSS_SIMULATION_DEBUG)
-                {
-    //                if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
-    
-                    if (((int)frame.sequenceNumbers()[1] < 5
-                            ||
-                            (int)frame.sequenceNumbers()[1] > 10 && (int)frame.sequenceNumbers()[1] <= 30
-                            ||
-                           (int)frame.sequenceNumbers()[1] > 40 && (int)frame.sequenceNumbers()[1] <= 60
-                           ||
-                           (int)frame.sequenceNumbers()[1] > 70 && (int)frame.sequenceNumbers()[1] <= 90
-                           ||
-                           (int)frame.sequenceNumbers()[1] > 120)
-                                   && (int)frame.sequenceNumbers()[1] % 10 != 0) //SIMULAZIONE PERDITA PACCHETTI
-    
-    //                if ((int)frame.sequenceNumbers()[1] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
-    
-                        this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
-                  
-                }
-                else
-                    this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
-            
-            }//end if (frame.marked())
+//LA PARTE DI CODICE SEGUENTE NON HA PIU' SENSO
+//            if (frame.marked())
+//            {
+//                System.arraycopy(voice, remote.getPktSize(), toSend, 0, remote.getPktSize());
+//                //ATTENZIONE!!!
+//                //SIMULAZIONE PERDITA PACCHETTI
+//                if (RECOVERY_PACKET_LOSS_SIMULATION_DEBUG)
+//                {
+//    //                if ((int)frame.sequenceNumbers()[1] % 10 != 0)//SIMULAZIONE PERDITA PACCHETTI
+//    
+//                    if (((int)frame.sequenceNumbers()[1] < 5
+//                            ||
+//                            (int)frame.sequenceNumbers()[1] > 10 && (int)frame.sequenceNumbers()[1] <= 30
+//                            ||
+//                           (int)frame.sequenceNumbers()[1] > 40 && (int)frame.sequenceNumbers()[1] <= 60
+//                           ||
+//                           (int)frame.sequenceNumbers()[1] > 70 && (int)frame.sequenceNumbers()[1] <= 90
+//                           ||
+//                           (int)frame.sequenceNumbers()[1] > 120)
+//                                   && (int)frame.sequenceNumbers()[1] % 10 != 0) //SIMULAZIONE PERDITA PACCHETTI
+//    
+//    //                if ((int)frame.sequenceNumbers()[1] % 2 != 0)//SIMULAZIONE PERDITA PACCHETTI
+//    
+//                        this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
+//                  
+//                }
+//                else
+//                    this.remote.add((int)frame.sequenceNumbers()[1], toSend, frame.rtpTimestamp());
+//            
+//            }//end if (frame.marked())
                 
         }//end if (remote!=null)
 
