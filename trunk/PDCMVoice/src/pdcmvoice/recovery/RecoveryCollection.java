@@ -55,7 +55,7 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = false;
 
-        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio
+        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))//spazio per 10 minuti di audio
 
 	}
 
@@ -71,7 +71,7 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = debug;
 
-        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio
+        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))
 
     }
 
@@ -82,7 +82,7 @@ public class RecoveryCollection
 	 * @param pkt contenuto del pacchetto codificato (speex)
 	 * @param timestamp del pkt RTP
 	 */
-	public void add(int sn, byte[] pkt, long timestamp)
+	public void add(int sn, byte[] pkt, long timestamp, boolean marked)
 	{
 
 	    if (firstSnReceived < 0)
@@ -97,10 +97,10 @@ public class RecoveryCollection
 	    int i = sn - firstSnReceived;
 	    if (i  > lastSn) //aggiungi solo fuori dalla finestra di ricerca dei pkt mancanti
 	    {
-	        if (i >= collection.length - 20)
+	        if (i >= collection.length - 40)
 	            collection = collectionResize(collection, 2 * collection.length);
 
-	        collection[i] = new RecoverySample(sn, pkt);
+	        collection[i] = new RecoverySample(sn, pkt, marked);
 
 	        if (debug)
 	        System.out.println(type + ": inserito sn " + sn);
@@ -351,13 +351,18 @@ public class RecoveryCollection
 	        return null;
 	    return collection [sn - firstSnReceived].audioPkt;
 	}
+	
+	public boolean isMarked(int sn)
+	{
+	    return collection [sn - firstSnReceived].marked;
+	}
 
-	public void recover(int sn, byte[] pkt)
+	public void recover(int sn, byte[] pkt, boolean marked)
     {
 	    if (sn - firstSnReceived >= collection.length - 20)
             collection = collectionResize(collection, 2 * collection.length);
 
-	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt);
+	    collection[sn - firstSnReceived] = new RecoverySample(sn, pkt, marked);
     }
 
 	private int writeOutSn(byte[] array, int start, int sn, byte nextByte) //sn  sempre di 2 byte al massimo
