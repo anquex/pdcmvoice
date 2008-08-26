@@ -6,9 +6,9 @@ package pdcmvoice.recovery;
  */
 public class RecoverySample 
 {
-    int sn; 
-    byte[] audioPkt; //pacchetto speex
-    boolean marked;
+    public int sn; 
+    public byte[] audioPkt; //pacchetto speex
+    public boolean marked;
     
     
     public RecoverySample(int sn, byte[] audioPkt, boolean marked)
