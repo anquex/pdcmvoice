@@ -391,10 +391,13 @@ public class RecoveryClientThread extends Thread
         {
             localSn = local.getFirstSnReceived() + i;
            
-            if (local.read(localSn) != null)
+            if (local.read(localSn) != null && localSn <= local.lastSnReceived)
             {
-                //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
-                localDecoder.decodeFrame(local.read(localSn));
+                if (local.read(localSn).length > 0)
+                {
+                    //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
+                    localDecoder.decodeFrame(local.read(localSn));
+                }
                 
                 if (RecConn.getLocalCollection().debug)
                 {
@@ -543,10 +546,15 @@ public class RecoveryClientThread extends Thread
         {
             remoteSn = remote.getFirstSnReceived() + i;
            
-            if (remote.read(remoteSn) != null)
+            if (remote.read(remoteSn) != null && remoteSn <= remote.lastSnReceived)
             {
-                //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
-                remoteDecoder.decodeFrame(remote.read(remoteSn));
+                
+                if (remote.read(remoteSn).length > 0)
+                {
+                
+                    //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
+                    remoteDecoder.decodeFrame(remote.read(remoteSn));
+                }
                 
                 if (RecConn.getRemoteCollection().debug)
                 {
