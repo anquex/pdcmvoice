@@ -243,7 +243,7 @@ public class RecoveryClientThread extends Thread
                            }//end while (dis.available() > 0)
                            
                            dis.read(separatoreMarked, 0, 1);
-                           if (separatoreMarked[0] == 3) //valore prescelto per indicare pacchetto marked (lungo il doppio, cioè 2*pktSize)
+                           if (separatoreMarked[0] == 3) //valore prescelto per indicare pacchetto marked (lungo il doppio, cioÃ¨ 2*pktSize)
                            {
                                isMarked = true;
                                lunghezzaTemp = 2*pktSize;
