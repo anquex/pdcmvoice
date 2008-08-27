@@ -59,6 +59,11 @@ public class RecoveryClientThread extends Thread
                 System.out.println("--CLIENT-- Dimensione pacchetto codificato: " + voiceSession.lastReceivedPacketFramesSize());
 	    }
 	    
+	    System.out.println("");
+	    System.out.println("");
+	    System.out.println("          INIZIO REGISTRAZIONE          ");
+	    System.out.println("");
+	    System.out.println("");
 	    
 	    /*
 	     * RICORDA LA RIGA DI DEBUG (simulazione perdita di pacchetti)
@@ -83,7 +88,7 @@ public class RecoveryClientThread extends Thread
         boolean rtpDown;
         
         try {
-            Thread.sleep(7000); //attesa prima di partire
+            Thread.sleep(5000); //attesa prima di partire
         } catch (InterruptedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -221,7 +226,7 @@ public class RecoveryClientThread extends Thread
                       for (int i = start; i <= end; i++)
                       {
                           byte[] temp = null;
-                          int lunghezzaTemp = pktSize;;
+                          int lunghezzaTemp = pktSize;
                           byte[] separatoreMarked = new byte[1];
                           boolean isMarked = false;
                           
@@ -243,7 +248,8 @@ public class RecoveryClientThread extends Thread
                            }//end while (dis.available() > 0)
                            
                            dis.read(separatoreMarked, 0, 1);
-                           if (separatoreMarked[0] == 3) //valore prescelto per indicare pacchetto marked (lungo il doppio, cioè 2*pktSize)
+                           
+                           if (separatoreMarked[0] == 3) //valore prescelto per indicare pacchetto marked (lungo il doppio, cioe' 2*pktSize)
                            {
                                isMarked = true;
                                lunghezzaTemp = 2*pktSize;
@@ -845,6 +851,9 @@ public class RecoveryClientThread extends Thread
                 }
            
                 System.out.println("--BackgroundRecoverySystem-- ELABORAZIONE COMPLETATA");
+                
+                localDecoder = null; //ibero lo spazio occupato dal cyrcularByteBuffer
+                remoteDecoder = null;
                 
             //if (RecConn.getLocalCollection().debug)
                 System.out.println("");
