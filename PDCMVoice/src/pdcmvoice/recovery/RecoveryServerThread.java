@@ -232,7 +232,8 @@ public class RecoveryServerThread extends Thread
                 byte separatoreNonMarked = 0;
 
                 int pktSize = RecConn.getLocalCollection().getPktSize(); //dimensione PACCHETTO SINGOLO e non doppio
-                byte[] temp;//contiene il pacchetto associato ad ogni SN; può essere lungo pktSize o 2*pktSize
+                byte[] temp;//contiene il pacchetto associato ad ogni SN; puo' essere lungo pktSize o 2*pktSize
+
                 int lunghezzaTemp = pktSize;
                 byte[] send = new byte[(RecConn.getLocalCollection().getWindowWidth())*pktSize*2];//contiene al massimo windowWidth pacchetti doppi (da ritrasmettere)
 
@@ -276,60 +277,80 @@ public class RecoveryServerThread extends Thread
 
                         //##LEGGI IL PACCHETTO DALLA COLLEZIONE
                         int n = 1;
-                        while (i >= 0 && n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
+                        if (i >= RecConn.getLocalCollection().getFirstSnReceived())
                         {
-                            try {
-                              Thread.sleep(100); //attesa durante la lettura dei pacchetti richiesti
-                              } catch (InterruptedException e1) {
-                                  // TODO Auto-generated catch block
-                                  e1.printStackTrace();
-                              }
 
-                            if (RecConn.getLocalCollection().debug)
-                                System.out.println("--SERVER-- Attesa lettura pacchetto " + i);
-
-                            n++;
-                        }
-
-                        n = i;
-
-                        //##SE LA LETTURA NON E' ANTATA BUON FINE, LEGGI IL PRIMO PACCHETTO VALIDO SUBITO PRECEDENTE A QUELLO RICHIESTO (i)
-                        if (n < 0)
-                            n = RecConn.getLocalCollection().getFirstSnReceived();
-
-                        if (RecConn.getLocalCollection().read(n) == null || RecConn.getLocalCollection().read(n).length <= 0)
-                        {
-                            while (n >= RecConn.getLocalCollection().getFirstSnReceived() && (RecConn.getLocalCollection().read(n)== null || RecConn.getLocalCollection().read(n).length == 0))
-                                n--;
-
-                            //##SE NON NE E' STATO TROVATO UNO PRIMA DI AVER RAGGIUNTO L'INIZIO DELLA COLLEZIONE, GENERA UN PACCHETTO VUOTO
-                            if (n < RecConn.getLocalCollection().getFirstSnReceived())
+                            while (i >= 0 && n <= 5 && (RecConn.getLocalCollection().read(i)== null || RecConn.getLocalCollection().read(i).length == 0))
                             {
-                                n = i;
-                                byte[] emptyPkt = new byte[RecConn.getLocalCollection().getPktSize()];
+                                try {
+                                  Thread.sleep(100); //attesa durante la lettura dei pacchetti richiesti
+                                  } catch (InterruptedException e1) {
+                                      // TODO Auto-generated catch block
+                                      e1.printStackTrace();
+                                  }
+
+                            
+
                                 if (RecConn.getLocalCollection().debug)
-                                    System.out.println("--SERVER-- crazione emptyPkt");
-                                for(int s = 0; s <= RecConn.getLocalCollection().getPktSize()-1; s++)
-                                {
-                                    emptyPkt[s] = 0;
-                                }
-                                RecConn.getLocalCollection().recover(n, emptyPkt, false); //il pacchetto vuoto è "singolo" (lungo pktSize)
+                                    System.out.println("--SERVER-- Attesa lettura pacchetto " + i);
+    
+                                n++;
                             }
+
+                            n = i;
+
+                            //##SE LA LETTURA NON E' ANTATA BUON FINE, LEGGI IL PRIMO PACCHETTO VALIDO SUBITO PRECEDENTE A QUELLO RICHIESTO (i)
+                            if (n < 0)
+                                n = RecConn.getLocalCollection().getFirstSnReceived();
+
+                            if (RecConn.getLocalCollection().read(n) == null || RecConn.getLocalCollection().read(n).length <= 0)
+                            {
+                                while (n >= RecConn.getLocalCollection().getFirstSnReceived() && (RecConn.getLocalCollection().read(n)== null || RecConn.getLocalCollection().read(n).length == 0))
+                                    n--;
+
+                                //##SE NON NE E' STATO TROVATO UNO PRIMA DI AVER RAGGIUNTO L'INIZIO DELLA COLLEZIONE, GENERA UN PACCHETTO VUOTO
+                                if (n < RecConn.getLocalCollection().getFirstSnReceived())
+                                {
+                                    n = i;
+                                    byte[] emptyPkt = new byte[RecConn.getLocalCollection().getPktSize()];
+                                    for(int s = 0; s <= RecConn.getLocalCollection().getPktSize()-1; s++)
+                                    {
+                                        emptyPkt[s] = 0;
+                                    }
+                                    RecConn.getLocalCollection().recover(n, emptyPkt, false); //il pacchetto vuoto e' "singolo" (lungo pktSize)
+                                }
+                             }
+
+
+                               temp = RecConn.getLocalCollection().read(n);
+    
+                               if (RecConn.getLocalCollection().isMarked(n))
+                               {
+                                   send[totaleByteRisposta] = separatoreMarked;
+                                   lunghezzaTemp = 2*pktSize;
+                               }
+                               else 
+                               {
+                                   send[totaleByteRisposta] = separatoreNonMarked;
+                                   lunghezzaTemp = pktSize;
+                               }
+                               totaleByteRisposta += 1;
+                        }
+                        else
+                        {
+                            byte[] emptyPkt = new byte[RecConn.getLocalCollection().getPktSize()];
+                            if (RecConn.getLocalCollection().debug)
+                                System.out.println("--SERVER-- crazione emptyPkt");
+                            for(int s = 0; s <= RecConn.getLocalCollection().getPktSize()-1; s++)
+                            {
+                                emptyPkt[s] = 0;
+                            }
+                            temp = emptyPkt;
+                            lunghezzaTemp = pktSize;
+                            send[totaleByteRisposta] = separatoreNonMarked;
+                            totaleByteRisposta += 1;
                         }
 
-
-                       temp = RecConn.getLocalCollection().read(n);
-                       if (RecConn.getLocalCollection().isMarked(n))
-                       {
-                           send[totaleByteRisposta] = separatoreMarked;
-                           lunghezzaTemp = 2*pktSize;
-                       }
-                       else
-                       {
-                           send[totaleByteRisposta] = separatoreNonMarked;
-                           lunghezzaTemp = pktSize;
-                       }
-                       totaleByteRisposta += 1;
 
                        //##AGGIUNGI IL CONTENUTO DEL PACCHETTO ALL'ARRAY DI BYTE DA INVIARE AL THREAD CLIENT DELL'INTERLOCUTORE CHE HA FORMULATO LA RICHIESTA
 //                        if (temp != null)
