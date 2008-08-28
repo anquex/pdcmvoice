@@ -192,7 +192,7 @@ public class MainUI extends javax.swing.JFrame {
 
 
     /** Creates new form MainUI */
-    public MainUI() {
+    public MainUI() {    
         initComponents();
         renderLocalConnectionSettings();
         renderLocalTransmissionSettings();
@@ -203,7 +203,6 @@ public class MainUI extends javax.swing.JFrame {
         guiUpdater.start();
         nf.setMaximumFractionDigits(1);
         nf.setMaximumIntegerDigits(2);
-        onlinelist.addListSelectionListener(new ListListener());
         client=new Client(null, myAudioSettings, myConnectionSettings, myTransmissionSettings);
         client.start();
     }
@@ -357,7 +356,6 @@ public class MainUI extends javax.swing.JFrame {
 
         jButton4.setText("Call");
 
-        onlinelist.setModel(new UserNodeListModel());
         onlinelist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(onlinelist);
 
@@ -1659,25 +1657,5 @@ public class MainUI extends javax.swing.JFrame {
         }
     }
     }
-class ListListener implements ListSelectionListener{
-   
-    String address ;
-    
-//    public ListListener(JList online){
-//        this.online = online;
-//    }
-    
-    public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()){
-            JList online = (JList)e.getSource();
-            //preleva il nome dell'utente selezionato nella lista
-            String selectedItem = (String)online.getSelectedValue();          
-            //con lo username estraggo lo userNode
-            UserNode user  = UserNode.getUserNode(selectedItem);
-            address = user.getAddress();
-        }
-        
-    }
 
-}
 

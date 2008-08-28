@@ -6,6 +6,7 @@
 package pdcmvoice.p2p;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -26,7 +28,7 @@ import static pdcmvoice.p2p.Constants.*;
  *
  * @author marco
  */
-public class Client extends Thread implements ActionListener{
+public class Client extends Thread implements Action{
 
     String username;
     int masterPort;
@@ -50,7 +52,7 @@ public class Client extends Thread implements ActionListener{
         
         //DefaultListModel listModel = new DefaultListModel();
         listmodel = new UserNodeListModel();
-        userlist = new ProvaJpanelList(this, listmodel);//serve la JLIST del MAINUI
+        userlist = new ProvaJpanelList(this,listmodel);
         userlist.setVisible(true);
     
         //visualList= new JList(online.toArray());
@@ -166,8 +168,8 @@ public class Client extends Thread implements ActionListener{
             out("Client "+username+": aggiunto "+u.toString());
         online.add(u);        
         listmodel.addUser(u);
-        updateList();
-        
+        updatelsit();
+            
 
     }
 
@@ -176,7 +178,9 @@ public class Client extends Thread implements ActionListener{
             out("Client "+username+": rimosso "+u.toString());
         online.remove(u);
         listmodel.removeUserNode(u);
-        updateList();
+        updatelsit();
+
+       
 
     }
     private UserNode makeUserNode(String description){
@@ -192,13 +196,34 @@ public class Client extends Thread implements ActionListener{
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-//public static void main(String[] args) throws IOException{
-//    Client c = new Client("laura",P2PPORT);
-//    c.connect("127.0.0.1",P2PPORT);
-//    System.in.read();
-//}
 
-    private void updateList() {
-        userlist.update();
+   
+    public Object getValue(String key) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void putValue(String key, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setEnabled(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isEnabled() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private void updatelsit() {
+        
+        userlist.validate();
     }
 }

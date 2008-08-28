@@ -19,11 +19,12 @@ public class UserNodeListModel extends DefaultListModel{
      * Rimuove uno UserNode 
      * @param user UserNode da rimuovere
      */
+    
     public void removeUserNode(UserNode user){
         for (int i = 0 ; i < size() ; i++){
             UserNode u = (UserNode)get(i);
-            if(u.getUserNode(u.getUserName()).equals(user))
-                remove(i);
+            if((u.getUserName()).equals(user))
+                super.removeElement(u);
         }
     }
     /**
@@ -31,8 +32,7 @@ public class UserNodeListModel extends DefaultListModel{
      * @param user UserNode da aggiungere
      */
     public void addUser(UserNode user){
-        super.addElement(user);
-       
+        super.addElement(user);       
     }
     /**
      * 
@@ -42,5 +42,6 @@ public class UserNodeListModel extends DefaultListModel{
         return super.size();
     }
     
-
+  
+ 
 }

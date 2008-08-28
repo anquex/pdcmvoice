@@ -5,8 +5,6 @@
 
 package pdcmvoice.client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -15,9 +13,6 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pdcmvoice.impl.VoiceSession;
-import pdcmvoice.p2p.ProvaJpanelList;
-import pdcmvoice.p2p.UserNode;
-import pdcmvoice.p2p.UserNodeListModel;
 import pdcmvoice.settings.AudioSettings;
 import pdcmvoice.settings.ConnectionSettings;
 import pdcmvoice.settings.TransmissionSettings;
