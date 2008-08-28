@@ -381,6 +381,8 @@ public class RecoveryClientThread extends Thread
         byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         
+        byte[] daDecodificare = null;
+        
         /*
         STRATEGIA 1
         Converto le collezioni in AudioInputStream di tipo Speex
@@ -408,6 +410,7 @@ public class RecoveryClientThread extends Thread
       if (RecConn.getLocalCollection().debug)
         System.out.println("--ELAB-- ELABORAZIONE LOCAL COLLECTION");
     
+      daDecodificare = new byte[local.getPktSize()];
         int i = 0;
         for (; ; i++)
         {
@@ -417,8 +420,22 @@ public class RecoveryClientThread extends Thread
             {
                 if (local.read(localSn).length > 0)
                 {
-                    //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
-                    localDecoder.decodeFrame(local.read(localSn));
+                    if (!local.isMarked(localSn))
+                    {
+                        //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
+                        localDecoder.decodeFrame(local.read(localSn));
+                    }
+                    else
+                    {
+                        
+                        System.arraycopy(local.read(localSn), 0, daDecodificare, 0, local.getPktSize());
+                        localDecoder.decodeFrame(daDecodificare);
+                        
+                        System.arraycopy(local.read(localSn), local.getPktSize(), daDecodificare, 0, local.getPktSize());
+                        localDecoder.decodeFrame(daDecodificare);
+                        
+                        
+                    }
                 }
                 
                 if (RecConn.getLocalCollection().debug)
@@ -441,6 +458,8 @@ public class RecoveryClientThread extends Thread
                 break;
             }
         }
+        
+        daDecodificare = null;
         
       if (RecConn.getLocalCollection().debug)
         {
@@ -563,6 +582,7 @@ public class RecoveryClientThread extends Thread
       if (RecConn.getRemoteCollection().debug)
         System.out.println("--ELAB-- ELABORAZIONE REMOTE COLLECTION");
     
+      daDecodificare = new byte[remote.getPktSize()];
         i = 0;
         for (; ; i++)
         {
@@ -573,9 +593,22 @@ public class RecoveryClientThread extends Thread
                 
                 if (remote.read(remoteSn).length > 0)
                 {
-                
-                    //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
-                    remoteDecoder.decodeFrame(remote.read(remoteSn));
+                    if (!remote.isMarked(remoteSn))
+                    {
+                        //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
+                        remoteDecoder.decodeFrame(remote.read(remoteSn));
+                    }
+                    else
+                    {
+                        
+                        System.arraycopy(remote.read(remoteSn), 0, daDecodificare, 0, remote.getPktSize());
+                        remoteDecoder.decodeFrame(daDecodificare);
+                        
+                        System.arraycopy(remote.read(remoteSn), remote.getPktSize(), daDecodificare, 0, remote.getPktSize());
+                        remoteDecoder.decodeFrame(daDecodificare);
+                        
+                        
+                    }
                 }
                 
                 if (RecConn.getRemoteCollection().debug)
@@ -598,6 +631,8 @@ public class RecoveryClientThread extends Thread
                 break;
             }
         }
+        
+        daDecodificare = null;
         
       if (RecConn.getRemoteCollection().debug)
         {
