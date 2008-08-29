@@ -428,7 +428,7 @@ public class RecoveryClientThread extends Thread
                     else
                     {
                         
-                        System.arraycopy(local.read(localSn), 0, daDecodificare, 0, local.getPktSize());
+                        System.arraycopy(local.read(localSn),  local.getPktSize(), daDecodificare, 0, local.getPktSize());
                         localDecoder.decodeFrame(daDecodificare);
                         
 //                        System.out.println("PACCHETTO " + localSn + " decodificato in:");
@@ -440,7 +440,7 @@ public class RecoveryClientThread extends Thread
 //                    
 //                         System.out.println("");
                         
-                        System.arraycopy(local.read(localSn), local.getPktSize(), daDecodificare, 0, local.getPktSize());
+                        System.arraycopy(local.read(localSn), 0, daDecodificare, 0, local.getPktSize());
                         localDecoder.decodeFrame(daDecodificare);
                         
 //                        System.out.print("SECONDA PARTE: ");
@@ -618,10 +618,10 @@ public class RecoveryClientThread extends Thread
                     else
                     {
                         
-                        System.arraycopy(remote.read(remoteSn), 0, daDecodificare, 0, remote.getPktSize());
+                        System.arraycopy(remote.read(remoteSn), remote.getPktSize(), daDecodificare, 0, remote.getPktSize());
                         remoteDecoder.decodeFrame(daDecodificare);
                         
-                        System.arraycopy(remote.read(remoteSn), remote.getPktSize(), daDecodificare, 0, remote.getPktSize());
+                        System.arraycopy(remote.read(remoteSn), 0 , daDecodificare, 0, remote.getPktSize());
                         remoteDecoder.decodeFrame(daDecodificare);
                         
                         
