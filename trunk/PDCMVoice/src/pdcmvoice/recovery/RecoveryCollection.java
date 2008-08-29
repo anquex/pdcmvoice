@@ -491,8 +491,11 @@ public class RecoveryCollection
 	{
 	    for (int i = 0; i<= collection.length -1; i++)
 	    {
-	        collection[i].audioPkt = null;
-	        collection[i] = null;
+	        if (collection[i] != null)
+	        {
+    	        collection[i].audioPkt = null;
+    	        collection[i] = null;
+	        }
 	    }
 	}
 

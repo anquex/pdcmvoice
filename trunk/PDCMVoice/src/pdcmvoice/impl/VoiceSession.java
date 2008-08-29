@@ -404,7 +404,7 @@ public class VoiceSession {
                     System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread...");
                 
                 try {
-                    Thread.sleep(4000); //attesa del thread che completa la scrittura del file
+                    Thread.sleep(7000); //attesa del thread che completa la scrittura del file
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
@@ -425,7 +425,7 @@ public class VoiceSession {
                     System.out.println("--VOICE SESSION-- WAITING FOR RecoveryServerThread...");
                 
                 try {
-                    Thread.sleep(4000); //attesa del thread che completa la scrittura del file
+                    Thread.sleep(7000); //attesa del thread che completa la scrittura del file
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
