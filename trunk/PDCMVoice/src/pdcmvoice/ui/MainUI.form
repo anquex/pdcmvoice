@@ -1439,7 +1439,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="UIRemoteEncoding" alignment="0" pref="118" max="32767" attributes="1"/>
                           <Component id="UIRemoteRTCP" alignment="0" pref="118" max="32767" attributes="1"/>
-                          <Component id="UIRemoteRTP" alignment="0" min="-2" pref="118" max="-2" attributes="2"/>
+                          <Component id="UIRemoteRTP" alignment="0" pref="118" max="32767" attributes="2"/>
                           <Component id="UIRemoteMaster" alignment="0" pref="118" max="32767" attributes="1"/>
                           <Component id="UIRemoteAddress" alignment="0" pref="118" max="32767" attributes="1"/>
                       </Group>
