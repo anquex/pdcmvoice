@@ -38,7 +38,10 @@ public class VoiceSession {
     //RECOVERY
     private RecoveryServerThread rs;
     private RecoveryClientThread rc;
+    RecoveryCollection localCollection;
+    RecoveryCollection remoteCollection;
     public boolean rcHasFinished;
+    public boolean rsHasFinished;
     private RecoveryConnectionThread rct;
     boolean withRecovery;
 
@@ -63,6 +66,7 @@ public class VoiceSession {
             
             this.withRecovery = settings.withRecovery();
             rcHasFinished = false;
+            rsHasFinished = false;
             
             if (!settings.withRecovery())
             {   
@@ -86,8 +90,8 @@ public class VoiceSession {
                 rs = null;
                 rc = null;
                 
-                RecoveryCollection localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), pdcmvoice.impl.Constants.RECOVERY_LOCAL_COLLECTION_DEBUG);
-                RecoveryCollection remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), pdcmvoice.impl.Constants.RECOVERY_REMOTE_COLLECTION_DEBUG);
+                localCollection = new RecoveryCollection("local", 0, settings.getSendFormatCode(), pdcmvoice.impl.Constants.RECOVERY_LOCAL_COLLECTION_DEBUG);
+                remoteCollection = new RecoveryCollection("remote", 0, settings.getReceiveFormatCode(), pdcmvoice.impl.Constants.RECOVERY_REMOTE_COLLECTION_DEBUG);
                 
                 senderSession= new VoiceSessionSender(
                                                     settings.getSendFormatCode(),
@@ -409,7 +413,29 @@ public class VoiceSession {
                 i++;
             }
             
+           //metto a null i riferimenti della remoteCollection
+            remoteCollection.emptyCollection();
             
+            
+            i = 1;
+            
+            while (!rsHasFinished && i <= 5)
+            {
+                //if (rc.getRecConn().debug)
+                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryServerThread...");
+                
+                try {
+                    Thread.sleep(4000); //attesa del thread che completa la scrittura del file
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                
+                i++;
+            }
+            
+            //metto a null i riferimenti della remoteCollection
+            localCollection.emptyCollection();
             
             
         }

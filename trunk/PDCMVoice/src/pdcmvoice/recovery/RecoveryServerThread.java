@@ -427,6 +427,8 @@ public class RecoveryServerThread extends Thread
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        voiceSession.rsHasFinished = true;
 
         System.out.println("--RECOVERY-- RecoveryServerThread END");
 
