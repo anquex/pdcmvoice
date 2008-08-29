@@ -486,6 +486,15 @@ public class RecoveryCollection
 	{
 	    return encodedFormat;
 	}
+	
+	public void emptyCollection()
+	{
+	    for (int i = 0; i<= collection.length -1; i++)
+	    {
+	        collection[i].audioPkt = null;
+	        collection[i] = null;
+	    }
+	}
 
 	private static RecoverySample[] collectionResize(RecoverySample[] coll, int newSize)
 	{
@@ -494,6 +503,8 @@ public class RecoveryCollection
 	    return newCollection;
 
 	}
+	
+
 
 
 }
