@@ -37,7 +37,7 @@ public class VoiceSessionController extends Thread implements RTCPAppIntf {
     // before starting calculating averages
     public final static int MIN_RR_REQUIRED=3;
 
-    public final static int WAIT_FOR_OPTIMIZE=30000;
+    public final static int WAIT_FOR_OPTIMIZE=15000;
 
     //paused status, Controller pause optimisation
     private boolean paused=!DEFAULT_DYNAMIC_ADAPTATION;
