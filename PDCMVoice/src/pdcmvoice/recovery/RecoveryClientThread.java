@@ -907,10 +907,8 @@ public class RecoveryClientThread extends Thread
                 localDecoder = null; //cerco di liberare lo spazio occupato dal cyrcularByteBuffer
                 remoteDecoder = null;
                 
-                //metto a null i riferimenti della remoteCollection
-                RecConn.getRemoteCollection().emptyCollection();
-                //VoiceSession dovrà svuotare la localCollection quando il serverThread gli comunicherà che ha finito.
-                //RecConn.getLocalCollection().emptyCollection();
+                //LA "CANCELLAZIONE" (riferimenti a null) DELLE COLLEZIONI VIENE FATTA DA VoiceSession (metodo stop)
+                
                 
                 
             //if (RecConn.getLocalCollection().debug)
