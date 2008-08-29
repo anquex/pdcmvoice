@@ -77,8 +77,8 @@ public class Decoder {
 //            cBuffer=new CircularByteBuffer(10500000); //10 minuti di audio (50 pkt da 350B (o 320?)(PCM) al secondo)
 //            input=cBuffer.getInputStream();
 //            output=cBuffer.getOutputStream();
-            output=new BufferedOutputStream(new ByteArrayOutputStream());
-            ByteArrayOutputStream baos=(ByteArrayOutputStream)output;
+            ByteArrayOutputStream baos=new ByteArrayOutputStream();
+            output=new BufferedOutputStream(baos);
             input= new ByteArrayInputStream(baos.toByteArray());
         }
     }
