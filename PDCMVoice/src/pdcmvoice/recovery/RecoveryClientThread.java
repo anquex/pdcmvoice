@@ -378,8 +378,8 @@ public class RecoveryClientThread extends Thread
         //AudioFormat targetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(8000.0), localAis.getFormat().getSampleSizeInBits(), localAis.getFormat().getChannels(), localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
         
         
-        byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
-        byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
+//        byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
+//        byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         
         byte[] daDecodificare = null;
         
@@ -904,8 +904,14 @@ public class RecoveryClientThread extends Thread
            
                 System.out.println("--BackgroundRecoverySystem-- ELABORAZIONE COMPLETATA");
                 
-                localDecoder = null; //ibero lo spazio occupato dal cyrcularByteBuffer
+                localDecoder = null; //cerco di liberare lo spazio occupato dal cyrcularByteBuffer
                 remoteDecoder = null;
+                
+                //metto a null i riferimenti della remoteCollection
+                RecConn.getRemoteCollection().emptyCollection();
+                //VoiceSession dovrà svuotare la localCollection quando il serverThread gli comunicherà che ha finito.
+                //RecConn.getLocalCollection().emptyCollection();
+                
                 
             //if (RecConn.getLocalCollection().debug)
                 System.out.println("");
