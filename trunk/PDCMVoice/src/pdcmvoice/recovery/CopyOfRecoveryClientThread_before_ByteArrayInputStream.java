@@ -15,7 +15,7 @@ import org.xiph.speex.spi.*;
  * 
  * @author Antonio
  */
-public class RecoveryClientThread extends Thread
+public class CopyOfRecoveryClientThread_before_ByteArrayInputStream extends Thread
 {
     private RecoveryConnection RecConn;
     private String lastQuery;
@@ -26,7 +26,7 @@ public class RecoveryClientThread extends Thread
     private boolean stopQuery;
     private VoiceSession voiceSession;
     
-    public RecoveryClientThread(RecoveryConnection RecConn, VoiceSession voiceSession)
+    public CopyOfRecoveryClientThread_before_ByteArrayInputStream(RecoveryConnection RecConn, VoiceSession voiceSession)
 	{
         this.RecConn = RecConn;
         lastQuery = null;
@@ -350,25 +350,13 @@ public class RecoveryClientThread extends Thread
         RecoveryCollection remote = RecConn.getRemoteCollection();
             
         //Decoder localDecoder = new Decoder (local.getEncodedFormat());
-        //Decoder localDecoder = new Decoder (local.getEncodedFormat(), true);
-        Decoder localDecoder = new Decoder (local.getEncodedFormat());
+        Decoder localDecoder = new Decoder (local.getEncodedFormat(), true);
         localDecoder.init();
-        //Decoder remoteDecoder = new Decoder (remote.getEncodedFormat(), true);
-        Decoder remoteDecoder = new Decoder (remote.getEncodedFormat());
+        Decoder remoteDecoder = new Decoder (remote.getEncodedFormat(), true);
         remoteDecoder.init();
         
-        AudioInputStream localAis = null; //restituito dal decoder
+        AudioInputStream localAis = null;
         AudioInputStream remoteAis = null;
-        
-        byte[] localBuffer = new byte[1050000]; //spazio per 50pkt/s da 350B ciascuno per un minuto
-        byte[] remoteBuffer = new byte[1050000];
-        
-        ByteArrayInputStream localBais = new ByteArrayInputStream(localBuffer);
-        ByteArrayInputStream remoteBais = new ByteArrayInputStream(remoteBuffer);
-        
-        int localBufferNextPos = 0;
-        int remoteBufferNextPos = 0;
-        
         
         try {
              localAis = localDecoder.getAudioInputStream();
@@ -390,8 +378,8 @@ public class RecoveryClientThread extends Thread
         //AudioFormat targetAudioFormat = new AudioFormat (AudioFormat.Encoding.PCM_SIGNED, new Float(8000.0), localAis.getFormat().getSampleSizeInBits(), localAis.getFormat().getChannels(), localAis.getFormat().getFrameSize(), localAis.getFormat().getFrameRate(), localAis.getFormat().isBigEndian());
         
         
-//        byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
-//        byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
+        byte[] localArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
+        byte[] remoteArray = new byte[160000]; //50 pkt/s da 320Byte ciascuno per 10 secondi
         
         byte[] daDecodificare = null;
         
@@ -436,46 +424,12 @@ public class RecoveryClientThread extends Thread
                     {
                         //localDecoder.decodeFrame(local.read(localSn), localSn, 0);
                         localDecoder.decodeFrame(local.read(localSn));
-                        
-                        try 
-                        {
-                            if (localAis.available()>0)
-                            {
-                                localBuffer = writeToBuffer(localAis, localBuffer, localBufferNextPos, localAis.available());
-                                localBufferNextPos = localBufferNextPos + localAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        
-                        
-                        //leggo subito il pacchetto decodificato da localAis (l'uscita del localDecoder) per una lunghezza di localAis.available() e lo scrivo 
-                        //DIRETTAMENTE nel localBuffer, usando ed incrementando localBaisNextPos (di localAis.available()) . continuo così fino alla fine della localCollection
-                        //così da ottenere un localBais completo.
-                        //Poi devo creare un AudioInputStream a partire dal localBais (che è cmq InputStream) passando l'audioFormat di localAis
-                        // e la length in sample frames ricavata da
-                        //localBuffer,length/localAis.getFormat().getFrameSize(),
-                        //così come prima creavo il localAis con:
-                        //localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
                     }
                     else
                     {
                         
                         System.arraycopy(local.read(localSn), 0, daDecodificare, 0, local.getPktSize());
                         localDecoder.decodeFrame(daDecodificare);
-                        
-                        try 
-                        {
-                            if (localAis.available()>0)
-                            {
-                                localBuffer = writeToBuffer(localAis, localBuffer, localBufferNextPos, localAis.available());
-                                localBufferNextPos = localBufferNextPos + localAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
                         
 //                        System.out.println("PACCHETTO " + localSn + " decodificato in:");
 //                        System.out.print("PRIMA PARTE: ");
@@ -488,18 +442,6 @@ public class RecoveryClientThread extends Thread
                         
                         System.arraycopy(local.read(localSn), local.getPktSize(), daDecodificare, 0, local.getPktSize());
                         localDecoder.decodeFrame(daDecodificare);
-                        
-                        try 
-                        {
-                            if (localAis.available()>0)
-                            {
-                                localBuffer = writeToBuffer(localAis, localBuffer, localBufferNextPos, localAis.available());
-                                localBufferNextPos = localBufferNextPos + localAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
                         
 //                        System.out.print("SECONDA PARTE: ");
 //                        for (int l = 0; l <= daDecodificare.length -1; l++)
@@ -539,13 +481,13 @@ public class RecoveryClientThread extends Thread
       if (RecConn.getLocalCollection().debug)
         {
         System.out.println("--ELAB-- formato localAis: " + localAis.getFormat().toString());
-//        try {
-            System.out.println("--ELAB-- byte presenti in localBais: " + localBais.available());
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-        //System.out.println("--ELAB-- lunghezza localAis in frame: " + localAis.getFrameLength());
+        try {
+            System.out.println("--ELAB-- byte presenti in localAis: " + localAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- lunghezza localAis in frame: " + localAis.getFrameLength());
         }
         
 //        try {
@@ -590,14 +532,13 @@ public class RecoveryClientThread extends Thread
        
         
         //Aggiornamento lunghezza IN FRAME dello stream localAis (necessaria per la scrittura del file .wav)
-//        try {
-            localAis = new AudioInputStream(localBais, localAis.getFormat(), localBais.available()/localAis.getFormat().getFrameSize());
-            //localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
+        try {
+            localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
             //localAis = new AudioInputStream(localAis, targetAudioFormat, localAis.available()/localAis.getFormat().getFrameSize());
-//        } catch (IOException e2) {
-//            // TODO Auto-generated catch block
-//            e2.printStackTrace();
-//        }
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
         
         //visualizzazione info sul NUOVO localAis
       if (RecConn.getLocalCollection().debug)
@@ -673,18 +614,6 @@ public class RecoveryClientThread extends Thread
                     {
                         //remoteDecoder.decodeFrame(local.read(remoteSn), remoteSn, 0);
                         remoteDecoder.decodeFrame(remote.read(remoteSn));
-                        
-                        try 
-                        {
-                            if (remoteAis.available()>0)
-                            {
-                                remoteBuffer = writeToBuffer(remoteAis, remoteBuffer, remoteBufferNextPos, remoteAis.available());
-                                remoteBufferNextPos = remoteBufferNextPos + remoteAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
                     }
                     else
                     {
@@ -692,32 +621,8 @@ public class RecoveryClientThread extends Thread
                         System.arraycopy(remote.read(remoteSn), 0, daDecodificare, 0, remote.getPktSize());
                         remoteDecoder.decodeFrame(daDecodificare);
                         
-                        try 
-                        {
-                            if (remoteAis.available()>0)
-                            {
-                                remoteBuffer = writeToBuffer(remoteAis, remoteBuffer, remoteBufferNextPos, remoteAis.available());
-                                remoteBufferNextPos = remoteBufferNextPos + remoteAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        
                         System.arraycopy(remote.read(remoteSn), remote.getPktSize(), daDecodificare, 0, remote.getPktSize());
                         remoteDecoder.decodeFrame(daDecodificare);
-                        
-                        try 
-                        {
-                            if (remoteAis.available()>0)
-                            {
-                                remoteBuffer = writeToBuffer(remoteAis, remoteBuffer, remoteBufferNextPos, remoteAis.available());
-                                remoteBufferNextPos = remoteBufferNextPos + remoteAis.available() + 1;
-                            }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
                         
                         
                     }
@@ -749,13 +654,13 @@ public class RecoveryClientThread extends Thread
       if (RecConn.getRemoteCollection().debug)
         {
         System.out.println("--ELAB-- formato remoteAis: " + remoteAis.getFormat().toString());
-//        try {
-            System.out.println("--ELAB-- byte presenti in remoteBais: " + remoteBais.available());
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-        //System.out.println("--ELAB-- lunghezza remoteAis in frame: " + remoteAis.getFrameLength());
+        try {
+            System.out.println("--ELAB-- byte presenti in remoteAis: " + remoteAis.available());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("--ELAB-- lunghezza remoteAis in frame: " + remoteAis.getFrameLength());
         }
         
         
@@ -777,14 +682,13 @@ public class RecoveryClientThread extends Thread
        
         
         //Aggiornamento lunghezza IN FRAME dello stream remoteAis (necessaria per la scrittura del file .wav)
-//        try {
-            remoteAis = new AudioInputStream(remoteBais, remoteAis.getFormat(), remoteBais.available()/remoteAis.getFormat().getFrameSize());
-            //remoteAis = new AudioInputStream(remoteAis, remoteAis.getFormat(), remoteAis.available()/remoteAis.getFormat().getFrameSize());
+        try {
+            remoteAis = new AudioInputStream(remoteAis, remoteAis.getFormat(), remoteAis.available()/remoteAis.getFormat().getFrameSize());
             //remoteAis = new AudioInputStream(remoteAis, targetAudioFormat, remoteAis.available()/remoteAis.getFormat().getFrameSize());
-//        } catch (IOException e2) {
-//            // TODO Auto-generated catch block
-//            e2.printStackTrace();
-//        }
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
         
         //visualizzazione info sul NUOVO remoteAis
       if (RecConn.getRemoteCollection().debug)
@@ -1000,20 +904,8 @@ public class RecoveryClientThread extends Thread
            
                 System.out.println("--BackgroundRecoverySystem-- ELABORAZIONE COMPLETATA");
                 
-                localDecoder = null; //cerco di liberare lo spazio occupato dal cyrcularByteBuffer
+                localDecoder = null; //ibero lo spazio occupato dal cyrcularByteBuffer
                 remoteDecoder = null;
-                
-                localBuffer = null;
-                remoteBuffer = null;
-               
-                localTemp = null;
-                remoteTemp = null;
-                
-                localBais = null;
-                remoteBais = null;
-                
-                //remote collection: metto a null tutte le celle
-                
                 
             //if (RecConn.getLocalCollection().debug)
                 System.out.println("");
@@ -1044,24 +936,6 @@ public class RecoveryClientThread extends Thread
         System.arraycopy (b, 0, newArray, 0, b.length);
         return newArray;
     }
-	
-	private byte[] writeToBuffer(AudioInputStream ais, byte[] buffer, int bufferPos, int toBeWritten)
-	{
-	    try 
-	    {
-            if (buffer.length - bufferPos <= toBeWritten)
-                buffer = arrayResize(buffer, 2*buffer.length);
-            
-            
-            ais.read(buffer, bufferPos, toBeWritten);
-        
-	    } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            
-        }
-        return buffer;
-	}
 	
 	
 	
