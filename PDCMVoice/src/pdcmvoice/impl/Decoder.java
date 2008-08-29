@@ -3,6 +3,9 @@
  */
 
 package pdcmvoice.impl;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import static pdcmvoice.impl.Constants.*;
 
 import org.xiph.speex.SpeexDecoder;
@@ -71,9 +74,12 @@ public class Decoder {
         //antonio modifications goes here
         if (recovery)
         {
-            cBuffer=new CircularByteBuffer(10500000); //10 minuti di audio (50 pkt da 350B (o 320?)(PCM) al secondo)
-            input=cBuffer.getInputStream();
-            output=cBuffer.getOutputStream();
+//            cBuffer=new CircularByteBuffer(10500000); //10 minuti di audio (50 pkt da 350B (o 320?)(PCM) al secondo)
+//            input=cBuffer.getInputStream();
+//            output=cBuffer.getOutputStream();
+            output=new BufferedOutputStream(new ByteArrayOutputStream());
+            ByteArrayOutputStream baos=(ByteArrayOutputStream)output;
+            input= new ByteArrayInputStream(baos.toByteArray());
         }
     }
 
