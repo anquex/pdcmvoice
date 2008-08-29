@@ -55,8 +55,8 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = false;
 
-        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))//spazio per 10 minuti di audio
-
+        //collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))//spazio per 10 minuti di audio
+        collection = new RecoverySample[3000]; //spazio per 1 minuto di audio (50pkt/s); la dimensione viene raddoppiata all'occorrenza 
 	}
 
 	public RecoveryCollection(String type, int pktSize, int encodedFormat, boolean debug)
@@ -71,7 +71,8 @@ public class RecoveryCollection
         this.encodedFormat = encodedFormat;
         this.debug = debug;
 
-        collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))
+        //collection = new RecoverySample[30000]; //spazio per 10 minuti di audio. (Ogni pacchetto contiene al massimo 40ms di audio, quindi spazio fino a 20 minuti (il decoder nel "vecchio" utilizzo decodifica fino a 10 minuti))
+        collection = new RecoverySample[3000]; //spazio per 1 minuto di audio (50pkt/s); la dimensione viene raddoppiata all'occorrenza
 
     }
 
