@@ -214,11 +214,6 @@ public class MainUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        OnlineList = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        onlinelist = new javax.swing.JList();
         MainTabbedPanel = new javax.swing.JTabbedPane();
         StatusPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -345,39 +340,6 @@ public class MainUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PDCMVoice");
-
-        OnlineList.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel6.setText("Online Users");
-
-        jButton4.setText("Call");
-
-        onlinelist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(onlinelist);
-
-        org.jdesktop.layout.GroupLayout OnlineListLayout = new org.jdesktop.layout.GroupLayout(OnlineList);
-        OnlineList.setLayout(OnlineListLayout);
-        OnlineListLayout.setHorizontalGroup(
-            OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, OnlineListLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jButton4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel6))
-                .addContainerGap())
-        );
-        OnlineListLayout.setVerticalGroup(
-            OnlineListLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(OnlineListLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jLabel6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 326, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 28, Short.MAX_VALUE)
-                .add(jButton4)
-                .addContainerGap())
-        );
 
         StatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -1329,15 +1291,11 @@ public class MainUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(OnlineList, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(MainTabbedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
-            .add(OnlineList, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -1491,7 +1449,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTabbedPane MainTabbedPanel;
     private javax.swing.JTextField MyJitter;
     private javax.swing.JTextField MyPloss;
-    private javax.swing.JPanel OnlineList;
     private javax.swing.JTextField PBMinMax;
     private javax.swing.JTextField PBbufferedMillis;
     private javax.swing.JTextField PercivedIntervalPL;
@@ -1548,7 +1505,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu1;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu helpMenu1;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1581,7 +1537,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1595,13 +1550,11 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuBar menuBar1;
-    private javax.swing.JList onlinelist;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem openMenuItem1;
     private javax.swing.JMenuItem pasteMenuItem;
