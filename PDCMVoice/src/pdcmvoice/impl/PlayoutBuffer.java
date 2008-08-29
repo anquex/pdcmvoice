@@ -28,9 +28,9 @@ public class PlayoutBuffer{
     private boolean isBuffering;      //true if buffer is waiting to fill up
     private Decoder decoder;
     private int minBufferedMillis=DEFAULT_MIN_BUFFER_SIZE;
-          // if buffer is empty I wait for
-          // minBufferedMillis before starting
-          // playback
+    // if buffer is empty I wait for
+    // minBufferedMillis before starting
+    // playback
 
     // must be at least 20 ms!
     private int maxBufferedMillis=DEFAULT_MAX_BUFFER_SIZE;
@@ -44,7 +44,7 @@ public class PlayoutBuffer{
     private Deliver decoderDeliver; // does the pop out work
     private BrustKiller brustKiller;
 
-    private final boolean DEBUG=false;
+    private final boolean DEBUG=true;
 
     //CONSTANTS
 
@@ -52,6 +52,7 @@ public class PlayoutBuffer{
     public final boolean WANTCONSECUTIVE=true;
 
     // STATS VARIABLES
+    
     private int totalAdded;
     private long higherReceivedTimestamp=-1;
     private long lastIntervalTimestamp=0;
@@ -114,7 +115,7 @@ public class PlayoutBuffer{
             higherReceivedTimestamp=Math.max(higherReceivedTimestamp, timestamp);
         }
 
-        if (DEBUG) out("BUFFER: Frame Added : new size... "+size());
+        if (DEBUG) out("BUFFER: Frame "+timestamp+" Added : new size... "+size());
 
         if (isFirstBuffering){
             if(startFrameTimestamp>timestamp){
@@ -157,12 +158,23 @@ public class PlayoutBuffer{
                                 break;
                             }
                             else{
-        //                       if(DEBUG)
+                                /**
+                                 * 
+                                 * continuo a bufferizzare mentre il brustkiller si occupa di eliminare 
+                                 * i frame + vecchi. in modo da dare la possibilità di avere una sequenza
+                                 * consecutiva
+        //                       *
+                                 */
+                                
+                                //if(DEBUG)
         //                       out("Still Buffering...");
                             }
+                        }else{
+                            // i pacchetti non sono consecutivi
+                            checkAndFixBrusts();
+                            break;
                         }
                     }
-
             }else{
                 bufferedMillis=size()*TIME_PER_FRAME;
             }
@@ -257,18 +269,22 @@ public class PlayoutBuffer{
 
            if(size()<=1) return;
 
-            if(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>getMaxBufferedMillis()
+            if(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>=getMaxBufferedMillis()
                     //&& !isBuffering
                     )
             {
                 if (DEBUG)
                         out("PLAYOUT BUFFER : Maximum Delay Reached: "+
                         (getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME));
-
-                // drop the older packet
+                
+                int removed=0;
+                // drop the older packets
                 remove();
-
-                out("PLAYOUT BUFFER : Packet Dropped due to High Latency");
+                while(getHigherTimestamp()-getLowerTimestamp()+TIME_PER_FRAME>=getMaxBufferedMillis()){
+                    remove();
+                    removed++;
+                }
+                out("PLAYOUT BUFFER : "+removed+" Packet(s) Dropped due to High Latency");
 
                 // start playing from the older packet
                 decoderDeliver.startPlaying(getLowerTimestamp());
@@ -310,7 +326,7 @@ public class PlayoutBuffer{
             return isPlaying;
         }
 
-
+        //questo metodo sincronizzato provoca deadlock
         public  void run() {
             byte[] audio=null;
             if (isPlaying()){
@@ -321,32 +337,41 @@ public class PlayoutBuffer{
                         isBuffering=true; //Playout buffer
                        // stop playing since I don't have nothing to play
                         stopPlaying();
-                        return;
-                    }
-                    // this happens if speakers runs faster than
-                    // microphone... just wait
-                    if(higherReceivedTimestamp==nextTimestampToPlay && size()>1)
-                        return;
-
-                    if (getLowerTimestamp()==nextTimestampToPlay){
-                        samplesPlayed++;
-                        // in the buffer there is what i want to play
-                        //send to the decoder
-                        VoiceFrame vf=remove();
-                        audio=vf.getContent();
-                        if (DEBUG) out("DELIVER: Playing Frame : "+nextTimestampToPlay);
                     }
                     else{
-                        //notify the decoder of the problem (PL?)
-                        if (DEBUG) out("DELIVER: Packet loss , " +
-                                       "expeted Frame :"+nextTimestampToPlay);
+                        // this happens if speakers runs faster than
+                        // microphone... just wait
+                        if(higherReceivedTimestamp==nextTimestampToPlay && size()>1){
+                            if(DEBUG) out("DELIVER: Player running too fast? Waiting a frame");
+                            return;
+                        }
+                        if (getLowerTimestamp()==nextTimestampToPlay){
+                            samplesPlayed++;
+                            // in the buffer there is what i want to play
+                            //send to the decoder
+                            audio=remove().getContent();
+                            if (DEBUG) out("DELIVER: Playing Frame : "+nextTimestampToPlay);
+                        }
+                        else{
+                            //notify the decoder of the problem (PL?)
+                            if (DEBUG){
+                                String out="DELIVER: Packet loss , " +
+                                           "expeted Frame :"+nextTimestampToPlay;
+
+                               boolean received= lastSeenTimestamps[(int)((nextTimestampToPlay/20) %256)]==nextTimestampToPlay;
+                                out+=" filter says it was received? "+received;
+                                out(out);
+                            }
+                        }
+                        nextTimestampToPlay+=TIME_PER_FRAME;
                     }
-                    nextTimestampToPlay+=TIME_PER_FRAME;
-                }
-                decoder.decodeFrame(audio);
-            }else{
-            }
+                }//synchronize
+            }// is playing
+            // mando sempre in ogni caso l'audio al decoder, l'audio potra quindi essere audio vero oppure
+            // null per indicare perdita
+            decoder.decodeFrame(audio);
         }
+        
     }//Deliver
 
 
@@ -377,7 +402,9 @@ public class PlayoutBuffer{
         return sessionPloss;
     }
 
-    public synchronized void updateSessionPloss(){
+    public  void updateSessionPloss(){
+        if (totalAdded==0)
+            return;
         float expected=(higherReceivedTimestamp-startFrameTimestamp)/TIME_PER_FRAME+1;
         //
         //out("Expected "+expected+" received "+totalAdded);
@@ -388,7 +415,7 @@ public class PlayoutBuffer{
         return intervalPloss;
     }
 
-    public synchronized void updateIntervalPloss(){
+    public  void updateIntervalPloss(){
         lastIntervalTimestamp=Math.max(lastIntervalTimestamp, startFrameTimestamp);
         float expected= ((higherReceivedTimestamp - lastIntervalTimestamp) / TIME_PER_FRAME);
         intervalPloss=(expected-(totalAdded-previousTotalAdded))/expected;
@@ -411,7 +438,7 @@ public class PlayoutBuffer{
                     // svuoto il più possibile
                     if(!isBuffering())
                         sleep(1000);
-                    else if(isBuffering)
+                    else
                         sleep(20);
                 } catch (InterruptedException ex) {
                     if(DEBUG) out("BRUST KILLER died!");
