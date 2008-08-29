@@ -364,12 +364,12 @@ public class PlayoutBuffer{
                             }
                         }
                         nextTimestampToPlay+=TIME_PER_FRAME;
+                        decoder.decodeFrame(audio);
                     }
                 }//synchronize
             }// is playing
             // mando sempre in ogni caso l'audio al decoder, l'audio potra quindi essere audio vero oppure
             // null per indicare perdita
-            decoder.decodeFrame(audio);
         }
         
     }//Deliver
@@ -437,7 +437,7 @@ public class PlayoutBuffer{
                     // se sto bufferizzando (quindi la riproduzione è interrotta
                     // svuoto il più possibile
                     if(!isBuffering())
-                        sleep(1000);
+                        sleep(600);
                     else
                         sleep(20);
                 } catch (InterruptedException ex) {

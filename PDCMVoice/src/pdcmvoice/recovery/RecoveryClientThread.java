@@ -451,12 +451,12 @@ public class RecoveryClientThread extends Thread
                         
                         
                         //leggo subito il pacchetto decodificato da localAis (l'uscita del localDecoder) per una lunghezza di localAis.available() e lo scrivo 
-                        //DIRETTAMENTE nel localBuffer, usando ed incrementando localBaisNextPos (di localAis.available()) . continuo così fino alla fine della localCollection
-                        //così da ottenere un localBais completo.
-                        //Poi devo creare un AudioInputStream a partire dal localBais (che è cmq InputStream) passando l'audioFormat di localAis
+                        //DIRETTAMENTE nel localBuffer, usando ed incrementando localBaisNextPos (di localAis.available()) . continuo cos fino alla fine della localCollection
+                        //cosï¿½ da ottenere un localBais completo.
+                        //Poi devo creare un AudioInputStream a partire dal localBais (che  cmq InputStream) passando l'audioFormat di localAis
                         // e la length in sample frames ricavata da
                         //localBuffer,length/localAis.getFormat().getFrameSize(),
-                        //così come prima creavo il localAis con:
+                        //cos come prima creavo il localAis con:
                         //localAis = new AudioInputStream(localAis, localAis.getFormat(), localAis.available()/localAis.getFormat().getFrameSize());
                     }
                     else
@@ -954,7 +954,7 @@ public class RecoveryClientThread extends Thread
         
 //SCRITTURA del mixedAis
           
-            String percorso = "F:\\mixed.wav";
+            String percorso = "C:\\mixed.wav";
             File file= new File(percorso);
             if (RecConn.getLocalCollection().debug)
               System.out.println("--ELAB-- File aperto");
