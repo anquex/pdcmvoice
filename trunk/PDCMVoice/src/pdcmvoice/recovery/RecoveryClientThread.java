@@ -878,11 +878,12 @@ public class RecoveryClientThread extends Thread
                 fos = new FileOutputStream(file);
             } catch (FileNotFoundException e1) {
                 // TODO Auto-generated catch block
-                System.out.println("-----------------------------------------------------");
-                //if (RecConn.getLocalCollection().debug)
-                System.out.println("ATTENZIONE! Non e' stato possibile scrivere nel file:");
-                System.out.println(percorso);
-                System.out.println("-----------------------------------------------------");
+                
+//                System.out.println("-----------------------------------------------------");
+//                //if (RecConn.getLocalCollection().debug)
+//                System.out.println("ATTENZIONE! Non e' stato possibile scrivere nel file:");
+//                System.out.println(percorso);
+//                System.out.println("-----------------------------------------------------");
                 
                 if (RecConn.getLocalCollection().debug)
                         e1.printStackTrace();
