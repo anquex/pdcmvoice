@@ -71,7 +71,7 @@ public class Decoder {
         //antonio modifications goes here
         if (recovery)
         {
-            cBuffer=new CircularByteBuffer(1050000); //1 minuto di audio (50 pkt da 350B (o 320?)(PCM) al secondo)
+            cBuffer=new CircularByteBuffer(10500000); //10 minuti di audio (50 pkt da 350B (o 320?)(PCM) al secondo)
             input=cBuffer.getInputStream();
             output=cBuffer.getOutputStream();
         }
