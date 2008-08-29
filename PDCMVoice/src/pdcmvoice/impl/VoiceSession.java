@@ -398,10 +398,11 @@ public class VoiceSession {
         {
             rc.endOfStream = true;
             int i = 1;
-            while (!rcHasFinished && i <= 5)
+            int attesaMax = 5;
+            while (!rcHasFinished && i <= attesaMax)
             {
                 //if (rc.getRecConn().debug)
-                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread...");
+                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread... [" + (attesaMax - i + 1)+ "]");
                 
                 try {
                     Thread.sleep(7000); //attesa del thread che completa la scrittura del file
@@ -419,10 +420,10 @@ public class VoiceSession {
             
             i = 1;
             
-            while (!rsHasFinished && i <= 5)
+            while (!rsHasFinished && i <= attesaMax)
             {
                 //if (rc.getRecConn().debug)
-                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryServerThread...");
+                    System.out.println("--VOICE SESSION-- WAITING FOR RecoveryServerThread... [" + (attesaMax - i + 1)+ "]");
                 
                 try {
                     Thread.sleep(7000); //attesa del thread che completa la scrittura del file
