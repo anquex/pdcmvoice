@@ -368,6 +368,7 @@ public class CallManager extends Thread{
                     sendHeartBeat();
                 }
                 if(receiveTimestamp+TIMEOUT<current){
+                    out("Quitting due to Timeout...");
                     exit();
                 }
             }
