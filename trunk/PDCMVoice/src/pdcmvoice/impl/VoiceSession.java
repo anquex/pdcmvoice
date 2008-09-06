@@ -398,7 +398,7 @@ public class VoiceSession {
         {
             rc.endOfStream = true;
             int i = 1;
-            int attesaMax = 5;
+            int attesaMax = 10;
             while (!rcHasFinished && i <= attesaMax)
             {
                 //if (rc.getRecConn().debug)
