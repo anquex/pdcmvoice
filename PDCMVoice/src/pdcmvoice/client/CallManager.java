@@ -369,6 +369,7 @@ public class CallManager extends Thread{
                 }
                 if(receiveTimestamp+TIMEOUT<current){
                     out("Quitting due to Timeout...");
+                    voiceSession.forceQuitting();
                     exit();
                 }
             }

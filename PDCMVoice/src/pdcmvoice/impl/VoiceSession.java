@@ -54,6 +54,7 @@ public class VoiceSession {
     private final boolean DEBUG=true;
     private boolean listeningStarted;
     private boolean transmittingStarted;
+    private boolean forceQuitting;
 
     public VoiceSession (VoiceSessionSettings settings) throws SocketException{
 
@@ -399,7 +400,7 @@ public class VoiceSession {
             rc.endOfStream = true;
             int i = 1;
             int attesaMax = 10;
-            while (!rcHasFinished && i <= attesaMax)
+            while (!rcHasFinished && i <= attesaMax && !forceQuitting)
             {
                 //if (rc.getRecConn().debug)
                     System.out.println("--VOICE SESSION-- WAITING FOR RecoveryClientThread... [" + (attesaMax - i + 1)+ "]");
@@ -420,7 +421,7 @@ public class VoiceSession {
             
             i = 1;
             
-            while (!rsHasFinished && i <= attesaMax)
+            while (!rsHasFinished && i <= attesaMax && !forceQuitting)
             {
                 //if (rc.getRecConn().debug)
                     System.out.println("--VOICE SESSION-- WAITING FOR RecoveryServerThread... [" + (attesaMax - i + 1)+ "]");
@@ -667,6 +668,9 @@ public class VoiceSession {
     public boolean isActive(){
         //TO DO
         return transmittingStarted && listeningStarted;
+    }
+    public void forceQuitting(){
+        forceQuitting=true;
     }
 
 }// END VOICE SESSION
