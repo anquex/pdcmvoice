@@ -225,7 +225,7 @@ public class RTPSession {
             return -1;
         } else {
             registered = true;
-            generateSeqNum();
+            //generateSeqNum();
             if(LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest("-> RTPSessionRegister");
             }
