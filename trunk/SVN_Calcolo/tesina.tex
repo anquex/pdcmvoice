@@ -6,7 +6,7 @@
 \usepackage{latexsym}
 \usepackage{graphicx}
 \usepackage{epsfig}
-\usepackage{amsmath,amssymb} %, amsthm,
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
 
 \usepackage{fancyhdr}
@@ -43,10 +43,10 @@ X_k=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1
 Ricordando la \emph{Formula di Eulero}
 
 \begin{equation*} 
-e^{\pm2\pi\omega x} = \cos( 2\pi \omega x) \pm i \sin(2\pi \omega x)
+e^{\pm i 2\pi\omega x} = \cos( 2\pi \omega x) \pm i \sin(2\pi \omega x)
 \end{equation*}
 è evidente come, in generale, $X$ possa risultare in una sequenza complessa sebbene $x$ fosse reale.\\
-La relazione inversa della \ref{def-dft}, chiamata \emph{trasformata discreta inversa di Fourier (IDFT, inverse discrete Fourier transform)} è data da:
+La relazione inversa della \eqref{eq:def-dft}, chiamata \emph{trasformata discreta inversa di Fourier (IDFT, inverse discrete Fourier transform)} è data da:
 \begin{equation}
 x_n=\frac{1}{N}\sum_{k=0}^{N-1}X_ke^{\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1
 \label{def_idft}
@@ -566,6 +566,15 @@ Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentr
 
 \section{Worst Case Error DFT}
 
+\newtheorem{lemma2}{Lemma}
+\begin{lemma2}\label{wilkinson}
+\emph{(di Wilkinson)}
+Se $\mathbf{A}$ è una matrice reale $p \times q$ e  $\mathbf{B}$ è una matrice reale $q \times r$, Allora
+\begin{equation}
+\frac{\left\|{fl(\mathbf{AB})-\mathbf{AB}}\right\|_2}{\left\|\mathbf{A}\right\|_2 \left\|\mathbf{B}\right\|_2}\leq 1.06 q 2^{-b} 	
+\end{equation}
+\end{lemma2}
+\vskip 15pt
 \newtheorem{Teorema}{Teorema}
 \begin{Teorema} \label{Teorema:bound-dft}
 Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
@@ -573,6 +582,49 @@ Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier dis
 	\frac{\left\|\mathbf{\hat{x}-x}\right\|_2}{\left\|\mathbf{x}\right\|_2}\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b}
 \end{equation}
 \end{Teorema}
+\begin{proof}
+Il calcolo per definizione della DFT è esprimibile attraverso una matrice $\mathbf{F} \in \mathbb{C}^{N \times N}$ dove $$\mathbf{F}_{i,j} =(\omega_N^{ij})_{i,k=0}^{N-1}$$
+\begin{equation}
+	\mathbf{\hat{x}}=\mathbf{F}\mathbf{x}
+\end{equation}
+$\mathbf{x}$ può essere visto come $\mathbf{x}={\rm Re}(\mathbf{x})+i{\rm Im}(\mathbf{x}) \leftrightarrow [{\rm Re}(\mathbf{x}), {\rm Im}(\mathbf{x})]$, vettore di lunghezza $2N$
+Per definizione
+\begin{align}
+\label{eq:def-dft}
+X_k&=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1\\
+&= \sum_{n=0}^{N-1}({\rm Re}(x)+\jmath{\rm Im}(x)) \left[ \cos\left( \frac{2\pi}{N}kn\right) - \jmath \sin \left(\frac{2\pi}{N}kn\right)\right]
+\end{align}
+Le operazioni complesse possono quindi essere espresse come operazioni reali attraverso una matrice $2N \times 2N$:
+\[ \begin{bmatrix}
+  {\rm Re}(\mathbf{\hat{x}}) \\
+	{\rm Im}(\mathbf{\hat{x}})
+ \end{bmatrix}= 
+ \begin{bmatrix}
+  \mathbf{C} & -\mathbf{S} \\
+  \mathbf{S} & \mathbf{C}
+ \end{bmatrix}
+  \begin{bmatrix}
+  {\rm Re}(\mathbf{x}) \\
+	{\rm Im}(\mathbf{x}) \end{bmatrix} = \mathbf{M}
+  \begin{bmatrix}
+  {\rm Re}(\mathbf{x}) \\
+	{\rm Im}(\mathbf{x}) \end{bmatrix}
+\]
+dove $\mathbf{C}_{i,j}=\cos\left(\frac{2\pi i j}{N}\right)$ e $\mathbf{S}_{i,j}=\sin\left(\frac{2\pi i j}{N}\right)$. Inoltre la norma 2 della matrice è
+
+\begin{align*}
+ \left\|\mathbf{M}\right\|_2&=\sqrt{\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}\left\{ \cos^2\left(\frac{2\pi ij}{N}\right) +\sin^2\left(\frac{2\pi ij}{N}\right)+\cos^2\left(\frac{2\pi ij}{N}\right)+\sin^2\left(\frac{2\pi ij}{N}\right) \right\}}\\
+ &=\sqrt{2N^2}
+\end{align*}
+Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\mathbf{M}\right\|_2=\sqrt{2} N$, ricordando che $\left\|\hat{\mathbf{x}}\right\|_2=\sqrt 2 \left \| \mathbf{x} \right \|_2$
+\begin{equation}
+\frac{\left\|{fl(\mathbf{Mx})-\mathbf{Mx}}\right\|_2}{\left\|\mathbf{M}\right\|_2 \left\|\mathbf{x}\right\|_2}\leq 1.06 q 2^{-b} = \frac{\left\|{fl(\mathbf{Mx})-\mathbf{\hat{{x}}}}\right\|_2}{\sqrt{2}N \left\|\mathbf{x}\right\|_2}\leq 1.06 2N 2^{-b} 
+\end{equation}
+\begin{equation}
+	\frac{\left\|\mathbf{\hat{x}-x}\right\|_2}{\left\|\mathbf{x}\right\|_2}\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b}
+\end{equation}
+\end{proof}
+
 
 \section{Confronto DFT FFT}
 \begin{figure}[h!]
