@@ -539,6 +539,9 @@ dove $N_1^{-1}$ è l'inverso di $N_1$ in aritmetica modulo $N_2$ e analogamente p
 La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N))$. Il numero di operazioni complessive è confrontabile con quello dello split-radix ma il numero di moltiplicazioni globale è inferiore.
 
 \chapter{Stabilità Numerica}
+Fin'ora abbiamo trattato la \emph{discrete Fourier transform} e la \emph{fast Fourier transform} pensando che potessero idealmente essere calcolate con assoluta precisione.
+Tuttavia i calcolatori reali utilizzano parole di lunghezza finita costante e quindi anche i numeri e le operazioni aritmetiche sono soggetti ai limiti della 	\emph{rappresentazione in virgola mobile}. 
+
 \section{Confronto DFT FFT}
 \begin{figure}[h!]
   \centering
