@@ -540,7 +540,39 @@ La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N)
 
 \chapter{Stabilità Numerica}
 Fin'ora abbiamo trattato la \emph{discrete Fourier transform} e la \emph{fast Fourier transform} pensando che potessero idealmente essere calcolate con assoluta precisione.
-Tuttavia i calcolatori reali utilizzano parole di lunghezza finita costante e quindi anche i numeri e le operazioni aritmetiche sono soggetti ai limiti della 	\emph{rappresentazione in virgola mobile}. 
+Tuttavia i calcolatori reali utilizzano parole di lunghezza finita e quindi anche i numeri e le operazioni aritmetiche sono soggetti ai limiti della 	\emph{rappresentazione in virgola mobile}.\\
+E' fondamentale infatti che un algoritmo, oltre ad essere veloce, sia anche stabile quando opera in un contesto in virgola mobile con errore di arrotondamento $u$.\\
+Mostreremo quindi come DFT e FFT siano estremamente sensibili rispetto alla precisione con cui vengono precalcolati i \emph{twiddle factors}, quale rapporto intercorre tra l'errore con DFT e FFT e come, sotto opportune ipotesi, gli algoritmi FFT possano essere considerati stabili.
+
+Utilizando un modello standard di aritmetica binaria reale a precisione finita \cite{higham} se $x$ e $y$ sono numeri complessi esattamente rappresentabili si assume che
+
+%ROUNDOFF ERROR pg 565
+\newtheorem{Lemma}{Lemma}
+\begin{Lemma}
+Siano $x,y \in \mathbb{C}$, allora
+\begin{alignat}{3}
+fl(x\pm y) = (x\pm y) (1+\delta) 	\qquad \qquad && |\delta| &\leq u\\
+fl(x\ast y) = (x\ast y) (1+\delta) 	\qquad \qquad&& |\delta| &\leq \sqrt{2}\frac{2u}{1-2nu}\\
+fl(x\div y) = (x\div y) (1+\delta) 	\qquad \qquad && |\delta| &\leq \sqrt{2}\frac{4u}{1-4nu}
+\end{alignat}
+\end{Lemma}
+
+Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y).$\\
+\noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\epsilon_{ik}|$ tale che:
+
+\begin{equation*}
+\hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\epsilon_{jk} \qquad |\epsilon_{jk}|\leq u
+\end{equation*}
+
+\section{Worst Case Error DFT}
+
+\newtheorem{Teorema}{Teorema}
+\begin{Teorema} \label{Teorema:bound-dft}
+Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
+\begin{equation}
+	\frac{\left\|\mathbf{\hat{x}-x}\right\|_2}{\left\|\mathbf{x}\right\|_2}\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b}
+\end{equation}
+\end{Teorema}
 
 \section{Confronto DFT FFT}
 \begin{figure}[h!]
