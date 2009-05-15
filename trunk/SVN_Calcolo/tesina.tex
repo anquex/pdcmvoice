@@ -502,9 +502,28 @@ T(\frac{N}{2}) + 2T(\frac{N}{4})+6N-16 & \text{se } N=4^\nu > 4 \\
 \end{equation}
 Il guadagno asintotico rispetto alle implementazioni radix-2 è quindi circa del 25\%.
 \subsection{Altri Algoritmi}
-\paragraph{Goertzel's Algorithm} %fft-lecture.pdf
-\paragraph{Good-Thomas - Prime Factor Algorithm} %fft-lecture.pdf
-Il "`Prime-factor algorithm"', anche chiamato Good-Thomas algorithm, permettere di ridefinire una FFT con $N=N_1\times N_2$ come \emph{DFT bidimensionali} $N_1\times N_2$, ma solo nel caso che $N_1$ e $N_2$ siano \emph{coprimi}. La valutazione di queste DFT di taglia $N_1$ o $N_2$ può essere effettuato applicando ricorsivamente PFA stesso, se possibile, o qualunque altro algoritmo FFT.
+
+\subsubsection*{Goertzel's Algorithm} %fft-lecture.pdf
+Questo algoritmo, implementato come filtro IIR, è utilizzato in DSP quando si è interessati a conoscere solo alcune delle componenti in frequenza $X_k$ di una sequenza $x_N$
+
+\begin{align*}
+	X_{k} &\stackrel{\text{\emph{def}}}{=} \sum_{n=0}^{N-1} x[n] \omega_N^{nk} = 1 \cdot \sum_{n=0}^{N-1} x[n] \omega_N^{nk}, \quad \text{con}\quad \omega_N^{-kN}=1\\
+	&= \omega_N^{-kN} \sum_{n=0}^{N-1} x[n] \omega_N^{nk} = \sum_{n=0}^{N-1} x[n] \omega_N^{-k(N-n)}\\
+	\left.y_k[n]\right|_{n=N}&= \left.\left[x[n]\ast \left( \omega_N^{-nk} u[n]\right)\right]\right|_{n=N}
+\end{align*}
+che è una convoluzione discreta.
+\begin{equation*}
+	x[n] \longrightarrow \fbox{$h[n]=\omega_N^{-nk} u[n]$} \longrightarrow y_k[n]
+\end{equation*}
+L'algoritmo, espresso come equazione alle differenze del primo ordine, fornisce
+\begin{equation*}
+	y_k[n] = x [n] +  \omega_N^{-k} y_k[n-1]  \quad \text{con} \quad y_k[-1]=0
+\end{equation*}
+Notiamo che $x[n]$ è definito solo per $0\leq n \leq N-1$ e perciò $x[n]=0$ e che per calcolare la $k$-esima componente $X_k$  si utilizza solo la radice $\omega_N^{-k}$.
+Il calcolo di $X_k$ richiede tempo $O(N)$. Quindi per calcolare tutta la DFT si ha complessità $O(N^2)$. Tuttavia se si è interessati solo a $M$ frequenze risulta vantaggiosa rispetto agli algoritmi FFT $O(N \log2(N))$ fin tanto che $ M\leq\log2(N)$
+
+\subsubsection*{Good-Thomas - Prime Factor Algorithm} %fft-lecture.pdf
+Il \emph{Prime Factor Algorithm (PFA)}, anche chiamato \emph{Good-Thomas algorithm}, permettere di ridefinire una FFT con $N=N_1\times N_2$ come \emph{DFT bidimensionali} $N_1\times N_2$, ma solo nel caso che $N_1$ e $N_2$ siano \emph{coprimi}. La valutazione di queste DFT di taglia $N_1$ o $N_2$ può essere effettuato applicando ricorsivamente PFA stesso, se possibile, o qualunque altro algoritmo FFT.
 Avere $N_1$ e $N_2$ coprimi permette di individuare facilmente una funzione biettiva per ri-indicizzare l'input e l'output di \eqref{eq:def-dft}.
 Ciò ci permette di scrivere
 \begin{align}
@@ -513,6 +532,7 @@ k &= k_1 N_2^{-1} N_2 + k_2 N_1^{-1} N_1 \mod N,\\
 X_{k_1 N_2^{-1} N_2 + k_2 N_1^{-1} N_1} &=\sum_{n_1=0}^{N_1-1} \left( \sum_{n_2=0}^{N_2-1} x_{n_1 N_2 + n_2 N_1}e^{-\frac{2\pi i}{N_2} n_2 k_2 } \right)e^{-\frac{2\pi i}{N_1} n_1 k_1 }.
 \end{align}
 dove $N_1^{-1}$ è l'inverso di $N_1$ in aritmetica modulo $N_2$ e analogamente per $N_2^{-1}$.
+La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N))$. Il numero di operazioni complessive è confrontabile con quello dello split-radix ma il numero di moltiplicazioni globale è inferiore.
 
 \chapter{Applicazioni}
 \section{FFT of two Real Functions Simultaneosly}
