@@ -519,8 +519,12 @@ L'algoritmo, espresso come equazione alle differenze del primo ordine, fornisce
 \begin{equation*}
 	y_k[n] = x [n] +  \omega_N^{-k} y_k[n-1]  \quad \text{con} \quad y_k[-1]=0
 \end{equation*}
-Notiamo che $x[n]$ è definito solo per $0\leq n \leq N-1$ e perciò $x[n]=0$ e che per calcolare la $k$-esima componente $X_k$  si utilizza solo la radice $\omega_N^{-k}$.
+Notiamo che $x[n]$ è definito solo per $0\leq n \leq N-1$ e perciò $x[N]=0$ e che per calcolare la $k$-esima componente $X_k$  si utilizza solo la radice $\omega_N^{-k}$.
 Il calcolo di $X_k$ richiede tempo $O(N)$. Quindi per calcolare tutta la DFT si ha complessità $O(N^2)$. Tuttavia se si è interessati solo a $M$ frequenze risulta vantaggiosa rispetto agli algoritmi FFT $O(N \log2(N))$ fin tanto che $ M\leq\log2(N)$
+%
+% propagazione errore veloce....
+%
+%
 
 \subsubsection*{Good-Thomas - Prime Factor Algorithm} %fft-lecture.pdf
 Il \emph{Prime Factor Algorithm (PFA)}, anche chiamato \emph{Good-Thomas algorithm}, permettere di ridefinire una FFT con $N=N_1\times N_2$ come \emph{DFT bidimensionali} $N_1\times N_2$, ma solo nel caso che $N_1$ e $N_2$ siano \emph{coprimi}. La valutazione di queste DFT di taglia $N_1$ o $N_2$ può essere effettuato applicando ricorsivamente PFA stesso, se possibile, o qualunque altro algoritmo FFT.
@@ -534,7 +538,19 @@ X_{k_1 N_2^{-1} N_2 + k_2 N_1^{-1} N_1} &=\sum_{n_1=0}^{N_1-1} \left( \sum_{n_2=
 dove $N_1^{-1}$ è l'inverso di $N_1$ in aritmetica modulo $N_2$ e analogamente per $N_2^{-1}$.
 La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N))$. Il numero di operazioni complessive è confrontabile con quello dello split-radix ma il numero di moltiplicazioni globale è inferiore.
 
+\chapter{Stabilità Numerica}
+\section{Confronto DFT FFT}
+\begin{figure}[h!]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/errore-DFT-FFT}
+  \caption{Norma 2 dell'errore tra $x_N$ e $\mathcal{F}^{-1}(\mathcal{F}(x_N))$}
+\end{figure}
+
 \chapter{Applicazioni}
+%
+% MURLI
+%
+%
 \section{FFT of two Real Functions Simultaneosly}
 
 %
