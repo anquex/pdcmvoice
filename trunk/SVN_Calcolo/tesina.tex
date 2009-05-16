@@ -86,6 +86,7 @@ DFT e IDFT mappano vettori complessi $N$-dimensionali in vettori complessi $N$-d
 \item Ortogonalità:\\
 I vettori $e^{\jmath \frac{2\pi}{N}kn}$ formano una \emph{base ortogonale} per l'insieme dei vettori complessi $N$-dimensionali:
 \begin{equation}
+\label{eq:dft-orthogonality}
 \sum_{n=0}^{N-1}(e^{\jmath\frac{2\pi}{N} kn})(e^{-\jmath\frac{2\pi}{N}k'n})=N\delta_{kk'}
 \end{equation}
 dove $\delta_{kk'}$ \`e il delta di Kronecker. 
@@ -192,7 +193,8 @@ Il termine
 \end{equation}
 \`e una \emph{radice complessa N-esima dell'unita}.\\
 L'elemento in posizione $(i,j)$ della matrice \`e $\omega_N^{ij}$, con $i,j=0,1,...,N-1$.\\
-Analogamente è possibile esprimere la IDFT come:
+
+\noindent Analogamente è possibile esprimere la IDFT come:
 \begin{equation}
 x=\mathcal{F}^{-1}(X)=F_N^{-1}X
 \end{equation}
@@ -202,6 +204,31 @@ Dove $F_N^{-1}$ \`e la \emph{matrice inversa} di $F_N$ e può essere facilmente o
 \end{equation}
 dove pertanto in posizione $(i,j)$ di $F_N^{-1}$ è presente il valore
  $\frac{1}{N}\omega_N^{-ij}$
+ 
+Dalla proprietà \eqref{eq:dft-orthogonality} emerge che 
+\begin{equation*}
+	F_N^*F_N=N\cdot I
+\end{equation*}
+questo significa che le colonne di $F$ sono \emph{ortogonali}. Indicando con $F^j$ la j-esima colonna di $F_N$ possiamo scrivere:
+\begin{align}
+\mathbf{F}_N^*\mathbf{F}_N&=
+\begin{bmatrix}
+	\langle F^0, F^0\rangle & \left\langle F^0, F^1\right\rangle &\left\langle F^0, F^2\right\rangle & \cdots & \left\langle F^0, F^{N-1}\right\rangle\\
+	\left\langle F^1, F^0\right\rangle & \left\langle F^1, F^1\right\rangle &\left\langle F^1, F^2\right\rangle & \cdots & \left\langle F^1, F^{N-1}\right\rangle\\
+	\left\langle F^2, F^0\right\rangle & \left\langle F^2, F^1\right\rangle &\left\langle F^2, F^2\right\rangle & \cdots & \left\langle F^2, F^{N-1}\right\rangle\\
+	\vdots &\vdots & \vdots & \ddots & \vdots \\
+	\left\langle F^{N-1}, F^0\right\rangle & \left\langle F^{N-1}, F^1\right\rangle &\left\langle F^{N-1}, F^2\right\rangle & \cdots & \left\langle F^{N-1}, F^{N-1}\right\rangle\\
+\end{bmatrix}\\
+&=
+\begin{bmatrix}
+ N & 0 & 0 & ... & 0\\  0 & N & 0 & ... & 0\\  0 & 0 & N & ... & 0\\ \vdots &\vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & ... & N\\
+\end{bmatrix} = N\cdot \mathbf{I}
+\end{align}
+Questo ci è utile per definire le versioni normalizzate 
+\begin{equation}
+	\widetilde{F}_N=\frac{1}{\sqrt{N}} F_N  \qquad \qquad  \widetilde{F}_N^*=\frac{1}{\sqrt{N}} F_N^*
+\end{equation}
+Una proprietà delle matrici ortogonali (e quindi che costituite da colonne ortonormali) è che \emph{conservano le norme dei vettori}.
 \subsection{Analogie tra DFT e IDFT}
 Questa affinità tra $F_N$ e $F_N^{-1}$ mette in risalto come in realtà la procedura per il calcolo di DFT e IDFT sia esattamente la stessa a meno di minimi adattamenti.\\
 In altre parole è possibile calcolare la IDFT attraverso lo stesso algoritmo di \emph{forward computation} della DFT attraverso un semplice preprocessing dell'input e moltiplicazione per un fattore di scala:
@@ -695,18 +722,18 @@ Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentr
 
 \newtheorem{lemma2}{Lemma}
 \begin{lemma2}\label{wilkinson}
-\emph{(di Wilkinson)}
-Se $\mathbf{A}$ è una matrice reale $p \times q$ e  $\mathbf{B}$ è una matrice reale $q \times r$, Allora
+\textbf{(di Wilkinson)}
+Se $\mathbf{A}$ è una matrice reale $p \times q$, $\mathbf{B}$ è una matrice reale $q \times r$ e  $b$ è il numero di bit della mantissa, Allora
 \begin{equation}
-\frac{\left\|{fl(\mathbf{AB})-\mathbf{AB}}\right\|_2}{\left\|\mathbf{A}\right\|_2 \left\|\mathbf{B}\right\|_2}\leq 1.06 q 2^{-b} 	
+\left\|{fl(\mathbf{AB})-\mathbf{AB}}\right\|_2\leq 1.06 \cdot q\cdot 2^{-b} \left\|\mathbf{A}\right\|_2 \left\|\mathbf{B}\right\|_2
 \end{equation}
 \end{lemma2}
 \vskip 15pt
 \newtheorem{Teorema}{Teorema}
-\begin{Teorema} \label{Teorema:bound-dft}
-Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
+\begin{Teorema} \textbf{(Gentleman-Sande)}\label{Teorema:bound-dft}
+Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta $\mathbf{X}$ di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
 \begin{equation}
-	\frac{\left\|\mathbf{\hat{x}-x}\right\|_2}{\left\|\mathbf{x}\right\|_2}\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b}
+\left\|\mathbf{\hat{X}-X}\right\|_2\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b} \left\|\mathbf{X}\right\|_2
 \end{equation}
 \end{Teorema}
 \begin{proof}
@@ -732,7 +759,7 @@ Le operazioni complesse possono quindi essere espresse come operazioni reali att
  \end{bmatrix}
   \begin{bmatrix}
   {\rm Re}(\mathbf{x}) \\
-	{\rm Im}(\mathbf{x}) \end{bmatrix} = \mathbf{M}
+	{\rm Im}(\mathbf{x}) \end{bmatrix} = \mathbf{\Phi}
   \begin{bmatrix}
   {\rm Re}(\mathbf{x}) \\
 	{\rm Im}(\mathbf{x}) \end{bmatrix}
@@ -740,24 +767,38 @@ Le operazioni complesse possono quindi essere espresse come operazioni reali att
 dove $\mathbf{C}_{i,j}=\cos\left(\frac{2\pi i j}{N}\right)$ e $\mathbf{S}_{i,j}=\sin\left(\frac{2\pi i j}{N}\right)$. Inoltre la norma 2 della matrice è
 
 \begin{align*}
- \left\|\mathbf{M}\right\|_2&=\sqrt{\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}\left\{ \cos^2\left(\frac{2\pi ij}{N}\right) +\sin^2\left(\frac{2\pi ij}{N}\right)+\cos^2\left(\frac{2\pi ij}{N}\right)+\sin^2\left(\frac{2\pi ij}{N}\right) \right\}}\\
+ \left\|\mathbf{\Phi}\right\|_2&=\sqrt{\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}\left\{ \cos^2\left(\frac{2\pi ij}{N}\right) +\sin^2\left(\frac{2\pi ij}{N}\right)+\cos^2\left(\frac{2\pi ij}{N}\right)+\sin^2\left(\frac{2\pi ij}{N}\right) \right\}}\\
  &=\sqrt{2N^2}
 \end{align*}
-Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\mathbf{M}\right\|_2=\sqrt{2} N$, ricordando che $\left\|\hat{\mathbf{x}}\right\|_2=\sqrt 2 \left \| \mathbf{x} \right \|_2$
+\begin{align*}
+\Phi^*\Phi= \underbrace{\begin{bmatrix}
+1 & 0 & ... & 0\\ 0 & 1 & ... & 0\\ \vdots & \vdots & \ddots & \vdots\\ 0 & 0 & ... & 1\\
+\end{bmatrix}}_{2N} \longrightarrow \left\|\Phi^*\Phi \right\|_2=\sqrt{2N}
+\end{align*}
 \begin{equation}
-\frac{\left\|{fl(\mathbf{Mx})-\mathbf{Mx}}\right\|_2}{\left\|\mathbf{M}\right\|_2 \left\|\mathbf{x}\right\|_2}\leq 1.06 q 2^{-b} = \frac{\left\|{fl(\mathbf{Mx})-\mathbf{\hat{{x}}}}\right\|_2}{\sqrt{2}N \left\|\mathbf{x}\right\|_2}\leq 1.06 2N 2^{-b} 
+\mathbf{X} = \Phi \mathbf{x} \longrightarrow \left\|\mathbf{X}\right\|_2=\frac{\left\|\Phi \right\|_2}{\left\|\Phi^*\Phi \right\|_2}\left\|\mathbf{x} \right\|_2 = \frac{\sqrt{2}N}{\sqrt{2N}}\left\|\mathbf{x} \right\|_2=\sqrt{N} \left\|\mathbf{x}\right\|_2
 \end{equation}
-\begin{equation}
-	\frac{\left\|\mathbf{\hat{x}-x}\right\|_2}{\left\|\mathbf{x}\right\|_2}\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b}
-\end{equation}
+
+Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\mathbf{\Phi}\right\|_2=\sqrt{2} N$, ricordando che $\left\|\mathbf{X}\right\|_2=\sqrt N \left \| \mathbf{x} \right \|_2$
+\begin{align*}
+\left\|{fl(\mathbf{\Phi x})-\mathbf{\Phi x}}\right\|_2&\leq 1.06 \cdot q \cdot 2^{-b} \left\|\mathbf{\Phi}\right\|_2 \left\|\mathbf{x}\right\|_2\\ 
+\left\|{fl(\mathbf{X})-\mathbf{X}}\right\|_2&\leq 1.06 \cdot 2N \cdot 2^{-b} \sqrt{2}N \frac{\left\|\mathbf{X}\right\|_2}{\sqrt{N}}\\ 
+\left\|\mathbf{\hat{X}-X}\right\|_2&\leq 1.06 {(2N)}^{3/2} 2^{-b} \left\|\mathbf{X}\right\|_2
+\end{align*}
 \end{proof}
 
 
 \section{Confronto DFT FFT}
 \begin{figure}[h!]
   \centering
-      \includegraphics[width=\textwidth]{immagini/errore-DFT-FFT}
+      \includegraphics[width=\textwidth]{immagini/errore-relativo-DFT-FFT}
   \caption{Norma 2 dell'errore tra $x_N$ e $\mathcal{F}^{-1}(\mathcal{F}(x_N))$}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/Bound-DFT}
+  \caption{Andamento dell'errore reale e dell'errore massimo per il calcolo della DFT attraverso definizione}
 \end{figure}
 
 \chapter{Applicazioni}
