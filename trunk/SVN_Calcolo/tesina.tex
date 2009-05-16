@@ -265,7 +265,7 @@ Inoltre, poichè nel caso della FFT, tutte le moltiplicazioni complesse coinvolgo
 %As noted earlier, most high-performance workstations can perform multiplications as additions
 %fast as additions
 
-\section{Algoritmi per il calcolo di FFT}
+\section{Algoritmi sequenziali per il calcolo di FFT}
 Sia $T(N)$ il tempo di calcolo associato ad un problema di cardinalità $N$ e supponiamo per semplicità $N=2^\nu$.\\
 Se partizioniamo gli $N$ dati in due sottoinsiemi di $N/2$ dati:
 \begin{equation}
@@ -298,6 +298,20 @@ Osserviamo inoltre che il principio \emph{"`divide et impera"'} conduce spontane
 \vskip 10pt
 
 \subsection{Cooley-Tukey Algorithm - DIT}
+
+Il calcolo della DFT utilizzando la definizione richiede tempo $O(N^2)$, come \`e facilmente verificabile. Molti sono gli algoritmi studiati e progettati per ridurre questa complessit\`a computazionale.\\La DFT calcolata secondo questi algoritmi prende il nome di \textbf{Fast Fourier Transform} o \textbf{FFT}.\\Tra gli algoritmi studiati uno dei pi\`u famosi \`e l'algoritmo noto come Algoritmo di Cooley-Tukey con una delle sue implementazioni pi\`u frequenti che si articola in cinque fasi.\\
+
+Dato un vettore $\mathbf{X}\in{}\mathbb{C}^n$, le cinque fasi dell'algoritmo di CT sono cos\`i articolate:
+\begin{itemize}
+\item Fase 1: il vettore di ingresso viene riorganizzato in forma matriciale pxq secondo un ordinamento row-major. Tipicamente o p o q \`e un fattore piccolo, non necessariamente primo, che \`e chiamato radice.\\Nelle pi\`u comuni implementazioni la DFT calcolata con l'algoritmo di Cooley-Tukey \`e di \textbf{radice 2} e, in particolare, se q \`e uguale a 2 si parla di decimazione in frequenza mentre se p \`e uaguale a 2 si parla di \textbf{decimazione nel tempo}.
+\item Fase 2: q FFT vengono calcolate ricorsivamente sulle colonne della matrice ottenuta.
+\item Fase 3: gli elementi della matrice risultante vengono moltiplicati per i twiddle factors, in particolare l'elemento di indice (i,j) viene moltiplicato per il fattore $\omega_n^{ij}$ ($i, j = 0,\ldots{},N-1$).
+\item Fase 4: p FFT vengono calcolate ricorsivamente sulle righe della matrice risultante.
+\item Fase 5: gli elementi della matrice vengono letti in ordine column-major al fine di ottenere il vettore finale.
+\end{itemize}
+
+Questo algoritmo \`e in grado di ridurre la complessit\`a computazionale a $O(Nlog_2N)$.\\
+
 Gli algoritmi di decimazione radix-2 nel tempo si costituiscono a partire dalla seguente scomposizione ricorsiva.\\
 Consideriamo un vettore $x$ di lunghezza $N=2^\nu$. Dividiamo i valori in ingresso in elementi di posizione pari e dispari\\
 \[n = 
@@ -537,6 +551,119 @@ X_{k_1 N_2^{-1} N_2 + k_2 N_1^{-1} N_1} &=\sum_{n_1=0}^{N_1-1} \left( \sum_{n_2=
 \end{align}
 dove $N_1^{-1}$ è l'inverso di $N_1$ in aritmetica modulo $N_2$ e analogamente per $N_2^{-1}$.
 La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N))$. Il numero di operazioni complessive è confrontabile con quello dello split-radix ma il numero di moltiplicazioni globale è inferiore.
+
+\section{Algoritmi paralleli per il calcolo di FFT}
+
+Gli algoritmi fino a questo momento presentati sono algoritmi prettamente sequenziali che, se pur diminuendo notevolmente la complessit\`a di calcolo rispetto all'algoritmo di base, non sfruttano il fatto che il calcolo della FFT presenta un elevato grado di parallelismo, parallelismo che pu\`o essere sfruttato al meglio in presenza di pi\`u processori e/o cores a patto di progettare algoritmi corretti ed adeguati alle risorse di sistema presenti.\\
+
+Non \`e scopo di questa relazione discutere approfonditamente l'argomento ma \`e utile fornire comunque una panoramica sulla struttura e l'efficienza di due algoritmi paralleli molto utilizzati nel calcolo della FFT, il primo dei quali utilizza una struttura nota come rete ascendente per il calcolo mentre il secondo \`e un'opportuna rivisitazione dell'algoritmo gi\`a presentato di Cooley-Tukey.
+Quest'ul\-ti\-mo algoritmo \'e stato realizzato utilizzando il linguaggio di programmazione C e testato su due diversi input su un'apposita macchina parallela a pi\`u vie, l'IBM RS/6000 di propriet\`a del Dipartimento di In\-ge\-gne\-ria dell'Informazione dell'U\-ni\-ver\-sit\`a di Padova. Le simulazioni sono state effettuate utilizzando una libreria pro\-prie\-ta\-ria IBM, di nome \emph{hmp Count}, in grado di accedere ai contatori hardware della macchina in questione. Le librerie utilizzate per le comunicazioni inter-processo sono le librerie standard MPI.\\Nella discussione che segue viene indicata con $n$ la lunghezza del vettore di ingresso e con \emph{size} il numero totale di processi utilizzati (numerati da $0$ a $size-1$).
+
+\subsection{Primo algoritmo: Computazione in rete ascendente}
+In questa sezione viene presentato il primo algoritmo che calcola la FFT utilizzando una rete ascendente (rete $\Omega^{-1}$) con i collegamenti tra le linee che rappresentano i cosiddetti operatori \emph{butterfly} (Figura 2.5).
+\begin{figure}[h!]
+\centering
+\includegraphics[width=13cm,height=5cm]{immagini/rete-ascendente.eps}
+\caption{Esempio di rete ascendente con 8 linee e illustrazione di un \emph{butterfly operator}. In figura il simbolo $\omega{}i$ rappresenta $\omega^i$.}
+\end{figure}\\
+Su ogni linea all'ingresso della rete va posto un elemento del vettore di ingresso, ed ogni processo \`e responsabile di una o pi\`u linee a seconda del numero di processi lanciati. Per semplicit\`a si assume che il numero di linee (e quindi la dimensione n del vettore di ingresso), cos\`i come il numero di processi, sia sempre una potenza di due con ovviamente il vincolo che il numero di processi sia minore o uguale ad n.
+
+Nell'implementazione dell'algoritmo i dati di ingresso (elementi del vettore $\mathbf{X}$) vengono letti da un file di input dove ogni valore, composto dalla sua parte reale e dalla parte immaginaria, \`e scritto su una riga separata. Il processo 0 \`e il processo che si occupa sempre di leggere i valori di ingresso e salvarli opportunamente in un array \emph{double} di dimensione doppia rispetto alla dimensione del vettore $\mathbf{X}$, dato che la sistemazione dei valori all'interno dell'array avviene in maniera tale che l'elemento i-esimo abbia la sua parte reale salvata in posizione $2*i$ e la parte immaginaria in posizione $2*i+1$ nell'array di input.\\Successivamente, completata l'acquisizione, il processo 0 esegue un riordinamento \emph{bit-reversing} dei dati sulle linee ed infine esegue un broadcast dell'intero contenuto dell'array verso i rimanenti processi\footnote{L'acquisizione dei valori di ingresso potrebbe essere gestita meglio con le librerie MPI-IO, che avrebbero consentito ai vari processi l'accesso simultaneo al file di input. Tuttavia le suddette librerie non sono sempre disponibili sulle macchine parallele, per questo motivo si \`e presentato questo tipo di strategia cre prevede il broadcast.}.
+
+Dopo questa prima fase, ogni processo calcola indipendentemente i twiddle factors che saranno necessari durante la computazione. Ogni processo calcola gli stessi twiddle factors, in particolare le potenze di $\omega_n$ necessarie e calcolate vanno da $\omega_n^0$ a $\omega_n^{\frac{n}{2}-1}$.\\
+
+Fatto ci\`o la computazione vera e propria ha inizio: essa si compone di $log_2(n)$ passi dove ogni passo coincide con un ``settore'' della rete ascendente. All'inizio di ogni passo ogni processo, se necessario, prima di effettuare qualunque calcolo esegue la primitiva non bloccante \verb+MPI_Irecv+ un numero di volte pari al numero di linee che gestisce al fine di preparare il buffer di ricezione per i dati che verranno ricevuti dai dovuti \emph{peers} al termine del passo. Conseguentemente, al termine di ogni passo e prima dell'inizio del successivo, se necessario ogni processo invia il/i dato/i calcolato/i durante il passo appena terminato al peer opportuno utilizzando una primitiva non bloccante \verb+MPI_Isend+. Prima del passaggio al passo successivo ogni processo attende il completamento delle operazioni di ricezione dati avviate all'inizio del passo precedente, dato che ovviamente tali dati saranno necessari per le prossime fasi.\\Al termine della computazione, infine, ogni processo invia al processo 0 i dati appartenenti alle linee di propria competenza affinch\`e vengano posti in un array comune ed infine visualizzati.
+
+\subsection{Secondo algoritmo: Adattamento dell'algoritmo standard di Cooley-Tukey}
+
+L'implementazione \emph{divide and conquer} tradizionale dell'algoritmo di CT richiede sostanzialmente cinque fasi per calcolare correttamente la FFT.\\
+Nella versione parallela proposta le suddette cinque fasi sono state cos\`i adattate:
+\begin{itemize}
+ \item Fase 1: il vettore di ingresso $\mathbf{X}$, che per semplicit\`a si assume avere un numero pari ad una potenza di due, con esponente pari, di elementi, \`e riorganizzato idealmente in forma matriciale di tipo $\sqrt{n}$ x $\sqrt{n}$. Tale matrice \`e poi suddivisa secondo un layout organizzato per righe tra i vari processi disponibili (Figura 1.2). Si assume, conseguentemente, che il numero di processi totali \`e minore o uguale a $\sqrt{n}$. 
+Dal punto di vista implementativo le righe di cui ogni processo \`e responsabile sono salvate consecutivamente in un array A, di dimensione $2*n/size$ dove \emph{size} \`e il numero di processi disponibili ed il coefficiente moltiplicativo 2 \`e dovuto al modo con cui vengono salvati i valori complessi, analogamente a quanto illustrato nel precedente algoritmo.
+\item Fase 2: viene effettuata una prima trasposizione matriciale globale atta a fare in modo che ogni processo conservi nel proprio array locale A un numero pari a $\sqrt{n}/size$ colonne della matrice globale. In questo modo ogni processo pu\`o poi effettuare la FFT, sulle colonne di competenza, localmente, senza richiedere ulteriori comunicazioni inter-processore.
+\item Fase 3: al termine della FFT calcolata sulle colonne, ogni processo moltiplica i propri elementi di competenza per i corrispondenti twiddle factors. Si noti a tal proposito che le potenze di $\omega_n$ che ogni processo calcola indipendentemente all'inizio dell'algoritmo vanno da $\omega_n^{0}$ a $\omega_n^{{(\sqrt{n}-1)}^2}$.
+\item Fase 4: la quarta fase richiede una nuova trasposizione matriciale atta a trasferire localmente ad ogni processo le dovute $\sqrt{n}/size$ righe della matrice ideale su cui poi poter eseguire nuovamente un totale di $\sqrt{n}/size$ FFT locali, analogamente a quanto fatto per le colonne alla Fase 2.
+\item Fase 5: completata la Fase 4 viene eseguita un'ultima trasposizione matriciale atta a trasferire ad ogni processo le colonne di competenza della matrice ideale. In questo modo la lettura dei valori finali, che come noto deve essere effettuata in ordine column-major, risulta pi\`u semplice dato che \`e sufficiente che tutti i processi comunichino al processo 0 i dati in loro possesso, quindi che 0 li disponga nell'ordine opportuno nel proprio array A (i $2*n/size$ elementi del processo i andranno di\-spo\-sti consecutivamente a partire dalla posizione $2*n*i/size$ nell'array finale) e che, infine, li visualizzi poi semplicemente scandendo l'array.
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=10cm,height=5cm]{immagini/CT-processi.eps}
+\caption{Esempio di suddivisione di una matrice 4x4 tra 4 processi secondo il layout proposto.}
+\end{figure}
+Come nel precedente algoritmo, anche in questo la raccolta dei valori iniziali e la distribuzione opportuna ai vari processi avviene ad opera del processo 0. Un'importante differenza \`e data dalla quantit\`a di dati distribuiti: se nel primo algoritmo il processo 0 effettuava un broadcast dell'intero array ini\-zia\-le verso tutti i processi, in questa versione 0 distribuisce soltanto i valori strettamente necessari ad ogni processo, ovvero un totale di $2*n/size$ valori.\\
+
+Appare chiaro, dalla descrizione effettuata, che questo algoritmo richiede comunicazioni tra i processi solo durante le trasposizioni matriciali. Durante la singola trasposizione ogni processo deve inviare e ricevere un totale di $2*(n/size - n/size^2)$ valori double, essendo $2*n/size$ il totale di elementi che sono contenuti nell'array locale e $2*{(\sqrt{n}/size)}^2$ gli elementi che rimangono nel pool locale (ovvero il numero di colonne di competenza del processo elevato al quadrato) durante la trasposizione. L'algoritmo di trasposizione implementato, invocato contemporaneamente da tutti i processi, opera scandendo l'array a disposizione di ogni processo e determinando, sulla base dell'ID del processo (e quindi della disposizione dei suoi dati nella matrice ideale globale) se il singolo elemento, dopo la trasposizione, apparterr\`a ancora al pool di competenza del medesimo processo oppure se \`e richiesta una comunicazione con un peer. In quest'ultimo caso l'ID del peer viene determinato ed il valore inviatogli con l'uso della primitiva \verb+MPI_Isend+. Chiaramente, ad ogni elemento inviato corrisponde un elemento che deve essere ricevuto dallo stesso peer, perci\`o il processo si mette in attesa della ricezione con la primitiva \verb+MPI_Irecv+. In questa implementazione \`e fondamentale l'uso di primitive non bloccanti, a differenza del precedente algoritmo, in virt\`u del fatto che l'ordine di determinazione dei peers da parte dei processi che devono comunicare non \`e lo stesso, ovvero non \`e detto che se il processo i, arrivato alla scansione dell'elemento k nel proprio array di competenza, ha richiesto l'invio di A[k] al processo j, a sua volta j si sia messo in attesa della ricezione, anzi pu\`o capitare che j abbia richiesto a sua volta l'invio di un altro valore ad un altro processo. Tutto ci\`o, se usate primitive bloccanti, porterebbe a \emph{deadlock}.\\
+\`E anche importante osservare che i valori scambiati tra due processi i e j (valori che possono essere in numero superiore ad 1) non occupano le stesse posizioni relative all'interno dei singoli array perci\`o \`e indispensabile fare un uso attento dei \emph{tags} nelle comunicazioni al fine di non rischiare di confondere i dati ricevuti.\\
+
+L'algoritmo utilizzato per il calcolo locale della FFT \`e il tradizionale algoritmo ricorsivo di natura D\verb+&+C che spezza l'array in due parti uguali, calcola ricorsivamente su queste parti la FFT, e ricompone correttamente in un unico array il tutto.
+
+
+\subsection{Analisi delle prestazioni}
+Le simulazioni svolte consistono nel calcolo della FFT con il secondo algoritmo parallelo proposto su vettori di elementi casuali di lunghezza pari a $2^8$ e $2^{12}$.\\
+
+La seguente tabella mostra, quindi, l'andamento del WCT (in secondi) ed il numero di istruzioni eseguite dal secondo algoritmo. La tabella \'e ordinata secondo il numero di processi utilizzati (nell'ordine 1, 2, 4, 8 e 16):
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+ & FFT (WCT / N. Ist.) \\
+\hline
+$2^8$ & $0.0014$ / 388817 \\
+\hline
+$2^{12}$ & $0.0278$ / 7927024 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|c|c|}
+\hline
+ & FFT (WCT / N. Ist.) \\
+\hline
+$2^8$ & $0.0030$ / 781344 \\
+\hline
+$2^{12}$ & $0.0748$ / 19849491 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|c|c|}
+\hline
+ & FFT (WCT / N. Ist.) \\
+\hline
+$2^8$ & $0.0023$ / 574317 \\
+\hline
+$2^{12}$ & $0.0444$ / 11983612 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|c|c|}
+\hline
+ & FFT (WCT / N. Ist.) \\
+\hline
+$2^8$ & $0.0018$ / 560944 \\
+\hline
+$2^{12}$ & $0.0224$ / 7265946 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|c|c|}
+\hline
+ & FFT (WCT / N. Ist.) \\
+\hline
+$2^8$ & $0.0013$ / 452222 \\
+\hline
+$2^{12}$ & $0.0098$ / 4679321 \\
+\hline
+\end{tabular}
+\end{center}
+
+\'E possibile considerare che l'algoritmo proposto \`e molto efficiente in ambito sequenziale (un processo) sia in termini di numero di istruzioni eseguite che di WCT. Tuttavia le cose cambiano anche notevolmente se si aumenta il numero di processi: con due processi si verifica un aumento del numero di istruzioni eseguite dal singolo processo rispetto al caso precedente. Ci\`o si spiega in parte con il fatto che, in presenza di due o pi\`u processi, l'algoritmo deve eseguire un numero molto maggiore di istruzioni, dovendo predisporre i dati necessari alle comunicazioni da effettuare per le trasposizioni matriciali (si pensi al gi\`a citato calcolo dei \emph{tags} e alla determinazione del peer con cui comunicare).
+
+Le comunicazioni crescono con l'aumentare della dimensione del pool di elementi di competenza del singolo processo ed \`e questo il motivo per cui l'effetto descritto \`e parzialmene mitigato dall'aumentare del numero di processi, ovvero con la diminuzione sia della dimensione del pool di competenza del singolo processo, che del numero di invocazioni delle funzioni MPI che il processo deve eseguire.\\
+
+Il fenomeno descritto sarebbe del tutto assente nel secondo algoritmo: infatti, nel primo algoritmo \`e quasi immediata la determinazione del peer con cui comunicare e non vi \`e bi\-so\-gno, per il modo in cui \`e strutturato l'algoritmo stesso, di tag diversi tra loro nelle comunicazioni. Tuttavia, quando il numero degli elementi del vettore di ingresso aumenta troppo ed il numero dei processi \`e superiore ad uno ma non ele\-va\-to l'alto numero di buffer pre\-di\-spo\-sti per le comunicazioni inciderebbe in maniera notevolissima sulle prestazioni, causando un notevole degrado della performance.\\
+
+Concludendo, quindi, si pu\`o dedurre che la prima versione dell'algoritmo per il calcolo della FFT \`e consigliabile solo in presenza di grandi vettori di input e pochi processi a disposizione (purch\`e pi\`u di uno) mentre la seconda versione dell'algoritmo \`e teoricamente tanto pi\`u efficiente, in presenza di comunicazioni inter-processore, quanto pi\`u il rapporto tra dimensione del vettore di ingresso e numero dei processi tende a 0.
+
 
 \chapter{Stabilità Numerica}
 Fin'ora abbiamo trattato la \emph{discrete Fourier transform} e la \emph{fast Fourier transform} pensando che potessero idealmente essere calcolate con assoluta precisione.
