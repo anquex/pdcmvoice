@@ -32,8 +32,9 @@
 
 
 \chapter{DFT}
-\section{Definizione}
+La trasformata discreta di Fourier, talvolta chiamata anche \emph{trasformata di Fourier finita}, \`e la trasformata di Fourier di un segnale a tempo discreto e con \emph{dominio finito}. Come le altre trasformate di Fourier, essa esprime un segnale in termini di una somma di componenti sinusoidali, determinandone ampiezza e fase per ciascun componente. Tuttavia, la DFT si distingue dal fatto che la funzione d'ingresso \`e \emph{discreta e finita}: ossia \`e una sequenza finita di numeri reali o complessi, e questo fatto rende la DFT ideale per processare le informazioni memorizzate nei calcolatori. Nel seguito verranno discusse alcune applicazioni della DFT e come pu\`o essere efficientemente implementata in un calcolatore, attraverso algoritmi di \emph{FFT (Fast Fourier Transform)}.
 
+\section{Definizione}
 
 Un vettore $x$ di lunghezza N può essere visto come una sequenza $x_0,...,x_{N-1}$ di N numeri complessi. Si definisce $X$ \emph{trasformata discreta di Fourier (DFT, discrete Fourier transform)}  di $x$ la sequenza $X_0,...,X_{N-1}$ espressa dalla seguente relazione:
 \begin{equation}
@@ -161,7 +162,7 @@ dove $\odot$ indica il prodotto componente per componente.
 \end{itemize}
 
 \section{Defizione Matriciale}
-Dalla defizione \eqref{eq:def-dft} di DFT emerge immadiatamente una interpretazione matriciale della \emph{trasformata discreta di Fourier} \\
+Dalla definizione \eqref{eq:def-dft} di DFT emerge immadiatamente una interpretazione matriciale della \emph{trasformata discreta di Fourier} \\
 \begin{equation}
 X=\mathcal{F}(x) = F_N x
 \end{equation}\\
@@ -261,7 +262,69 @@ Analogamente è possibile sfruttare la seguente proprietà per il calcolo della ID
 \vskip 5pt
 coniugando l'input, applicando la DFT, coniugando l'output e quindi scalando.
 
-\section{Segnali di durata finita: relazione tra trasformata di Fourier e DFT}
+\section{Segnali di durata finita: relazione tra trasformata di Fourier DTFT e DFT}
+
+% CTFT Mitra 3.1.1
+% DTFT M 3.2.1 3.2.2
+% DFT intro pag 233, 5.3.1, (5.2.1) 5.3.2 5.3.3
+
+In questo paragrafo si esamineranno la relazione fra la Discrete-Time Fourier Transform (DTFT) e la N-point DFT.
+
+La DTFT  $X(e^{j\omega})$ di una sequenza $x[n]$ definita per $0 \leq n \leq N-1$ è data da:
+\\
+\begin{equation}
+	X(e^{j\omega}) = \sum_{n=-\infty}^{\infty}{x_ne^{-j\omega n}} = \sum_{n=0}^{N-1}{x_ne^{-j\omega n}}
+\end{equation}
+\\
+Campionando uniformemente $X(e^{j\omega})$ su N frequenze $\omega_k = \frac{2\pi k}{N} , 0 \leq k \leq N-1$, con $0 \leq \omega \leq 2\pi$, si ottiene
+\\
+\begin{equation}
+\label{eq:dtft-campionamento}
+	X(e^{j\omega})| _{\omega=\frac{2\pi k}{N}} = \sum_{n=0}^{N-1}{x_ne^{-j\frac{2\pi k}{N} n}} ,\qquad 0 \leq k \leq N-1
+\end{equation}
+\\
+Confrontando la definizione di DFT (1.1)%\eqref{eq:def-dft}
+\begin{equation*}
+X_k=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi k}{N}n} \quad k=0,...,N-1
+\end{equation*}
+con la \eqref{eq:dtft-campionamento}, è possibile osservare che la N-point DFT $X_k$ corrisponde esattamente alla DFTF $X(e^{j\omega})$ campionata  sulle frequenze $\omega_k = \frac{2\pi k}{N} , 0 \leq k \leq N-1$; di conseguenza la frequenza angolare $\omega$ associata all'elemento di indice $k$ è $\frac{2\pi k}{N}$.
+
+La DFT costituisce un valido metodo per il calcolo della DTFT di una sequenza finita, in particolar modo se sono disponibili algoritmi efficienti (FFT) per la sua determinazione.
+
+Si consideri di voler valutare $X(e^{j\omega})$, la DFTF di una sequenza $x_n$ di lunghezza N su un insieme più denso di frequenze $\omega _k=\frac{2\pi k}{M}, 0 \leq k \leq M-1$, dove $M>>N$:
+\\
+\begin{equation}
+\label{eq:dtft-x-estesa-1}
+	X(e^{j\omega _k}) = \sum_{n=0}^{N-1}{x_ne^{-j\omega _k n}} = \sum_{n=0}^{N-1}{x_ne^{-j\frac{2\pi k}{M} n}}
+\end{equation}
+\\
+\'E possibile definire la sequenza $x_n^e$ ottenuta eseguendo su $x_n$ uno zero-padding di lunghezza $M - N$:
+
+\begin{equation*}
+\label{eq:dtft-x-estesa-2}
+\[x_n^e = 
+\begin{cases} 
+x_n \qquad 0 \leq n \leq N-1 \\
+0 \qquad N \leq n \leq M-1
+\end{cases}\]
+\end{equation*}
+Tenendo in considerazione che le sequenze $x_n$ e $x_n^e$ sono definite su domini differenti, facendo uso della definizione di $x_n^e$ si giunge a:
+\\
+\begin{equation}
+\label{eq:dtft-x-estesa-3}
+	X(e^{j\omega _k}) = \sum_{n=0}^{M-1}{x_n^e e^{-j\frac{2\pi k}{M} n}} = X_k^e
+\end{equation}
+\\
+che corrisponde alla M-point DFT $X_k^e$ (della sequenza $x_n^e$ di lunghezza M), che può essere facilmente calcolata avvalendosi della FFT se M è potenza di 2.
+\\
+\\
+\textbf{DFTF come interpolazione della DFT}
+\\
+\\
+Data la N-point DFT $X_k$ di una sequenza $x_n$ di lunghezza n è possibile determinare la DTFT $X(e^{j\omega _k})$ esequendo l'operazione di intepolazione sui valori di  $X_k$.
+
+--> \emph{MITRA - PARAGRAFO 5.3.3}
+
 \chapter{Calcolo della DFT}
 
 La diffusione nell'utilizzo della DFT è principalmente dovuta all'introduzione, avvenuta negli anni '60, di una classe di algoritmi computazionale efficienti per la sua valutazione: la \emph{(Fast Fourier Transform, i.e. trasformata veloce di Fourier)}.\\ Essa rende possibile in taluni casi l'elaborazione in tempo reale (sistemi di navigazione, trasmissione e processo di segnali vocali o televisivi) e consente di risolvere alcuni problemi di grandi dimensioni che risulterebbero altrimenti intrattabili.\\
