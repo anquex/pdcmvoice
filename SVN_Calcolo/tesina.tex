@@ -9,6 +9,8 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
 \usepackage{float} % parametro H in figur : posizionamento esattamente li
+\usepackage{verbatim}
+
 
 \usepackage{fancyhdr}
 \setcounter{tocdepth}{3}
@@ -303,11 +305,11 @@ Si consideri di voler valutare $X(e^{j\omega})$, la DFTF di una sequenza $x_n$ d
 
 \begin{equation*}
 \label{eq:dtft-x-estesa-2}
-\[x_n^e = 
+x_n^e = 
 \begin{cases} 
 x_n \qquad 0 \leq n \leq N-1 \\
 0 \qquad N \leq n \leq M-1
-\end{cases}\]
+\end{cases}
 \end{equation*}
 Tenendo in considerazione che le sequenze $x_n$ e $x_n^e$ sono definite su domini differenti, facendo uso della definizione di $x_n^e$ si giunge a:
 \\
@@ -931,5 +933,6 @@ Y(n)&= H(n)+jG(n)\\
 &=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
 &={\rm Re}(n)+j{\rm Imm}(n)
 \end{align*}
+\include{appendice}
 \include{bibliografia}
 \end{document}
