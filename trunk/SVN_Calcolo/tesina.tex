@@ -224,11 +224,17 @@ questo significa che le colonne di $F$ sono \emph{ortogonali}. Indicando con $F^
  N & 0 & 0 & ... & 0\\  0 & N & 0 & ... & 0\\  0 & 0 & N & ... & 0\\ \vdots &\vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & ... & N\\
 \end{bmatrix} = N\cdot \mathbf{I}
 \end{align}
-Questo ci è utile per definire le versioni normalizzate 
+Questo ci è utile per definire le versioni normalizzate  della DFT/IDFT con matrici unitarie
 \begin{equation}
 	\widetilde{F}_N=\frac{1}{\sqrt{N}} F_N  \qquad \qquad  \widetilde{F}_N^*=\frac{1}{\sqrt{N}} F_N^*
 \end{equation}
-Una proprietà delle matrici ortogonali (e quindi che costituite da colonne ortonormali) è che \emph{conservano le norme dei vettori}.
+Le matrici ortogonali (unitarie) sono infatti usate per garantire stabilità numerica e scarsa sensibilità agli errori di arrotondamento.\\
+Riepiloghiamo brevemente alcune proprietà delle matrici ortogonali (unitarie):
+\begin{itemize}
+	\item $\left\|Sx\right\|_2=\left\|x\right\|_2 \qquad \forall x$
+	\item $\left\|S\right\|_2=\left\|S^{-1}\right\|_2=1$
+	\item $\left\|A\right\|_2=\left\|SAT\right\|_2 \qquad \forall S,T \quad \text{ortogonali (unitarie)}$
+\end{itemize}
 \subsection{Analogie tra DFT e IDFT}
 Questa affinità tra $F_N$ e $F_N^{-1}$ mette in risalto come in realtà la procedura per il calcolo di DFT e IDFT sia esattamente la stessa a meno di minimi adattamenti.\\
 In altre parole è possibile calcolare la IDFT attraverso lo stesso algoritmo di \emph{forward computation} della DFT attraverso un semplice preprocessing dell'input e moltiplicazione per un fattore di scala:
@@ -588,11 +594,11 @@ Quest'ul\-ti\-mo algoritmo \'e stato realizzato utilizzando il linguaggio di pro
 
 \subsection{Primo algoritmo: Computazione in rete ascendente}
 In questa sezione viene presentato il primo algoritmo che calcola la FFT utilizzando una rete ascendente (rete $\Omega^{-1}$) con i collegamenti tra le linee che rappresentano i cosiddetti operatori \emph{butterfly} (Figura 2.5).
-\begin{figure}[h!]
-\centering
-\includegraphics[width=13cm,height=5cm]{immagini/rete-ascendente.eps}
-\caption{Esempio di rete ascendente con 8 linee e illustrazione di un \emph{butterfly operator}. In figura il simbolo $\omega{}i$ rappresenta $\omega^i$.}
-\end{figure}\\
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[width=13cm,height=5cm]{immagini/rete-ascendente.eps}
+%\caption{Esempio di rete ascendente con 8 linee e illustrazione di un \emph{butterfly operator}. In figura il simbolo $\omega{}i$ rappresenta $\omega^i$.}
+%\end{figure}\\
 Su ogni linea all'ingresso della rete va posto un elemento del vettore di ingresso, ed ogni processo \`e responsabile di una o pi\`u linee a seconda del numero di processi lanciati. Per semplicit\`a si assume che il numero di linee (e quindi la dimensione n del vettore di ingresso), cos\`i come il numero di processi, sia sempre una potenza di due con ovviamente il vincolo che il numero di processi sia minore o uguale ad n.
 
 Nell'implementazione dell'algoritmo i dati di ingresso (elementi del vettore $\mathbf{X}$) vengono letti da un file di input dove ogni valore, composto dalla sua parte reale e dalla parte immaginaria, \`e scritto su una riga separata. Il processo 0 \`e il processo che si occupa sempre di leggere i valori di ingresso e salvarli opportunamente in un array \emph{double} di dimensione doppia rispetto alla dimensione del vettore $\mathbf{X}$, dato che la sistemazione dei valori all'interno dell'array avviene in maniera tale che l'elemento i-esimo abbia la sua parte reale salvata in posizione $2*i$ e la parte immaginaria in posizione $2*i+1$ nell'array di input.\\Successivamente, completata l'acquisizione, il processo 0 esegue un riordinamento \emph{bit-reversing} dei dati sulle linee ed infine esegue un broadcast dell'intero contenuto dell'array verso i rimanenti processi\footnote{L'acquisizione dei valori di ingresso potrebbe essere gestita meglio con le librerie MPI-IO, che avrebbero consentito ai vari processi l'accesso simultaneo al file di input. Tuttavia le suddette librerie non sono sempre disponibili sulle macchine parallele, per questo motivo si \`e presentato questo tipo di strategia cre prevede il broadcast.}.
@@ -614,11 +620,11 @@ Dal punto di vista implementativo le righe di cui ogni processo \`e responsabile
 \item Fase 5: completata la Fase 4 viene eseguita un'ultima trasposizione matriciale atta a trasferire ad ogni processo le colonne di competenza della matrice ideale. In questo modo la lettura dei valori finali, che come noto deve essere effettuata in ordine column-major, risulta pi\`u semplice dato che \`e sufficiente che tutti i processi comunichino al processo 0 i dati in loro possesso, quindi che 0 li disponga nell'ordine opportuno nel proprio array A (i $2*n/size$ elementi del processo i andranno di\-spo\-sti consecutivamente a partire dalla posizione $2*n*i/size$ nell'array finale) e che, infine, li visualizzi poi semplicemente scandendo l'array.
 \end{itemize}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=10cm,height=5cm]{immagini/CT-processi.eps}
-\caption{Esempio di suddivisione di una matrice 4x4 tra 4 processi secondo il layout proposto.}
-\end{figure}
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[width=10cm,height=5cm]{immagini/CT-processi.eps}
+%\caption{Esempio di suddivisione di una matrice 4x4 tra 4 processi secondo il layout proposto.}
+%\end{figure}
 Come nel precedente algoritmo, anche in questo la raccolta dei valori iniziali e la distribuzione opportuna ai vari processi avviene ad opera del processo 0. Un'importante differenza \`e data dalla quantit\`a di dati distribuiti: se nel primo algoritmo il processo 0 effettuava un broadcast dell'intero array ini\-zia\-le verso tutti i processi, in questa versione 0 distribuisce soltanto i valori strettamente necessari ad ogni processo, ovvero un totale di $2*n/size$ valori.\\
 
 Appare chiaro, dalla descrizione effettuata, che questo algoritmo richiede comunicazioni tra i processi solo durante le trasposizioni matriciali. Durante la singola trasposizione ogni processo deve inviare e ricevere un totale di $2*(n/size - n/size^2)$ valori double, essendo $2*n/size$ il totale di elementi che sono contenuti nell'array locale e $2*{(\sqrt{n}/size)}^2$ gli elementi che rimangono nel pool locale (ovvero il numero di colonne di competenza del processo elevato al quadrato) durante la trasposizione. L'algoritmo di trasposizione implementato, invocato contemporaneamente da tutti i processi, opera scandendo l'array a disposizione di ogni processo e determinando, sulla base dell'ID del processo (e quindi della disposizione dei suoi dati nella matrice ideale globale) se il singolo elemento, dopo la trasposizione, apparterr\`a ancora al pool di competenza del medesimo processo oppure se \`e richiesta una comunicazione con un peer. In quest'ultimo caso l'ID del peer viene determinato ed il valore inviatogli con l'uso della primitiva \verb+MPI_Isend+. Chiaramente, ad ogni elemento inviato corrisponde un elemento che deve essere ricevuto dallo stesso peer, perci\`o il processo si mette in attesa della ricezione con la primitiva \verb+MPI_Irecv+. In questa implementazione \`e fondamentale l'uso di primitive non bloccanti, a differenza del precedente algoritmo, in virt\`u del fatto che l'ordine di determinazione dei peers da parte dei processi che devono comunicare non \`e lo stesso, ovvero non \`e detto che se il processo i, arrivato alla scansione dell'elemento k nel proprio array di competenza, ha richiesto l'invio di A[k] al processo j, a sua volta j si sia messo in attesa della ricezione, anzi pu\`o capitare che j abbia richiesto a sua volta l'invio di un altro valore ad un altro processo. Tutto ci\`o, se usate primitive bloccanti, porterebbe a \emph{deadlock}.\\
@@ -711,7 +717,7 @@ fl(x\div y) = (x\div y) (1+\delta) 	\qquad \qquad && |\delta| &\leq \sqrt{2}\fra
 \end{alignat}
 \end{Lemma}
 
-Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y).$\\
+Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y)$ dove l'operazione $\circ \in\{+,-,\cdot,\div\}$\\
 \noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\epsilon_{ik}|$ tale che:
 
 \begin{equation*}
@@ -733,7 +739,7 @@ Se $\mathbf{A}$ è una matrice reale $p \times q$, $\mathbf{B}$ è una matrice rea
 \begin{Teorema} \textbf{(Gentleman-Sande)}\label{Teorema:bound-dft}
 Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta $\mathbf{X}$ di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
 \begin{equation}
-\left\|\mathbf{\hat{X}-X}\right\|_2\leq 1.06 \sqrt{N} {(2N)}^{3/2} 2^{-b} \left\|\mathbf{X}\right\|_2
+\left\|\mathbf{\hat{X}-X}\right\|_2\leq 1.06 \;{(2N)}^{3/2} 2^{-b} \left\|\mathbf{X}\right\|_2
 \end{equation}
 \end{Teorema}
 \begin{proof}
@@ -787,7 +793,7 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 \end{align*}
 \end{proof}
 
-
+\section{Worst Case Error FFT}
 \section{Confronto DFT FFT}
 \begin{figure}[h!]
   \centering
