@@ -8,6 +8,7 @@
 \usepackage{epsfig}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
+\usepackage{float} % parametro H in figur : posizionamento esattamente li
 
 \usepackage{fancyhdr}
 \setcounter{tocdepth}{3}
@@ -770,16 +771,17 @@ Mostreremo quindi come DFT e FFT siano estremamente sensibili rispetto alla prec
 Utilizando un modello standard di aritmetica binaria reale a precisione finita \cite{higham} se $x$ e $y$ sono numeri complessi esattamente rappresentabili si assume che
 
 %ROUNDOFF ERROR pg 565
-\newtheorem{Lemma}{Lemma}
-\begin{Lemma}
+\newtheorem{lemma}{Lemma}
+\begin{lemma}\textbf{Modello di Wilkinson}
 Siano $x,y \in \mathbb{C}$, allora
 \begin{alignat}{3}
 fl(x\pm y) = (x\pm y) (1+\delta) 	\qquad \qquad && |\delta| &\leq u\\
-fl(x\ast y) = (x\ast y) (1+\delta) 	\qquad \qquad&& |\delta| &\leq \sqrt{2}\frac{2u}{1-2nu}\\
-fl(x\div y) = (x\div y) (1+\delta) 	\qquad \qquad && |\delta| &\leq \sqrt{2}\frac{4u}{1-4nu}
+fl(x\ast y) = (x\ast y) (1+\delta) 	\qquad \qquad&& |\delta| &\leq \sqrt{2}\frac{2u}{1-2u}=2\sqrt{2}u+ O(u^2)\\
+fl(x\div y) = (x\div y) (1+\delta) 	\qquad \qquad && |\delta| &\leq \sqrt{2}\frac{4u}{1-4u}=4\sqrt{2}u+ O(u^2)\\
 \end{alignat}
-\end{Lemma}
+\end{lemma}
 
+dove $\delta\approx 2^{-b}$ con $b$ lunghezza della mantissa.
 Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y)$ dove l'operazione $\circ \in\{+,-,\cdot,\div\}$\\
 \noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\epsilon_{ik}|$ tale che:
 
@@ -787,9 +789,10 @@ Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentr
 \hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\epsilon_{jk} \qquad |\epsilon_{jk}|\leq u
 \end{equation*}
 
+Generalmente, per lo standar IEEE 734, operando in doppia precisione, la mantissa è lunga 52 bit per cui $u\approx 2.22 \times 10^{-16}$
 \section{Worst Case Error DFT}
 
-\newtheorem{lemma2}{Lemma}
+\newtheorem{lemma2}[lemma]{Lemma}
 \begin{lemma2}\label{wilkinson}
 \textbf{(di Wilkinson)}
 Se $\mathbf{A}$ è una matrice reale $p \times q$, $\mathbf{B}$ è una matrice reale $q \times r$ e  $b$ è il numero di bit della mantissa, Allora
@@ -858,18 +861,45 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 
 \section{Worst Case Error FFT}
 \section{Confronto DFT FFT}
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/errore-relativo-DFT-FFT}
   \caption{Norma 2 dell'errore tra $x_N$ e $\mathcal{F}^{-1}(\mathcal{F}(x_N))$}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/Bound-DFT}
   \caption{Andamento dell'errore reale e dell'errore massimo per il calcolo della DFT attraverso definizione}
 \end{figure}
 
+
+%%
+%
+%  stabfinal.ps
+%  oppure Computational frameworks for the fast fourier (van loan)
+%  % tabella degli errori devi vari metodi
+%%
+\section{Calcolo dei \emph{twiddle factor}}
+Vediamo ora come calcolare i $\omega_N^k,\quad (k=0,1,...,N-1)$ con $N=2^n$ e $N_j=2^{-j}N, \quad (j=0,1,...,n)$. Usando le simmetrie degli esponenziali complessi $\omega_N^l \quad (l=N_3,...,N-1)$ si possono ottenere
+\begin{align}
+ \hat{\omega}_N^{N_2-k}=-i \overline{\hat{\omega}_N^{k}}, \quad &\text{simmetrie di $\pi/2$ tra i quadranti }\\ 
+    \hat{\omega}_N^{N_2+k}=-i\hat{\omega}_N^{k},\quad&\text{ I e IV,I e II}\\
+\hat{\omega}_N^{N_1-k}=\overline{\hat{\omega}_N^{k}},\quad& \text{simmetrie rispetto asse y}\\
+\hat{\omega}_N^{N_1+k}=-\hat{\omega}_N^{k} \quad&
+\end{align} 
+per $k=1,..., N_3-1$  e da\[ \hat{\omega}_N^{N_3}=\hat{\omega}_8=fl\left(\sqrt{2}/2\right)(1-i),\quad \hat{\omega}_N^{N_2}=\hat{\omega}_4=-i,\quad \hat{\omega}_N^{N_1}=\hat{\omega}_2=-1
+\]
+ \subsection{Metodo diretto}
+\subsection{Metodo ricorsivo}
+\subsection{Repeated subvector scaling}
+
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/confronto-dc-vs}
+  \caption{Confronto DC-VS}
+\end{figure}
 \chapter{Applicazioni}
 %
 % MURLI
