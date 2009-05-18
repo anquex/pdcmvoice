@@ -13,6 +13,7 @@ norm2MATFFT=zeros(1,N);
 norm2FFTDC=zeros(1,N);
 norm2FFTRM=zeros(1,N);
 norm2FFTVS=zeros(1,N);
+norm2FFTFR=zeros(1,N);
 norma=zeros(1,N);
 norma2DFT=zeros(1,N);
 for i=1:N
@@ -43,6 +44,12 @@ for i=1:N
     clear FFT;
     norm2FFTRM(i)=norm(vettore-IFFT)/norma(i);
     clear IFFT;
+%FFT DIT2-RM-ITER
+    FFT=fft_fr_iter(vettore,-1);
+    IFFT=fft_fr_iter(FFT,1)/l;
+    clear FFT;
+    norm2FFTFR(i)=norm(vettore-IFFT)/norma(i);
+    clear IFFT;
 % %DFT
 %     DFT=dft(vettore);
 %     IDFT=idft(DFT);
@@ -52,7 +59,7 @@ for i=1:N
 %     i
 end 
 %plot(esponente,norm2FFT,'b',esponente,norm2DFT,'r');
-semilogy(esponente,norm2FFTDC,'b',esponente,norm2FFTRM,'r',esponente,norm2FFTVS,'black',esponente,norm2MATFFT,'c');
+semilogy(esponente,norm2FFTDC,'b',esponente,norm2FFTRM,'r',esponente,norm2FFTVS,'black',esponente,norm2MATFFT,'c',esponente,norm2FFTFR,'g');
 legend('errore FFT-DC','errore FFT-RM','errore FFT-VS','errore MATLAB-FFT','Location','NorthWest');
 grid on;
 xlabel('esponente');

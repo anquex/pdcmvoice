@@ -10,6 +10,8 @@
 \usepackage[none]{hyphenat} 
 \usepackage{float} % parametro H in figur : posizionamento esattamente li
 \usepackage{verbatim}
+\usepackage{booktabs}
+
 
 
 \usepackage{fancyhdr}
@@ -895,6 +897,23 @@ per $k=1,..., N_3-1$  e da\[ \hat{\omega}_N^{N_3}=\hat{\omega}_8=fl\left(\sqrt{2
  \subsection{Metodo diretto}
 \subsection{Metodo ricorsivo}
 \subsection{Repeated subvector scaling}
+
+
+\begin{table}[H]
+  \caption{Riepilogo errori di arrotondamento per \emph{twiddle factors}}
+  \begin{center}
+\begin{tabular}{ll}
+\toprule
+\multicolumn{1}{c}{\emph {Metodo}} & \multicolumn{1}{c}{\emph{Errore in} $w_N^j$}  \\
+\midrule
+Direct Call & $O(u)$\\
+Repeated multiplication & $O(uj)$\\
+Subvector Scaling & $O(u\log j)$\\
+Forward Recursion & $O(uc^j)$\\
+\bottomrule
+\end {tabular}
+\end{center}
+\end{table}
 
 
 \begin{figure}[H]
