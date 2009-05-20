@@ -11,6 +11,7 @@
 \usepackage{float} % parametro H in figur : posizionamento esattamente li
 \usepackage{verbatim}
 \usepackage{booktabs}
+\usepackage{enumerate}
 
 
 
@@ -77,9 +78,8 @@ di prolungare periodicamente il vettore di cui calcolare la DFT senza alterarne 
 La maggior parte delle proprietà valide per la trasformata di Fourier a tempo continuo hanno un analogo equivalente anche per la DFT.\\ Il cambiamento più significativo da apportare ai teoremi per adattarli al caso finito-discreto è quello di modificare gli indici per tenere conto della periodicità della DFT, ovvero prendere gli indici modulo $\mathbf{N}$.
 
 \noindent Date $X$ e $Y$ le DFT di $x$ e $y$ rispettivamente, valgono:
-\begin{itemize}
 
-
+\begin{enumerate}[i.]
 \item Completezza:\\
 La DFT è una trasformazione \emph{lineare e invertibile}:
 \begin{equation}
@@ -103,12 +103,12 @@ dove $\delta_{kk'}$ \`e il delta di Kronecker.
 \end{cases}\]
 Questa condizione pu\`o essere sfruttata per ricavare la formula della IDFT dalla definizione di DFT.
 
-\item Il teorema di Plancherel e il teorema di Parseval:\\
-Il \emph{teorema di Plancherel} dice che:
+\item Teorema di Parseval:\\
+in generale per segnali ortognolali si ha che
 \begin{equation}
 \sum_{n=0}^{N-1}x_ny_n^*=\frac{1}{N}\sum_{k=0}^{N-1}X_kY_k^*
 \end{equation}
-Il \emph{teorema di Parseval} \`e un caso particolare del teorema di Plancherel e afferma che:
+se $y=x^*$ otteniamo il  \emph{teorema di Parseval}
 \begin{equation}
 \sum_{n=0}^{N-1}|x_n|^2=\frac{1}{N}\sum_{k=0}^{N-1}|X_k|^2
 \end{equation}
@@ -164,7 +164,7 @@ dove $\odot$ indica il prodotto componente per componente.
 %
 % Corollari convoluzione ciclica <--> lineare (pucci)
 %
-\end{itemize}
+\end{enumerate}
 
 \section{Defizione Matriciale}
 Dalla definizione \eqref{eq:def-dft} di DFT emerge immadiatamente una interpretazione matriciale della \emph{trasformata discreta di Fourier} \\
@@ -952,6 +952,8 @@ Y(n)&= H(n)+jG(n)\\
 &=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
 &={\rm Re}(n)+j{\rm Imm}(n)
 \end{align*}
+
+\chapter{FFT N-dimensionale e immagini}
 \include{appendice}
 \include{bibliografia}
 \end{document}
