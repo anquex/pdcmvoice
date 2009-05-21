@@ -326,9 +326,80 @@ che corrisponde alla M-point DFT $X_k^e$ (della sequenza $x_n^e$ di lunghezza M)
 \textbf{DFTF come interpolazione della DFT}
 \\
 \\
-Data la N-point DFT $X_k$ di una sequenza $x_n$ di lunghezza n è possibile determinare la DTFT $X(e^{j\omega _k})$ esequendo l'operazione di intepolazione sui valori di  $X_k$.
-
---> \emph{MITRA - PARAGRAFO 5.3.3}
+Data la N-point DFT $X_k$ di una sequenza $x_n$ di lunghezza n è possibile determinare la DTFT $X(e^{j\omega})$ eseguendo l'operazione di intepolazione sui valori di  $X_k$.
+Dalla definizione di DTFT
+\\
+\begin{equation}
+\label{eq:dtft-def}
+	X(e^{j\omega}) = \sum_{n=0}^{N-1}{x_n e^{-j\omega n}}
+\end{equation}
+\\
+e dalla definizione di IDFT (1.2)
+\\
+\begin{equation*}
+	x_n=\frac{1}{N}\sum_{k=0}^{N-1}X_ke^{\jmath\frac{2\pi}{N}kn}
+\end{equation*}
+\\
+è possibile ricavare
+\begin{eqnarray}
+\label{eq:dft-interpolation-1}
+	X(e^{j\omega}) &=& \sum_{n=0}^{N-1}{\left[\frac{1}{N}\sum_{k=0}^{N-1}X_ke^{\jmath\frac{2\pi}{N}kn}\right] e^{-j\omega n}}\\
+	&=& \frac{1}{N}\sum_{k=0}^{N-1}{X_k \sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}}}
+\end{eqnarray}
+\\
+Riscrivendo la parte destra della relazione precedente utilizzando la seguente proprietà
+\\
+\begin{equation*}
+	\sum_{n=0}^{N-1}u^n = \frac{1-u^N}{1-u}
+\end{equation*}
+\\
+si ottiene
+\\
+\begin{eqnarray}
+\label{eq:dft-interpolation-2}
+	\sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}} &=& \frac{1-e^{-j(\omega N-2\pi k)}}{1-e^{-j[\omega -(2\pi k/N)]}}
+	\\
+	&=& \frac{e^{-j[(\omega N-2\pi k)/2]}}{e^{-j[(\omega N-2\pi k)/2N)]}} \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})}
+	\\
+	&=& \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})} e^{-j[\omega -(2\pi k/N)][(N-1)/2]}
+\end{eqnarray}
+\\
+Sostituendo la \eqref{eq:dft-interpolation-2} nella \eqref{eq:dft-interpolation-1} si giunge a
+\\
+\begin{equation}
+\label{eq:dft-interpolation-3}
+	X(e^{j\omega}) = \frac{1}{N}\sum_{k=0}^{N-1}{X_k \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})} e^{-j[\omega -(2\pi k/N)][(N-1)/2]} }
+\end{equation}
+\\
+che può essere riscritta come
+\\
+\begin{equation}
+\label{eq:dft-interpolation-4}
+	X(e^{j\omega}) = \sum_{k=0}^{N-1}{X_k \phi(\omega -\frac{2\pi k}{N}) }
+\end{equation}
+\\
+definendo
+\\
+\begin{equation}
+\label{eq:dft-interpolation-5}
+	\phi(\omega) = \frac{1}{N} \frac{\sin(\frac{\omega N}{2})}{\sin(\frac{\omega}{2})} e^{-j\omega[(N-1)/2]}
+\end{equation}
+\\
+E' possibile verificare che
+\\
+\[\phi(\omega)|_{\omega=2\pi k/N} =  
+\begin{cases} 
+1 k = 0 \\
+0 1 \leq k \leq N-1
+\end{cases}\]
+\\
+e di conseguenza
+\\
+\begin{equation*}
+	X(e^{j\omega})| _{\omega=2\pi k/N} = X_l \qquad 0 \leq k \leq N-1
+\end{equation*}
+\\
+In definitiva è possibile ottenere $X(e^{j\omega})$ al variare di $\omega$ in $\mathbb{R}$ considerando gli elementi della DFT $X_k$ come i valori di $X(e^{j\omega})$ in \omega = $ 2 \pi k \setminus N$, $0 \leq k \leq N-1$ e considerando, per gli altri valori di $\omega$, il risultato dell'interpolazione \eqref{eq:dft-interpolation-3}
 
 \chapter{Calcolo della DFT}
 
@@ -955,25 +1026,33 @@ Forward Recursion & $O(uc^j)$\\
 
 Nell'applicazione della FFT spesso consideriamo solo funzioni reali del tempo mentre le funzioni in frequenza utilizzate nei calcoli sono, in generale, funzioni complesse. Pertanto, un comune programma in grado determinare la DFT e la sua inversa è scritto in modo da ricevere in input una forma d'onda complessa
 \begin{equation}
-	H(n)=\sum_{k=0}^{N-1}\left[ h_r(k)+ jh_i(k)\right] e^{-j\frac{2\pi}{N}nk}
+	H(k)=\sum_{n=0}^{N-1}\left[ h_{Re}(n)+ jh_{Im}(n)\right] e^{-j\frac{2\pi k}{N}n}
 \end{equation}
 Sfruttando la proprietà \eqref{eq:inverse_computing_rule} per il calcolo dell'inversa è possibile riscrivere
 \begin{equation}
-	h(k)=\frac{1}{N}{\left[\sum_{n=0}^{N-1}{\left[ H_r(n)+ jH_i(n)\right]}^* e^{-j\frac{2\pi}{N}nk}\right]}^*
+	h(n)=\frac{1}{N}{\left[\sum_{k=0}^{N-1}{\left[ H_{Re}(k)+ jH_{Im}(k)\right]}^* e^{-j\frac{2\pi k}{N}n}\right]}^*
 \end{equation}
-e poichè entrambe contengono $e^{-j\frac{2\pi}{N}nk}$ lo stesso programma può essere usato per calcolare sia la trasformata diretta che la sua inversa.
+e poichè entrambe contengono $e^{-j\frac{2\pi k}{N}n}$ lo stesso programma può essere usato per calcolare sia la trasformata diretta che la sua inversa.
 
 Se i dati in ingresso sono reali allora la loro parte immaginaria risulterà essere nulla. Tuttavia poichè i programmi effettuano comunque le operazioni anche per i coefficienti posti a zero, otteniamo uno spreco di capacità di calcolo. Varie tecniche possono essere adottate per aumentare l'efficienza di calcolo di sequenze rali.
-Volendo infatti calcolare le trasformate di $h(k)$ e $g(k)$ è possibile considerare l'ingresso fittizio $y(k)=h(k)+jg(k)$\\
-Per la linearità della DFT
-\begin{align*}
-Y(n)&= H(n)+jG(n)\\
-&=[H_r(n)+jH_i(n)] + j[G_r(n)+jG_i(n)]\\
-&=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
-&={\rm Re}(n)+j{\rm Imm}(n)
-\end{align*}
+\\
+Volendo infatti calcolare le trasformate di $g(n)$ e $h(n)$ è possibile considerare l'ingresso fittizio $y(n)=g(n)+j \cdot h(n)$, considerando in questo modo $g(n) = {\rm Re}(y(n))$ e $h(n) = {\rm Imm}(y(n))$.
+Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n)$ e $h(n)$:
+\begin{equation*}
+	G[k] = \frac{1}{2} \left{ X[k] + X^*[(-k)modN]\right }
+\end{equation*}
+\begin{equation*}
+	H[k] = \frac{1}{2j} \left{ X[k] - X^*[(-k)modN]\right }
+\end{equation*}
 
-\section{Convoluzione lineare}
+%Per la linearità della DFT
+%\begin{align*}
+%Y(k)&= H(k)+jG(k)\\
+%&=[H_r(n)+jH_i(n)] + j[G_r(n)+jG_i(n)]\\
+%&=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
+%&={\rm Re}(n)+j{\rm Imm}(n)
+%\end{align*}
+%\section{Convoluzione lineare}
 
 \section{Convoluzione ciclica}
 
