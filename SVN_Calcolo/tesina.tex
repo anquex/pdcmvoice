@@ -273,7 +273,7 @@ coniugando l'input, applicando la DFT, coniugando l'output e quindi scalando.
 % DTFT M 3.2.1 3.2.2
 % DFT intro pag 233, 5.3.1, (5.2.1) 5.3.2 5.3.3
 
-In questo paragrafo si esamineranno la relazione fra la Discrete-Time Fourier Transform (DTFT) e la N-point DFT.
+In questo paragrafo si esaminerà la relazione fra la Discrete-Time Fourier Transform (DTFT) e la N-point DFT.
 
 La DTFT  $X(e^{j\omega})$ di una sequenza $x[n]$ definita per $0 \leq n \leq N-1$ è data da:
 \\
@@ -345,7 +345,7 @@ ed essendo
 \begin{equation*}
 \mathcal{F} : \mathbb{C}^N\longrightarrow\mathbb{C}^N
 \end{equation*}
-ci sono $N$ termini da calcolare, ognuno dei quali richiede $N$ moltiplicazioni e $N-1$ addizzioni complesse. Anche evidando di calcolare le moltiplicazioni per $\omega_{N}^{0}=1$ si devono comunque effettuare in totale $2(N-1)^2$ operazioni complesse. Il costo è pertanto $O(N^2)$
+ci sono $N$ termini da calcolare, ognuno dei quali richiede $N$ moltiplicazioni e $N-1$ addizioni complesse. Anche evidando di calcolare le moltiplicazioni per $\omega_{N}^{0}=1$ si devono comunque effettuare in totale $2(N-1)^2$ operazioni complesse. Il costo è pertanto $O(N^2)$
 
 Nel dettaglio ogni moltiplicazione complessa $\lambda = z_1 \cdot z_2 = (a + jb) \cdot (c + jd)$ si sviluppa in 
 \begin{align*}
@@ -655,7 +655,7 @@ La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N)
 
 \section{Algoritmi paralleli per il calcolo di FFT}
 
-Gli algoritmi fino a questo momento presentati sono algoritmi prettamente sequenziali che, se pur diminuendo notevolmente la complessit\`a di calcolo rispetto all'algoritmo di base, non sfruttano il fatto che il calcolo della FFT presenta un elevato grado di parallelismo, parallelismo che pu\`o essere sfruttato al meglio in presenza di pi\`u processori e/o cores a patto di progettare algoritmi corretti ed adeguati alle risorse di sistema presenti.\\
+Gli algoritmi fino a questo momento presentati sono algoritmi prettamente sequenziali che, se pur diminuendo notevolmente la complessit\`a di calcolo rispetto all'algoritmo di base, non sfruttano il fatto che il calcolo della FFT presenta un elevato grado di parallelismo, che pu\`o essere sfruttato al meglio in presenza di pi\`u processori a patto di progettare algoritmi corretti ed adeguati alle risorse di sistema presenti.\\
 
 Non \`e scopo di questa relazione discutere approfonditamente l'argomento ma \`e utile fornire comunque una panoramica sulla struttura e l'efficienza di due algoritmi paralleli molto utilizzati nel calcolo della FFT, il primo dei quali utilizza una struttura nota come rete ascendente per il calcolo mentre il secondo \`e un'opportuna rivisitazione dell'algoritmo gi\`a presentato di Cooley-Tukey.
 Quest'ul\-ti\-mo algoritmo \'e stato realizzato utilizzando il linguaggio di programmazione C e testato su due diversi input su un'apposita macchina parallela a pi\`u vie, l'IBM RS/6000 di propriet\`a del Dipartimento di In\-ge\-gne\-ria dell'Informazione dell'U\-ni\-ver\-sit\`a di Padova. Le simulazioni sono state effettuate utilizzando una libreria pro\-prie\-ta\-ria IBM, di nome \emph{hmp Count}, in grado di accedere ai contatori hardware della macchina in questione. Le librerie utilizzate per le comunicazioni inter-processo sono le librerie standard MPI.\\Nella discussione che segue viene indicata con $n$ la lunghezza del vettore di ingresso e con \emph{size} il numero totale di processi utilizzati (numerati da $0$ a $size-1$).
@@ -926,7 +926,7 @@ Forward Recursion & $O(uc^j)$\\
 % MURLI
 %
 %
-\section{FFT of two Real Functions Simultaneosly}
+\section{N-FFT di due funzioni reali}
 
 %
 % anche dal mitra oppure Brigham cap 1p pg 166
@@ -953,7 +953,16 @@ Y(n)&= H(n)+jG(n)\\
 &={\rm Re}(n)+j{\rm Imm}(n)
 \end{align*}
 
-\chapter{FFT N-dimensionale e immagini}
+\section{Convoluzione lineare}
+
+\section{Convoluzione ciclica}
+
+\section{Moltiplicazione di polinomi}
+
+\section{FFT N-dimensionale e immagini}
+
+
+
 \include{appendice}
 \include{bibliografia}
 \end{document}
