@@ -767,7 +767,7 @@ Concludendo, quindi, si pu\`o dedurre che la prima versione dell'algoritmo per i
 
 
 \chapter{Stabilità Numerica}
-Fin'ora abbiamo trattato la \emph{discrete Fourier transform} e la \emph{fast Fourier transform} pensando che potessero idealmente essere calcolate con assoluta precisione.
+Fin'ora abbiamo trattato la \emph{discrete Fourier transform} e la \emph{fast Fourier transform} pensando che potessero idealmente essere calcolate con assoluta precisione.\\
 Tuttavia i calcolatori reali utilizzano parole di lunghezza finita e quindi anche i numeri e le operazioni aritmetiche sono soggetti ai limiti della 	\emph{rappresentazione in virgola mobile}.\\
 E' fondamentale infatti che un algoritmo, oltre ad essere veloce, sia anche stabile quando opera in un contesto in virgola mobile con errore di arrotondamento $u$.\\
 Mostreremo quindi come DFT e FFT siano estremamente sensibili rispetto alla precisione con cui vengono precalcolati i \emph{twiddle factors}, quale rapporto intercorre tra l'errore con DFT e FFT e come, sotto opportune ipotesi, gli algoritmi FFT possano essere considerati stabili.
@@ -884,6 +884,7 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 \end{figure}
 
 
+
 %%
 %
 %  stabfinal.ps
@@ -924,9 +925,22 @@ Forward Recursion & $O(uc^j)$\\
 
 \begin{figure}[H]
   \centering
+      \includegraphics[width=\textwidth]{immagini/twiddle_factor_cd_rm_vs}
+  \caption{Twiddle Factors DC - RM - VS}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
       \includegraphics[width=\textwidth]{immagini/confronto-dc-vs}
   \caption{Confronto DC-VS}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/errore-fft_fr_dft}
+  \caption{Errore esponenziale}
+\end{figure}
+
 \chapter{Applicazioni}
 %
 % MURLI
