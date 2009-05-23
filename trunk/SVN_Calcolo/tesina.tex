@@ -12,6 +12,8 @@
 \usepackage{verbatim}
 \usepackage{booktabs}
 \usepackage{enumerate}
+\usepackage{algorithmic}
+\usepackage[boxed]{algorithm}
 
 
 
@@ -864,7 +866,7 @@ Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentr
 \hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\epsilon_{jk} \qquad |\epsilon_{jk}|\leq u
 \end{equation*}
 
-Generalmente, per lo standar IEEE 734, operando in doppia precisione, la mantissa è lunga 52 bit per cui $u\approx 2.22 \times 10^{-16}$
+Generalmente, per lo standar IEEE 754, operando in doppia precisione, la mantissa è lunga 52 bit per cui $u\approx 2.22 \times 10^{-16}$
 \section{Worst Case Error DFT}
 
 \newtheorem{lemma2}[lemma]{Lemma}
@@ -963,19 +965,128 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 %  % tabella degli errori devi vari metodi
 %%
 \section{Calcolo dei \emph{twiddle factor}}
-Vediamo ora come calcolare i $\omega_N^k,\quad (k=0,1,...,N-1)$ con $N=2^n$ e $N_j=2^{-j}N, \quad (j=0,1,...,n)$. Usando le simmetrie degli esponenziali complessi $\omega_N^l \quad (l=N_3,...,N-1)$ si possono ottenere
-\begin{align}
- \hat{\omega}_N^{N_2-k}=-i \overline{\hat{\omega}_N^{k}}, \quad &\text{simmetrie di $\pi/2$ tra i quadranti }\\ 
-    \hat{\omega}_N^{N_2+k}=-i\hat{\omega}_N^{k},\quad&\text{ I e IV,I e II}\\
-\hat{\omega}_N^{N_1-k}=\overline{\hat{\omega}_N^{k}},\quad& \text{simmetrie rispetto asse y}\\
-\hat{\omega}_N^{N_1+k}=-\hat{\omega}_N^{k} \quad&
-\end{align} 
-per $k=1,..., N_3-1$  e da\[ \hat{\omega}_N^{N_3}=\hat{\omega}_8=fl\left(\sqrt{2}/2\right)(1-i),\quad \hat{\omega}_N^{N_2}=\hat{\omega}_4=-i,\quad \hat{\omega}_N^{N_1}=\hat{\omega}_2=-1
-\]
- \subsection{Metodo diretto}
-\subsection{Metodo ricorsivo}
-\subsection{Repeated subvector scaling}
+Nel calcolo della FFT riveste un'importanza cruciale l'accuratenzza con cui vengono calcolati i \emph{twiddle factors}. Tutte le moltiplicazioni complesse infatti coinvolgono elementi dell'input e \emph{twiddle factors} appunto.
+In generale per il calcolo di una DFT di lunghezza N è necessario valutare $\omega_N^{0}$, $\omega_N^{1}$, ..., $\omega_N^{N-1}$.
+Queste valutazioni comportano il calcolo di funzioni trigonometriche che sono operazioni piuttosto coste.
+Presentiamo di seguito alcune famose tecniche per il calcolo dei \emph{twiddle factors}.\\
 
+\noindent Per semplificare la trattazione degli algoritmi presentati non si terrà conto di considerazioni estremamente importanti importanti dal punto di vista implementativo che permettono di ridurre il numero di \emph{twiddle factors} da calcolare fruttando le proprietà delle radici ennesime dell'unità.
+Infatti le radici dell'unità sono dispote sul cerchio immaginario in maniera regolare e questo permette, attraverso relazioni di simmetria, di ridurre di $1/8$ le valutazioni trigonometriche da effettuare.
+Più in particolare, per $k=1,... ,N/8 $
+\begin{align}
+ \hat{\omega}_N^{\frac{N}{4}-k}=-i \overline{\hat{\omega}_N^{k}}, \quad &\text{simmetrie di $\pi/2$ tra i quadranti }\\ 
+\hat{\omega}_N^{\frac{N}{4}+k}=-i\hat{\omega}_N^{k},\quad&\text{ I e IV,I e II}\\
+\hat{\omega}_N^{\frac{N}{2}-k}=\overline{\hat{\omega}_N^{k}},\quad& \text{simmetrie rispetto asse y}\\
+\hat{\omega}_N^{\frac{N}{2}+k}=-\hat{\omega}_N^{k} \quad&
+\end{align} 
+e inoltre , sfruttando la decomoposizione ricorsiva, $\omega_N^{kp}=w_{\frac{N}{k}}^p$ si può trarre vantaggio dal fatto che alcune radici sono già note\[ \hat{\omega}_N^{\frac{N}{8}}=\hat{\omega}_8=fl\left(\sqrt{2}/2\right)(1-i),\quad \hat{\omega}_N^{\frac{N}{4}}=\hat{\omega}_4=-i,\quad \hat{\omega}_N^{\frac{N}{2}}=\hat{\omega}_2=-1
+\]
+
+Queste conderazioni banalizzano alcune moltiplicazioni complesse riducendole a cambiamenti di segno e scambi tra parte reale ed immaginaria: questo si traduce in un numero minore di operazioni reali e pertanto, anche nella riduzione della propagazione degli errori di arrotondamento.
+ \subsection{Metodo diretto}
+ Consiste nella valutazione banale di ogni $\omega_N^k$ ed effettua 2N valutazioni trigonometriche
+ 
+\begin{algorithm}[H]                      % enter the algorithm environment
+\caption{Direct Call}          % give the algorithm a caption
+\label{alg1}                           % and a label for \ref{} commands later in the document
+\begin{algorithmic}                    % enter the algorithmic environment
+\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\FOR{$k=1$ to $N$}
+\STATE $\hat{\omega}_N^k \longleftarrow fl(\cos(k\theta)) - i fl(\sin(k\theta))$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+Se le funzioni $\cos$ e $\sin$ di libreria sono esatte allora
+\begin{equation}
+	|\hat{\omega}_N^j -\omega_N^j|=|\epsilon_{j}| \leq \sqrt{2}u/2 = O(u)
+\end{equation}
+
+
+\subsection{Moltiplicazione Ripetuta}
+Si basa sulla scomposizione $\omega_N^k = \omega_N \times \omega_N^{k-1} $ ed effettua 2 valutazioni trigometriche e $(N-2)$ moltiplicazioni complesse
+
+\begin{algorithm}[H]                      % enter the algorithm environment
+\caption{Repeated Multiplication}          % give the algorithm a caption
+\label{alg1}                           % and a label for \ref{} commands later in the document
+\begin{algorithmic}                    % enter the algorithmic environment
+\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\STATE $\hat{\omega}_N^0 \longleftarrow 1$
+\STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
+\FOR{$k=2$ to $N-1$}
+\STATE $\hat{\omega}_N^k \longleftarrow fl(\hat{\omega}_N \times \hat{\omega}_N^{k-1})$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+In questo caso $\hat{\omega}_N^j$ è il  risultato di $j-1$ moltiplicazioni e pertanto si ha che 
+\begin{equation}
+	|\epsilon_{j}| = O(ju)
+\end{equation}
+
+\subsection{Subvector Scaling}
+L'idea alla base è la scomposizione 
+
+\begin{align*}
+[\underbrace{\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}}_{N/2},\underbrace{\omega_N^{\frac{N}{2}},\omega_N^{\frac{N}{2}+1}, ..., \omega_N^{N-1}}_{N/2}]=
+[\underbrace{\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}}_{N/2},\omega_N^{\frac{N}{2}}\underbrace{\left(\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}\right)}_{N/2}]
+\end {align*}
+che comporta $2\log_2N$ valutazioni trigonometriche $\log_2N$addizioni reali e $2N$ moltiplicazioni complesse
+
+\begin{algorithm}[H]                      % enter the algorithm environment
+\caption{Subvector Scaling}          % give the algorithm a caption
+\label{alg1}                           % and a label for \ref{} commands later in the document
+\begin{algorithmic}                    % enter the algorithmic environment
+\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\STATE $\hat{\omega}_N^0 \longleftarrow 1$
+\STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
+\FOR{$j=1$ to $\nu-1$}
+\STATE $u \longleftarrow 2^j \pi/N$
+\STATE $\hat{\omega}_N^{2^j} \longleftarrow fl(\cos(u)) - i fl(\sin(u))$
+\FOR{$k=1$ to $2^j-1$}
+\STATE $\hat{\omega}_N^{k+2^j} \longleftarrow fl(\hat{\omega}_N^{2^j} \times \hat{\omega}_N^{k})$
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+In questo caso $\omega_N^j$ è il risultato di circa $\log_2(j)$ moltiplicazioni di fattori calcolati attraverso direct call. Pertanto l'errore risulta essere: 
+\begin{equation}
+	|\epsilon_{j}| = O(\log_2(j)u)
+\end{equation}
+
+
+\subsection{Forward Recursion}
+Questo metodo è presentato per completezza come esempio di metodo numericamente instabile. Il metodo discende da:
+\begin{align}
+\cos(A+B) + \cos(A-B) &= 2 \cos(A) \cos(B)\\
+\sin(A+B) + \sin(A-B) &= 2 \sin(A) \cos(B)
+\end{align}
+da cui per $B=\theta$, $A=(j-1)\theta$
+\begin{align}
+\cos(j\theta) &= 2 \cos(\theta) \cos((j-1)\theta)-\cos((j-2)\theta)\\
+\sin(j\theta) &= 2 \cos(\theta) \sin((j-1)\theta)-\sin((j-2)\theta)
+\end{align}
+
+\begin{algorithm}[H]                      % enter the algorithm environment
+\caption{Forward Recursion}          % give the algorithm a caption
+\label{alg1}                           % and a label for \ref{} commands later in the document
+\begin{algorithmic}                    % enter the algorithmic environment
+\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\STATE $\hat{\omega}_N^0 \longleftarrow 1$
+\STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
+\STATE $\tau \longleftarrow fl(2\cos(\theta))$
+\FOR{$j=1$ to $N-1$}
+\STATE $\hat{\omega}_N^{k} \longleftarrow fl(\tau \hat{\omega}_N^{k-1}-\hat{\omega}_N^{k-2})$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+Il metodo comporta 2 valutazioni trigonometriche, $2N-1$ moltiplicazioni reali e $2(N-1)$ addizioni reali\\ 
+In questo caso l'errore viene amplificato ad ogni step di $|\tau|=|2\cos(\theta)|$ che per $N\geq 6$ risulta già maggiore di 1.
+\begin{equation}
+	|\epsilon_{j}| = O(\tau^ju)
+\end{equation}
 
 \begin{table}[H]
   \caption{Riepilogo errori di arrotondamento per \emph{twiddle factors}}
@@ -993,19 +1104,28 @@ Forward Recursion & $O(uc^j)$\\
 \end{center}
 \end{table}
 
+\subsection{Verifica sperimentale}
+I seguenti grafici illustrano l'errore ottenuto con i diversi metodi per il calcolo dei \emph{twiddle factor}.
+Sono stati ottenuti generando in matlab un vettore casuale di lughezza $N=2^k$ con distribuzione uniforme e valori compresi tra 0 e 1. A questi vettori è stata quindi applicata FFT e IFFT con i vari metodi e quindi calcolato l'errore relativo$$ \frac{\left\|\text{IFFT}(\text{FFT}(x)) \right\|}{\left\|x\right\|}$$
 
+Nel grafico \ref{tf:dc-rm-vs} sono riepilogati gli andamenti dei vari metodi stabili.
+Si noti come direct call e subvector scaling sono praticamente indistinguibili e l'errore sia poco influenzato dalla taglia mentre per repeated multiplication la crescita dell'errore è circa lineare nelle dimensioni dell'ingresso. 
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/twiddle_factor_cd_rm_vs}
   \caption{Twiddle Factors DC - RM - VS}
+  \label{tf:dc-rm-vs}
 \end{figure}
 
+L'errore tra DC-VS non è significativamente distinguibile mentre il numero di operazioni richieste da VS è decisamente inferiore.
+\
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/confronto-dc-vs}
   \caption{Confronto DC-VS}
 \end{figure}
 
+Il metodo Forward Recursion è instabile ed il suo errore lo rende inutilizzabile già per taglie di poblemi non banali $(N\geq8)$. Il grafico compara l'errore con Forward Recursion e quello della DFT con definizione.
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/errore-fft_fr_dft}

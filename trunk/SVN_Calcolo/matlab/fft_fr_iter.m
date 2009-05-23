@@ -25,8 +25,13 @@ W(1)=1;                % omega 0
 W(2)=exp(is*2*pi*i/n); % omega 1
 t=2*W(2);
 for k=3:n
-    W(k)=t*W(k-1)-W(k-2);
+    W(k)=t*real(W(k-1))-real(W(k-2));
+    W(k)=W(k)+i*(t*imag(W(k-1))-imag(W(k-2)));
 end
+
+% for k=3:n
+%     W(k)=t*W(k-1)-W(k-2);
+% end
 
 %bit-reversal dell'input
 a= bitrevorder(a);
