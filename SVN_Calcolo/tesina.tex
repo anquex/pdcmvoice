@@ -401,7 +401,7 @@ e di conseguenza
 	X(e^{j\omega})| _{\omega=2\pi k/N} = X_l \qquad 0 \leq k \leq N-1
 \end{equation*}
 \\
-In definitiva è possibile ottenere $X(e^{j\omega})$ al variare di $\omega$ in $\mathbb{R}$ considerando gli elementi della DFT $X_k$ come i valori di $X(e^{j\omega})$ in \omega = $ 2 \pi k \setminus N$, $0 \leq k \leq N-1$ e considerando, per gli altri valori di $\omega$, il risultato dell'interpolazione \eqref{eq:dft-interpolation-3}
+In definitiva è possibile ottenere $X(e^{j\omega})$ al variare di $\omega$ in $\mathbb{R}$ considerando gli elementi della DFT $X_k$ come i valori di $X(e^{j\omega})$ in \$omega = $ 2 \pi k \setminus N$, $0 \leq k \leq N-1$ e considerando, per gli altri valori di $\omega$, il risultato dell'interpolazione \eqref{eq:dft-interpolation-3}
 
 \chapter{Calcolo della DFT}
 
@@ -1159,10 +1159,10 @@ Se i dati in ingresso sono reali allora la loro parte immaginaria risulterà esse
 Volendo infatti calcolare le trasformate di $g(n)$ e $h(n)$ è possibile considerare l'ingresso fittizio $y(n)=g(n)+j \cdot h(n)$, considerando in questo modo $g(n) = {\rm Re}(y(n))$ e $h(n) = {\rm Imm}(y(n))$.
 Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n)$ e $h(n)$:
 \begin{equation*}
-	G[k] = \frac{1}{2} \left{ X[k] + X^*[(-k)modN]\right }
+	G[k] = \frac{1}{2} \left\{ X[k] + X^*[(-k)modN]\right \}
 \end{equation*}
 \begin{equation*}
-	H[k] = \frac{1}{2j} \left{ X[k] - X^*[(-k)modN]\right }
+	H[k] = \frac{1}{2j} \left\{ X[k] - X^*[(-k)modN]\right \}
 \end{equation*}
 
 %Per la linearità della DFT
