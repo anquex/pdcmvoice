@@ -564,8 +564,8 @@ Se dividiamo gli $N=2^\nu$ elementi di $x_N$ nelle due sotto sequenze $x_{head}=
 X_k &=\sum_{n=0}^{N-1}x_n \omega_N^{nk} \qquad \text{con}\quad \omega_N=e^{-\jmath\frac{2\pi}{N}} \\
 &=\sum_{n=0}^{N/2-1}x_n \omega_N^{nk} + \sum_{n=N/2-1}^{N-1}x_{n} \omega_N^{nk} \qquad \text{per} \quad n'=n-\frac{N}{2}\\
 \label{eq:dft-dif-div}
-&=\sum_{n=0}^{N/2-1}x_n \omega_N^{nk} + \sum_{n'=0}^{N/2-1}x_{\frac{N}{2}+n'} \omega_N^{(\frac{N}{2}+n')k} \qquad  \quad \omega_N^{N\frac{k}{2}}= (-1)^k\\
-&=\sum_{n=0}^{N/2-1}\left[x_n  + (-1)^k x_{\frac{N}{2}+n}\right]
+&=\sum_{n=0}^{N/2-1}x_n \omega_N^{nk} + \sum_{n'=0}^{N/2-1}x_{\frac{N}{2}+n'} \omega_N^{(\frac{N}{2}+n')k} \qquad  \quad \omega_N^{\frac{N}{2}k}= (-1)^k\\
+&=\sum_{n=0}^{N/2-1}\left[x_n  + (-1)^k x_{\frac{N}{2}+n}\right]\omega_N^{nk}
 \end{align}}
 
 Notiamo che la \eqref{eq:dft-dif-div} non è una DFT su $N/2$ punti in quanto è presente il termine $\omega_N^{nk}$ invece di $\omega_{\frac{N}{2}}^{nk}$
@@ -725,6 +725,129 @@ X_{k_1 N_2^{-1} N_2 + k_2 N_1^{-1} N_1} &=\sum_{n_1=0}^{N_1-1} \left( \sum_{n_2=
 \end{align}
 dove $N_1^{-1}$ è l'inverso di $N_1$ in aritmetica modulo $N_2$ e analogamente per $N_2^{-1}$.
 La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N))$. Il numero di operazioni complessive è confrontabile con quello dello split-radix ma il numero di moltiplicazioni globale è inferiore.
+
+
+\section{Interpretazione Matriciale degli algoritmi}
+La visione matriciale proprosta da Van Loan \cite{fft-black-box} risulta molto comoda per la comprensine delle operazioni che si verificano nel calcolo della FFT.
+Riprendendo la scomposizione di Cooley-Tukey
+\begin{align}
+\label{eq:ct-matrix-1}
+	X_k&= Y_k+\omega_N^k Z_k, \qquad k=0,1,...,N/2-1\\ 
+\label{eq:ct-matrix-2}
+	X_{k+\frac{N}{2}} &= Y_k-\omega_N^k Z_k, \qquad k=0,1,...,N/2-1
+\end{align}
+la applichiamo al caso sufficientemente rappresentativo $N=16$ per ricavare lo schema di scomposizione matriciale ricorsivo.
+Indicando con $\mathbf{Y}$ e $\mathbf{Z}$ i vettori corrispondenti alle sequenze $Y_k$ e $Z_k$, possiamo riscrivere le operazioni butterly \eqref{eq:ct-matrix-1} e \eqref{eq:ct-matrix-2} nella forma
+\begin{equation}
+	\mathbf{X}=\mathbf{W_{16}}\mathbf{x} = \begin{pmatrix} \mathbf{I_{8}} &\mathbf{\Omega_{8}} \\\mathbf{I_{8}} &-\mathbf{\Omega_{8}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}\equiv\mathbf{B_{16}} \begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}
+\end{equation}
+dove $\mathbf{I_{8}}$ è la matrice identità di ordine \emph{m} e $\mathbf{\Omega_{8}}$ è la matrice diagnonale 
+\begin{equation*}
+	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
+\end{equation*}
+La matrice $\mathbf{B_{16}}$ utilizzata per il passo di ricombinazione è detta \emph{butterfly matrix}.\\
+$\mathbf{Y}$ e $\mathbf{Z}$ sono a loro volta DFT di lunghezza 8 delle sotto-sequenze pari e dispari di x, che chiameremo $x_{even}$ e $x_{odd}$. Quindi procedendo analogamente,
+
+\begin{equation}
+	\mathbf{Y}=\mathbf{W_{8}}\mathbf{x_{even}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}
+\end{equation}
+dove  $\mathbf{Y'}$ e $\mathbf{Z'}$ denotano le DFT di lunghezza 4 delle sottosequenze pari e dispari di $x_{even}$.
+
+\begin{equation}
+	\mathbf{Z}=\mathbf{W_{8}}\mathbf{x_{odd}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}
+\end{equation}
+dove  $\mathbf{Y''}$ e $\mathbf{Z''}$ denotano le DFT di lunghezza 4 delle sottosequenze pari e dispari di $x_{odd}$.
+
+\begin{equation}
+	\mathbf{X}=\mathbf{W_{16}}\mathbf{x} =\mathbf{B_{16}}
+	\begin{pmatrix}\mathbf{B_{8}} & 0\\0& \mathbf{B_{8}} \end{pmatrix}
+	\begin{pmatrix} \mathbf{Y'} \\\mathbf{Y''} \\ \mathbf{Z'}\\\mathbf{Z''}\end{pmatrix}
+\end{equation}
+e continuando fino a N=2
+\begin{align*}
+	\mathbf{X}&=\mathbf{W_{16}}\mathbf{x} =\mathbf{B_{16}}
+	\begin{pmatrix}\mathbf{B_{8}} & 0 \\0& \mathbf{B_{8}} \end{pmatrix}
+	\begin{pmatrix}\mathbf{B_{4}} & 0& 0& 0\\ 0&\mathbf{B_{4}}& 0& 0 \\  0& 0&\mathbf{B_{4}}& 0 \\  0& 0& 0& \mathbf{B_{4}}  \end{pmatrix}\\
+	&\times
+	\label{eq:CT-factorization}
+	\begin{pmatrix}
+	\mathbf{B_{2}}& 0& 0& 0& 0& 0& 0& 0 \\
+	0&\mathbf{B_{2}}& 0& 0& 0& 0& 0& 0 \\ 
+	0&0&\mathbf{B_{2}}& 0& 0& 0& 0& 0 \\ 
+	0&0&0&\mathbf{B_{2}}& 0& 0& 0& 0 \\ 
+	0&0&0&0&\mathbf{B_{2}}& 0& 0& 0 \\ 
+	0&0&0&0&0&\mathbf{B_{2}}& 0& 0 \\ 
+	0&0&0&0&0&0&\mathbf{B_{2}}& 0 \\ 
+	0&0&0&0&0&0&0&\mathbf{B_{2}} \\  \end{pmatrix}\mathbf{P}^{T}\mathbf{x}
+\end{align*}
+Quindi la matrice $\mathbf{W_{16}}$ è stata espressa come prodotto di quattro matrici  $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT ti tagllia $m/2$ a una di taglia $m$.\\
+Notiamo che man mano che la fattorizzazione è stata sviluppata, il riordinamento dell'input è stato espresso sempre alla destra dei prodotti di matrici. Pertanto, questa riorganizzazione dell'ingresso, detta \emph{scramble operation} viene effettuata solo all'inizio sul vettore di input e non sui passi intermedi.
+La matrice $\mathbf{P}$ è ottenuta effettuando successivi riordinamenti pari/dispari delle colonne della matrice identità $\mathbf{I_{16}}$.
+Dove un riordinamento di mensione N può essere espresso come una matrice $\mathbf{R_N}$  $NxN$ del tipo
+$$\mathbf{R_{N}}=\begin{pmatrix}
+0 & 1\\
+&&0 & 1\\
+&&&&...\\
+&&&&&0 & 1\\
+1 & 0\\
+&&1 & 0\\
+&&&&...\\
+&&&&&1 & 0
+\end{pmatrix}
+$$
+\begin{align*}
+	\mathbf{P}=\mathbf{R_{16}}
+	\begin{pmatrix}\mathbf{R_{8}} & 0 \\0& \mathbf{R_{8}} \end{pmatrix}
+	\begin{pmatrix}\mathbf{R_{4}} & 0& 0& 0\\ 0&\mathbf{R_{4}}& 0& 0 \\  0& 0&\mathbf{R_{4}}& 0 \\  0& 0& 0& \mathbf{R_{4}}  \end{pmatrix}
+	\times
+	\begin{pmatrix}
+	\mathbf{R_{2}}& 0& 0& 0& 0& 0& 0& 0 \\
+	0&\mathbf{R_{2}}& 0& 0& 0& 0& 0& 0 \\ 
+	0&0&\mathbf{R_{2}}& 0& 0& 0& 0& 0 \\ 
+	0&0&0&\mathbf{R_{2}}& 0& 0& 0& 0 \\ 
+	0&0&0&0&\mathbf{R_{2}}& 0& 0& 0 \\ 
+	0&0&0&0&0&\mathbf{R_{2}}& 0& 0 \\ 
+	0&0&0&0&0&0&\mathbf{R_{2}}& 0 \\ 
+	0&0&0&0&0&0&0&\mathbf{R_{2}} \\  \end{pmatrix}
+\end{align*}
+L'effetto di questa permutazione è quello di ottenere un  \emph{riordinamento bitreversal} della sequenza di input x.
+
+La fattorizzazione può inoltre essere espressa agevolmente attraverso  il \emph{Prodotto di Kronecker}
+\footnote{Il prodotto di Kronecker di una matrice $\mathbf{A}$ $p\times q$ e $\mathbf{B}$ $r\times s$ è la matrice$pr \times qs$
+$$
+\mathbf{A}\otimes \mathbf{B}=
+\begin{pmatrix}
+a_{11}\mathbf{B} &\ldots & a_{1q}\mathbf{B}\\
+\vdots &\ddots&\vdots\\
+a_{p1}\mathbf{B} &\ldots & a_{pq}\mathbf{B}
+
+\end{pmatrix}
+$$
+con $a_{ij}$ elementi di $\mathbf{A}$
+}\\
+La fattorizzazione  	\eqref{eq:CT-factorization} può quindi essere vista come
+$$
+\mathbf{X}=\mathbf{W_{16}} \mathbf{x}=(\mathbf{I_{1}}\otimes \mathbf{B_{16}})(\mathbf{I_{2}}\otimes \mathbf{B_{8}}) (\mathbf{I_{4}}\otimes \mathbf{B_{4}})(\mathbf{I_{8}}\otimes \mathbf{B_{2}})\mathbf{P}^T\mathbf{x}
+$$
+In generale la FFT di Cooley-Tukey per $N=2^M$ può essere espressa come
+$$
+\mathbf{X}=\mathbf{W_{N}} \mathbf{x}=\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T\mathbf{x}
+$$
+dove$\mathbf{A}_{k}=\mathbf{I}_r\otimes\mathbf{B}_m $, $m=2^k$ e $rm=N$ per $k=1,...,M$ sono matrici diagnonali a blocchi.
+Generalizzando l'esempio
+$$
+	\mathbf{B}_{2m}= \begin{pmatrix} \mathbf{I}_{m} &\mathbf{\Omega}_{m} \\\mathbf{I}_{m} &-\mathbf{\Omega}_{m}\end{pmatrix} \qquad \text{e} \qquad  	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
+$$
+Notando che $\mathbf{W}_N$ è una matrice simmetrica allora
+$$
+\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = P\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
+$$
+che è proprio la fattorizzazione corrispondente all'algoritmo di Gentleman e Sande.\\
+Un ulteriore modo per vedere $\mathbf{W}_{N}$ è
+$$
+\mathbf{W}_{N}=\mathbf{A}_{M}\mathbf{P}_{M}\mathbf{A}_{M-1}\mathbf{P}_{M-1} ... \mathbf{A}_{2}\mathbf{P}_{2}\mathbf{A}_{1}\mathbf{P}_{1}
+$$
+dove ogni stadio $i$ è costituito da una matrice di combinazione $\mathbf{A}_{i}$ e una di permutazione $\mathbf{P}_{i}$
 
 \section{Algoritmi paralleli per il calcolo di FFT}
 
@@ -890,10 +1013,8 @@ Il calcolo per definizione della DFT è esprimibile attraverso una matrice $\math
 \begin{equation}
 	\mathbf{\hat{x}}=\mathbf{F}\mathbf{x}
 \end{equation}
-$\mathbf{x}$ può essere visto come $\mathbf{x}={\rm Re}(\mathbf{x})+i{\rm Im}(\mathbf{x}) \leftrightarrow [{\rm Re}(\mathbf{x}), {\rm Im}(\mathbf{x})]$, vettore di lunghezza $2N$
-Per definizione
+$\mathbf{x}$ può essere visto come $\mathbf{x}={\rm Re}(\mathbf{x})+i{\rm Im}(\mathbf{x}) \leftrightarrow [{\rm Re}(\mathbf{x}), {\rm Im}(\mathbf{x})]$, vettore di lunghezza $2N$. Per definizione
 \begin{align}
-\label{eq:def-dft}
 X_k&=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1\\
 &= \sum_{n=0}^{N-1}({\rm Re}(x)+\jmath{\rm Im}(x)) \left[ \cos\left( \frac{2\pi}{N}kn\right) - \jmath \sin \left(\frac{2\pi}{N}kn\right)\right]
 \end{align}
@@ -1133,6 +1254,7 @@ Il metodo Forward Recursion è instabile ed il suo errore lo rende inutilizzabile
 \end{figure}
 
 \chapter{Applicazioni}
+ Per le applicazioni si può vedere Inside the FFT black box capitolo 16
 %
 % MURLI
 %
