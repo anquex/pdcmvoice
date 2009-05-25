@@ -168,7 +168,7 @@ dove $\odot$ indica il prodotto componente per componente.
 %
 \end{enumerate}
 
-\section{Defizione Matriciale}
+\section{Definizione Matriciale}
 Dalla definizione \eqref{eq:def-dft} di DFT emerge immadiatamente una interpretazione matriciale della \emph{trasformata discreta di Fourier} \\
 \begin{equation}
 X=\mathcal{F}(x) = F_N x
@@ -957,7 +957,7 @@ $2^{12}$ & $0.0098$ / 4679321 \\
 
 Le comunicazioni crescono con l'aumentare della dimensione del pool di elementi di competenza del singolo processo ed \`e questo il motivo per cui l'effetto descritto \`e parzialmene mitigato dall'aumentare del numero di processi, ovvero con la diminuzione sia della dimensione del pool di competenza del singolo processo, che del numero di invocazioni delle funzioni MPI che il processo deve eseguire.\\
 
-Il fenomeno descritto sarebbe del tutto assente nel secondo algoritmo: infatti, nel primo algoritmo \`e quasi immediata la determinazione del peer con cui comunicare e non vi \`e bi\-so\-gno, per il modo in cui \`e strutturato l'algoritmo stesso, di tag diversi tra loro nelle comunicazioni. Tuttavia, quando il numero degli elementi del vettore di ingresso aumenta troppo ed il numero dei processi \`e superiore ad uno ma non ele\-va\-to l'alto numero di buffer pre\-di\-spo\-sti per le comunicazioni inciderebbe in maniera notevolissima sulle prestazioni, causando un notevole degrado della performance.\\
+Il fenomeno descritto sarebbe del tutto assente nel primo algoritmo: infatti, nel primo algoritmo \`e quasi immediata la determinazione del peer con cui comunicare e non vi \`e bi\-so\-gno, per il modo in cui \`e strutturato l'algoritmo stesso, di tag diversi tra loro nelle comunicazioni. Tuttavia, quando il numero degli elementi del vettore di ingresso aumenta troppo ed il numero dei processi \`e superiore ad uno ma non ele\-va\-to l'alto numero di buffer pre\-di\-spo\-sti per le comunicazioni inciderebbe in maniera notevolissima sulle prestazioni, causando un notevole degrado della performance.\\
 
 Concludendo, quindi, si pu\`o dedurre che la prima versione dell'algoritmo per il calcolo della FFT \`e consigliabile solo in presenza di grandi vettori di input e pochi processi a disposizione (purch\`e pi\`u di uno) mentre la seconda versione dell'algoritmo \`e teoricamente tanto pi\`u efficiente, in presenza di comunicazioni inter-processore, quanto pi\`u il rapporto tra dimensione del vettore di ingresso e numero dei processi tende a 0.
 
@@ -1294,9 +1294,196 @@ Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n
 %&=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
 %&={\rm Re}(n)+j{\rm Imm}(n)
 %\end{align*}
-%\section{Convoluzione lineare}
 
-\section{Convoluzione ciclica}
+% \otimes _N CIRCOLARE SU N
+% \odot LINEARE
+
+\section{Convoluzione circolare}
+
+La N-point DFT Y(k) della sequenza y(n) = g(n) \otimes _N h(n) data dalla convoluzione ricolare tra g(n) e h(n) è data da:
+\begin{equation}
+\label{appl_conv_circ}
+	Y(k) = DFT[y(n)] = DFT[g(n) \otimes _N h(n)] = G(k)H(k)
+\end{equation}
+Di conseguenza è possibile calcolare il risultato della convoluzione circolare y(n) eseguendo la IDFT sulla \eqref{appl_conv_circ}, com'è possibile osservare dalla seguente figura:
+\\
+\\
+\textbf{FIGURA 5.11 pag 261 del MITRA}
+\\
+\\
+
+\textbf{\textit{Esempio}}
+Date le due sequenze
+\begin{equation}
+  g(n) = [1 2 0 1]
+\end{equation}
+\begin{equation}
+  h(n) = [2 2 1 1]
+\end{equation}
+per calcolare la convoluzione circolare
+\begin{equation}
+y_C(n) = g(n) \otimes _N h(n) = \sum_{m=0}^{3} g(m)x((n-m)mod4) \qquad 0 \leq n \leq 3
+\end{equation}
+è possibile considerare le DFT di $g(n)$ calcolata secondo la definizione e di $h(n)$ calcolata secondo la definizione matriciale:
+\begin{eqnarray*}
+  G(k) &=& g(0) + g(1)e^{-j(2\pi k/4)} + g(2)e^{-j(4\pi k/4)} + g(3)e^{-j(6\pi k/4)}
+  \\
+       &=& 1 + 2e^{-j(\pi k/2)} + e^{-j(3\pi k/2)} \qquad 0 \leq k \leq 3
+  \\
+  \\
+  G(0) &=& 1 + 2 + 1 = 4
+  \\
+  G(1) &=& 1 - j2 + j = 1-j
+  \\
+  G(2) &=& 1 - 2 - 1 = -2
+  \\
+  G(3) &=& 1 + j2 - j = 1+j
+\end{eqnarray*}
+
+\begin{equation*}
+  H(k)=
+\left(
+\begin{array}{h0}
+H(0)\\
+H(1)\\
+H(2)\\	
+H(3)\\
+\end{array}\right)
+= D_4
+\left(
+\begin{array}{h1}
+h(0)\\
+h(1)\\
+h(2)\\	
+h(3)\\
+\end{array}\right)
+\left(
+\begin{array}{clrr}
+1 & 1 & 1 & 1\\
+1 & -j & -1 & j\\
+1 & -1 & 1 & -1 \\
+1 & j & -1 & -j\\	
+\end{array}\right)
+\left(
+\begin{array}{h1}
+2\\
+2\\
+1\\	
+1\\
+\end{array}\right)
+=
+\left(
+\begin{array}{h1}
+6\\
+1-j\\
+0\\	
+1+j\\
+\end{array}\right)
+\end{equation*}
+
+Applicando la IDFT al prodotto $Y_C(k) = G(k)H(k) = $[24 -j2 0 j2]
+si ottiene
+\begin{equation*}
+  y_C(n)=
+\left(
+\begin{array}{h0}
+y_C(0)\\
+y_C(1)\\
+y_C(2)\\	
+y_C(3)\\
+\end{array}\right)
+= \frac{1}{4} D_4^*  Y_C(k) = \frac{1}{4}
+\left(
+\begin{array}{clrr}
+1 & 1 & 1 & 1\\
+1 & -j & -1 & j\\
+1 & -1 & 1 & -1 \\
+1 & j & -1 & -j\\	
+\end{array}\right)
+\left(
+\begin{array}{h0}
+24\\
+-j2\\
+0\\	
+j2\\
+\end{array}\right)
+=
+\left(
+\begin{array}{h1}
+6\\
+7\\
+6\\	
+5\\
+\end{array}\right)
+\end{equation*}
+
+\section{Convoluzione lineare}
+
+
+
+Date due sequenze finite $g(n)$ e $h(n)$ di lunghezza N e M rispettivamente è possibile calcolare la convoluzione lineare
+\begin{equation*}
+	y_L(n) = g(n) \odot h(n)
+\end{equation*}
+eseguendo una convoluzione circolare. Definendo le sequenze estese 
+\begin{equation*}
+	g_e(n)=
+	\begin{cases} 
+  g(n) \qquad 0 \leq n \leq N-1 \\
+  0 \qquad N \leq n \leq L-1
+  \end{cases}
+\end{equation*}
+\begin{equation*}
+	h_e(n)=
+	\begin{cases} 
+  h(n) \qquad 0 \leq n \leq M-1 \\
+  0 \qquad M \leq n \leq L-1
+  \end{cases}
+\end{equation*}
+la convoluzione lineare $y_L (n)$ di lunghezza $L = M + N - 1$ corrisponde alla convoluzione circolare tra le sequenza estese:
+\begin{equation*}
+	y_L(n)=y_C(n)=g_e(n) \otimes _L h_e(n)
+\end{equation*}
+\\
+\\
+\textbf{FIGURA 5.13 pag 269 del MITRA}
+\\
+\\
+Nel caso in cui una delle due sequenze sia di durata molto maggiore dell'altra (si può pensare ad una sequenza $x(n)$ di durata infinita e ad una sequenza $h(n)$ di lunghezza M) è possibile utilizzare un metodo detto Overlap-Add, che prevede di suddividere la sequenza di partenza $x(n)$ in più sequenze $x_m(n)$ di campioni non sovrapposti:
+\begin{equation*}
+	x(n)= \sum_{m=0}^{\infty} x_m(n-mN)
+\end{equation*}
+dove
+\begin{equation*}
+	x_m(n)=
+	\begin{cases} 
+  x(n+mN) \qquad 0 \leq n \leq N-1 \\
+  0 \qquad altrove
+  \end{cases}	
+\end{equation*}
+E' possibile calcolare la convoluzione lineare
+\begin{equation*}
+	y(n)= h(n) \odot x(n) = \sum_{l=0}^{M-1} h(l)x(n-l)
+\end{equation*}
+come
+\begin{eqnarray*}
+	y(n)&=& \sum_{l=0}^{M-1} h(l) \left ( \sum_{m=0}^{\infty} {x_m(n-l-mN) \right )
+	    \\
+	    &=& \sum_{m=0}^{\infty} \left ( \sum_{l=0}^{M-1} {h(l) x_m(n-l-mN) \right )
+	    \\
+	    &=& \sum_{m=0}^{\infty} y_m(n-mN)
+\end{eqnarray*}
+dove 
+\begin{equation*}
+	y_m(n)= h(n) \odot x_m(n)
+\end{equation*}
+La convoluzione lineare $y(n)$ viene così suddivisa in più convoluzioni lineari $y_m(n)$ di lunghezza minore $(N + M - 1)$.
+Per esempio $y_0(n)= h(n) \odot x_0(n)$ è definita per $0 \leq n \leq N+M-2$ e $y_1(n)= h(n) \odot x_1(n)$ è definita per $N \leq n \leq 2N+M-2$; la sovrapposizione tra gli $M-1$ elementi di $y_0(n)$ e $y_1(n)$ viene risolta sommando tali elementi per otterenere la sequenza definitiva $y(n)$.
+\\
+\\
+\textbf{FIGURA 5.15 DEL MITRA, PAG 272}
+\\
+\\
 
 \section{Moltiplicazione di polinomi}
 
