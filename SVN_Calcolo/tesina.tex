@@ -1495,7 +1495,7 @@ Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n
 
 \section{Convoluzione circolare}
 
-La N-point DFT Y(k) della sequenza y(n) = g(n) \otimes _N h(n) data dalla convoluzione ricolare tra g(n) e h(n) è data da:
+La N-point DFT Y(k) della sequenza $y(n) = g(n) \otimes _N h(n)$ data dalla convoluzione ricolare tra g(n) e h(n) è data da:
 \begin{equation}
 \label{appl_conv_circ}
 	Y(k) = DFT[y(n)] = DFT[g(n) \otimes _N h(n)] = G(k)H(k)
@@ -1537,79 +1537,67 @@ y_C(n) = g(n) \otimes _N h(n) = \sum_{m=0}^{3} g(m)x((n-m)mod4) \qquad 0 \leq n 
 
 \begin{equation*}
   H(k)=
-\left(
-\begin{array}{h0}
+\begin{pmatrix}
 H(0)\\
 H(1)\\
 H(2)\\	
 H(3)\\
-\end{array}\right)
+\end{pmatrix}
 = D_4
-\left(
-\begin{array}{h1}
-h(0)\\
+\begin{pmatrix}
+h0\\
 h(1)\\
 h(2)\\	
 h(3)\\
-\end{array}\right)
-\left(
-\begin{array}{clrr}
-1 & 1 & 1 & 1\\
+\end{pmatrix}
+\begin{pmatrix}1 & 1 & 1 & 1\\
 1 & -j & -1 & j\\
 1 & -1 & 1 & -1 \\
 1 & j & -1 & -j\\	
-\end{array}\right)
-\left(
-\begin{array}{h1}
+\end{pmatrix}
+\begin{pmatrix}
 2\\
 2\\
 1\\	
 1\\
-\end{array}\right)
+\end{pmatrix}
 =
-\left(
-\begin{array}{h1}
-6\\
+\begin{pmatrix}6\\
 1-j\\
 0\\	
 1+j\\
-\end{array}\right)
+\end{pmatrix}
 \end{equation*}
 
 Applicando la IDFT al prodotto $Y_C(k) = G(k)H(k) = $[24 -j2 0 j2]
 si ottiene
 \begin{equation*}
   y_C(n)=
-\left(
-\begin{array}{h0}
+\begin{pmatrix}
 y_C(0)\\
 y_C(1)\\
 y_C(2)\\	
 y_C(3)\\
-\end{array}\right)
+\end{pmatrix}
 = \frac{1}{4} D_4^*  Y_C(k) = \frac{1}{4}
-\left(
-\begin{array}{clrr}
+\begin{pmatrix}
 1 & 1 & 1 & 1\\
 1 & -j & -1 & j\\
 1 & -1 & 1 & -1 \\
 1 & j & -1 & -j\\	
-\end{array}\right)
-\left(
-\begin{array}{h0}
-24\\
+\end{pmatrix}
+\begin{pmatrix}24\\
 -j2\\
 0\\	
 j2\\
-\end{array}\right)
+\end{pmatrix}
 =
-\left(
-\begin{array}{h1}
+\begin{pmatrix}
 6\\
 7\\
 6\\	
 5\\
-\end{array}\right)
+\end{pmatrix}
 \end{equation*}
 
 \section{Convoluzione lineare}
@@ -1662,7 +1650,7 @@ E' possibile calcolare la convoluzione lineare
 \end{equation*}
 come
 \begin{eqnarray*}
-	y(n)&=& \sum_{l=0}^{M-1} h(l) \left ( \sum_{m=0}^{\infty} {x_m(n-l-mN) \right )
+	y(n)&=& \sum_{l=0}^{M-1} h(l) \left( \sum_{m=0}^\infty x_m(n-l-mN) \right)
 	    \\
 	    &=& \sum_{m=0}^{\infty} \left ( \sum_{l=0}^{M-1} {h(l) x_m(n-l-mN) \right )
 	    \\
