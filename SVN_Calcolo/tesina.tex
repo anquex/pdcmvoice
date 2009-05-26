@@ -1508,13 +1508,11 @@ Di conseguenza è possibile calcolare il risultato della convoluzione circolare y
 \\
 
 \textbf{\textit{Esempio}}
+\\
 Date le due sequenze
-\begin{equation}
-  g(n) = [1 2 0 1]
-\end{equation}
-\begin{equation}
-  h(n) = [2 2 1 1]
-\end{equation}
+\\$g(n)$ = [1 2 0 1]
+\\$h(n)$ = [2 2 1 1]
+
 per calcolare la convoluzione circolare
 \begin{equation}
 y_C(n) = g(n) \otimes _N h(n) = \sum_{m=0}^{3} g(m)x((n-m)mod4) \qquad 0 \leq n \leq 3
@@ -1669,6 +1667,53 @@ Per esempio $y_0(n)= h(n) \odot x_0(n)$ è definita per $0 \leq n \leq N+M-2$ e $
 \\
 
 \section{Moltiplicazione di polinomi}
+
+Un'altra applicazione della DFT che fa uso del prodotto di convoluzione riguarda il calcolo dei coefficienti del polinomio prodotto di due polinomi.
+Siano ad esempio assegnati due polinomi
+\begin{equation*}
+	p(x) = 1 + 5x + 17x^2
+\end{equation*}
+\begin{equation*}
+	q(x) = 11 +6x -4x^2
+\end{equation*}
+Definiti i vettori
+\begin{equation*}
+	a = [1,5,17,0,0] \qquad e \qquad b = [11,6,-4,0,0]
+\end{equation*}
+i coefficienti del polinomio z di quarto grado prodotto di p e di q si ottengono effettuando il prodotto di convoluzione lineare dei vettori a e b, ovvero:
+\begin{equation*}
+c = a \odot b = (11,61,213,82,-68,0,0,0,0)
+\end{equation*}
+che corrisponde al polinomio
+\begin{equation*}
+	z(x) = p(x)q(x) = 11 +61x +213x^2 +82x^3 -68x^4
+\end{equation*}
+
+Per determinare i coefficienti di z si può utilizzare l'operatore DFT. Posto:
+\begin{equation*}
+A = DFT[a] = (23, -11.2082 -i14.7476, 2.082 + i13.229, 2.2082 -i13.229, -11.2082 + i14.7476)
+\end{equation*}
+\begin{equation*}
+B = DFT[b] = (13, 16.0902 - i3.3552, 4.9098 - i7.3309, 4.9098+ i7.3309, +16.0902+ i3.3552)
+\end{equation*}
+utilizzando il seguente teorema
+\begin{equation*}
+C = DFT(c) = DFT[a \odot b] = A .* B
+\end{equation*}
+si ottiene
+\begin{equation*}
+C = (299, -229.82 -i199.69, 107.82 + i48.76; 107.82 - i48.76, -229.82 + i199.69)
+\end{equation*}
+da cui:
+\begin{equation*}
+c := IDFT(C) = (11, 61, 213, 82, -68)
+\end{equation*}
+Il calcolo dei coefficienti del prodotto di due polinomi si riduce, quindi, al calcolo di 3 DFT.
+
+
+
+
+
 
 \section{FFT N-dimensionale e immagini}
 
