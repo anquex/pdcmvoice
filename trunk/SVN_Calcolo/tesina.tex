@@ -728,7 +728,7 @@ La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N)
 
 
 \section{Interpretazione Matriciale degli algoritmi}
-La visione matriciale proprosta da Van Loan \cite{fft-black-box} risulta molto comoda per la comprensine delle operazioni che si verificano nel calcolo della FFT.
+La visione matriciale proprosta da Van Loan \cite{van-loan} risulta molto comoda per la comprensine delle operazioni che si verificano nel calcolo della FFT.
 Riprendendo la scomposizione di Cooley-Tukey
 \begin{align}
 \label{eq:ct-matrix-1}
@@ -764,7 +764,8 @@ dove  $\mathbf{Y''}$ e $\mathbf{Z''}$ denotano le DFT di lunghezza 4 delle sotto
 	\begin{pmatrix} \mathbf{Y'} \\\mathbf{Y''} \\ \mathbf{Z'}\\\mathbf{Z''}\end{pmatrix}
 \end{equation}
 e continuando fino a N=2
-\begin{align*}
+\begin{align}
+\begin{split}
 	\mathbf{X}&=\mathbf{W_{16}}\mathbf{x} =\mathbf{B_{16}}
 	\begin{pmatrix}\mathbf{B_{8}} & 0 \\0& \mathbf{B_{8}} \end{pmatrix}
 	\begin{pmatrix}\mathbf{B_{4}} & 0& 0& 0\\ 0&\mathbf{B_{4}}& 0& 0 \\  0& 0&\mathbf{B_{4}}& 0 \\  0& 0& 0& \mathbf{B_{4}}  \end{pmatrix}\\
@@ -779,7 +780,8 @@ e continuando fino a N=2
 	0&0&0&0&0&\mathbf{B_{2}}& 0& 0 \\ 
 	0&0&0&0&0&0&\mathbf{B_{2}}& 0 \\ 
 	0&0&0&0&0&0&0&\mathbf{B_{2}} \\  \end{pmatrix}\mathbf{P}^{T}\mathbf{x}
-\end{align*}
+\end{split}
+\end{align}
 Quindi la matrice $\mathbf{W_{16}}$ è stata espressa come prodotto di quattro matrici  $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT ti tagllia $m/2$ a una di taglia $m$.\\
 Notiamo che man mano che la fattorizzazione è stata sviluppata, il riordinamento dell'input è stato espresso sempre alla destra dei prodotti di matrici. Pertanto, questa riorganizzazione dell'ingresso, detta \emph{scramble operation} viene effettuata solo all'inizio sul vettore di input e non sui passi intermedi.
 La matrice $\mathbf{P}$ è ottenuta effettuando successivi riordinamenti pari/dispari delle colonne della matrice identità $\mathbf{I_{16}}$.
@@ -840,7 +842,7 @@ $$
 $$
 Notando che $\mathbf{W}_N$ è una matrice simmetrica allora
 $$
-\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = P\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
+\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = \mathbf{A}\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
 $$
 che è proprio la fattorizzazione corrispondente all'algoritmo di Gentleman e Sande.\\
 Un ulteriore modo per vedere $\mathbf{W}_{N}$ è
@@ -848,6 +850,20 @@ $$
 \mathbf{W}_{N}=\mathbf{A}_{M}\mathbf{P}_{M}\mathbf{A}_{M-1}\mathbf{P}_{M-1} ... \mathbf{A}_{2}\mathbf{P}_{2}\mathbf{A}_{1}\mathbf{P}_{1}
 $$
 dove ogni stadio $i$ è costituito da una matrice di combinazione $\mathbf{A}_{i}$ e una di permutazione $\mathbf{P}_{i}$
+
+\begin{algorithm}[H]                      % enter the algorithm environment
+\caption{Cooley-Tukey Matriciale}          % give the algorithm a caption
+\label{alg:ct-matrix}                           % and a label for \ref{} commands later in the document
+\begin{algorithmic}                    % enter the algorithmic environment
+\REQUIRE $N = 2^n (n\geq1),\quad \mathbf{x}\in\mathbb{C}^N$\\
+\ENSURE $\mathbf{x}_n \in\mathbb{C}^N$\\
+\emph{Calcola i twiddle factor} $\omega_N^k$ $(k=1,...,N-1$)\\
+\STATE $\mathbf{x}_0 \longleftarrow \mathbf{P}^T\mathbf{x}$\\
+\FOR{$k=1$ to $n$}
+\STATE $\mathbf{x}_j  \longleftarrow \mathbf{A}_j \mathbf{x}_{j-1} $
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
 
 \section{Algoritmi paralleli per il calcolo di FFT}
 
@@ -975,9 +991,12 @@ Utilizando un modello standard di aritmetica binaria reale a precisione finita \
 \begin{lemma}\textbf{Modello di Wilkinson}
 Siano $x,y \in \mathbb{C}$, allora
 \begin{alignat}{3}
-fl(x\pm y) = (x\pm y) (1+\delta) 	\qquad \qquad && |\delta| &\leq u\\
-fl(x\ast y) = (x\ast y) (1+\delta) 	\qquad \qquad&& |\delta| &\leq \sqrt{2}\frac{2u}{1-2u}=2\sqrt{2}u+ O(u^2)\\
-fl(x\div y) = (x\div y) (1+\delta) 	\qquad \qquad && |\delta| &\leq \sqrt{2}\frac{4u}{1-4u}=4\sqrt{2}u+ O(u^2)\\
+\label{eq:error-sum}
+fl(x\pm y) = (x\pm y) (1+\varepsilon^+) 	\qquad \qquad && |\varepsilon^+| &\leq u\\
+\label{eq:error-prod}
+fl(x\ast y) = (x\ast y) (1+\varepsilon^\times) 	\qquad \qquad&& |\varepsilon^\times| &\leq \sqrt{2}\frac{2u}{1-2u}=2\sqrt{2}u+ O(u^2)\\
+\label{eq:error-div}
+fl(x\div y) = (x\div y) (1+\varepsilon^\div) 	\qquad \qquad && |\varepsilon^\div| &\leq \sqrt{2}\frac{4u}{1-4u}=4\sqrt{2}u+ O(u^2)\\
 \end{alignat}
 \end{lemma}
 
@@ -989,7 +1008,7 @@ Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentr
 \hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\epsilon_{jk} \qquad |\epsilon_{jk}|\leq u
 \end{equation*}
 
-Generalmente, per lo standar IEEE 754, operando in doppia precisione, la mantissa è lunga 52 bit per cui $u\approx 2.22 \times 10^{-16}$
+Per lo standard IEEE 754, operando in doppia precisione, la mantissa è di 53 bit (con 1 bit di segno) per cui $u\approx 1.11 \times 10^{-16}$ mentre in singola precisione è di 24 bit per cui $u\approx 5.96 \times 10^{-8}$.
 \section{Worst Case Error DFT}
 
 \newtheorem{lemma2}[lemma]{Lemma}
@@ -1058,6 +1077,182 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 \end{proof}
 
 \section{Worst Case Error FFT}
+
+%% TEOREMA Worst Case Error FFT
+\newtheorem{Teorema2}[Teorema]{Teorema}
+\begin{Teorema2} \label{Teorema:bound-fft}
+Sia $N=2^n (n\geq3)$ e assumiamo che i \emph{twiddle factor} siano calcolati con una precisine $c_N$
+\begin{equation}
+	|\hat{\omega}_{2^j}^k-\omega_{2^j}^k|=|\delta_{2^j}^k|\leq c_N u \qquad (j=3,...,n; k=1,...,2^{j-1}-1)
+	\label{eq:3.12}
+\end{equation}
+Allora per l'Algoritmo di Cooley-Tukey
+\[\left\|\hat{\mathbf{x}}_n-\mathbf{x}_n\right\|_2 \leq 2^{n/2}(2u +(n-2)((\sqrt{2}c_N+4+\sqrt{2})u + O(u^2)))\left\|\mathbf{x}\right\|_2\]
+\end{Teorema2}
+
+\begin{proof}\.\\Sia $\hat{\mathbf{x}}_0 = \mathbf{x}_0=\mathbf{P}^T\mathbf{x}$, essendo l'input perfettamente rappresentabile in virgola mobile. Indichiamo con $\hat{\mathbf{x}}_j$ il calcolo del vettore $\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1} $ $$\hat{\mathbf{x}}_j=fl(\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1}) \qquad (j=1,...,n)$$
+introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commesso al $j$-esimo passo
+\begin{equation}
+	\hat{\mathbf{x}}_j=\hat{\mathbf{A}}_j\mathbf{x}_{j-1}+\mathbf{e}_{j}\qquad(j=1,...,n)
+	\label{eq:3.7}
+\end{equation}
+ 
+\begin{enumerate}
+	\item Passo $j=1$
+	$$\hat{\mathbf{A}}_1 ={\mathbf{A}}_1=\mathbf{I}_{2^{n-1}}\otimes\mathbf{B}_2\quad \text{con}\quad \mathbf{B}_2=\begin{pmatrix}1 &1\\1 &-1  \end{pmatrix}
+	$$
+	Questo passo pertanto si costituisce di $n/2$ FFT su due elementi. I twiddle factor risultano banali e le operazioni si riducono a 
+	\begin{align}\eta_1 &= \xi_1+\xi_2 \qquad(\xi_1,\xi_2\in \mathbb{C})\\
+								\nonumber \eta_2 &= \xi_1-\xi_2
+	\end{align}
+	Per la \eqref{eq:error-sum} i valori calcolati in virgola mobile risultano essere
+	\begin{align*}
+	\hat{\eta}_1 &= (\xi_1 +\xi_2)(1+\varepsilon_1^+)=\eta_1+(\xi_1+\xi_2)\varepsilon_1^+ & (|\eta_1^+|,|\eta_1^+|\leq u)\\
+	\hat{\eta}_2 &= (\xi_1 -\xi_2)(1+\varepsilon_1^+)=\eta_2+(\xi_1+\xi_2)\varepsilon_1^+
+	\end{align*}
+	da cui
+	$$|\varepsilon_1|^2= |\hat{\eta_1}-\eta_1|^2+|\hat{\eta_2}-\eta_2|^2\leq u^2(|\xi_1+\xi_2|^2+|\xi_1-\xi_2|^2)= 2u^2(|\xi_1|^2+|\xi_2|^2)$$
+	e quindi
+	\begin{equation}
+	\label{eq:3.9}
+	\left\|\mathbf{e}_1\right\|_2\leq\sqrt{2}u \left\|\mathbf{x}_0\right\|_2= \sqrt{2}\left\|\mathbf{x}\right\|_2
+\end{equation}
+	
+	\item Passo $j=2$. Notiamo che
+		$$\hat{\mathbf{A}}_2 ={\mathbf{A}}_2=\mathbf{I}_{2^{n-2}}\otimes\mathbf{B}_4$$
+		con
+		$$\mathbf{B}_2=\begin{pmatrix}\mathbf{I}_2 &\mathbf{\Omega}_2\\\mathbf{I}_2 &-\mathbf{\Omega}_2 \end{pmatrix} \quad\mathbf{\Omega}_2=\begin{pmatrix}1 &0\\ 0& -i\end{pmatrix}\quad \text{e quindi}\quad \mathbf{B}_4=\begin{pmatrix}1&0&1&0\\0&1&0&-i\\1&0&-1&0\\0&1&0&-i\end{pmatrix}$$
+		Il secondo passo consiste quindi in $N/4$ FFT di 4 elementi. I twiddle factor sono banali e le operazioni risultano essere $(\xi_1,\xi_2,\xi_3,\xi_4\in \mathbb{C})$
+			\begin{align*}
+			\eta_1 &= \xi_1+\xi_3 &
+			\eta_2 &= \xi_2-i\xi_4\\
+			\eta_3 &= \xi_1-\xi_3&
+			\eta_4 &= \xi_2+i\xi_4
+	\end{align*}
+	Procedendo analogamente al caso precedente si ottiene la stima $\left\|\mathbf{e}_2\right\|_2\leq\sqrt{2}u \left\|\mathbf{x}_1\right\|_2$.
+	Per la \eqref{eq:3.7} e la \eqref{eq:3.9} otteniamo che 
+	\begin{equation*}
+	\left\|\hat{\mathbf{x}}_1\right\|_2\leq \underbrace{\left\|\mathbf{A}_1\right\|_2}_{\sqrt{2}}\left\|\hat{\mathbf{x}}_0\right\|_2+\underbrace{\left\|\hat{\mathbf{e}}_1\right\|_2}_{\leq \sqrt{2} u \left\|\hat{\mathbf{x}}_0\right\|_2}\leq \sqrt{2} (1+u)\left\|\mathbf{x}\right\|_2
+\end{equation*}
+e quindi
+\begin{equation}
+	\left\|\mathbf{e}_2\right\|_2\leq (2u+O(u^2)) \left\|\mathbf{x}\right\|_2
+	\label{eq:3.10}
+\end{equation}
+	%3
+	\item Passo $j$ con $(j=3,...,n)$.\\
+	Osserviamo che la matrice $\mathbf{A}_j$ presenta per ogni riga e colonna esattamente due elementi diversi da zero. In ogni riga inoltre un elemento è $1$ mentre l'altro è un generico \emph{twiddle factor}. Al passo $j$ pertanto vengono effettuate FFT di lunghezza $2^{n-j}$ e $2^{j-1}$ coppie di operazioni del tipo 
+	\begin{align}
+	\label{eq:3.11}
+	\begin{split}
+	\eta_1 &= \xi_1+\omega_{2^j}^k\xi_2 \qquad(\xi_1,\xi_2\in \mathbb{C}; k=0,...,2^{j-1}-1)\\
+	\eta_2 &= \xi_1-\omega_{2^j}^k\xi_2
+	\end{split}
+	\end{align}
+che calcolate in vigola mobile risultano
+\begin{align}
+\begin{split}
+		\hat{\eta}_1 &= (\xi_1+\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon_1^\times))(1+\varepsilon_1^+) \\
+		\hat{\eta}_2 &= (\xi_1-\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon_2^\times))(1+\varepsilon_2^+)
+		\label{eq:3.13}
+\end{split}
+\end{align}
+con
+\begin{equation}
+	|\varepsilon^\times|\leq 2\sqrt{2}u, \qquad |\varepsilon_1^+|,|\varepsilon_2^+|\leq u 
+	\label{eq:3.14}
+\end{equation}	
+Dall'ipotesi \eqref{eq:3.12} sui \emph{twiddle factor} e dalla \eqref{eq:3.14} segue che
+$$
+\hat{\eta}_1-\eta_1=\xi_1\varepsilon_1^++\hat{\omega}_{2^j}^k\xi_2(\varepsilon^\times+\varepsilon_1^++\varepsilon^\times \varepsilon_1^+)+\delta_{2^j}^k \varepsilon_2+O(u^2)\
+$$
+usando la \eqref{eq:3.14}si ha
+$$
+|\hat{\eta}_1-\eta_1|=|\xi_1|u+|\xi_2|((2\sqrt{2}+1+c_N)u+O(u^2))
+$$
+e quindi
+$$
+|\hat{\eta}_1-\eta_1|^2=2((2\sqrt{2}+1+c_N)u+O(u^2))^2(|\xi_1|^2+|\xi_2|^2)
+$$
+Applicando lo stesso ragionamento a $|\hat{\eta}_2-\eta_2|^2$ si arriva a 
+$$
+|\hat{\eta}_1-\eta_1|^2+|\hat{\eta}_2-\eta_2|^2=4((2\sqrt{2}+1+c_N)u+O(u^2))^2(|\xi_1|^2+|\xi_2|^2)
+$$
+
+Per l'errore $\mathbf{e}_j$ otteniamo la stima
+$$\left\|\mathbf{e}_j\right\|_2\leq 2((2\sqrt{2}+1+c_N)u+O(u^2))\left\|\mathbf{\hat   {x}}_{j-1}\right\|_2$$
+
+Dalla \eqref{eq:3.4} e \eqref{eq:3.5} segue che
+$$
+\left\|\mathbf{\hat   {x}}_{j-1}\right\|_2\leq (2^{(j-1)/2})+O(u))\left\|\mathbf{x}\right\|_2
+$$
+e quindi
+\begin{align}
+\begin{split}
+	\left\|\mathbf{e}_j\right\|_2&\leq 2^{(j+1)/2}((2\sqrt{2}+1+c_N)u+O(u^2))\left\|\mathbf{x}\right\|_2\\
+	&\leq 2^{j/2}((4+\sqrt{2}+\sqrt{2}c_N)u+O(u^2))\left\|\mathbf{x}\right\|_2
+	\label{eq:3.15}
+	\end{split}
+\end{align}
+	\item \. %4
+ Ora valutiamo l'errore $\left\|\hat{x}_n-x_n\right\|_2$. Applicando ripetutamente la \eqref{eq:3.7} otteniamo
+
+\begin{equation}\nonumber
+ \begin{split}						  
+		\hat{x}_n &= \hat{\mathbf{A}}_n\hat{\mathbf{x}}_{n-1}+ \mathbf{e}_{n}\\
+							&= \hat{\mathbf{A}}_n\hat{\mathbf{A}}_{n-1}\hat{\mathbf{x}}_{n-2}		+	                         			\hat{\mathbf{A}}_n\mathbf{e}_{n-1}
+								 +\mathbf{e}_{n}\\
+							&\qquad \vdots\\
+						  &=\hat{\mathbf{A}}_n...\hat{\mathbf{A}}_{1}\mathbf{x}+\hat{\mathbf{A}}_n ...\hat{\mathbf{A}}_{2}\mathbf{e}_{1} +...+\hat{\mathbf{A}}_n ...\hat{\mathbf{A}}_{j+1}\mathbf{e}_{j}+...+ \hat{\mathbf{A}}_n\mathbf{e}_{n-1}+ \mathbf{e}_{n}
+	\end{split}
+\end {equation}
+Dall'algoritmo \ref{alg:ct-matrix} (CT-Matriciale) ricordiamo che $\mathbf{x}_n = \mathbf{A}_n ...\mathbf{A}_1\mathbf{P}^T\mathbf{x}_{n-1}$ e per el \eqref{eq:3.4},\eqref{eq:3.9},\eqref{eq:3.10},\eqref{eq:3.15}
+%\left\|\mathbf{e}_1\right\|_2
+
+\begin{equation}\nonumber						  
+		\left\|\hat{\mathbf{x}}_n-\mathbf{x}_n\right\|_2 \leq \left\|\mathbf{A}_n... \mathbf{A}_2\right\|_2\left\|\mathbf{e}_1\right\|_2+...+\left\|\mathbf{A}_n\right\|_2\left\|\mathbf{e}_{n-1}\right\|_2 +\left\|\mathbf{e}_{n}\right\|_2 
+\end {equation}
+
+Osserviamo quindi che
+\begin{align*}
+\left\|\mathbf{A}_n... \mathbf{A}_2\right\|_2\left\|\mathbf{e}_1\right\|_2 &\leq 2^{(n-1)/2} \sqrt{2} u \left\|\mathbf{x}\right\|_2 = 2^{\frac{n}{2}}u\left\|\mathbf{x}\right\|_2\\
+\left\|\mathbf{A}_n... \mathbf{A}_3\right\|_2\left\|\mathbf{e}_2\right\|_2 &\leq 2^{(n-2)/2} 2 u \left\|\mathbf{x}\right\|_2 = 2^{\frac{n}{2}}u \left\|\mathbf{x}\right\|_2\\
+\left\|\mathbf{A}_n... \mathbf{A}_4\right\|_2\left\|\mathbf{e}_3\right\|_2 &\leq 
+2^{(n-3)/2}2^{3/2}((4+\sqrt{2}+\sqrt{2}c_N)u + O(u^2))\left\|\mathbf{x}\right\|_2
+\\&\vdots\\
+\left\|\mathbf{A}_n... \mathbf{A}_{j+1}\right\|_2\left\|\mathbf{e}_j\right\|_2
+&\leq2^{n/2}((4+\sqrt{2}+\sqrt{2}c_N)u + O(u^2))\left\|\mathbf{x}\right\|_2
+\\&\vdots\\
+\left\|\mathbf{e}_n\right\|_2
+&\leq2^{n/2}((4+\sqrt{2}+\sqrt{2}c_N)u + O(u^2))\left\|\mathbf{x}\right\|_2
+\end{align*}
+
+Pertanto risulta
+\begin{equation}
+	\left\|\hat{\mathbf{x}}_n-\mathbf{x}_n\right\|_2 \leq 2^{n/2}(2u +(n-2)((\sqrt{2}c_N+4+\sqrt{2})u + O(u^2)))\left\|\mathbf{x}\right\|_2
+\end{equation}
+
+Ricordando che$\left\|\mathbf{X}\right\|_2=\sqrt{N}\left\|\mathbf{x}\right\|_2$,l'errore, come ordine di grandezza, risulta essere\\
+$$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{X}\right\|_2$$
+
+% 5 
+%\item Nel caso di DFT unitaria è necessario operare la normalizzazione $\mathbf{y}=2^{-n/2}\mathbf{x}_n$ del risultato. Siamo nel caso in cui $\mathbf{\hat{y}}=fl(2^{-n/2}\mathbf{\hat{x}}_n)$ e l'operazione è una semplice moltiplicazione tra numero complesso e reale. Otteniamo quindi
+%$$\left\|\mathbf{\hat{y}}-2^{-n/2}\mathbf{\hat{x}}_n\right\|_2\leq 2^{-n/2}u\left\|\mathbf{\hat{x}}_n\right\|_2\leq (u+O(u^2))\left\|\mathbf{x}\right\|_2$$
+%
+%e quindi
+%\begin{align}
+%\left\|\mathbf{\hat{y}}-\mathbf{y}\right\|_2&\leq\left\|\mathbf{\hat{y}}-2^{-n/2}\mathbf{\hat{x}}_n\right\|_2+\left\|2^{-n/2}\mathbf{\hat{x}}_n-2^{-n/2}\mathbf{x}_n \right\|_2\\
+%&\leq\left\|\mathbf{\hat{y}}-2^{-n/2}\mathbf{\hat{x}}_n\right\|_2+2^{-n/2}\left\|\mathbf{\hat{x}}_n-\mathbf{x}_n \right\|_2\\
+%&\leq ((\sqrt{2}c_N+4+\sqrt{2})(n-2)u + 3u+ O(u^2))\left\|\mathbf{x}\right\|_2
+%\end{align}
+%
+%La FFT unitaria riduce quindi l'errore di un fattore $1/\sqrt{N}$ e risulta pertanto preferibile\\
+%$$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{x}\right\|_2$$
+\end{enumerate}
+\end{proof}
+
+
+
 \section{Confronto DFT FFT}
 \begin{figure}[H]
   \centering
@@ -1219,13 +1414,13 @@ In questo caso l'errore viene amplificato ad ogni step di $|\tau|=|2\cos(\theta)
 Direct Call & $O(u)$\\
 Repeated multiplication & $O(uj)$\\
 Subvector Scaling & $O(u\log j)$\\
-Forward Recursion & $O(uc^j)$\\
+Forward Recursion & $O(u\tau^j)$\\
 \bottomrule
 \end {tabular}
 \end{center}
 \end{table}
 
-\subsection{Verifica sperimentale}
+\section{Verifiche sperimentali}
 I seguenti grafici illustrano l'errore ottenuto con i diversi metodi per il calcolo dei \emph{twiddle factor}.
 Sono stati ottenuti generando in matlab un vettore casuale di lughezza $N=2^k$ con distribuzione uniforme e valori compresi tra 0 e 1. A questi vettori è stata quindi applicata FFT e IFFT con i vari metodi e quindi calcolato l'errore relativo$$ \frac{\left\|\text{IFFT}(\text{FFT}(x)) \right\|}{\left\|x\right\|}$$
 
