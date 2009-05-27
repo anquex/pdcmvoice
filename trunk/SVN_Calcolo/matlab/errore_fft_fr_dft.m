@@ -2,14 +2,14 @@ clear all;
 close all;
 clc;
 
-N=5; % numero di punti
+N=15; % numero di punti
 l=2;  % potenza di partenza
 base=2;
 punti=base*ones(1,N);
 esponente=linspace(l,N+l-1,N);
 punti=punti.^esponente;
 
-% norm2MATFFT=zeros(1,N);
+norm2MATFFT=zeros(1,N);
 % norm2FFTDC=zeros(1,N);
 % norm2FFTRM=zeros(1,N);
 % norm2FFTVS=zeros(1,N);
@@ -21,11 +21,11 @@ for i=1:N
     l=length(vettore);
     norma(i)=norm(vettore);
 %FFT MATLAB FFT
-%     FFT=fft(vettore);
-%     IFFT=ifft(FFT);
-%     clear FFT;
-%     norm2MATFFT(i)=norm(vettore-IFFT)/norma(i);
-%     clear IFFT;
+    FFT=fft(vettore);
+    IFFT=ifft(FFT);
+    clear FFT;
+    norm2MATFFT(i)=norm(vettore-IFFT)/norma(i);
+    clear IFFT;
 %FFT DIT2-DC-ITER
 %     FFT=fft_dc_iter(vettore,-1);
 %     IFFT=fft_dc_iter(FFT,1)/l;
@@ -59,12 +59,12 @@ for i=1:N
      i
 end 
 %plot(esponente,norm2FFT,'b',esponente,norm2DFT,'r');
-semilogy(esponente,norm2FFTFR,'mv',esponente,norm2DFT,'bv');
-legend('errore FFT-FR','errore DFT','Location','NorthWest');
+semilogy(esponente,norm2FFTFR,'mv',esponente,norm2DFT,'bv',esponente,norm2MATFFT,'cv');
+legend('errore FFT-FR','errore DFT','errore FFT','Location','NorthWest');
 grid on;
 xlabel('esponente');
 ylabel('errore');
 title('Norma 2 dell''errore');
 
 hold on;
-semilogy(esponente,norm2FFTFR,'m',esponente,norm2DFT,'b');
+semilogy(esponente,norm2FFTFR,'m',esponente,norm2DFT,'b',esponente,norm2MATFFT,'c');

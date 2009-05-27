@@ -14,6 +14,7 @@
 \usepackage{enumerate}
 \usepackage{algorithmic}
 \usepackage[boxed]{algorithm}
+\usepackage{subfig}
 
 
 
@@ -127,15 +128,18 @@ dove si è utilizzato il fatto che $e^{-2\pi \jmath}=1$. Allo stesso modo pu\`o e
 
 \item Il \emph{Circular shift theorem}:\\
 Moltiplicare $x_N$ per una fase lineare $e^{-\jmath\frac{2\pi}{N}nm}$, per un qualche $m$ intero, è equivalente ad uno shift circolare di $X_N$ di $m$ posizioni: $X_k$ diventa $X_{k-m}$, il cui pedice si deve intendere come \emph{modulo N}. Analogamente, uno shift circolare di $x_N$ corrisponde alla moltiplicazione di $X_N$ per una fase lineare.
-\begin{equation}
-se\;\mathcal{F}((x_n))_k=X_k
-\end{equation}
-\begin{equation}
-allora\;\mathcal{F}((x_ne^{\jmath\frac{2\pi}{N}nm}))_k=X_{k-m}
-\end{equation}
-\begin{equation}
-e\;\mathcal{F}((x_{n-m}))_k=X_ke^{-\jmath\frac{2\pi}{N}km}
-\end{equation}
+\begin{gather}
+\nonumber \text{Se}\qquad\qquad x_n \longleftrightarrow X_k\\
+\text{Allora} \qquad x_ne^{\jmath\frac{2\pi}{N}nm}\longleftrightarrow X_{k-m}\\
+\text{e}\qquad x_{n-m}\longleftrightarrow X_ke^{-\jmath\frac{2\pi}{N}km}
+\end{gather}
+Un caso molto utile, soprattutto nelle sue applicazioni $d$-dimensionali è
+\begin{gather}
+\nonumber x_n \longleftrightarrow X_k\\
+	x_n\cdot(-1)^n= x_n\cdot e^{j2\pi(\frac{N/2n}{N})} \longleftrightarrow X_{k-\frac{N}{2}}
+	\label{eq:frequency-shift}
+\end{gather}
+che ha l'effetto di centrare le basse frequenze.
 
 \item \emph{Linear Convolution Theorem}\\
 Siano $x=x_N$ e $y=y_N$ due vettori arbitrari $N$-dimensionali e sia $z=x \ast y$, un vettore di $2N-1$ componenti ottenuto dalla convoluzione lineare $\ast$.\\ Allora,\\
@@ -1237,17 +1241,25 @@ $$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{X
 
 
 \section{Confronto DFT FFT}
+
+L'applicazione della FFT non velocizza il calcolo della trasformata discreta di Fourier ma riduce al contempo la propagazione dell'errore di arrotondamento.
+Notiamo come per la DFT questo sia più che lineare mentre per la FFT risulta logaritmico e quindi praticamente costante per taglie di problemi molto grandi.
+
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/errore-relativo-DFT-FFT}
   \caption{Norma 2 dell'errore tra $x_N$ e $\mathcal{F}^{-1}(\mathcal{F}(x_N))$}
 \end{figure}
 
+La verifica su dati reali mostra come bound DFT ed errore effettivo abbiano lo stesso andamento asintotico a meno di una costante quantificabile in circa un ordine di grandezza.
+
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/Bound-DFT}
   \caption{Andamento dell'errore reale e dell'errore massimo per il calcolo della DFT attraverso definizione}
 \end{figure}
+
+Notiamo come l'errore reale e quello di bound per la FFT è circa 2 ordini di grandezza inferiore. La costante asintotica della FFT è circa $1/10$ di quella della DFT
 
 \begin{figure}[H]
   \centering
@@ -1382,9 +1394,9 @@ da cui per $B=\theta$, $A=(j-1)\theta$
 \end{algorithm}
 
 Il metodo comporta 2 valutazioni trigonometriche, $2N-1$ moltiplicazioni reali e $2(N-1)$ addizioni reali\\ 
-In questo caso l'errore viene amplificato ad ogni step di $|\tau|=|2\cos(\theta)|$ che per $N\geq 6$ risulta già maggiore di 1.
+In questo caso la propagazione dell'errore è dovuta principalmente alla moltiplicazione per $|\tau|=|2\cos(\theta)|$ che per $N\geq 6$ risulta già maggiore di 1.
 \begin{equation}
-	|\epsilon_{j}| = O(\tau^ju)
+	|\epsilon_{j}| = O(2j^2u)
 \end{equation}
 
 \begin{table}[H]
@@ -1397,7 +1409,7 @@ In questo caso l'errore viene amplificato ad ogni step di $|\tau|=|2\cos(\theta)
 Direct Call & $O(u)$\\
 Repeated multiplication & $O(uj)$\\
 Subvector Scaling & $O(u\log j)$\\
-Forward Recursion & $O(u\tau^j)$\\
+Forward Recursion & $O(2j^2u)$\\
 \bottomrule
 \end {tabular}
 \end{center}
@@ -1416,15 +1428,15 @@ Si noti come direct call e subvector scaling sono praticamente indistinguibili e
   \label{tf:dc-rm-vs}
 \end{figure}
 
-L'errore tra DC-VS non è significativamente distinguibile mentre il numero di operazioni richieste da VS è decisamente inferiore.
-\
+L'errore tra DC-VS non è significativamente distinguibile mentre il numero di operazioni richieste da VS è decisamente inferiore. Infatti DC effettua un ordine lineare di valutazioni trigonometriche mentre VS soltanto un ordine logaritmico di queste e un ordine lineare di moltiplicazioni complesse.
+
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/confronto-dc-vs}
   \caption{Confronto DC-VS}
 \end{figure}
 
-Il metodo Forward Recursion è instabile ed il suo errore lo rende inutilizzabile già per taglie di poblemi non banali $(N\geq8)$. Il grafico compara l'errore con Forward Recursion e quello della DFT con definizione.
+Il metodo Forward Recursion è instabile ed il suo errore è maggiore di quello della DFT banale già per $N=2^6$. Il grafico compara l'errore con Forward Recursion, DFT con definizione e calcolo diretto.
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/errore-fft_fr_dft}
@@ -1698,7 +1710,8 @@ Il calcolo dei coefficienti del prodotto di due polinomi si riduce, quindi, al c
 
 
 
-\section{FFT N-dimensionale e immagini}
+\section{FFT $d$-dimensionale e immagini}
+La DFT $d$-dimensionale è definita come
 \begin{equation}
 X_{k_1,k_2,...,k_d}=
 \sum_{n_1=0}^{N_1-1}\left(
@@ -1711,29 +1724,65 @@ x_{k_1,k_2,...,k_d}
 \omega_{N_1}^{k_1n_1}
 % \quad k=0,...,N-1
 \end{equation}
-con $k_l=0,1,...,N_l-1$
+con $k_l=0,1,...,N_l-1$\\
 La DFT multidimensionale può essere calcolata, sfuttando la separabilità dell'operatore DFT, attraverso applicazioni successive della DFT monodimensionale per ciascuna delle $d$ dimensioni.\\
 
-
-Nel caso delle immagini (2-D) questa si riduce a
+\noindent Nel caso delle immagini (2-D) questa si riduce a
 \begin{equation}
 	F(u,v)= \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x,y) e^{-j2\pi(\frac{ux}{M}+\frac{vy}{N})}
 \end{equation}
 
-Abbiamo sviluppato un semplice programma in C\# che è in grado di calcolare la 2D FFT di un'immagine e qualche operazione basilare di filtraggio.\\
+\noindent Abbiamo sviluppato un semplice programma in C\# che è in grado di calcolare la 2D FFT di un'immagine e qualche operazione basilare di filtraggio.\\
 La scelta del C\# è stata determinata dal fatto che il linguaggio offre la potenzialità dei costrutti C++ con in più notevoli classi di supporto al caricamento delle immagini da formati diversi e la loro conversione in bitmap, alla loro visualizzazione e manipolazione, e a basilari operazioni di editing e interazione con l'utente attraverso il modulo drawing.
 
-\paragraph{Fasi}
+\paragraph{Fasi Elaborazione}
 \begin{enumerate}
-	\item Moltiplicazione dell'immagine originale $f(x,y)$ per $(-1)^{x+y}$
-	\item Calcolo DFT $F(u,v)$
+	\item Moltiplicazione dell'immagine originale $f(x,y)$ per $(-1)^{x+y}$ per centrare le basse frequenze. Proprietà \eqref{eq:frequency-shift}
+	\item $F(u,v)\leftarrow DFT\; f(x,y)$
 	\item editing $F(u,v)$
-	\item $f(x,y)=$IDFT$F(u,v)$
+	\item $f(x,y)\leftarrow $IDFT\;$F(u,v)$
 	\item Moltiplicazione di $f(x,y)$ per $(-1)^{x+y}$
 \end{enumerate}
 
+\paragraph{Applicazione dell'elaborazione}\.\\
 
+\noindent Qui di seguito sono riportate alcune immagini e la loro trasformata a cui è stata applicata una log-tranform per aumentare la gamma dei bianchi in modo da rendere la fft calcolata più visibile.
 
+\begin{figure}[H]
+  \centering 		             
+  \subfloat[Rettangolo]{\includegraphics[width=0.6\textwidth]{immagini/rettangolo}} 
+  \subfloat[Trasformata]{\includegraphics[width=0.6\textwidth]{immagini/rettangolo-fft}} 
+\end{figure}
+
+\begin{figure}[H]
+  \centering \subfloat[Rettangolo Ruotato]{\includegraphics[width=0.6\textwidth]{immagini/rettangolo-ruotato}} \subfloat[Trasformata]{\includegraphics[width=0.6\textwidth]{immagini/rettangolo-ruotato-fft}}                  
+\end{figure}
+
+\begin{figure}[H]
+  \centering \subfloat[Pattern Taj Mahal]{\includegraphics[width=0.6\textwidth]{immagini/render-taj-ifscompose}} \subfloat[Trasformata]{\includegraphics[width=0.5\textwidth]{immagini/render-taj-ifscompose-fft}}               
+\end{figure}
+
+\begin{figure}[H]
+  \centering \subfloat[Pattern]{\includegraphics[width=0.6\textwidth]{immagini/square-noiseless}} \subfloat[Trasformata]{\includegraphics[width=0.6\textwidth]{immagini/square-noiseless-fft}}               
+\end{figure}
+
+Le seguenti immagini sono il risultato del filtraggio con il software da noi sviluppato.
+Sono riportate immagine originale, fft, fft a cui sono state rimosse delle frequenze e antitrasformata.
+
+Notiamo come la conoscenza della caratterizzazione del rumore permetta di rimuovere, ove possibile, le frequenze ad esso associato dall'immagine.
+
+\begin{figure}[H]
+  \centering \subfloat[Automobile]{\includegraphics[width=0.35\textwidth]{immagini/macchina}}  \subfloat[Trasformata]{\includegraphics[width=0.5\textwidth]{immagini/macchina-fft}} \\
+  \subfloat[Automobile filtrata]{\includegraphics[width=0.35\textwidth]{immagini/macchina-filtrata}} 
+\subfloat[Trasformata filtrata]{\includegraphics[width=0.5\textwidth]{immagini/macchina-filtrata-fft}}                
+\end{figure}
+
+\begin{figure}[H]
+  \centering 
+  \subfloat[Africa]{\includegraphics[width=0.45\textwidth]{immagini/africa}}\quad  \subfloat[Trasformata]{\includegraphics[width=0.45\textwidth]{immagini/africa-fft}} \\
+  \subfloat[Africa filtrata]{\includegraphics[width=0.45\textwidth]{immagini/africa-filtrata}} \quad 
+\subfloat[Trasformata filtrata]{\includegraphics[width=0.45\textwidth]{immagini/africa-filtrata-fft}}                
+\end{figure}
 
 \include{appendice}
 \include{bibliografia}

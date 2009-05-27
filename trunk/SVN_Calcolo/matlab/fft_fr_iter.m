@@ -23,7 +23,7 @@ n=length(a);
 % Repeated multiplication
 W(1)=1;                % omega 0
 W(2)=exp(is*2*pi*i/n); % omega 1
-t=2*W(2);
+t=2*cos(2*pi/n);
 for k=3:n
     W(k)=t*real(W(k-1))-real(W(k-2));
     W(k)=W(k)+i*(t*imag(W(k-1))-imag(W(k-2)));
