@@ -728,6 +728,7 @@ La complessità dopo la scomposizione è $N\cdot (N_1+N_2)$ e iterando $O(N\log(N)
 
 
 \section{Interpretazione Matriciale degli algoritmi}
+\label{notazione-matriciale}
 La visione matriciale proprosta da Van Loan \cite{van-loan} risulta molto comoda per la comprensine delle operazioni che si verificano nel calcolo della FFT.
 Riprendendo la scomposizione di Cooley-Tukey
 \begin{align}
@@ -842,7 +843,7 @@ $$
 $$
 Notando che $\mathbf{W}_N$ è una matrice simmetrica allora
 $$
-\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = \mathbf{A}\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
+\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = \mathbf{P}\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
 $$
 che è proprio la fattorizzazione corrispondente all'algoritmo di Gentleman e Sande.\\
 Un ulteriore modo per vedere $\mathbf{W}_{N}$ è
@@ -859,7 +860,7 @@ dove ogni stadio $i$ è costituito da una matrice di combinazione $\mathbf{A}_{i}
 \ENSURE $\mathbf{x}_n \in\mathbb{C}^N$\\
 \emph{Calcola i twiddle factor} $\omega_N^k$ $(k=1,...,N-1$)\\
 \STATE $\mathbf{x}_0 \longleftarrow \mathbf{P}^T\mathbf{x}$\\
-\FOR{$k=1$ to $n$}
+\FOR{$j=1$ to $n$}
 \STATE $\mathbf{x}_j  \longleftarrow \mathbf{A}_j \mathbf{x}_{j-1} $
 \ENDFOR
 \end{algorithmic}
@@ -1025,6 +1026,37 @@ Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\ma
 \section{Worst Case Error FFT}
 
 %% TEOREMA Worst Case Error FFT
+Per questa dimostrazione faremo riferimento alla notazione matriciale introdotta nella sezione \ref{notazione-matriciale} per l'algoritmo di Cooley-Tukey.
+
+Introduciamo alcune proprietà della matrici $\mathbf{A}_j$ che useremo nella dimostrazione.
+La matrice FFT può essere espressa come:
+\begin{equation}
+	\mathbf{F}_N=\mathbf{A}_n \mathbf{A}_{n-1} ... \mathbf{A}_1 \mathbf{P}^T \qquad (N=2^n)
+	\label{eq:3.1}
+\end{equation}
+dove
+\begin{equation}
+	\mathbf{A}_j=\mathbf{I}_{2^{n-j}} \otimes \mathbf{B}_{2^j}, \quad
+		\mathbf{B}_{2m}= \begin{pmatrix} \mathbf{I}_{m} &\mathbf{\Omega}_{m}\\ \mathbf{I}_{m} &-\mathbf{\Omega}_{m}\end{pmatrix}, \quad	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
+	\label{eq:3.3}
+\end{equation}
+è chiaro che $\mathbf{A}_j$ contiene solo 2 elementi diversi da zero in ogni riga e colonna.
+\emph{Proprietà} La matrice $\frac{1}{\sqrt{2}}\mathbf{B}_{2m}$ è unitaria. Infatti
+ $$\mathbf{B}_{2m} (\overline{\mathbf{B}}_{2m})^T = \begin{pmatrix}
+ \mathbf{I}_{m}+\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m}) &\mathbf{I}_{m}-\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m})\\\mathbf{I}_{m}-\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m}) &\mathbf{I}_{m}+ \mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m})
+ \end{pmatrix}= 2\begin{pmatrix}\mathbf{I}_{m}&0\\0&\mathbf{I}_{m}\end{pmatrix}$$
+ e quindi
+ $$\mathbf{A}_j\overline{\mathbf{A}}_j^T=
+ (\mathbf{I}_{2^{n-j}} \otimes \mathbf{B}_{2^j})(\overline{\mathbf{I}_{2^{n-j}} \otimes\mathbf{B}}_{2^j})^T
+ =\mathbf{I}_{2^{n-j}} \otimes \mathbf{B}_{2^j}\overline{\mathbf{B}}_{2^j}^T=2\mathbf{I}_{N}$$
+ Di conseguenza, per $0\leq j< k\leq n$
+\begin{equation}
+	 \left\|\mathbf{A}_{k}...\mathbf{A}_{j+1}\right\|_2=2^{(k-j)/2}
+	\label{eq:3.4}
+\end{equation}
+Ovvero la norma di un vettore moltiplicato per $k-j$ matrici di tipo $\mathbf{A}_i$ viene amplificata di $ 2^{(k-j)/2}$.
+
+
 \newtheorem{Teorema2}[Teorema]{Teorema}
 \begin{Teorema2} \label{Teorema:bound-fft}
 Sia $N=2^n (n\geq3)$ e assumiamo che i \emph{twiddle factor} siano calcolati con una precisine $c_N$
@@ -1042,7 +1074,11 @@ introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commes
 	\hat{\mathbf{x}}_j=\hat{\mathbf{A}}_j\mathbf{x}_{j-1}+\mathbf{e}_{j}\qquad(j=1,...,n)
 	\label{eq:3.7}
 \end{equation}
- 
+Ovvero
+\begin{equation*}
+	\frac{\left\|\Delta X\right\|_2}{\left\|X\right\|_2}=O(log(N)c_N)
+\end{equation*}
+
 \begin{enumerate}
 	\item Passo $j=1$
 	$$\hat{\mathbf{A}}_1 ={\mathbf{A}}_1=\mathbf{I}_{2^{n-1}}\otimes\mathbf{B}_2\quad \text{con}\quad \mathbf{B}_2=\begin{pmatrix}1 &1\\1 &-1  \end{pmatrix}
@@ -1128,7 +1164,7 @@ $$
 Per l'errore $\mathbf{e}_j$ otteniamo la stima
 $$\left\|\mathbf{e}_j\right\|_2\leq 2((2\sqrt{2}+1+c_N)u+O(u^2))\left\|\mathbf{\hat   {x}}_{j-1}\right\|_2$$
 
-Dalla \eqref{eq:3.4} e \eqref{eq:3.5} segue che
+Dalla \eqref{3.4} e \eqref{eq:3.12} segue che
 $$
 \left\|\mathbf{\hat   {x}}_{j-1}\right\|_2\leq (2^{(j-1)/2})+O(u))\left\|\mathbf{x}\right\|_2
 $$
@@ -1180,6 +1216,7 @@ Pertanto risulta
 
 Ricordando che$\left\|\mathbf{X}\right\|_2=\sqrt{N}\left\|\mathbf{x}\right\|_2$,l'errore, come ordine di grandezza, risulta essere\\
 $$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{X}\right\|_2$$
+
 
 % 5 
 %\item Nel caso di DFT unitaria è necessario operare la normalizzazione $\mathbf{y}=2^{-n/2}\mathbf{x}_n$ del risultato. Siamo nel caso in cui $\mathbf{\hat{y}}=fl(2^{-n/2}\mathbf{\hat{x}}_n)$ e l'operazione è una semplice moltiplicazione tra numero complesso e reale. Otteniamo quindi
@@ -1662,6 +1699,19 @@ Il calcolo dei coefficienti del prodotto di due polinomi si riduce, quindi, al c
 
 
 \section{FFT N-dimensionale e immagini}
+
+\begin{equation}
+	F(u,v)= \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x,y) e^{-j2\pi(\frac{ux}{M}+\frac{vy}{N})}
+\end{equation}
+
+Abbiamo sviluppato un semplice programma in C\# che è in grado di calcolare la 2D FFT di un'immagine e qualche operazione basilare di filtraggio.\\
+La scelta del C\# è stata determinata dal fatto che il linguaggio offre la potenzialità dei costrutti C++ con in più notevoli classi di supporto al caricamento delle immagini da formati diversi e la loro conversione in bitmap, alla loro visualizzazione e manipolazione, e a basilari operazioni di editing e interazione con l'utente attraverso il modulo drawing.
+
+\paragraph{Fasi}
+\begin{enumerate}
+	\item Moltiplicazione dell'immagine originale p
+\end{enumerate}
+
 
 
 
