@@ -740,7 +740,7 @@ Riprendendo la scomposizione di Cooley-Tukey
 la applichiamo al caso sufficientemente rappresentativo $N=16$ per ricavare lo schema di scomposizione matriciale ricorsivo.
 Indicando con $\mathbf{Y}$ e $\mathbf{Z}$ i vettori corrispondenti alle sequenze $Y_k$ e $Z_k$, possiamo riscrivere le operazioni butterly \eqref{eq:ct-matrix-1} e \eqref{eq:ct-matrix-2} nella forma
 \begin{equation}
-	\mathbf{X}=\mathbf{W_{16}}\mathbf{x} = \begin{pmatrix} \mathbf{I_{8}} &\mathbf{\Omega_{8}} \\\mathbf{I_{8}} &-\mathbf{\Omega_{8}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}\equiv\mathbf{B_{16}} \begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}
+	\mathbf{X}=\mathbf{F_{16}}\mathbf{x} = \begin{pmatrix} \mathbf{I_{8}} &\mathbf{\Omega_{8}} \\\mathbf{I_{8}} &-\mathbf{\Omega_{8}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}\equiv\mathbf{B_{16}} \begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}
 \end{equation}
 dove $\mathbf{I_{8}}$ è la matrice identità di ordine \emph{m} e $\mathbf{\Omega_{8}}$ è la matrice diagnonale 
 \begin{equation*}
@@ -750,24 +750,24 @@ La matrice $\mathbf{B_{16}}$ utilizzata per il passo di ricombinazione è detta \
 $\mathbf{Y}$ e $\mathbf{Z}$ sono a loro volta DFT di lunghezza 8 delle sotto-sequenze pari e dispari di x, che chiameremo $x_{even}$ e $x_{odd}$. Quindi procedendo analogamente,
 
 \begin{equation}
-	\mathbf{Y}=\mathbf{W_{8}}\mathbf{x_{even}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}
+	\mathbf{Y}=\mathbf{F_{8}}\mathbf{x_{even}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y'} \\ \mathbf{Z'} \end{pmatrix}
 \end{equation}
 dove  $\mathbf{Y'}$ e $\mathbf{Z'}$ denotano le DFT di lunghezza 4 delle sottosequenze pari e dispari di $x_{even}$.
 
 \begin{equation}
-	\mathbf{Z}=\mathbf{W_{8}}\mathbf{x_{odd}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}
+	\mathbf{Z}=\mathbf{F_{8}}\mathbf{x_{odd}} = \begin{pmatrix} \mathbf{I_{4}} &\mathbf{\Omega_{4}} \\\mathbf{I_{4}} &-\mathbf{\Omega_{4}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}\equiv\mathbf{B_{8}} \begin{pmatrix} \mathbf{Y''} \\ \mathbf{Z''} \end{pmatrix}
 \end{equation}
 dove  $\mathbf{Y''}$ e $\mathbf{Z''}$ denotano le DFT di lunghezza 4 delle sottosequenze pari e dispari di $x_{odd}$.
 
 \begin{equation}
-	\mathbf{X}=\mathbf{W_{16}}\mathbf{x} =\mathbf{B_{16}}
+	\mathbf{X}=\mathbf{F_{16}}\mathbf{x} =\mathbf{B_{16}}
 	\begin{pmatrix}\mathbf{B_{8}} & 0\\0& \mathbf{B_{8}} \end{pmatrix}
 	\begin{pmatrix} \mathbf{Y'} \\\mathbf{Y''} \\ \mathbf{Z'}\\\mathbf{Z''}\end{pmatrix}
 \end{equation}
 e continuando fino a N=2
 \begin{align}
 \begin{split}
-	\mathbf{X}&=\mathbf{W_{16}}\mathbf{x} =\mathbf{B_{16}}
+	\mathbf{X}&=\mathbf{F_{16}}\mathbf{x} =\mathbf{B_{16}}
 	\begin{pmatrix}\mathbf{B_{8}} & 0 \\0& \mathbf{B_{8}} \end{pmatrix}
 	\begin{pmatrix}\mathbf{B_{4}} & 0& 0& 0\\ 0&\mathbf{B_{4}}& 0& 0 \\  0& 0&\mathbf{B_{4}}& 0 \\  0& 0& 0& \mathbf{B_{4}}  \end{pmatrix}\\
 	&\times
@@ -783,7 +783,7 @@ e continuando fino a N=2
 	0&0&0&0&0&0&0&\mathbf{B_{2}} \\  \end{pmatrix}\mathbf{P}^{T}\mathbf{x}
 \end{split}
 \end{align}
-Quindi la matrice $\mathbf{W_{16}}$ è stata espressa come prodotto di quattro matrici  $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT ti tagllia $m/2$ a una di taglia $m$.\\
+Quindi la matrice $\mathbf{F_{16}}$ è stata espressa come prodotto di quattro matrici  $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT ti tagllia $m/2$ a una di taglia $m$.\\
 Notiamo che man mano che la fattorizzazione è stata sviluppata, il riordinamento dell'input è stato espresso sempre alla destra dei prodotti di matrici. Pertanto, questa riorganizzazione dell'ingresso, detta \emph{scramble operation} viene effettuata solo all'inizio sul vettore di input e non sui passi intermedi.
 La matrice $\mathbf{P}$ è ottenuta effettuando successivi riordinamenti pari/dispari delle colonne della matrice identità $\mathbf{I_{16}}$.
 Dove un riordinamento di mensione N può essere espresso come una matrice $\mathbf{R_N}$  $NxN$ del tipo
@@ -830,25 +830,25 @@ con $a_{ij}$ elementi di $\mathbf{A}$
 }\\
 La fattorizzazione  	\eqref{eq:CT-factorization} può quindi essere vista come
 $$
-\mathbf{X}=\mathbf{W_{16}} \mathbf{x}=(\mathbf{I_{1}}\otimes \mathbf{B_{16}})(\mathbf{I_{2}}\otimes \mathbf{B_{8}}) (\mathbf{I_{4}}\otimes \mathbf{B_{4}})(\mathbf{I_{8}}\otimes \mathbf{B_{2}})\mathbf{P}^T\mathbf{x}
+\mathbf{X}=\mathbf{F_{16}} \mathbf{x}=(\mathbf{I_{1}}\otimes \mathbf{B_{16}})(\mathbf{I_{2}}\otimes \mathbf{B_{8}}) (\mathbf{I_{4}}\otimes \mathbf{B_{4}})(\mathbf{I_{8}}\otimes \mathbf{B_{2}})\mathbf{P}^T\mathbf{x}
 $$
 In generale la FFT di Cooley-Tukey per $N=2^M$ può essere espressa come
 $$
-\mathbf{X}=\mathbf{W_{N}} \mathbf{x}=\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T\mathbf{x}
+\mathbf{X}=\mathbf{F_{N}} \mathbf{x}=\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T\mathbf{x}
 $$
 dove$\mathbf{A}_{k}=\mathbf{I}_r\otimes\mathbf{B}_m $, $m=2^k$ e $rm=N$ per $k=1,...,M$ sono matrici diagnonali a blocchi.
 Generalizzando l'esempio
 $$
 	\mathbf{B}_{2m}= \begin{pmatrix} \mathbf{I}_{m} &\mathbf{\Omega}_{m} \\\mathbf{I}_{m} &-\mathbf{\Omega}_{m}\end{pmatrix} \qquad \text{e} \qquad  	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
 $$
-Notando che $\mathbf{W}_N$ è una matrice simmetrica allora
+Notando che $\mathbf{F}_N$ è una matrice simmetrica allora
 $$
-\mathbf{W}_{N}=\mathbf{W}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = \mathbf{P}\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
+\mathbf{F}_{N}=\mathbf{F}_{N}^T =(\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T)^T = \mathbf{P}\mathbf{A}_{1}^T\mathbf{A}_{2}^T ... \mathbf{A}_{M-1}^T\mathbf{A}_{M}^T
 $$
 che è proprio la fattorizzazione corrispondente all'algoritmo di Gentleman e Sande.\\
-Un ulteriore modo per vedere $\mathbf{W}_{N}$ è
+Un ulteriore modo per vedere $\mathbf{F}_{N}$ è
 $$
-\mathbf{W}_{N}=\mathbf{A}_{M}\mathbf{P}_{M}\mathbf{A}_{M-1}\mathbf{P}_{M-1} ... \mathbf{A}_{2}\mathbf{P}_{2}\mathbf{A}_{1}\mathbf{P}_{1}
+\mathbf{F}_{N}=\mathbf{A}_{M}\mathbf{P}_{M}\mathbf{A}_{M-1}\mathbf{P}_{M-1} ... \mathbf{A}_{2}\mathbf{P}_{2}\mathbf{A}_{1}\mathbf{P}_{1}
 $$
 dove ogni stadio $i$ è costituito da una matrice di combinazione $\mathbf{A}_{i}$ e una di permutazione $\mathbf{P}_{i}$
 
@@ -1076,7 +1076,7 @@ introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commes
 \end{equation}
 Ovvero
 \begin{equation*}
-	\frac{\left\|\Delta X\right\|_2}{\left\|X\right\|_2}=O(log(N)c_N)
+	\frac{\left\|\Delta X\right\|_2}{\left\|X\right\|_2}=O(log(N)c_Nu)
 \end{equation*}
 
 \begin{enumerate}
@@ -1699,7 +1699,23 @@ Il calcolo dei coefficienti del prodotto di due polinomi si riduce, quindi, al c
 
 
 \section{FFT N-dimensionale e immagini}
+\begin{equation}
+X_{k_1,k_2,...,k_d}=
+\sum_{n_1=0}^{N_1-1}\left(
+\sum_{n_2=0}^{N_2-1}...\left(
+\sum_{n_d=0}^{N_d-1}
+x_{k_1,k_2,...,k_d}
+\omega_{N_d}^{k_dn_d}\right)
+...\quad
+\omega_{N_2}^{k_2n_2}\right)
+\omega_{N_1}^{k_1n_1}
+% \quad k=0,...,N-1
+\end{equation}
+con $k_l=0,1,...,N_l-1$
+La DFT multidimensionale può essere calcolata, sfuttando la separabilità dell'operatore DFT, attraverso applicazioni successive della DFT monodimensionale per ciascuna delle $d$ dimensioni.\\
 
+
+Nel caso delle immagini (2-D) questa si riduce a
 \begin{equation}
 	F(u,v)= \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x,y) e^{-j2\pi(\frac{ux}{M}+\frac{vy}{N})}
 \end{equation}
@@ -1709,7 +1725,11 @@ La scelta del C\# è stata determinata dal fatto che il linguaggio offre la poten
 
 \paragraph{Fasi}
 \begin{enumerate}
-	\item Moltiplicazione dell'immagine originale p
+	\item Moltiplicazione dell'immagine originale $f(x,y)$ per $(-1)^{x+y}$
+	\item Calcolo DFT $F(u,v)$
+	\item editing $F(u,v)$
+	\item $f(x,y)=$IDFT$F(u,v)$
+	\item Moltiplicazione di $f(x,y)$ per $(-1)^{x+y}$
 \end{enumerate}
 
 
