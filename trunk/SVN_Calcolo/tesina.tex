@@ -1415,10 +1415,31 @@ Forward Recursion & $O(2j^2u)$\\
 \end{center}
 \end{table}
 
+Con i vari metodi quindi, l'errore nel calcolo della FFT diventa
+
+\begin{table}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\multicolumn{1}{c}{\emph {Metodo}} & \multicolumn{1}{c}{\emph{Errore }}  \\
+\midrule
+Direct Call & $O(\log_2N)$\\
+Repeated multiplication & $O(N\log_2N)$\\
+Subvector Scaling & $O((\log_2N)^2)$\\
+Forward Recursion & $O(N^2\log_2N)$\\
+\bottomrule
+\end {tabular}
+\end{center}
+\end{table}
+
 \section{Verifiche sperimentali}
 I seguenti grafici illustrano l'errore ottenuto con i diversi metodi per il calcolo dei \emph{twiddle factor}.
-Sono stati ottenuti generando in matlab un vettore casuale di lughezza $N=2^k$ con distribuzione uniforme e valori compresi tra 0 e 1. A questi vettori è stata quindi applicata FFT e IFFT con i vari metodi e quindi calcolato l'errore relativo$$ \frac{\left\|\text{IFFT}(\text{FFT}(x)) \right\|}{\left\|x\right\|}$$
-
+Sono stati ottenuti generando in matlab un vettore casuale di lughezza $N=2^k$ con distribuzione uniforme e valori compresi tra 0 e 1. A questi vettori è stata quindi applicata FFT e IFFT con i vari metodi e quindi calcolato l'errore relativo
+\\
+\begin{equation*}
+ \frac{\left\|\text{IFFT}(\text{FFT}(x)) \right\|}{\left\|x\right\|}
+\end{equation*}
+\\
 Nel grafico \ref{tf:dc-rm-vs} sono riepilogati gli andamenti dei vari metodi stabili.
 Si noti come direct call e subvector scaling sono praticamente indistinguibili e l'errore sia poco influenzato dalla taglia mentre per repeated multiplication la crescita dell'errore è circa lineare nelle dimensioni dell'ingresso. 
 \begin{figure}[H]
