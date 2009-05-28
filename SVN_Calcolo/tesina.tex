@@ -1440,7 +1440,7 @@ Il metodo Forward Recursion è instabile ed il suo errore è maggiore di quello de
 \begin{figure}[H]
   \centering
       \includegraphics[width=\textwidth]{immagini/errore-fft_fr_dft}
-  \caption{Errore esponenziale}
+  \caption{errore instabile}
 \end{figure}
 
 \chapter{Applicazioni}
@@ -1782,6 +1782,13 @@ Notiamo come la conoscenza della caratterizzazione del rumore permetta di rimuov
   \subfloat[Africa]{\includegraphics[width=0.45\textwidth]{immagini/africa}}\quad  \subfloat[Trasformata]{\includegraphics[width=0.45\textwidth]{immagini/africa-fft}} \\
   \subfloat[Africa filtrata]{\includegraphics[width=0.45\textwidth]{immagini/africa-filtrata}} \quad 
 \subfloat[Trasformata filtrata]{\includegraphics[width=0.45\textwidth]{immagini/africa-filtrata-fft}}                
+\end{figure}
+
+\begin{figure}[H]
+  \centering 
+  \subfloat[1. Immagine dallo spazio con rumore]{\includegraphics[width=0.45\textwidth]{immagini/satellite}}\quad  \subfloat[2. Trasformata]{\includegraphics[width=0.45\textwidth]{immagini/satellite-fft}} \\
+  \subfloat[4. Risultato]{\includegraphics[width=0.45\textwidth]{immagini/satellite-filtrato}} \quad 
+\subfloat[3.Trasformata filtrata]{\includegraphics[width=0.45\textwidth]{immagini/satellite-filtrato-fft}}                
 \end{figure}
 
 \include{appendice}
