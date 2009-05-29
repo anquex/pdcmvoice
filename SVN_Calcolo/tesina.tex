@@ -951,15 +951,16 @@ fl(x\div y) = (x\div y) (1+\varepsilon^\div) 	\qquad \qquad && |\varepsilon^\div
 \end{alignat}
 \end{lemma}
 
-dove $\delta\approx 2^{-b}$ con $b$ lunghezza della mantissa.
+dove $u\approx 2^{-b}$ con $b$ lunghezza della mantissa.
 Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y)$ dove l'operazione $\circ \in\{+,-,\cdot,\div\}$\\
 \noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\epsilon_{ik}|$ tale che:
 
 \begin{equation*}
-\hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\epsilon_{jk} \qquad |\epsilon_{jk}|\leq u
+\hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\delta_{jk} \qquad |\delta_{jk}|\leq u
 \end{equation*}
 
 Per lo standard IEEE 754, operando in doppia precisione, la mantissa è di 53 bit (con 1 bit di segno) per cui $u\approx 1.11 \times 10^{-16}$ mentre in singola precisione è di 24 bit per cui $u\approx 5.96 \times 10^{-8}$.
+
 \section{Worst Case Error DFT}
 
 \newtheorem{lemma2}[lemma]{Lemma}
@@ -973,7 +974,7 @@ Se $\mathbf{A}$ è una matrice reale $p \times q$, $\mathbf{B}$ è una matrice rea
 \vskip 15pt
 \newtheorem{Teorema}{Teorema}
 \begin{Teorema} \textbf{(Gentleman-Sande)}\label{Teorema:bound-dft}
-Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta $\mathbf{X}$ di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola costante con mantissa di $b$ bit, Allora
+Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier discreta $\mathbf{X}$ di una sequenza $\mathbf{x}$ di lunghezza $N$ in aritmetica a virgola mobile a lunghezza di parola finita e mantissa di $b$ bit, Allora
 \begin{equation}
 \left\|\mathbf{\hat{X}-X}\right\|_2\leq 1.06 \;{(2N)}^{3/2} 2^{-b} \left\|\mathbf{X}\right\|_2
 \end{equation}
@@ -981,21 +982,21 @@ Se si utilizza la definizione di DFT per calcolare la trasformata di Fourier dis
 \begin{proof}
 Il calcolo per definizione della DFT è esprimibile attraverso una matrice $\mathbf{F} \in \mathbb{C}^{N \times N}$ dove $$\mathbf{F}_{i,j} =(\omega_N^{ij})_{i,k=0}^{N-1}$$
 \begin{equation}
-	\mathbf{\hat{x}}=\mathbf{F}\mathbf{x}
+	\mathbf{X}=\mathbf{F}\mathbf{x}
 \end{equation}
-$\mathbf{x}$ può essere visto come $\mathbf{x}={\rm Re}(\mathbf{x})+i{\rm Im}(\mathbf{x}) \leftrightarrow [{\rm Re}(\mathbf{x}), {\rm Im}(\mathbf{x})]$, vettore di lunghezza $2N$. Per definizione
+$\mathbf{x}$ può essere visto come $\mathbf{x}={\rm Re}(\mathbf{x})+j{\rm Im}(\mathbf{x}) \leftrightarrow [{\rm Re}(\mathbf{x}), {\rm Im}(\mathbf{x})]$, vettore di lunghezza $2N$. Per definizione
 \begin{align}
 X_k&=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1\\
 &= \sum_{n=0}^{N-1}({\rm Re}(x)+\jmath{\rm Im}(x)) \left[ \cos\left( \frac{2\pi}{N}kn\right) - \jmath \sin \left(\frac{2\pi}{N}kn\right)\right]
 \end{align}
 Le operazioni complesse possono quindi essere espresse come operazioni reali attraverso una matrice $2N \times 2N$:
 \[ \begin{bmatrix}
-  {\rm Re}(\mathbf{\hat{x}}) \\
-	{\rm Im}(\mathbf{\hat{x}})
+  {\rm Re}(\mathbf{X}) \\
+	{\rm Im}(\mathbf{X})
  \end{bmatrix}= 
  \begin{bmatrix}
-  \mathbf{C} & -\mathbf{S} \\
-  \mathbf{S} & \mathbf{C}
+  \mathbf{C} & \mathbf{S} \\
+  -\mathbf{S} & \mathbf{C}
  \end{bmatrix}
   \begin{bmatrix}
   {\rm Re}(\mathbf{x}) \\
@@ -1010,13 +1011,15 @@ dove $\mathbf{C}_{i,j}=\cos\left(\frac{2\pi i j}{N}\right)$ e $\mathbf{S}_{i,j}=
  \left\|\mathbf{\Phi}\right\|_2&=\sqrt{\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}\left\{ \cos^2\left(\frac{2\pi ij}{N}\right) +\sin^2\left(\frac{2\pi ij}{N}\right)+\cos^2\left(\frac{2\pi ij}{N}\right)+\sin^2\left(\frac{2\pi ij}{N}\right) \right\}}\\
  &=\sqrt{2N^2}
 \end{align*}
+
 \begin{align*}
-\Phi^*\Phi= \underbrace{\begin{bmatrix}
+\Phi\Phi^T= N \cdot \underbrace{\begin{bmatrix}
 1 & 0 & ... & 0\\ 0 & 1 & ... & 0\\ \vdots & \vdots & \ddots & \vdots\\ 0 & 0 & ... & 1\\
-\end{bmatrix}}_{2N} \longrightarrow \left\|\Phi^*\Phi \right\|_2=\sqrt{2N}
+\end{bmatrix}}_{2N} \longrightarrow \frac{1}{\sqrt{N}}\Phi \qquad \text{è ortonogonale}
 \end{align*}
+
 \begin{equation}
-\mathbf{X} = \Phi \mathbf{x} \longrightarrow \left\|\mathbf{X}\right\|_2=\frac{\left\|\Phi \right\|_2}{\left\|\Phi^*\Phi \right\|_2}\left\|\mathbf{x} \right\|_2 = \frac{\sqrt{2}N}{\sqrt{2N}}\left\|\mathbf{x} \right\|_2=\sqrt{N} \left\|\mathbf{x}\right\|_2
+\mathbf{X} = \Phi \mathbf{x} \longrightarrow \left\|\mathbf{X}\right\|_2=\sqrt{N} \left\|\mathbf{x}\right\|_2
 \end{equation}
 
 Applicando il \emph{Lemma di Wilkinson} con, nel nostro caso $q=2N$, $\left\|\mathbf{\Phi}\right\|_2=\sqrt{2} N$, ricordando che $\left\|\mathbf{X}\right\|_2=\sqrt N \left \| \mathbf{x} \right \|_2$
@@ -1070,34 +1073,35 @@ Sia $N=2^n (n\geq3)$ e assumiamo che i \emph{twiddle factor} siano calcolati con
 \end{equation}
 Allora per l'Algoritmo di Cooley-Tukey
 \[\left\|\hat{\mathbf{x}}_n-\mathbf{x}_n\right\|_2 \leq 2^{n/2}(2u +(n-2)((\sqrt{2}c_N+4+\sqrt{2})u + O(u^2)))\left\|\mathbf{x}\right\|_2\]
+
+\noindent Ovvero
+\begin{equation*}
+	\frac{\left\|\Delta X\right\|_2}{\left\|X\right\|_2}=O(log_2N \;c_Nu)
+\end{equation*}
 \end{Teorema2}
 
 \begin{proof}\.\\Sia $\hat{\mathbf{x}}_0 = \mathbf{x}_0=\mathbf{P}^T\mathbf{x}$, essendo l'input perfettamente rappresentabile in virgola mobile. Indichiamo con $\hat{\mathbf{x}}_j$ il calcolo del vettore $\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1} $ $$\hat{\mathbf{x}}_j=fl(\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1}) \qquad (j=1,...,n)$$
 introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commesso al $j$-esimo passo
 \begin{equation}
-	\hat{\mathbf{x}}_j=\hat{\mathbf{A}}_j\mathbf{x}_{j-1}+\mathbf{e}_{j}\qquad(j=1,...,n)
+	\hat{\mathbf{x}}_j=\hat{\mathbf{A}}_j\mathbf{\hat{x}}_{j-1}+\mathbf{e}_{j}\qquad(j=1,...,n)
 	\label{eq:3.7}
 \end{equation}
-Ovvero
-\begin{equation*}
-	\frac{\left\|\Delta X\right\|_2}{\left\|X\right\|_2}=O(log(N)c_Nu)
-\end{equation*}
 
 \begin{enumerate}
 	\item Passo $j=1$
 	$$\hat{\mathbf{A}}_1 ={\mathbf{A}}_1=\mathbf{I}_{2^{n-1}}\otimes\mathbf{B}_2\quad \text{con}\quad \mathbf{B}_2=\begin{pmatrix}1 &1\\1 &-1  \end{pmatrix}
 	$$
-	Questo passo pertanto si costituisce di $n/2$ FFT su due elementi. I twiddle factor risultano banali e le operazioni si riducono a 
+	Questo passo pertanto si costituisce di $N/2$ \emph{operazioni butterfly} su due elementi. I twiddle factor risultano banali e le operazioni si riducono a 
 	\begin{align}\eta_1 &= \xi_1+\xi_2 \qquad(\xi_1,\xi_2\in \mathbb{C})\\
 								\nonumber \eta_2 &= \xi_1-\xi_2
 	\end{align}
 	Per la \eqref{eq:error-sum} i valori calcolati in virgola mobile risultano essere
 	\begin{align*}
-	\hat{\eta}_1 &= (\xi_1 +\xi_2)(1+\varepsilon_1^+)=\eta_1+(\xi_1+\xi_2)\varepsilon_1^+ & (|\eta_1^+|,|\eta_1^+|\leq u)\\
-	\hat{\eta}_2 &= (\xi_1 -\xi_2)(1+\varepsilon_1^+)=\eta_2+(\xi_1+\xi_2)\varepsilon_1^+
+	\hat{\eta}_1 &= (\xi_1 +\xi_2)(1+\varepsilon_1^+)=\eta_1+(\xi_1+\xi_2)\varepsilon_1^+ & (|\varepsilon_1^+|,|\varepsilon_2^+|\leq u)\\
+	\hat{\eta}_2 &= (\xi_1 -\xi_2)(1+\varepsilon_2^+)=\eta_2+(\xi_1+\xi_2)\varepsilon_2^+
 	\end{align*}
 	da cui
-	$$|\varepsilon_1|^2= |\hat{\eta_1}-\eta_1|^2+|\hat{\eta_2}-\eta_2|^2\leq u^2(|\xi_1+\xi_2|^2+|\xi_1-\xi_2|^2)= 2u^2(|\xi_1|^2+|\xi_2|^2)$$
+	$$|\hat{\eta}_1-\eta_1|^2+|\hat{\eta}_2-\eta_2|^2\leq u^2(|\xi_1+\xi_2|^2+|\xi_1-\xi_2|^2)= 2u^2(|\xi_1|^2+|\xi_2|^2)$$
 	e quindi
 	\begin{equation}
 	\label{eq:3.9}
@@ -1107,18 +1111,18 @@ Ovvero
 	\item Passo $j=2$. Notiamo che
 		$$\hat{\mathbf{A}}_2 ={\mathbf{A}}_2=\mathbf{I}_{2^{n-2}}\otimes\mathbf{B}_4$$
 		con
-		$$\mathbf{B}_2=\begin{pmatrix}\mathbf{I}_2 &\mathbf{\Omega}_2\\\mathbf{I}_2 &-\mathbf{\Omega}_2 \end{pmatrix} \quad\mathbf{\Omega}_2=\begin{pmatrix}1 &0\\ 0& -i\end{pmatrix}\quad \text{e quindi}\quad \mathbf{B}_4=\begin{pmatrix}1&0&1&0\\0&1&0&-i\\1&0&-1&0\\0&1&0&-i\end{pmatrix}$$
-		Il secondo passo consiste quindi in $N/4$ FFT di 4 elementi. I twiddle factor sono banali e le operazioni risultano essere $(\xi_1,\xi_2,\xi_3,\xi_4\in \mathbb{C})$
+		$$\mathbf{B}_4=\begin{pmatrix}\mathbf{I}_2 &\mathbf{\Omega}_2\\\mathbf{I}_2 &-\mathbf{\Omega}_2 \end{pmatrix} \quad\mathbf{\Omega}_2=\begin{pmatrix}1 &0\\ 0& -i\end{pmatrix}\quad \text{e quindi}\quad \mathbf{B}_4=\begin{pmatrix}1&0&1&0\\0&1&0&-i\\1&0&-1&0\\0&1&0&-i\end{pmatrix}$$
+		Il secondo passo consiste quindi in $N/4$ \emph{operazioni butterfly} di 4 elementi. I twiddle factor sono banali e le operazioni risultano essere $(\xi_1,\xi_2,\xi_3,\xi_4\in \mathbb{C})$
 			\begin{align*}
 			\eta_1 &= \xi_1+\xi_3 &
 			\eta_2 &= \xi_2-i\xi_4\\
 			\eta_3 &= \xi_1-\xi_3&
 			\eta_4 &= \xi_2+i\xi_4
 	\end{align*}
-	Procedendo analogamente al caso precedente si ottiene la stima $\left\|\mathbf{e}_2\right\|_2\leq\sqrt{2}u \left\|\mathbf{x}_1\right\|_2$.
+	Procedendo analogamente al caso precedente si ottiene la stima $\left\|\mathbf{e}_2\right\|_2\leq\sqrt{2}u \left\|\mathbf{\hat{x}}_1\right\|_2$.
 	Per la \eqref{eq:3.7} e la \eqref{eq:3.9} otteniamo che 
 	\begin{equation*}
-	\left\|\hat{\mathbf{x}}_1\right\|_2\leq \underbrace{\left\|\mathbf{A}_1\right\|_2}_{\sqrt{2}}\left\|\hat{\mathbf{x}}_0\right\|_2+\underbrace{\left\|\hat{\mathbf{e}}_1\right\|_2}_{\leq \sqrt{2} u \left\|\hat{\mathbf{x}}_0\right\|_2}\leq \sqrt{2} (1+u)\left\|\mathbf{x}\right\|_2
+	\left\|\hat{\mathbf{x}}_1\right\|_2\leq \underbrace{\left\|\mathbf{A}_1\right\|_2}_{\sqrt{2}}\left\|\hat{\mathbf{x}}_0\right\|_2+\underbrace{\left\|\mathbf{e}_1\right\|_2}_{\leq \sqrt{2} u \left\|\hat{\mathbf{x}}_0\right\|_2}\leq \sqrt{2} (1+u)\left\|\mathbf{x}\right\|_2
 \end{equation*}
 e quindi
 \begin{equation}
@@ -1127,7 +1131,7 @@ e quindi
 \end{equation}
 	%3
 	\item Passo $j$ con $(j=3,...,n)$.\\
-	Osserviamo che la matrice $\mathbf{A}_j$ presenta per ogni riga e colonna esattamente due elementi diversi da zero. In ogni riga inoltre un elemento è $1$ mentre l'altro è un generico \emph{twiddle factor}. Al passo $j$ pertanto vengono effettuate FFT di lunghezza $2^{n-j}$ e $2^{j-1}$ coppie di operazioni del tipo 
+	Osserviamo che la matrice $\mathbf{A}_j$ presenta per ogni riga e colonna esattamente due elementi diversi da zero. In ogni riga inoltre un elemento è $1$ mentre l'altro è un generico \emph{twiddle factor}. Al passo $j$ pertanto vengono effettuate $2^{n-j}$  \emph{operazioni butterfly}, ciascuna costituita da $2^{j-1}$ coppie di operazioni del tipo 
 	\begin{align}
 	\label{eq:3.11}
 	\begin{split}
@@ -1138,8 +1142,8 @@ e quindi
 che calcolate in vigola mobile risultano
 \begin{align}
 \begin{split}
-		\hat{\eta}_1 &= (\xi_1+\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon_1^\times))(1+\varepsilon_1^+) \\
-		\hat{\eta}_2 &= (\xi_1-\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon_2^\times))(1+\varepsilon_2^+)
+		\hat{\eta}_1 &= (\xi_1+\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon^\times))(1+\varepsilon_1^+) \\
+		\hat{\eta}_2 &= (\xi_1-\hat{\omega}_{2^j}^k\xi_2(1+\varepsilon^\times))(1+\varepsilon_2^+)
 		\label{eq:3.13}
 \end{split}
 \end{align}
@@ -1148,11 +1152,11 @@ con
 	|\varepsilon^\times|\leq 2\sqrt{2}u, \qquad |\varepsilon_1^+|,|\varepsilon_2^+|\leq u 
 	\label{eq:3.14}
 \end{equation}	
-Dall'ipotesi \eqref{eq:3.12} sui \emph{twiddle factor} e dalla \eqref{eq:3.14} segue che
+Dall'ipotesi \eqref{eq:3.12} sui \emph{twiddle factor} e dalla \eqref{eq:3.13} segue che
 $$
 \hat{\eta}_1-\eta_1=\xi_1\varepsilon_1^++\hat{\omega}_{2^j}^k\xi_2(\varepsilon^\times+\varepsilon_1^++\varepsilon^\times \varepsilon_1^+)+\delta_{2^j}^k \varepsilon_2+O(u^2)\
 $$
-usando la \eqref{eq:3.14}si ha
+e usando la \eqref{eq:3.14} si ha
 $$
 |\hat{\eta}_1-\eta_1|=|\xi_1|u+|\xi_2|((2\sqrt{2}+1+c_N)u+O(u^2))
 $$
@@ -1165,10 +1169,10 @@ $$
 |\hat{\eta}_1-\eta_1|^2+|\hat{\eta}_2-\eta_2|^2=4((2\sqrt{2}+1+c_N)u+O(u^2))^2(|\xi_1|^2+|\xi_2|^2)
 $$
 
-Per l'errore $\mathbf{e}_j$ otteniamo la stima
+Pertanto, per l'errore $\mathbf{e}_j$ otteniamo la stima
 $$\left\|\mathbf{e}_j\right\|_2\leq 2((2\sqrt{2}+1+c_N)u+O(u^2))\left\|\mathbf{\hat   {x}}_{j-1}\right\|_2$$
 
-Dalla \eqref{3.4} e \eqref{eq:3.12} segue che
+Dalla \eqref{eq:3.4} e \eqref{eq:3.7} segue che
 $$
 \left\|\mathbf{\hat   {x}}_{j-1}\right\|_2\leq (2^{(j-1)/2})+O(u))\left\|\mathbf{x}\right\|_2
 $$
@@ -1180,8 +1184,8 @@ e quindi
 	\label{eq:3.15}
 	\end{split}
 \end{align}
-	\item \. %4
- Ora valutiamo l'errore $\left\|\hat{x}_n-x_n\right\|_2$. Applicando ripetutamente la \eqref{eq:3.7} otteniamo
+	\item \; %4
+Ora valutiamo l'errore $\left\|\hat{x}_n-x_n\right\|_2$. Applicando ripetutamente la \eqref{eq:3.7} otteniamo
 
 \begin{equation}\nonumber
  \begin{split}						  
@@ -1192,7 +1196,7 @@ e quindi
 						  &=\hat{\mathbf{A}}_n...\hat{\mathbf{A}}_{1}\mathbf{x}+\hat{\mathbf{A}}_n ...\hat{\mathbf{A}}_{2}\mathbf{e}_{1} +...+\hat{\mathbf{A}}_n ...\hat{\mathbf{A}}_{j+1}\mathbf{e}_{j}+...+ \hat{\mathbf{A}}_n\mathbf{e}_{n-1}+ \mathbf{e}_{n}
 	\end{split}
 \end {equation}
-Dall'algoritmo \ref{alg:ct-matrix} (CT-Matriciale) ricordiamo che $\mathbf{x}_n = \mathbf{A}_n ...\mathbf{A}_1\mathbf{P}^T\mathbf{x}_{n-1}$ e per el \eqref{eq:3.4},\eqref{eq:3.9},\eqref{eq:3.10},\eqref{eq:3.15}
+Dall'algoritmo \ref{alg:ct-matrix} (CT-Matriciale) ricordiamo che $\mathbf{x}_n = \mathbf{A}_n ...\mathbf{A}_1\mathbf{P}^T\mathbf{x}$ e per le \eqref{eq:3.4},\eqref{eq:3.9},\eqref{eq:3.10},\eqref{eq:3.15}
 %\left\|\mathbf{e}_1\right\|_2
 
 \begin{equation}\nonumber						  
@@ -1218,7 +1222,7 @@ Pertanto risulta
 	\left\|\hat{\mathbf{x}}_n-\mathbf{x}_n\right\|_2 \leq 2^{n/2}(2u +(n-2)((\sqrt{2}c_N+4+\sqrt{2})u + O(u^2)))\left\|\mathbf{x}\right\|_2
 \end{equation}
 
-Ricordando che$\left\|\mathbf{X}\right\|_2=\sqrt{N}\left\|\mathbf{x}\right\|_2$,l'errore, come ordine di grandezza, risulta essere\\
+Ricordando che $\left\|\mathbf{X}\right\|_2=\sqrt{N}\left\|\mathbf{x}\right\|_2$, l'errore, come ordine di grandezza, risulta essere\\
 $$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{X}\right\|_2$$
 
 
@@ -1242,7 +1246,7 @@ $$\left\|\hat{\mathbf{X}}-\mathbf{X}\right\|_2=O(\log_2{N} c_Nu)\left\|\mathbf{X
 
 \section{Confronto DFT FFT}
 
-L'applicazione della FFT non velocizza il calcolo della trasformata discreta di Fourier ma riduce al contempo la propagazione dell'errore di arrotondamento.
+L'applicazione della FFT non solo velocizza il calcolo della trasformata discreta di Fourier ma riduce al contempo la propagazione dell'errore di arrotondamento.
 Notiamo come per la DFT questo sia più che lineare mentre per la FFT risulta logaritmico e quindi praticamente costante per taglie di problemi molto grandi.
 
 \begin{figure}[H]
@@ -1330,7 +1334,7 @@ Si basa sulla scomposizione $\omega_N^k = \omega_N \times \omega_N^{k-1} $ ed ef
 \end{algorithmic}
 \end{algorithm}
 
-In questo caso $\hat{\omega}_N^j$ è il  risultato di $j-1$ moltiplicazioni e pertanto si ha che 
+In questo caso $\hat{\omega}_N^j$ è il  risultato di $j-1$ moltiplicazioni complesse e pertanto si ha che 
 \begin{equation}
 	|\epsilon_{j}| = O(ju)
 \end{equation}
@@ -1342,7 +1346,7 @@ L'idea alla base è la scomposizione
 [\underbrace{\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}}_{N/2},\underbrace{\omega_N^{\frac{N}{2}},\omega_N^{\frac{N}{2}+1}, ..., \omega_N^{N-1}}_{N/2}]=
 [\underbrace{\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}}_{N/2},\omega_N^{\frac{N}{2}}\underbrace{\left(\omega_N^0,\omega_N^1,...,\omega_N^{\frac{N}{2}-1}\right)}_{N/2}]
 \end {align*}
-che comporta $2\log_2N$ valutazioni trigonometriche $\log_2N$addizioni reali e $2N$ moltiplicazioni complesse
+che comporta $2\log_2N$ valutazioni trigonometriche e $N$  moltiplicazioni complesse
 
 \begin{algorithm}[H]                      % enter the algorithm environment
 \caption{Subvector Scaling}          % give the algorithm a caption
@@ -1368,7 +1372,7 @@ In questo caso $\omega_N^j$ è il risultato di circa $\log_2(j)$ moltiplicazioni 
 
 
 \subsection{Forward Recursion}
-Questo metodo è presentato per completezza come esempio di metodo numericamente instabile. Il metodo discende da:
+Questo metodo è presentato per completezza come esempio di metodo numericamente instabile. Il metodo discende dalle identità trigonometriche:
 \begin{align}
 \cos(A+B) + \cos(A-B) &= 2 \cos(A) \cos(B)\\
 \sin(A+B) + \sin(A-B) &= 2 \sin(A) \cos(B)
@@ -1423,10 +1427,10 @@ Con i vari metodi quindi, l'errore nel calcolo della FFT diventa
 \toprule
 \multicolumn{1}{c}{\emph {Metodo}} & \multicolumn{1}{c}{\emph{Errore }}  \\
 \midrule
-Direct Call & $O(\log_2N)$\\
-Repeated multiplication & $O(N\log_2N)$\\
-Subvector Scaling & $O((\log_2N)^2)$\\
-Forward Recursion & $O(N^2\log_2N)$\\
+Direct Call & $O(\log_2N\;u)$\\
+Repeated multiplication & $O(N\log_2N\;u)$\\
+Subvector Scaling & $O((\log_2N)^2\;u)$\\
+Forward Recursion & $O(N^2\log_2N\;u)$\\
 \bottomrule
 \end {tabular}
 \end{center}
