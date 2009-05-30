@@ -11,10 +11,13 @@
 \usepackage{float} % parametro H in figur : posizionamento esattamente li
 \usepackage{verbatim}
 \usepackage{booktabs}
-\usepackage{enumerate}
-\usepackage{algorithmic}
+\usepackage{enumerate} %lettere o altro negli indici
+\usepackage{algorithmic} %float con un algoritmo
 \usepackage[boxed]{algorithm}
-\usepackage{subfig}
+\usepackage{subfig}    % + figure in un float figure
+
+%con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
+\usepackage{emptypage}
 
 
 
@@ -32,9 +35,17 @@
 
 %\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
 
+%per impaginare con giustifica sx-dx
+  \tolerance 1414
+  \hbadness 1414
+  \emergencystretch 1.5em
+  \hfuzz 0.3pt
+  \widowpenalty=10000
+  \vfuzz \hfuzz
+  \raggedbottom
+
 \title{}
 \begin{document}
-
 \include{mytitle}
 
 \tableofcontents
@@ -111,7 +122,7 @@ in generale per segnali ortognolali si ha che
 \begin{equation}
 \sum_{n=0}^{N-1}x_ny_n^*=\frac{1}{N}\sum_{k=0}^{N-1}X_kY_k^*
 \end{equation}
-se $y=x^*$ otteniamo il  \emph{teorema di Parseval}
+se $y=x$ otteniamo il  \emph{teorema di Parseval}
 \begin{equation}
 \sum_{n=0}^{N-1}|x_n|^2=\frac{1}{N}\sum_{k=0}^{N-1}|X_k|^2
 \end{equation}
@@ -124,7 +135,7 @@ X_{k+N}&=&\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}(k+N)n}\\
 &=&\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn}\\
 &=&X_k
 \end{eqnarray}
-dove si è utilizzato il fatto che $e^{-2\pi \jmath}=1$. Allo stesso modo pu\`o essere mostrato che la \ref{def_idft} porta a un'estensione periodica della IDFT.
+dove si è utilizzato il fatto che $e^{-\jmath 2\pi }=1$. Allo stesso modo pu\`o essere mostrato che la \ref{def_idft} porta a un'estensione periodica della IDFT.
 
 \item Il \emph{Circular shift theorem}:\\
 Moltiplicare $x_N$ per una fase lineare $e^{-\jmath\frac{2\pi}{N}nm}$, per un qualche $m$ intero, è equivalente ad uno shift circolare di $X_N$ di $m$ posizioni: $X_k$ diventa $X_{k-m}$, il cui pedice si deve intendere come \emph{modulo N}. Analogamente, uno shift circolare di $x_N$ corrisponde alla moltiplicazione di $X_N$ per una fase lineare.
@@ -203,7 +214,7 @@ Il termine
 \begin{equation}
 \omega_N=e^{-\jmath \frac{2\pi}{N}}
 \end{equation}
-\`e una \emph{radice complessa N-esima dell'unita}.\\
+\`e una \emph{radice complessa N-esima dell'unità}.\\
 L'elemento in posizione $(i,j)$ della matrice \`e $\omega_N^{ij}$, con $i,j=0,1,...,N-1$.\\
 
 \noindent Analogamente è possibile esprimere la IDFT come:
@@ -224,27 +235,27 @@ Dalla proprietà \eqref{eq:dft-orthogonality} emerge che
 questo significa che le colonne di $F$ sono \emph{ortogonali}. Indicando con $F^j$ la j-esima colonna di $F_N$ possiamo scrivere:
 \begin{align}
 \mathbf{F}_N^*\mathbf{F}_N&=
-\begin{bmatrix}
+\begin{pmatrix}
 	\langle F^0, F^0\rangle & \left\langle F^0, F^1\right\rangle &\left\langle F^0, F^2\right\rangle & \cdots & \left\langle F^0, F^{N-1}\right\rangle\\
-	\left\langle F^1, F^0\right\rangle & \left\langle F^1, F^1\right\rangle &\left\langle F^1, F^2\right\rangle & \cdots & \left\langle F^1, F^{N-1}\right\rangle\\
-	\left\langle F^2, F^0\right\rangle & \left\langle F^2, F^1\right\rangle &\left\langle F^2, F^2\right\rangle & \cdots & \left\langle F^2, F^{N-1}\right\rangle\\
-	\vdots &\vdots & \vdots & \ddots & \vdots \\
 	\left\langle F^{N-1}, F^0\right\rangle & \left\langle F^{N-1}, F^1\right\rangle &\left\langle F^{N-1}, F^2\right\rangle & \cdots & \left\langle F^{N-1}, F^{N-1}\right\rangle\\
-\end{bmatrix}\\
+	\left\langle F^{N-2}, F^0\right\rangle & \left\langle F^{N-2}, F^1\right\rangle &\left\langle F^{N-2}, F^2\right\rangle & \cdots & \left\langle F^{N-2}, F^{N-1}\right\rangle\\
+	\vdots &\vdots & \vdots & \ddots & \vdots \\
+	\left\langle F^1, F^0\right\rangle & \left\langle F^1, F^1\right\rangle &\left\langle F^1, F^2\right\rangle & \cdots & \left\langle F^1, F^{N-1}\right\rangle\\
+\end{pmatrix}\\
 &=
-\begin{bmatrix}
+\begin{pmatrix}
  N & 0 & 0 & ... & 0\\  0 & N & 0 & ... & 0\\  0 & 0 & N & ... & 0\\ \vdots &\vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & ... & N\\
-\end{bmatrix} = N\cdot \mathbf{I}
+\end{pmatrix} = N\cdot \mathbf{I}
 \end{align}
 Questo ci è utile per definire le versioni normalizzate  della DFT/IDFT con matrici unitarie
 \begin{equation}
-	\widetilde{F}_N=\frac{1}{\sqrt{N}} F_N  \qquad \qquad  \widetilde{F}_N^*=\frac{1}{\sqrt{N}} F_N^*
+	\widetilde{F}_N=\frac{1}{\sqrt{N}} F_N  \qquad \qquad  \widetilde{F}_N^{-1}=\frac{1}{\sqrt{N}} F_N^*
 \end{equation}
 Le matrici ortogonali (unitarie) sono infatti usate per garantire stabilità numerica e scarsa sensibilità agli errori di arrotondamento.\\
 Riepiloghiamo brevemente alcune proprietà delle matrici ortogonali (unitarie):
 \begin{itemize}
 	\item $\left\|Sx\right\|_2=\left\|x\right\|_2 \qquad \forall x$
-	\item $\left\|S\right\|_2=\left\|S^{-1}\right\|_2=1$
+	\item $\det (S) = \pm 1$
 	\item $\left\|A\right\|_2=\left\|SAT\right\|_2 \qquad \forall S,T \quad \text{ortogonali (unitarie)}$
 \end{itemize}
 \subsection{Analogie tra DFT e IDFT}
@@ -273,7 +284,7 @@ Analogamente è possibile sfruttare la seguente proprietà per il calcolo della ID
 \vskip 5pt
 coniugando l'input, applicando la DFT, coniugando l'output e quindi scalando.
 
-\section{Segnali di durata finita: relazione tra trasformata di Fourier DTFT e DFT}
+\section{Segnali di durata finita: relazione tra DTFT e DFT}
 
 % CTFT Mitra 3.1.1
 % DTFT M 3.2.1 3.2.2
@@ -300,9 +311,9 @@ X_k=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi k}{N}n} \quad k=0,...,N-1
 \end{equation*}
 con la \eqref{eq:dtft-campionamento}, è possibile osservare che la N-point DFT $X_k$ corrisponde esattamente alla DFTF $X(e^{j\omega})$ campionata  sulle frequenze $\omega_k = \frac{2\pi k}{N} , 0 \leq k \leq N-1$; di conseguenza la frequenza angolare $\omega$ associata all'elemento di indice $k$ è $\frac{2\pi k}{N}$.
 
-La DFT costituisce un valido metodo per il calcolo della DTFT di una sequenza finita, in particolar modo se sono disponibili algoritmi efficienti (FFT) per la sua determinazione.
+La DFT costituisce un valido metodo per il calcolo della DTFT di una sequenza finita, tanto più in quanto sono disponibili algoritmi efficienti (FFT) per la sua determinazione.
 
-Si consideri di voler valutare $X(e^{j\omega})$, la DFTF di una sequenza $x_n$ di lunghezza N su un insieme più denso di frequenze $\omega _k=\frac{2\pi k}{M}, 0 \leq k \leq M-1$, dove $M>>N$:
+Si consideri di voler valutare $X(e^{j\omega})$, la DFTF di una sequenza $x_N$ di lunghezza N su un insieme più denso di frequenze $\omega _k=\frac{2\pi k}{M}, 0 \leq k \leq M-1$, dove $M>>N$:
 \\
 \begin{equation}
 \label{eq:dtft-x-estesa-1}
@@ -347,11 +358,13 @@ e dalla definizione di IDFT (1.2)
 \end{equation*}
 \\
 è possibile ricavare
-\begin{eqnarray}
+\begin{align}
+\begin{split}
 \label{eq:dft-interpolation-1}
-	X(e^{j\omega}) &=& \sum_{n=0}^{N-1}{\left[\frac{1}{N}\sum_{k=0}^{N-1}X_ke^{\jmath\frac{2\pi}{N}kn}\right] e^{-j\omega n}}\\
-	&=& \frac{1}{N}\sum_{k=0}^{N-1}{X_k \sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}}}
-\end{eqnarray}
+	X(e^{j\omega}) &= \sum_{n=0}^{N-1}{\left[\frac{1}{N}\sum_{k=0}^{N-1}X_ke^{\jmath\frac{2\pi}{N}kn}\right] e^{-j\omega n}}\\
+	&= \frac{1}{N}\sum_{k=0}^{N-1}{X_k \sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}}}
+\end{split}
+\end{align}
 \\
 Riscrivendo la parte destra della relazione precedente utilizzando la seguente proprietà
 \\
@@ -361,14 +374,16 @@ Riscrivendo la parte destra della relazione precedente utilizzando la seguente p
 \\
 si ottiene
 \\
-\begin{eqnarray}
+\begin{align}
+\begin{split}
 \label{eq:dft-interpolation-2}
-	\sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}} &=& \frac{1-e^{-j(\omega N-2\pi k)}}{1-e^{-j[\omega -(2\pi k/N)]}}
+	\sum_{n=0}^{N-1}{e^{\jmath\frac{2\pi}{N}kn} e^{-j\omega n}} &= \frac{1-e^{-j(\omega N-2\pi k)}}{1-e^{-j[\omega -(2\pi k/N)]}}
 	\\
-	&=& \frac{e^{-j[(\omega N-2\pi k)/2]}}{e^{-j[(\omega N-2\pi k)/2N)]}} \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})}
+	&= \frac{e^{-j[(\omega N-2\pi k)/2]}}{e^{-j[(\omega N-2\pi k)/2N)]}} \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})}
 	\\
-	&=& \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})} e^{-j[\omega -(2\pi k/N)][(N-1)/2]}
-\end{eqnarray}
+	&= \frac{\sin(\frac{\omega N-2\pi k}{2})}{\sin(\frac{\omega N-2\pi k}{2N})} e^{-j[\omega -(2\pi k/N)][(N-1)/2]}
+\end{split}
+\end{align}
 \\
 Sostituendo la \eqref{eq:dft-interpolation-2} nella \eqref{eq:dft-interpolation-1} si giunge a
 \\
@@ -395,8 +410,8 @@ E' possibile verificare che
 \\
 \[\phi(\omega)|_{\omega=2\pi k/N} =  
 \begin{cases} 
-1 k = 0 \\
-0 1 \leq k \leq N-1
+1 \quad \text{per} \quad k = 0 \\
+0 \quad \text{per} \quad 1 \leq k \leq N-1
 \end{cases}\]
 \\
 e di conseguenza
@@ -405,12 +420,12 @@ e di conseguenza
 	X(e^{j\omega})| _{\omega=2\pi k/N} = X_l \qquad 0 \leq k \leq N-1
 \end{equation*}
 \\
-In definitiva è possibile ottenere $X(e^{j\omega})$ al variare di $\omega$ in $\mathbb{R}$ considerando gli elementi della DFT $X_k$ come i valori di $X(e^{j\omega})$ in \$omega = $ 2 \pi k \setminus N$, $0 \leq k \leq N-1$ e considerando, per gli altri valori di $\omega$, il risultato dell'interpolazione \eqref{eq:dft-interpolation-3}
+In definitiva è possibile ottenere $X(e^{j\omega})$ al variare di $\omega$ in $\mathbb{R}$ considerando gli elementi della DFT $X_k$ come i valori di $X(e^{j\omega})$ in $\omega = 2 \pi k / N$, $0 \leq k \leq N-1$ e considerando, per gli altri valori di $\omega$, il risultato dell'interpolazione \eqref{eq:dft-interpolation-3}.
 
 \chapter{Calcolo della DFT}
 
-La diffusione nell'utilizzo della DFT è principalmente dovuta all'introduzione, avvenuta negli anni '60, di una classe di algoritmi computazionale efficienti per la sua valutazione: la \emph{(Fast Fourier Transform, i.e. trasformata veloce di Fourier)}.\\ Essa rende possibile in taluni casi l'elaborazione in tempo reale (sistemi di navigazione, trasmissione e processo di segnali vocali o televisivi) e consente di risolvere alcuni problemi di grandi dimensioni che risulterebbero altrimenti intrattabili.\\
-L'FFT viene normalmente attribuita a Cooley e Tukey. Di fatto questo particolare algoritmo venne scoperto (ed usato) da Gauss nel XIX secolo. Pare che in realtà l'algoritmo sia stato riscoperto ed utilizzato varie volte (anche prima del lavoro di Cooley e Tuckey menzionato sopra).
+La diffusione nell'utilizzo della DFT è principalmente dovuta all'introduzione, avvenuta negli anni `60, di una classe di algoritmi computazionale efficienti per la sua valutazione: la \emph{Fast Fourier Transform (trasformata veloce di Fourier)}.\\ Essa rende possibile in taluni casi l'elaborazione in tempo reale (sistemi di navigazione, trasmissione e processo di segnali vocali o televisivi) e consente di risolvere alcuni problemi di grandi dimensioni che risulterebbero altrimenti intrattabili.\\
+L'FFT viene normalmente attribuita a Cooley e Tukey (`65). Di fatto questo particolare algoritmo venne scoperto (ed usato) da Gauss nel XIX secolo. Pare che in realtà l'algoritmo sia stato riscoperto ed utilizzato varie volte (anche prima del lavoro di Cooley e Tukey sopra menzionato).
 Grazie alla FFT, infatti, è possibile implementare al calcolatore operazioni nel dominio della frequenza, cioè utilizzando le trasformate di Fourier, con complessità di calcolo inferiore a quella ottenibile implementando lo stesso calcolo nel dominio del tempo.\\
 \newpage
 \section{Attraverso la definizione}
@@ -422,9 +437,11 @@ ed essendo
 \begin{equation*}
 \mathcal{F} : \mathbb{C}^N\longrightarrow\mathbb{C}^N
 \end{equation*}
-ci sono $N$ termini da calcolare, ognuno dei quali richiede $N$ moltiplicazioni e $N-1$ addizioni complesse. Anche evidando di calcolare le moltiplicazioni per $\omega_{N}^{0}=1$ si devono comunque effettuare in totale $2(N-1)^2$ operazioni complesse. Il costo è pertanto $O(N^2)$
+ci sono $N$ termini da calcolare, ognuno dei quali richiede $N$ moltiplicazioni e $N-1$ addizioni complesse. Anche evitando di calcolare le moltiplicazioni per $\omega_{N}^{0}=1$ si devono comunque effettuare in totale $2(N-1)^2$ operazioni complesse. Il costo è pertanto $O(N^2)$
 
 Nel dettaglio ogni moltiplicazione complessa $\lambda = z_1 \cdot z_2 = (a + jb) \cdot (c + jd)$ si sviluppa in 
+$$ \lambda= (a \cdot c - b \cdot d)+ j (a \cdot d + b \cdot c)$$
+oppure in
 \begin{align*}
 m1 &= (a + b) \cdot c\\
 m2 &= (d + c) \cdot b\\
@@ -432,11 +449,13 @@ m3 &= (d - c) \cdot a\\
 \rm{Re}(\lambda) &= m1 - m2\\
 \rm{Im}(\lambda) &= m1 + m3\\
 \end{align*}
-richiedendo 4 moltiplicazioni reali e 2 addizioni e pertanto il numero di operazioni macchina totali risultante è $4(N-1)^2$ moltiplicazioni e $2N(N-1)+2(N-1)^2= 2(N-1)(2N-1)$ addizioni.
+richiedendo  rispettivamente 4 moltiplicazioni reali e 2 addizioni nel primo caso e 3 moltiplicazione e 5 addizioni nel secondo.\\
+Il numero di operazioni macchina totali risultante nel primo caso è $4(N-1)^2$ moltiplicazioni e $2N(N-1)+2(N-1)^2= 2(N-1)(2N-1)$ addizioni.
+
+Il secondo caso può risultare utile in particolari situazioni in quanto, poichè nel calcolo della FFT tutte le moltiplicazioni complesse coinvolgono un "`\emph{twiddle factor}"' $\omega_N^l = c + jd$ e un ulteriore termine, è possibile, oltre che precalcolarli, organizzare le operazioni in modo da salvarsi anche i risultati intermedi $c+d$ e $c-d$. Con questa accortezza una moltiplicazione complessa richede sempre 6 operazioni totali di cui soltanto 3 sono moltiplicazioni. 
 
 Nel modello di calcolo da noi considerato assumeremo, come effettivamente si verifica per i moderni apparecchi di calcolo, che il tempo impiegato per effetuare una addizione o moltiplicazione sia lo stesso.
 
-Inoltre, poichè nel caso della FFT, tutte le moltiplicazioni complesse coinvolgono un "`twiddle factor"' $\omega_N^l = c + jd$, e un ulteriore termine è possibile precalcolare, oltre che precalcolarli è possibile salvarsi anche i risultati intermedi $c+d$ e $c-d$ in modo che una moltiplicazione complessa richeda solo $5$ operazioni totali. 
 
 %Un'altra scomposizione che può risultare vantaggiosa è $(a+jb)(c+jd)=a(c+d)-d(a+b)+j[a(c+d)+c(b-a)]$
 %3 moltiplicazioni e 5 addizioni reali.
@@ -463,9 +482,9 @@ qualsiasi sia la complessita di calcolo originale $T(N)$, purchè di tipo polinom
 \begin{equation}
 T(N) = O(N^\alpha), \quad \alpha \in \mathbb{R}
 \end{equation}
-Ovviamente, minore è la complessità originaria (quindi l'esponente $\alpha$) e più piccolo sarà il tempo di calcolo al quare si arriva applicando il principio \emph{"`divide et impera"'}; in ogni caso, comunque, esso sarà dell'ordine di $N \cdot \log_2 N$
+Ovviamente, minore è la complessità originaria (quindi l'esponente $\alpha$) e più piccolo sarà il tempo di calcolo al quale si arriva applicando il principio \emph{"`divide et impera"'}; in ogni caso, comunque, esso sarà dell'ordine di $N \cdot \log_2 N$
 
-Osserviamo inoltre che il principio \emph{"`divide et impera"'} conduce spontaneamente a strutture di calcolo parallele. Con $N=2_\nu$, le partizioni dei dati più efficienti sono le più "`spontanee"', e sono "`schematizzate"' nella figura seguente per $N=8$
+Osserviamo inoltre che il principio \emph{"`divide et impera"'} conduce spontaneamente a strutture di calcolo parallele. Con $N=2^\nu$, le partizioni dei dati più efficienti sono le più "`spontanee"', e sono "`schematizzate"' nella figura seguente per $N=8$
 \vskip 30pt
 \begin{figure}[h!]
   \centering
@@ -477,26 +496,16 @@ Osserviamo inoltre che il principio \emph{"`divide et impera"'} conduce spontane
 
 \subsection{Cooley-Tukey Algorithm - DIT}
 
-Il calcolo della DFT utilizzando la definizione richiede tempo $O(N^2)$, come \`e facilmente verificabile. Molti sono gli algoritmi studiati e progettati per ridurre questa complessit\`a computazionale.\\La DFT calcolata secondo questi algoritmi prende il nome di \textbf{Fast Fourier Transform} o \textbf{FFT}.\\Tra gli algoritmi studiati uno dei pi\`u famosi \`e l'algoritmo noto come Algoritmo di Cooley-Tukey con una delle sue implementazioni pi\`u frequenti che si articola in cinque fasi.\\
-
-Dato un vettore $\mathbf{X}\in{}\mathbb{C}^n$, le cinque fasi dell'algoritmo di CT sono cos\`i articolate:
+Dato un vettore $\mathbf{x}\in{}\mathbb{C}^n$, l'algoritmo di Cooley-Tukey  si articola in cinque fasi:
 \begin{itemize}
-\item Fase 1: il vettore di ingresso viene riorganizzato in forma matriciale pxq secondo un ordinamento row-major. Tipicamente o p o q \`e un fattore piccolo, non necessariamente primo, che \`e chiamato radice.\\Nelle pi\`u comuni implementazioni la DFT calcolata con l'algoritmo di Cooley-Tukey \`e di \textbf{radice 2} e, in particolare, se q \`e uguale a 2 si parla di decimazione in frequenza mentre se p \`e uaguale a 2 si parla di \textbf{decimazione nel tempo}.
-\item Fase 2: q FFT vengono calcolate ricorsivamente sulle colonne della matrice ottenuta.
+\item Fase 1: il vettore di ingresso viene riorganizzato in forma matriciale $p \times q$ secondo un ordinamento row-major. Tipicamente o $p$ o $q$ \`e un fattore piccolo, non necessariamente primo, che \`e chiamato radice.
+\item Fase 2: $q$ FFT vengono calcolate ricorsivamente sulle colonne della matrice ottenuta.
 \item Fase 3: gli elementi della matrice risultante vengono moltiplicati per i twiddle factors, in particolare l'elemento di indice (i,j) viene moltiplicato per il fattore $\omega_n^{ij}$ ($i, j = 0,\ldots{},N-1$).
-\item Fase 4: p FFT vengono calcolate ricorsivamente sulle righe della matrice risultante.
+\item Fase 4: $p$ FFT vengono calcolate ricorsivamente sulle righe della matrice risultante.
 \item Fase 5: gli elementi della matrice vengono letti in ordine column-major al fine di ottenere il vettore finale.
 \end{itemize}
 
-Questo algoritmo \`e in grado di ridurre la complessit\`a computazionale a $O(Nlog_2N)$.\\
-
-Gli algoritmi di decimazione radix-2 nel tempo si costituiscono a partire dalla seguente scomposizione ricorsiva.\\
-Consideriamo un vettore $x$ di lunghezza $N=2^\nu$. Dividiamo i valori in ingresso in elementi di posizione pari e dispari\\
-\[n = 
-\begin{cases} 
-2 \cdot r \\
-2 \cdot r +1
-\end{cases}\]
+Per $p=2$ si ottiene un algoritmo radix-2 nel tempo, ovvero che risolve il problema originale scomponendolo in due sottoproblemi di taglia dimezzata su campioni alterni dell'input. Lo schema di scomposizione risultante è il seguente.
 
 \subsubsection{Schema di scomposizione}
 
@@ -510,7 +519,7 @@ X_k &=\sum_{n=0}^{N-1}x_n \omega_N^{nk} \qquad \text{con}\quad \omega_N=e^{-\jma
 &=X_{even} \quad +\quad \omega_N^{k} \cdot X_{odd} \qquad k=0,1, ..., N-1
 \end{align}}
 
-Entrambe le sommatorie in \eqref{eq:cooley-tukey-sommatorie-2} possono quindi essere interpretate come DFT di taglia $N/2$: la prima coinvolge gli elementi in posizione pari $\{x_{2k}|k=0,1,...,N/2-1\}$ mentre la seconda gli elementi in posizione dispari $\{x_{2k+1}|k=0,1,...,N/2-1\}$. Ci siamo quindi ricondotti a due sottoproblemi analoghi a quello di partenza ma di daglia dimezzata.\\
+Entrambe le sommatorie in \eqref{eq:cooley-tukey-sommatorie-2} possono quindi essere interpretate come DFT di taglia $N/2$: la prima coinvolge gli elementi in posizione pari $\{x_{2k}|k=0,1,...,N/2-1\}$ mentre la seconda gli elementi in posizione dispari $\{x_{2k+1}|k=0,1,...,N/2-1\}$. Ci siamo quindi ricondotti a due sottoproblemi analoghi a quello di partenza ma di taglia dimezzata.\\
 Definiendo $y_r=x_{2r}$ e $z_r=x_{2r+1}$ e quindi le rispettive DFT
 \begin{equation}
 	Y_{k}=\sum_{r=0}^{\frac{N}{2}-1} y_r \omega_{\frac{N}{2}}^{rk}, \qquad k=0,1,...,N/2-1
@@ -559,7 +568,7 @@ e quindi
 %
  
 \subsection{Gentleman-Sande Algorithm - DIF}
-Una strategia leggermente diversa da quella dello schema di Cooley e Tukey sta alla base la versione dell'algoritmo FFT radix-2 introdotta da Gentleman e Sande. Tale variante si basa sul decomporre ripetutamente il vettore DFT da calcolare. Si osserva che le componoenti con indice pari della DFT si possono esprimere come una DFT di lunghezza $N/2$ costruita a partire da un vettore ottenuto combinando le componenti del vettore di input che distano di $N/2$. Analogo ragionamento si fa per le componenti con indice dispari della DFT da calcolare.
+Una strategia leggermente diversa da quella dello schema di Cooley e Tukey sta alla base la versione dell'algoritmo FFT radix-2 introdotta da Gentleman e Sande. Tale variante si basa sul decomporre ripetutamente il vettore DFT da calcolare. Si osserva che le componenti con indice pari della DFT si possono esprimere come una DFT di lunghezza $N/2$ costruita a partire da un vettore ottenuto combinando le componenti del vettore di input che distano di $N/2$. Analogo ragionamento si fa per le componenti con indice dispari della DFT da calcolare.
 
 \subsubsection{Schema di scomposizione}
 Se dividiamo gli $N=2^\nu$ elementi di $x_N$ nelle due sotto sequenze $x_{head}=(x_0,x_1,...,x_{\frac{N}{2}-1})$ e $x_{tail}=(x_{\frac{N}{2}},x_{\frac{N}{2}+1},...,x_{N-1})$, la DFT di $x_N$ si può scrivere nella forma
@@ -574,7 +583,7 @@ X_k &=\sum_{n=0}^{N-1}x_n \omega_N^{nk} \qquad \text{con}\quad \omega_N=e^{-\jma
 
 Notiamo che la \eqref{eq:dft-dif-div} non è una DFT su $N/2$ punti in quanto è presente il termine $\omega_N^{nk}$ invece di $\omega_{\frac{N}{2}}^{nk}$
 
-Procedendo separatamente con il calcolo dei valori di $X_k$ di posto pari $\left((-1)^K=1\right)$ e dispari $\left((-1)^K=-1\right)$ si ottiene
+Procedendo separatamente con il calcolo dei valori di $X_k$ di posto pari $\left((-1)^k=1\right)$ e dispari $\left((-1)^k=-1\right)$ si ottiene
 
 
 \setlength{\jot}{17pt}{\begin{align} 
@@ -641,11 +650,11 @@ Y_r=\sum_{k=0}^{\frac{N}{2}-1}{x_{2k}\omega_{N}^{r(2k)}} =\sum_{k=0}^{\frac{N}{2
 \end{equation}
 
 \begin{equation}
-Z_r=\sum_{k=0}^{\frac{N}{2}-1}{x_{4k+1}\omega_{N}^{r(4k)}} =\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+1}{(\omega_{N}^{4})}^{rk}} =\sum_{k=0}^{\frac{N}{4}-1}{z_{k}\omega_{\frac{N}{4}}^{rk}}, \qquad r=0,1,... ,N/4-1
+Z_r=\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+1}\omega_{N}^{r(4k)}} =\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+1}{(\omega_{N}^{4})}^{rk}} =\sum_{k=0}^{\frac{N}{4}-1}{z_{k}\omega_{\frac{N}{4}}^{rk}}, \qquad r=0,1,... ,N/4-1
 \end{equation}
 
 \begin{equation}
-H_r=\sum_{k=0}^{\frac{N}{2}-1}{x_{4k+3}\omega_{N}^{r(4k)}} =\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+3}{(\omega_{N}^{4})}^{rk}} =\sum_{k=0}^{\frac{N}{4}-1}{h_{k}\omega_{\frac{N}{4}}^{rk}}, \qquad r=0,1,... ,N/4-1
+H_r=\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+3}\omega_{N}^{r(4k)}} =\sum_{k=0}^{\frac{N}{4}-1}{x_{4k+3}{(\omega_{N}^{4})}^{rk}} =\sum_{k=0}^{\frac{N}{4}-1}{h_{k}\omega_{\frac{N}{4}}^{rk}}, \qquad r=0,1,... ,N/4-1
 \end{equation}
 
 dopo che ognuno dei tre sottoproblemi è stato risolto, ricordando che $Y_r$ è periodico di periodo $N/2$ e $Z_r$ e $H_R$ sono periodici di  $N/4$, la soluzione al problema originale di taglia N può essere ottenuta come:
@@ -700,26 +709,34 @@ Questo algoritmo, implementato come filtro IIR, è utilizzato in DSP quando si è 
 
 \begin{align*}
 	X_{k} &\stackrel{\text{\emph{def}}}{=} \sum_{n=0}^{N-1} x[n] \omega_N^{nk} = 1 \cdot \sum_{n=0}^{N-1} x[n] \omega_N^{nk}, \quad \text{con}\quad \omega_N^{-kN}=1\\
-	&= \omega_N^{-kN} \sum_{n=0}^{N-1} x[n] \omega_N^{nk} = \sum_{n=0}^{N-1} x[n] \omega_N^{-k(N-n)}\\
+	&= \omega_N^{-kN} \sum_{n=0}^{N-1} x[n] \omega_N^{nk} = \sum_{r=0}^{N-1} x[r] \omega_N^{-k(N-r)}\\
 	\left.y_k[n]\right|_{n=N}&= \left.\left[x[n]\ast \left( \omega_N^{-nk} u[n]\right)\right]\right|_{n=N}
 \end{align*}
-che è una convoluzione discreta.
+che è una convoluzione discreta\footnote{
+La convoluzione discreta è definita come: $\displaystyle
+y(n)=x(n)\ast h(n)= \sum_{r=-\infty}^{+\infty}x(r)h(n-r)
+$
+}.
 \begin{equation*}
 	x[n] \longrightarrow \fbox{$h[n]=\omega_N^{-nk} u[n]$} \longrightarrow y_k[n]
 \end{equation*}
-L'algoritmo, espresso come equazione alle differenze del primo ordine, fornisce
-\begin{equation*}
-	y_k[n] = x [n] +  \omega_N^{-k} y_k[n-1]  \quad \text{con} \quad y_k[-1]=0
-\end{equation*}
+Espandendo la sommatoria otteniamo
+$$
+X_{k}=(((\omega_N^{-k}x[0]+x[1])\omega_N^{-k}+x[2])\omega_N^{-k}+\dots+x[n-1])\omega_N^{-k}
+$$
+e l'algoritmo, espresso come equazione alle differenze del primo ordine, fornisce
+\begin{align*}
+	y_k[n] &= x [n] +  \omega_N^{-k} y_k[n-1]  \quad \text{con} \quad y_k[-1]=0
+\end{align*}
 Notiamo che $x[n]$ è definito solo per $0\leq n \leq N-1$ e perciò $x[N]=0$ e che per calcolare la $k$-esima componente $X_k$  si utilizza solo la radice $\omega_N^{-k}$.
-Il calcolo di $X_k$ richiede tempo $O(N)$. Quindi per calcolare tutta la DFT si ha complessità $O(N^2)$. Tuttavia se si è interessati solo a $M$ frequenze risulta vantaggiosa rispetto agli algoritmi FFT $O(N \log2(N))$ fin tanto che $ M\leq\log2(N)$
+Il calcolo di $X_k$ richiede tempo $O(N)$. Quindi per calcolare tutta la DFT si ha complessità $O(N^2)$. Tuttavia se si è interessati solo a $M$ frequenze risulta vantaggiosa rispetto agli algoritmi FFT $O(N \log_2N)$ fin tanto che $ M\leq\log_2N$
 %
 % propagazione errore veloce....
 %
 %
 
 \subsubsection*{Good-Thomas - Prime Factor Algorithm} %fft-lecture.pdf
-Il \emph{Prime Factor Algorithm (PFA)}, anche chiamato \emph{Good-Thomas algorithm}, permettere di ridefinire una FFT con $N=N_1\times N_2$ come \emph{DFT bidimensionali} $N_1\times N_2$, ma solo nel caso che $N_1$ e $N_2$ siano \emph{coprimi}. La valutazione di queste DFT di taglia $N_1$ o $N_2$ può essere effettuato applicando ricorsivamente PFA stesso, se possibile, o qualunque altro algoritmo FFT.
+Il \emph{Prime Factor Algorithm (PFA)}, anche chiamato \emph{Good-Thomas algorithm}, permettere di ridefinire una DFT con $N=N_1\times N_2$ come \emph{DFT bi-dimensionale} $N_1\times N_2$, ma solo nel caso che $N_1$ e $N_2$ siano \emph{coprimi}. La valutazione di queste DFT di taglia $N_1$ o $N_2$ può essere effettuato applicando ricorsivamente PFA stesso, se possibile, o qualunque altro algoritmo FFT.
 Avere $N_1$ e $N_2$ coprimi permette di individuare facilmente una funzione biettiva per ri-indicizzare l'input e l'output di \eqref{eq:def-dft}.
 Ciò ci permette di scrivere
 \begin{align}
@@ -746,7 +763,7 @@ Indicando con $\mathbf{Y}$ e $\mathbf{Z}$ i vettori corrispondenti alle sequenze
 \begin{equation}
 	\mathbf{X}=\mathbf{F_{16}}\mathbf{x} = \begin{pmatrix} \mathbf{I_{8}} &\mathbf{\Omega_{8}} \\\mathbf{I_{8}} &-\mathbf{\Omega_{8}}  \end{pmatrix}\begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}\equiv\mathbf{B_{16}} \begin{pmatrix} \mathbf{Y} \\ \mathbf{Z} \end{pmatrix}
 \end{equation}
-dove $\mathbf{I_{8}}$ è la matrice identità di ordine \emph{m} e $\mathbf{\Omega_{8}}$ è la matrice diagnonale 
+dove $\mathbf{I_{m}}$ è la matrice identità di ordine \emph{m}$=8$ e $\mathbf{\Omega_{m}}$ è la matrice diagnonale 
 \begin{equation*}
 	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
 \end{equation*}
@@ -787,10 +804,10 @@ e continuando fino a N=2
 	0&0&0&0&0&0&0&\mathbf{B_{2}} \\  \end{pmatrix}\mathbf{P}^{T}\mathbf{x}
 \end{split}
 \end{align}
-Quindi la matrice $\mathbf{F_{16}}$ è stata espressa come prodotto di quattro matrici  $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT ti tagllia $m/2$ a una di taglia $m$.\\
+Quindi la matrice $\mathbf{F_{16}}$ è stata espressa come prodotto di quattro matrici contenenti $\mathbf{B}_m$ con $m=2,4,8,16$ e ad ogni passo la matrice  $\mathbf{B}_m$ implementa le relazioni di scambi e calcolo per passare da 2 DFT di tagllia $m/2$ a una di taglia $m$.\\
 Notiamo che man mano che la fattorizzazione è stata sviluppata, il riordinamento dell'input è stato espresso sempre alla destra dei prodotti di matrici. Pertanto, questa riorganizzazione dell'ingresso, detta \emph{scramble operation} viene effettuata solo all'inizio sul vettore di input e non sui passi intermedi.
 La matrice $\mathbf{P}$ è ottenuta effettuando successivi riordinamenti pari/dispari delle colonne della matrice identità $\mathbf{I_{16}}$.
-Dove un riordinamento di mensione N può essere espresso come una matrice $\mathbf{R_N}$  $NxN$ del tipo
+Dove un riordinamento di mensione N può essere espresso come una matrice $\mathbf{R_N}$  $N \times N$ del tipo
 $$\mathbf{R_{N}}=\begin{pmatrix}
 0 & 1\\
 &&0 & 1\\
@@ -819,8 +836,8 @@ $$
 \end{align*}
 L'effetto di questa permutazione è quello di ottenere un  \emph{riordinamento bitreversal} della sequenza di input x.
 
-La fattorizzazione può inoltre essere espressa agevolmente attraverso  il \emph{Prodotto di Kronecker}
-\footnote{Il prodotto di Kronecker di una matrice $\mathbf{A}$ $p\times q$ e $\mathbf{B}$ $r\times s$ è la matrice$pr \times qs$
+La fattorizzazione \eqref{eq:CT-factorization}  può inoltre essere espressa agevolmente attraverso  il \emph{Prodotto di Kronecker}
+\footnote{Il prodotto di Kronecker di una matrice $\mathbf{A}$ $p\times q$ e $\mathbf{B}$ $r\times s$ è la matrice $pr \times qs$
 $$
 \mathbf{A}\otimes \mathbf{B}=
 \begin{pmatrix}
@@ -831,8 +848,8 @@ a_{p1}\mathbf{B} &\ldots & a_{pq}\mathbf{B}
 \end{pmatrix}
 $$
 con $a_{ij}$ elementi di $\mathbf{A}$
-}\\
-La fattorizzazione  	\eqref{eq:CT-factorization} può quindi essere vista come
+}
+come
 $$
 \mathbf{X}=\mathbf{F_{16}} \mathbf{x}=(\mathbf{I_{1}}\otimes \mathbf{B_{16}})(\mathbf{I_{2}}\otimes \mathbf{B_{8}}) (\mathbf{I_{4}}\otimes \mathbf{B_{4}})(\mathbf{I_{8}}\otimes \mathbf{B_{2}})\mathbf{P}^T\mathbf{x}
 $$
@@ -840,7 +857,7 @@ In generale la FFT di Cooley-Tukey per $N=2^M$ può essere espressa come
 $$
 \mathbf{X}=\mathbf{F_{N}} \mathbf{x}=\mathbf{A}_{M}\mathbf{A}_{M-1} ... \mathbf{A}_{2}\mathbf{A}_{1}\mathbf{P}^T\mathbf{x}
 $$
-dove$\mathbf{A}_{k}=\mathbf{I}_r\otimes\mathbf{B}_m $, $m=2^k$ e $rm=N$ per $k=1,...,M$ sono matrici diagnonali a blocchi.
+dove$\mathbf{A}_{k}=\mathbf{I}_r\otimes\mathbf{B}_m $, $m=2^k$ e $r=2^{M-k}$ per $k=1,...,M$ sono matrici diagnonali a blocchi.
 Generalizzando l'esempio
 $$
 	\mathbf{B}_{2m}= \begin{pmatrix} \mathbf{I}_{m} &\mathbf{\Omega}_{m} \\\mathbf{I}_{m} &-\mathbf{\Omega}_{m}\end{pmatrix} \qquad \text{e} \qquad  	\mathbf\Omega_{m}= \text{diag} (1,\omega_{2m}^{1},\omega_{2m}^{2},...,\omega_{2m}^{m-1})
@@ -1080,7 +1097,7 @@ Allora per l'Algoritmo di Cooley-Tukey
 \end{equation*}
 \end{Teorema2}
 
-\begin{proof}\.\\Sia $\hat{\mathbf{x}}_0 = \mathbf{x}_0=\mathbf{P}^T\mathbf{x}$, essendo l'input perfettamente rappresentabile in virgola mobile. Indichiamo con $\hat{\mathbf{x}}_j$ il calcolo del vettore $\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1} $ $$\hat{\mathbf{x}}_j=fl(\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1}) \qquad (j=1,...,n)$$
+\begin{proof}.\\ Sia $\hat{\mathbf{x}}_0 = \mathbf{x}_0=\mathbf{P}^T\mathbf{x}$, essendo l'input perfettamente rappresentabile in virgola mobile. Indichiamo con $\hat{\mathbf{x}}_j$ il calcolo del vettore $\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1} $ $$\hat{\mathbf{x}}_j=fl(\hat{\mathbf{A}}_j\hat{\mathbf{x}}_{j-1}) \qquad (j=1,...,n)$$
 introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commesso al $j$-esimo passo
 \begin{equation}
 	\hat{\mathbf{x}}_j=\hat{\mathbf{A}}_j\mathbf{\hat{x}}_{j-1}+\mathbf{e}_{j}\qquad(j=1,...,n)
@@ -1305,7 +1322,7 @@ Queste conderazioni banalizzano alcune moltiplicazioni complesse riducendole a c
 \caption{Direct Call}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
-\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\REQUIRE $N = 2^\nu (\nu\geq1), \theta=2\pi/N$
 \FOR{$k=1$ to $N$}
 \STATE $\hat{\omega}_N^k \longleftarrow fl(\cos(k\theta)) - i fl(\sin(k\theta))$
 \ENDFOR
@@ -1325,7 +1342,7 @@ Si basa sulla scomposizione $\omega_N^k = \omega_N \times \omega_N^{k-1} $ ed ef
 \caption{Repeated Multiplication}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
-\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\REQUIRE $N = 2^\nu (\nu\geq1), \theta=2\pi/N$
 \STATE $\hat{\omega}_N^0 \longleftarrow 1$
 \STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
 \FOR{$k=2$ to $N-1$}
@@ -1352,7 +1369,7 @@ che comporta $2\log_2N$ valutazioni trigonometriche e $N$  moltiplicazioni compl
 \caption{Subvector Scaling}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
-\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\REQUIRE $N = 2^\nu (\nu\geq1), \theta=2\pi/N$
 \STATE $\hat{\omega}_N^0 \longleftarrow 1$
 \STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
 \FOR{$j=1$ to $\nu-1$}
@@ -1387,7 +1404,7 @@ da cui per $B=\theta$, $A=(j-1)\theta$
 \caption{Forward Recursion}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
-\REQUIRE $N = 2^\nu (\nu\geq3), \theta=2\pi/N$
+\REQUIRE $N = 2^\nu (\nu\geq1), \theta=2\pi/N$
 \STATE $\hat{\omega}_N^0 \longleftarrow 1$
 \STATE $\hat{\omega}_N \longleftarrow fl(\cos(\theta)) - i fl(\sin(\theta))$
 \STATE $\tau \longleftarrow fl(2\cos(\theta))$
@@ -1769,7 +1786,7 @@ La scelta del C\# è stata determinata dal fatto che il linguaggio offre la poten
 	\item Moltiplicazione di $f(x,y)$ per $(-1)^{x+y}$
 \end{enumerate}
 
-\paragraph{Applicazione dell'elaborazione}\.\\
+\paragraph{Applicazione dell'elaborazione}.\\
 
 \noindent Qui di seguito sono riportate alcune immagini e la loro trasformata a cui è stata applicata una log-tranform per aumentare la gamma dei bianchi in modo da rendere la fft calcolata più visibile.
 
