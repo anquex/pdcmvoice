@@ -886,7 +886,7 @@ In questa sezione viene presentato il primo algoritmo che calcola la FFT utilizz
 \end{figure}\\
 Su ogni linea all'ingresso della rete va posto un elemento del vettore di ingresso, ed ogni processo \`e responsabile di una o pi\`u linee a seconda del numero di processi lanciati. Per semplicit\`a si assume che il numero di linee (e quindi la dimensione n del vettore di ingresso), cos\`i come il numero di processi, sia sempre una potenza di due con ovviamente il vincolo che il numero di processi sia minore o uguale ad n.
 
-I dati di ingresso (elementi del vettore $\mathbf{X}$) vengono letti da un file di input dove ogni valore, composto dalla sua parte reale e dalla parte immaginaria, \`e scritto su una riga separata. Il processo 0 \`e il processo che si occupa sempre di leggere i valori di ingresso e salvarli opportunamente in un array \emph{double} di dimensione doppia rispetto alla dimensione del vettore $\mathbf{X}$, dato che la sistemazione dei valori all'interno dell'array avviene in maniera tale che l'elemento i-esimo abbia la sua parte reale salvata in posizione $2*i$ e la parte immaginaria in posizione $2*i+1$ nell'array di input.\\Successivamente, completata l'acquisizione, il processo 0 esegue un riordinamento \emph{bit-reversing} dei dati sulle linee ed infine esegue un broadcast dell'intero contenuto dell'array verso i rimanenti processi.
+I dati di ingresso (elementi del vettore $\mathbf{X}$) sono costituiti da diversi valori, ognuno dei quali è composto dalla sua parte reale e dalla parte immaginaria. Il processo 0 \`e il processo che si occupa sempre di leggere i valori di ingresso e salvarli opportunamente in un array \emph{double} di dimensione doppia rispetto alla dimensione del vettore $\mathbf{X}$, dato che la sistemazione dei valori all'interno dell'array avviene in maniera tale che l'elemento i-esimo abbia la sua parte reale salvata in posizione $2*i$ e la parte immaginaria in posizione $2*i+1$ nell'array di input.\\Successivamente, completata l'acquisizione, il processo 0 esegue un riordinamento \emph{bit-reversing} dei dati sulle linee ed infine esegue un broadcast dell'intero contenuto dell'array verso i rimanenti processi.
 
 Dopo questa prima fase, ogni processo calcola indipendentemente i twiddle factors che saranno necessari durante la computazione. Ogni processo calcola gli stessi twiddle factors, in particolare le potenze di $\omega_n$ necessarie e calcolate vanno da $\omega_n^0$ a $\omega_n^{\frac{n}{2}-1}$.\\
 
@@ -1496,10 +1496,10 @@ Se i dati in ingresso sono reali allora la loro parte immaginaria risulterà esse
 Volendo infatti calcolare le trasformate di $g(n)$ e $h(n)$ è possibile considerare l'ingresso fittizio $y(n)=g(n)+j \cdot h(n)$, considerando in questo modo $g(n) = {\rm Re}(y(n))$ e $h(n) = {\rm Imm}(y(n))$.
 Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n)$ e $h(n)$:
 \begin{equation*}
-	G[k] = \frac{1}{2} \left\{ X[k] + X^*[(-k)modN]\right \}
+	G[k] = \frac{1}{2} \left\{ Y[k] + Y^*[(-k)modN]\right \}
 \end{equation*}
 \begin{equation*}
-	H[k] = \frac{1}{2j} \left\{ X[k] - X^*[(-k)modN]\right \}
+	H[k] = \frac{1}{2j} \left\{ Y[k] - Y^*[(-k)modN]\right \}
 \end{equation*}
 
 %Per la linearità della DFT
