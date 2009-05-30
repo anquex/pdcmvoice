@@ -17,7 +17,7 @@
 \usepackage{subfig}    % + figure in un float figure
 
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
-\usepackage{emptypage}
+%%\usepackage{emptypage}
 
 
 
@@ -1541,7 +1541,7 @@ Di conseguenza è possibile calcolare il risultato della convoluzione circolare y
 
 \begin{figure}[h!]
   \centering
-      \includegraphics[width=10cm,height=3cm]{immagini/circ-conv-mitra.jpg}
+      \includegraphics[width=10cm,height=3cm]{immagini/circ-conv-mitra}
   \caption{Convoluzione circolare tramite FFT}
 \end{figure}
 
@@ -1666,7 +1666,7 @@ la convoluzione lineare $y_L (n)$ di lunghezza $L = M + N - 1$ corrisponde alla 
 
 \begin{figure}[H]
   \centering
-      \includegraphics[width=10cm,height=3cm]{immagini/lin-conv-mitra.jpg}
+      \includegraphics[width=10cm,height=3cm]{immagini/lin-conv-mitra}
   \caption{Convoluzione lineare di due sequenza di lunghezza finita tramite FFT}
 \end{figure}
 
@@ -1703,13 +1703,13 @@ Per esempio $y_0(n)= h(n) \odot x_0(n)$ è definita per $0 \leq n \leq N+M-2$ e $
 
 \begin{figure}[H]
   \centering
-      \includegraphics[width=10cm,height=10cm]{immagini/overlap-add-mitra-1.jpg}
+      \includegraphics[width=10cm,height=10cm]{immagini/overlap-add-mitra-1}
   \caption{Overlap-add (a) Sequenza di input (b) Suddivisioni di x(n)}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-      \includegraphics[width=10cm,height=7cm]{immagini/overlap-add-mitra-2.jpg}
+      \includegraphics[width=10cm,height=7cm]{immagini/overlap-add-mitra-2}
   \caption{Overlap-add (c) $y_m(n) = h(n) \odot x_m(n)$}
 \end{figure}
 
