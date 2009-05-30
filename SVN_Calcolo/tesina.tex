@@ -1538,11 +1538,12 @@ La N-point DFT Y(k) della sequenza $y(n) = g(n) \otimes _N h(n)$ data dalla conv
 	Y(k) = DFT[y(n)] = DFT[g(n) \otimes _N h(n)] = G(k)H(k)
 \end{equation}
 Di conseguenza è possibile calcolare il risultato della convoluzione circolare y(n) eseguendo la IDFT sulla \eqref{appl_conv_circ}, com'è possibile osservare dalla seguente figura:
-\\
-\\
-\textbf{FIGURA 5.11 pag 261 del MITRA}
-\\
-\\
+
+\begin{figure}[h!]
+  \centering
+      \includegraphics[width=10cm,height=3cm]{immagini/circ-conv-mitra.jpg}
+  \caption{Convoluzione circolare tramite FFT}
+\end{figure}
 
 \textbf{\textit{Esempio}}
 \\
@@ -1662,11 +1663,13 @@ la convoluzione lineare $y_L (n)$ di lunghezza $L = M + N - 1$ corrisponde alla 
 \begin{equation*}
 	y_L(n)=y_C(n)=g_e(n) \otimes _L h_e(n)
 \end{equation*}
-\\
-\\
-\textbf{FIGURA 5.13 pag 269 del MITRA}
-\\
-\\
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=10cm,height=3cm]{immagini/lin-conv-mitra.jpg}
+  \caption{Convoluzione lineare di due sequenza di lunghezza finita tramite FFT}
+\end{figure}
+
 Nel caso in cui una delle due sequenze sia di durata molto maggiore dell'altra (si può pensare ad una sequenza $x(n)$ di durata infinita e ad una sequenza $h(n)$ di lunghezza M) è possibile utilizzare un metodo detto Overlap-Add, che prevede di suddividere la sequenza di partenza $x(n)$ in più sequenze $x_m(n)$ di campioni non sovrapposti:
 \begin{equation*}
 	x(n)= \sum_{m=0}^{\infty} x_m(n-mN)
@@ -1697,11 +1700,19 @@ dove
 \end{equation*}
 La convoluzione lineare $y(n)$ viene così suddivisa in più convoluzioni lineari $y_m(n)$ di lunghezza minore $(N + M - 1)$.
 Per esempio $y_0(n)= h(n) \odot x_0(n)$ è definita per $0 \leq n \leq N+M-2$ e $y_1(n)= h(n) \odot x_1(n)$ è definita per $N \leq n \leq 2N+M-2$; la sovrapposizione tra gli $M-1$ elementi di $y_0(n)$ e $y_1(n)$ viene risolta sommando tali elementi per otterenere la sequenza definitiva $y(n)$.
-\\
-\\
-\textbf{FIGURA 5.15 DEL MITRA, PAG 272}
-\\
-\\
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=10cm,height=10cm]{immagini/overlap-add-mitra-1.jpg}
+  \caption{Overlap-add (a) Sequenza di input (b) Suddivisioni di x(n)}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=10cm,height=7cm]{immagini/overlap-add-mitra-2.jpg}
+  \caption{Overlap-add (c) $y_m(n) = h(n) \odot x_m(n)$}
+\end{figure}
+
 
 \section{Moltiplicazione di polinomi}
 
