@@ -16,3 +16,202 @@ Implementazione iterativa dell'algoritmo di Cooley-Tukey radix-2 con calcolo dei
 Implementazione iterativa dell'algoritmo di Cooley-Tukey radix-2 con calcolo dei \emph{twiddle factor} attraverso \emph{subvector scaling}
 \verbatiminput{matlab/fft_vs_iter.m}
 
+\begin{comment}
+\section{FFT/IFFT 1D float C\#}
+\begin{verbatim}
+    /// <summary>
+    /// Metodo per il calcolo della fft su un vettore di float
+    /// </summary>
+    /// <param name="data">vettore di float a coppie successive (Re(a),Im(a))</param>
+    /// <param name="length">lunghezza della fft </param>
+    /// <param name="direction">fft o ifft?</param>
+    
+		public static void	FFT( float[] data, int length, FourierDirection direction ) {
+		
+			Fourier.SyncLookupTableLength( length );
+			
+			int ln = Fourier.Log2( length );
+
+			
+			Fourier.ReorderArray( data );
+
+			// fft o ifft?
+			int signIndex = ( direction == FourierDirection.Forward ) ? 0 : 1;
+			
+			// implementazione iterativa butterfly CT
+			int N = 1;
+			
+			//Calcolo le matrici A_i per i=1,...,ln
+			
+			for( int level = 1; level <= ln; level ++ ) {
+				int M = N;
+				N <<= 1;
+				
+				//lookup dei tf da utilizzare 
+				
+				float[] uRLookup = _uRLookupF[ level, signIndex ];
+				float[] uILookup = _uILookupF[ level, signIndex ];
+
+				// Butterfly operation su gruppi di 2*M=N elementi
+				 
+				for( int j = 0; j < M; j ++ ) {
+					float uR = uRLookup[j];
+					float uI = uILookup[j];
+				
+					for( int evenT = j; evenT < length; evenT += N ) {
+					  // posizione dell'elemento pari
+						int even = evenT << 1;
+						// posizione dell'elemento dispari
+						int odd = ( evenT + M ) << 1;
+						
+						//ricombinazine
+						
+						float r = data[ odd ];
+						float i = data[ odd+1 ];
+
+						// moltiplicazione odd*tf
+						float odduR = r * uR - i * uI;
+						float odduI = r * uI + i * uR;
+
+						r = data[ even ];
+						i = data[ even+1 ];
+
+						data[ even ]	= r + odduR;
+						data[ even+1 ]	= i + odduI;
+
+						data[ odd ]		= r - odduR;
+						data[ odd+1 ]	= i - odduI;
+					}
+				}
+			}
+		}
+\end{verbatim}
+\end{comment}
+\section{FFT 1-D C\#}
+\begin{verbatim}
+		/// <summary>
+		/// FFT 1-D su ComplexF[]
+		/// </summary>
+		/// <param name="data">vettore di struct con float .Re .Im</param>
+		/// <param name="length">lunghezza della fft </param>
+		/// <param name="direction">fft o ifft?</param>
+    
+public static void	FFT( ComplexF[] data, int length, FourierDirection direction ) {
+
+		Fourier.SyncLookupTableLength( length );
+		int ln = Fourier.Log2( length );
+
+		// riordina  il vettore di ingresso in bit reversal
+		Fourier.ReorderArray( data );
+
+		// fft o ifft?
+		int signIndex = ( direction == FourierDirection.Forward ) ? 0 : 1;
+		
+		// implementazione iterativa Cooley-Tukey
+	  int N = 1;
+			
+		//Calcoli associati alle matrici A_i per i=1,...,ln
+
+		for( int level = 1; level <= ln; level ++ ) {
+				int M = N;
+				N <<= 1;
+
+				//lookup dei tf da utilizzare dalla tabella precalcolata 
+				
+				float[] uRLookup = _uRLookupF[ level, signIndex ];
+				float[] uILookup = _uILookupF[ level, signIndex ];
+
+				// Butterfly operation su gruppi di 2*M=N elementi
+				
+				for( int j = 0; j < M; j ++ ) {
+            float uR = uRLookup[j];
+            float uI = uILookup[j];
+
+            for( int even = j; even < length; even += N ) {
+                int odd	 = even + M;
+
+                float	r = data[ odd ].Re;
+                float	i = data[ odd ].Im;
+
+                float	odduR = r * uR - i * uI;
+                float	odduI = r * uI + i * uR;
+
+                r = data[ even ].Re;
+                i = data[ even ].Im;
+
+                data[ even ].Re	= r + odduR;
+                data[ even ].Im	= i + odduI;
+
+                data[ odd ].Re	= r - odduR;
+                data[ odd ].Im	= i - odduI;
+            }
+        }
+    }
+}
+\end{verbatim}
+
+\section{FFT 2-D C\#}
+\begin{verbatim}
+/// <summary>
+/// FFT 2-D su ComplexF[]
+/// </summary>
+/// <param name="data"></param>
+/// <param name="xLength"></param>
+/// <param name="yLength"></param>
+/// <param name="direction"></param>
+
+public static void	FFT2( ComplexF[] data, int xLength, int yLength,
+                          FourierDirection direction ) {
+    int xInc = 1;
+    int yInc = xLength;
+    //fft 1-D per colonne
+    if( xLength > 1 ) {
+        Fourier.SyncLookupTableLength( xLength );
+        for( int y = 0; y < yLength; y ++ ) {
+            int xStart = y * yInc;
+            Fourier.LinearFFT_Quick( data, xStart, xInc, xLength, direction );
+        }
+    }
+    //fft 1-D per righe
+    if( yLength > 1 ) {
+        Fourier.SyncLookupTableLength( yLength );
+        for( int x = 0; x < xLength; x ++ ) {
+            int yStart = x * xInc;
+            Fourier.LinearFFT_Quick( data, yStart, yInc, yLength, direction );
+        }
+    }
+}
+
+/// <summary>
+/// la matrice data è memorizzata su un array
+/// permette di selezionare opportunamente gli elementi su una riga/colonna
+/// metterli su un buffer e calcolarne la trasformata
+/// </summary>
+/// <param name="data">matrice memorizzata come vettore</param>
+/// <param name="start">posizione primo elemento nel vettore</param>
+/// <param name="inc">posizione elementi successivi nel vettore +inc</param>
+/// <param name="length">lunghezza della fft da calcolare</param>
+/// <param name="direction">fft/ifft</param>
+
+private static void	LinearFFT_Quick( ComplexF[] data, int start, int inc,
+                                    int length, FourierDirection direction ) {
+
+    // copio nel buffer
+    ComplexF[]	buffer = null;
+    LockBufferCF( length, ref buffer );
+    int j = start;
+    for( int i = 0; i < length; i ++ ) {
+        buffer[ i ] = data[ j ];
+        j += inc;
+    }
+    //fft 1-D
+    FFT( buffer, length, direction );
+    // copio dal buffer
+    j = start;
+    for( int i = 0; i < length; i ++ ) {
+        data[ j ] = buffer[ i ];
+        j += inc;
+    }
+    UnlockBufferCF( ref buffer );
+}
+\end{verbatim}
