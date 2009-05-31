@@ -178,7 +178,6 @@ Possiamo calcolare la convoluzione ciclica utilizzando la DFT nel seguente modo:
 \end{equation}\\
 dove $\odot$ indica il prodotto componente per componente.
 
-%
 % Corollari convoluzione ciclica <--> lineare (pucci)
 %
 \end{enumerate}
@@ -887,6 +886,11 @@ dove ogni stadio $i$ è costituito da una matrice di combinazione $\mathbf{A}_{i}
 \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/CT-FFT-fasi}
+  \caption{Operazioni effettuate dall'algoritmo di CT per N=8. Si noti la fase iniziale di riordino e la successiva di calcolo}
+\end{figure}
 \section{Algoritmi paralleli per il calcolo di FFT}
 
 Gli algoritmi fino a questo momento presentati sono algoritmi prettamente sequenziali che, se pur diminuendo notevolmente la complessit\`a di calcolo rispetto all'algoritmo di base, non sfruttano il fatto che il calcolo della FFT presenta un elevato grado di parallelismo, che pu\`o essere sfruttato al meglio in presenza di pi\`u processori a patto di progettare algoritmi corretti ed adeguati alle risorse di sistema presenti.\\
@@ -1065,7 +1069,7 @@ dove
 	\label{eq:3.3}
 \end{equation}
 è chiaro che $\mathbf{A}_j$ contiene solo 2 elementi diversi da zero in ogni riga e colonna.
-\emph{Proprietà} La matrice $\frac{1}{\sqrt{2}}\mathbf{B}_{2m}$ è unitaria. Infatti
+\emph{Proprietà} La matrice $\dfrac{1}{\sqrt{2}}\mathbf{B}_{2m}$ è unitaria. Infatti
  $$\mathbf{B}_{2m} (\overline{\mathbf{B}}_{2m})^T = \begin{pmatrix}
  \mathbf{I}_{m}+\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m}) &\mathbf{I}_{m}-\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m})\\\mathbf{I}_{m}-\mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m}) &\mathbf{I}_{m}+ \mathbf{\Omega}_{m} (\overline{\mathbf{\Omega}}_{m})
  \end{pmatrix}= 2\begin{pmatrix}\mathbf{I}_{m}&0\\0&\mathbf{I}_{m}\end{pmatrix}$$
@@ -1491,53 +1495,49 @@ Il metodo Forward Recursion è instabile ed il suo errore è maggiore di quello de
 % MURLI
 %
 %
-\section{N-FFT di due funzioni reali}
+\section{DFT di una sequenza reale}
 
+La DFT è una mappa $\displaystyle \mathcal{F} : \mathbb{C}^N\longrightarrow\mathbb{C}^N $ ma spesso nelle applicazioni si utilizzano 
+esclusivamente dati reali come input. In questo caso, utilizzando opportunamente le simmetrie dei segnali e le loro trasformate è possibile ridurre ulteriormente la complessità di calcolo.
+
+
+Dato un segnale $x[n]=g[n]+jh[n]$ e la sua trasformata $X[k]$ si ha che
+\begin{align} \label{eq:dft-real-1}
+x_{re}[n]=g[n] &\longleftrightarrow \frac{1}{2} \{X[k]+X^*[-k]\}= G[k]\\\label{eq:dft-real-2}
+x_{im}[n]=h[n] &\longleftrightarrow \frac{1}{2j} \{X[k]-X^*[-k]\} = H[k]
+\end{align}
+dove le operazioni $[i]$ sono intese modulo $N$.\\
+Se il vettore da elaborare è $v[n]\in\mathbb{R}^N$ possiamo considerarlo come
+$$
+g[n] =v[2n], \qquad h[n]=v[2n+1],\qquad 0\leq n \leq N/2-1
+$$
+pertanto
+\begin{align}
+V[k]&= \sum_{n=0}^{N-1} v[n] \omega_N^{nk} = \sum_{n=0}^{\frac{N}{2}-1} v[2n] \omega_N^{2nk}+\sum_{n=0}^{\frac{N}{2}-1} v[2n+1] \omega_N^{(2n+1)k}\\
+&= \sum_{n=0}^{\frac{N}{2}-1} g[n] \omega_\frac{N}{2}^{nk}+\omega_N^k\sum_{n=0}^{\frac{N}{2}-1} h[n] \omega_\frac{N}{2}^{nk}\\
+&=G[k]+\omega_N^k H[k]
+\end{align}
+
+Quindi risulta possibile calcolare la FFT di una sequenza reale di lunghezza $N$ attraverso una FFT di lunghezza $N/2$ con complessità $O(\frac{N}{2}log_2\frac{N}{2})$, un processing aggiuntivo di $O(N/2)$ operazioni per ricostruire $G[k]$ e $H[k]$ e un ulteriore $O(N)$ per ottenere $V[k]$.   
+
+Poichè
+$$O\left(\frac{N}{2}\log_2\frac{N}{2}+2N\right)\leq O\left(N\log_2N\right)\qquad \forall N \geq8$$
+l'operazione risulta sempre vantaggiosa.
+Notiamo inoltre che le \eqref{eq:dft-real-1} e \eqref{eq:dft-real-2} possono essere altresi utilizzate per il calcolo di 2 DFT reali di lunghezza N attraverso una unica FFT di lunghezza N
 %
 % anche dal mitra oppure Brigham cap 1p pg 166
 %
 %
 
-Nell'applicazione della FFT spesso consideriamo solo funzioni reali del tempo mentre le funzioni in frequenza utilizzate nei calcoli sono, in generale, funzioni complesse. Pertanto, un comune programma in grado determinare la DFT e la sua inversa è scritto in modo da ricevere in input una forma d'onda complessa
-\begin{equation}
-	H(k)=\sum_{n=0}^{N-1}\left[ h_{Re}(n)+ jh_{Im}(n)\right] e^{-j\frac{2\pi k}{N}n}
-\end{equation}
-Sfruttando la proprietà \eqref{eq:inverse_computing_rule} per il calcolo dell'inversa è possibile riscrivere
-\begin{equation}
-	h(n)=\frac{1}{N}{\left[\sum_{k=0}^{N-1}{\left[ H_{Re}(k)+ jH_{Im}(k)\right]}^* e^{-j\frac{2\pi k}{N}n}\right]}^*
-\end{equation}
-e poichè entrambe contengono $e^{-j\frac{2\pi k}{N}n}$ lo stesso programma può essere usato per calcolare sia la trasformata diretta che la sua inversa.
-
-Se i dati in ingresso sono reali allora la loro parte immaginaria risulterà essere nulla. Tuttavia poichè i programmi effettuano comunque le operazioni anche per i coefficienti posti a zero, otteniamo uno spreco di capacità di calcolo. Varie tecniche possono essere adottate per aumentare l'efficienza di calcolo di sequenze rali.
-\\
-Volendo infatti calcolare le trasformate di $g(n)$ e $h(n)$ è possibile considerare l'ingresso fittizio $y(n)=g(n)+j \cdot h(n)$, considerando in questo modo $g(n) = {\rm Re}(y(n))$ e $h(n) = {\rm Imm}(y(n))$.
-Dopo aver eseguito la N-DFT $Y(k)$ di $y(n)$ è possibile ricavare le DFT di $g(n)$ e $h(n)$:
-\begin{equation*}
-	G[k] = \frac{1}{2} \left\{ Y[k] + Y^*[(-k)modN]\right \}
-\end{equation*}
-\begin{equation*}
-	H[k] = \frac{1}{2j} \left\{ Y[k] - Y^*[(-k)modN]\right \}
-\end{equation*}
-
-%Per la linearità della DFT
-%\begin{align*}
-%Y(k)&= H(k)+jG(k)\\
-%&=[H_r(n)+jH_i(n)] + j[G_r(n)+jG_i(n)]\\
-%&=[H_r(n)-G_i(n)] + j [H_i(n)+G_r(n)]\\
-%&={\rm Re}(n)+j{\rm Imm}(n)
-%\end{align*}
-
-% \otimes _N CIRCOLARE SU N
-% \odot LINEARE
 
 \section{Convoluzione circolare}
 
-La N-point DFT Y(k) della sequenza $y(n) = g(n) \otimes _N h(n)$ data dalla convoluzione ricolare tra g(n) e h(n) è data da:
+La N-point DFT $Y[k]$ della sequenza $y[n] = g[n] \circledast_N h[n]$ data dalla convoluzione circolare tra $g[n]$ e $h[n]$ è data da:
 \begin{equation}
 \label{appl_conv_circ}
-	Y(k) = DFT[y(n)] = DFT[g(n) \otimes _N h(n)] = G(k)H(k)
+	Y[k] = DFT(y[n])_k = DFT(g[n] \circledast_N h[n])_k = G[k]H[k]
 \end{equation}
-Di conseguenza è possibile calcolare il risultato della convoluzione circolare y(n) eseguendo la IDFT sulla \eqref{appl_conv_circ}, com'è possibile osservare dalla seguente figura:
+Di conseguenza è possibile calcolare il risultato della convoluzione circolare $y[n]$ eseguendo la IDFT sulla \eqref{appl_conv_circ}, com'è possibile osservare dalla seguente figura:
 
 \begin{figure}[H]
   \centering
@@ -1545,47 +1545,42 @@ Di conseguenza è possibile calcolare il risultato della convoluzione circolare y
   \caption{Convoluzione circolare tramite FFT}
 \end{figure}
 
-\textbf{\textit{Esempio}}
-\\
+\paragraph{Esempio}.\\
 Date le due sequenze
-\\$g(n)$ = [1 2 0 1]
-\\$h(n)$ = [2 2 1 1]
-
+$$g[n] = [1 2 0 1] \qquad \text{e}\qquad h[n] = [2 2 1 1]$$
 per calcolare la convoluzione circolare
 \begin{equation}
-y_C(n) = g(n) \otimes _N h(n) = \sum_{m=0}^{3} g(m)x((n-m)mod4) \qquad 0 \leq n \leq 3
+y_C[n] = g[n] \circledast_4 h[n] = \sum_{m=0}^{3} g[m]\cdot h[(n-m){\mod4}] \qquad 0 \leq n \leq 3
 \end{equation}
-è possibile considerare le DFT di $g(n)$ calcolata secondo la definizione e di $h(n)$ calcolata secondo la definizione matriciale:
-\begin{eqnarray*}
-  G(k) &=& g(0) + g(1)e^{-j(2\pi k/4)} + g(2)e^{-j(4\pi k/4)} + g(3)e^{-j(6\pi k/4)}
+è possibile considerare le DFT di $g[n]$ calcolata secondo la definizione e di $h[n]$ calcolata secondo la definizione matriciale:
+\begin{align*}
+  G[k] &= g[0] + g[1]e^{-j(\frac{2\pi}{4}1 \cdot k)} + g[2]e^{-j(\frac{2\pi}{4}2 \cdot k)} + g[3]e^{-j(\frac{2\pi}{4}3 \cdot k)}
   \\
-       &=& 1 + 2e^{-j(\pi k/2)} + e^{-j(3\pi k/2)} \qquad 0 \leq k \leq 3
+  &= g[0] + g[1](-j)^k + g[2](-1)^k + g[3](-j)^{3k} 
   \\
-  \\
-  G(0) &=& 1 + 2 + 1 = 4
-  \\
-  G(1) &=& 1 - j2 + j = 1-j
-  \\
-  G(2) &=& 1 - 2 - 1 = -2
-  \\
-  G(3) &=& 1 + j2 - j = 1+j
-\end{eqnarray*}
+       &= 1 + 2(-j)^k + (-j)^{3k} & 0 \leq k \leq 3
+\end{align*}
+ottenendo quindi per $k=0,1,2,3$
+\begin{align*}
+  G[0] &= 1 + 2 + 1 = 4 & G[1] &= 1 - j2 + j = 1-j\\
+  G[2] &= 1 - 2 - 1 = -2& G[3] &= 1 + j2 - j = 1+j
+\end{align*}
 
 \begin{equation*}
-  H(k)=
+  H[k]=
 \begin{pmatrix}
-H(0)\\
-H(1)\\
-H(2)\\	
-H(3)\\
+H[0]\\
+H[1]\\
+H[2]\\	
+H[3]\\
 \end{pmatrix}
 = D_4
 \begin{pmatrix}
-h0\\
-h(1)\\
-h(2)\\	
-h(3)\\
-\end{pmatrix}
+H[0]\\
+H[1]\\
+H[2]\\	
+H[3]\\
+\end{pmatrix}=
 \begin{pmatrix}1 & 1 & 1 & 1\\
 1 & -j & -1 & j\\
 1 & -1 & 1 & -1 \\
@@ -1605,22 +1600,22 @@ h(3)\\
 \end{pmatrix}
 \end{equation*}
 
-Applicando la IDFT al prodotto $Y_C(k) = G(k)H(k) = $[24 -j2 0 j2]
+Applicando la IDFT al prodotto $Y_C[k] = G[k]H[k] = (24\; -\!j2\; 0\; j2)$
 si ottiene
 \begin{equation*}
-  y_C(n)=
+  y_c[n]=
 \begin{pmatrix}
-y_C(0)\\
-y_C(1)\\
-y_C(2)\\	
-y_C(3)\\
+y_c[0]\\
+y_c[1]\\
+y_c[2]\\	
+y_c[3]\\
 \end{pmatrix}
-= \frac{1}{4} D_4^*  Y_C(k) = \frac{1}{4}
+= \frac{1}{4} D_4^*  Y_C[k] = \frac{1}{4}
 \begin{pmatrix}
 1 & 1 & 1 & 1\\
-1 & -j & -1 & j\\
+1 & j & -1 & -j\\
 1 & -1 & 1 & -1 \\
-1 & j & -1 & -j\\	
+1 & -j & -1 & j\\	
 \end{pmatrix}
 \begin{pmatrix}24\\
 -j2\\
@@ -1640,28 +1635,29 @@ j2\\
 
 
 
-Date due sequenze finite $g(n)$ e $h(n)$ di lunghezza N e M rispettivamente è possibile calcolare la convoluzione lineare
+Date due sequenze finite $g[n]$ e $h[n]$ di lunghezza $N$ e $M$ rispettivamente è possibile calcolare la convoluzione lineare
 \begin{equation*}
-	y_L(n) = g(n) \odot h(n)
+	y_L[n] = g[n] \ast h[n]=\sum_{m=0}^{N+M-1}g[m]h[n-m]
 \end{equation*}
 eseguendo una convoluzione circolare. Definendo le sequenze estese 
 \begin{equation*}
 	g_e(n)=
 	\begin{cases} 
-  g(n) \qquad 0 \leq n \leq N-1 \\
-  0 \qquad N \leq n \leq L-1
+  g(n) \qquad &0 \leq n \leq N-1 \\
+  0 \qquad &N \leq n \leq L-1
   \end{cases}
 \end{equation*}
 \begin{equation*}
 	h_e(n)=
 	\begin{cases} 
-  h(n) \qquad 0 \leq n \leq M-1 \\
-  0 \qquad M \leq n \leq L-1
+  h(n) \qquad &0 \leq n \leq M-1 \\
+  0 \qquad &M \leq n \leq L-1
   \end{cases}
 \end{equation*}
-la convoluzione lineare $y_L (n)$ di lunghezza $L = M + N - 1$ corrisponde alla convoluzione circolare tra le sequenza estese:
+dove $L = M + N - 1$.\\
+La convoluzione lineare $y_L[n]$ di lunghezza corrisponde alla convoluzione circolare tra le sequenza estese:
 \begin{equation*}
-	y_L(n)=y_C(n)=g_e(n) \otimes _L h_e(n)
+	y_L[n]=y_{Ce}[n]=g_e[n] \circledast_L h_e[n]
 \end{equation*}
 
 \begin{figure}[H]
@@ -1670,47 +1666,47 @@ la convoluzione lineare $y_L (n)$ di lunghezza $L = M + N - 1$ corrisponde alla 
   \caption{Convoluzione lineare di due sequenza di lunghezza finita tramite FFT}
 \end{figure}
 
-Nel caso in cui una delle due sequenze sia di durata molto maggiore dell'altra (si può pensare ad una sequenza $x(n)$ di durata infinita e ad una sequenza $h(n)$ di lunghezza M) è possibile utilizzare un metodo detto Overlap-Add, che prevede di suddividere la sequenza di partenza $x(n)$ in più sequenze $x_m(n)$ di campioni non sovrapposti:
+Nel caso in cui una delle due sequenze sia di durata molto maggiore dell'altra (si può pensare ad una sequenza $x[n]$ di durata infinita e ad una sequenza $h[n]$ di lunghezza M) è possibile utilizzare un metodo detto Overlap-Add, che prevede di suddividere la sequenza di partenza $x[n]$ in più sequenze $x_m[n]$ di $N$ campioni non sovrapposti:
 \begin{equation*}
-	x(n)= \sum_{m=0}^{\infty} x_m(n-mN)
+	x[n]= \sum_{m=0}^{\infty} x_m[n-mN]
 \end{equation*}
 dove
 \begin{equation*}
-	x_m(n)=
+	x_m[n]=
 	\begin{cases} 
-  x(n+mN) \qquad 0 \leq n \leq N-1 \\
-  0 \qquad altrove
+  x[n+mN] \qquad &0 \leq n \leq N-1 \\
+  0 \qquad &altrove
   \end{cases}	
 \end{equation*}
 E' possibile calcolare la convoluzione lineare
 \begin{equation*}
-	y(n)= h(n) \odot x(n) = \sum_{l=0}^{M-1} h(l)x(n-l)
+	y_L[n]= h[n] \ast x[n] = \sum_{l=0}^{M-1} h[l]x[n-l]
 \end{equation*}
 come
 \begin{eqnarray*}
-	y(n)&=& \sum_{l=0}^{M-1} h(l) \left( \sum_{m=0}^\infty x_m(n-l-mN) \right)
+	y_L[n]&=& \sum_{l=0}^{M-1} h[l] \left( \sum_{m=0}^\infty x_m[n-l-mN] \right)
 	    \\
-	    &=& \sum_{m=0}^{\infty} \left ( \sum_{l=0}^{M-1} h(l) x_m(n-l-mN) \right )
+	    &=& \sum_{m=0}^{\infty} \left ( \sum_{l=0}^{M-1} h[l] x_m[n-l-mN] \right )
 	    \\
-	    &=& \sum_{m=0}^{\infty} y_m(n-mN)
+	    &=& \sum_{m=0}^{\infty} y_m[n-mN]
 \end{eqnarray*}
 dove 
 \begin{equation*}
-	y_m(n)= h(n) \odot x_m(n)
+	y_m[n]= h[n] \ast x_m[n]
 \end{equation*}
-La convoluzione lineare $y(n)$ viene così suddivisa in più convoluzioni lineari $y_m(n)$ di lunghezza minore $(N + M - 1)$.
-Per esempio $y_0(n)= h(n) \odot x_0(n)$ è definita per $0 \leq n \leq N+M-2$ e $y_1(n)= h(n) \odot x_1(n)$ è definita per $N \leq n \leq 2N+M-2$; la sovrapposizione tra gli $M-1$ elementi di $y_0(n)$ e $y_1(n)$ viene risolta sommando tali elementi per otterenere la sequenza definitiva $y(n)$.
+La convoluzione lineare $y_L[n]$ viene così suddivisa in più convoluzioni lineari $y_m[n]$ di lunghezza minore $(N + M - 1)$.
+Per esempio $y_0[n]= h[n] \ast x_0[n]$ è definita per $0 \leq n \leq N+M-2$ e $y_1[n]= h[n] \ast x_1[n]$ è definita per $N \leq n \leq 2N+M-2$; la sovrapposizione tra gli $M-1$ elementi di $y_0[n]$ e $y_1[n]$ viene risolta sommando tali elementi per otterenere la sequenza definitiva $y_L[n]$.
 
 \begin{figure}[H]
   \centering
       \includegraphics[width=10cm,height=10cm]{immagini/overlap-add-mitra-1}
-  \caption{Overlap-add (a) Sequenza di input (b) Suddivisioni di x(n)}
+  \caption{Tecnica Overlapp-and-add: (a) $x[n]$ input iniziale (b) Suddivisioni di $x[n]$ in segmenti $x_0[n]$, $x_1[n]$, $x_2[n]$. Si noti che ogni sotto-sequenza è stata estesa con almeno $4\geq M-1$ zero in quanto il filtro ha lunghezza $M=5$} 
 \end{figure}
 
 \begin{figure}[H]
   \centering
       \includegraphics[width=10cm,height=7cm]{immagini/overlap-add-mitra-2}
-  \caption{Overlap-add (c) $y_m(n) = h(n) \odot x_m(n)$}
+  \caption{Convoluzioni lineari dei vari segmenti (c) $y_m[n] = h_e[n] \circledast_{N+M-1} x_me[n]$ che dovranno essere sommati al fine di ottenere $y_L[n]$ }
 \end{figure}
 
 
@@ -1724,29 +1720,30 @@ Siano ad esempio assegnati due polinomi
 \begin{equation*}
 	q(x) = 11 +6x -4x^2
 \end{equation*}
+dove il grado dei coefficienti è ribaltato rispetto alla notazione usuale in modo che il padding possa essere operato in coda.
 Definiti i vettori
 \begin{equation*}
 	a = [1,5,17,0,0] \qquad e \qquad b = [11,6,-4,0,0]
 \end{equation*}
-i coefficienti del polinomio z di quarto grado prodotto di p e di q si ottengono effettuando il prodotto di convoluzione lineare dei vettori a e b, ovvero:
+i coefficienti del polinomio $z(x)$ di quarto grado prodotto di $p(x)$ e di $q(x)$ si ottengono effettuando la convoluzione lineare dei vettori a e b, ovvero:
 \begin{equation*}
-c = a \odot b = (11,61,213,82,-68,0,0,0,0)
+c = a \ast b = (11,61,213,82,-68)
 \end{equation*}
 che corrisponde al polinomio
 \begin{equation*}
 	z(x) = p(x)q(x) = 11 +61x +213x^2 +82x^3 -68x^4
 \end{equation*}
 
-Per determinare i coefficienti di z si può utilizzare l'operatore DFT. Posto:
+Per determinare i coefficienti di $z(x)$ si può utilizzare l'operatore DFT. Posto:
 \begin{equation*}
-A = DFT[a] = (23, -11.2082 -i14.7476, 2.082 + i13.229, 2.2082 -i13.229, -11.2082 + i14.7476)
+A = DFT[a] = (23,\; -11.2082 -i14.7476,\; 2.082 + i13.229,\; 2.2082 -i13.229,\; -11.2082 + i14.7476)
 \end{equation*}
 \begin{equation*}
-B = DFT[b] = (13, 16.0902 - i3.3552, 4.9098 - i7.3309, 4.9098+ i7.3309, +16.0902+ i3.3552)
+B = DFT[b] = (13,\; 16.0902 - i3.3552,\; 4.9098 - i7.3309,\; 4.9098+ i7.3309,\; 16.0902+ i3.3552)
 \end{equation*}
 utilizzando il seguente teorema
 \begin{equation*}
-C = DFT(c) = DFT[a \odot b] = A .* B
+C = DFT(c) = DFT[a \ast b] = A \odot B
 \end{equation*}
 si ottiene
 \begin{equation*}
@@ -1757,11 +1754,6 @@ da cui:
 c := IDFT(C) = (11, 61, 213, 82, -68)
 \end{equation*}
 Il calcolo dei coefficienti del prodotto di due polinomi si riduce, quindi, al calcolo di 3 DFT.
-
-
-
-
-
 
 \section{FFT $d$-dimensionale e immagini}
 La DFT $d$-dimensionale è definita come
