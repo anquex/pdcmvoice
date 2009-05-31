@@ -172,6 +172,11 @@ Siano $x=x_N$ e $y=y_N$ due vettori arbitrari $N$-dimensionali, definiamo \emph{
 	w_i=\sum_{j=0}^{N-1}{x_i y_{(i-j) \mod N }} \qquad 0\leq i \leq N-1
 \end{equation}
 \\
+Matricialmente la convoluzione ciclica è espressa come
+\begin{equation}
+\begin{pmatrix}\omega_0\\ \omega_1 \\\omega_2 \\ \vdots \\ \omega_{N-1} \end{pmatrix}=\begin{pmatrix}y_0 & y_{N-1} & y_{N-2} & \cdots & y_{1}\\ y_{1} & y_0 & y_{N-1} &\cdots & y_{2}\\y_{2} & y_1 & y_{0} &\cdots & y_{3}\\ \vdots &\vdots &\vdots &\ddots &\vdots\\y_{N-1} & y_{N-2} & y_{N-3} & \cdots & y_{0}
+\end{pmatrix}\begin{pmatrix} x_0 \\ x_1 \\ x_2 \\ \vdots\\ x_{N-1} \end{pmatrix}
+\end{equation}
 Possiamo calcolare la convoluzione ciclica utilizzando la DFT nel seguente modo:\\
 \begin{equation}	
 	w= \mathcal{F}_{N}^{-1}(\mathcal{F}_{N} x \odot \mathcal{F}_{N} y)
