@@ -980,7 +980,7 @@ fl(x\div y) = (x\div y) (1+\varepsilon^\div) 	\qquad \qquad && |\varepsilon^\div
 
 dove $u\approx 2^{-b}$ con $b$ lunghezza della mantissa.
 Indichiamo con $\mathbf{\hat{z}}$ il risultato ottenuto da $fl(x \circ y)$ mentre con $\mathbf {z}$ il risultato esatto di $(x \circ y)$ dove l'operazione $\circ \in\{+,-,\cdot,\div\}$\\
-\noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\epsilon_{ik}|$ tale che:
+\noindent Si suppone inoltre che gli esponenziali complessi $\omega_k$ siano pre-calcolati e su di essi sia stato commesso un errore $|\delta_{jk}|$ tale che:
 
 \begin{equation*}
 \hat{\omega}_j^k= fl(\omega_j^k)=\omega_j^k+\delta_{jk} \qquad |\delta_{jk}|\leq u
@@ -1138,7 +1138,7 @@ introduciamo inoltre il vettore $\mathbf{e}_j\in\mathbb{C}^N$ dell'errore commes
 	\item Passo $j=2$. Notiamo che
 		$$\hat{\mathbf{A}}_2 ={\mathbf{A}}_2=\mathbf{I}_{2^{n-2}}\otimes\mathbf{B}_4$$
 		con
-		$$\mathbf{B}_4=\begin{pmatrix}\mathbf{I}_2 &\mathbf{\Omega}_2\\\mathbf{I}_2 &-\mathbf{\Omega}_2 \end{pmatrix} \quad\mathbf{\Omega}_2=\begin{pmatrix}1 &0\\ 0& -i\end{pmatrix}\quad \text{e quindi}\quad \mathbf{B}_4=\begin{pmatrix}1&0&1&0\\0&1&0&-i\\1&0&-1&0\\0&1&0&-i\end{pmatrix}$$
+		$$\mathbf{B}_4=\begin{pmatrix}\mathbf{I}_2 &\mathbf{\Omega}_2\\\mathbf{I}_2 &-\mathbf{\Omega}_2 \end{pmatrix} \quad\mathbf{\Omega}_2=\begin{pmatrix}1 &0\\ 0& -i\end{pmatrix}\quad \text{e quindi}\quad \mathbf{B}_4=\begin{pmatrix}1&0&1&0\\0&1&0&-i\\1&0&-1&0\\0&1&0&i\end{pmatrix}$$
 		Il secondo passo consiste quindi in $N/4$ \emph{operazioni butterfly} di 4 elementi. I twiddle factor sono banali e le operazioni risultano essere $(\xi_1,\xi_2,\xi_3,\xi_4\in \mathbb{C})$
 			\begin{align*}
 			\eta_1 &= \xi_1+\xi_3 &
@@ -1181,7 +1181,7 @@ con
 \end{equation}	
 Dall'ipotesi \eqref{eq:3.12} sui \emph{twiddle factor} e dalla \eqref{eq:3.13} segue che
 $$
-\hat{\eta}_1-\eta_1=\xi_1\varepsilon_1^++\hat{\omega}_{2^j}^k\xi_2(\varepsilon^\times+\varepsilon_1^++\varepsilon^\times \varepsilon_1^+)+\delta_{2^j}^k \varepsilon_2+O(u^2)\
+\hat{\eta}_1-\eta_1=\xi_1\varepsilon_1^++\hat{\omega}_{2^j}^k\xi_2(\varepsilon^\times+\varepsilon_1^++\varepsilon^\times \varepsilon_1^+)+\delta_{2^j}^k \xi_2+O(u^2)\
 $$
 e usando la \eqref{eq:3.14} si ha
 $$
