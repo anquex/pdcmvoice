@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,oneside,openright]{report}
+\documentclass[12pt,a4paper,oneside,openright]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
@@ -48,6 +48,8 @@
 \begin{document}
 \include{mytitle}
 
+%\tableofcontents
+
 \section*{Introduzione}
 Un vettore $x$ di lunghezza N può essere visto come una sequenza $x_0,...,x_{N-1}$ di N numeri complessi. Si definisce $X$ \emph{trasformata discreta di Fourier (DFT, discrete Fourier transform)}  di $x$ la sequenza $X_0,...,X_{N-1}$ espressa dalla seguente relazione:
 \begin{equation*}
@@ -56,7 +58,27 @@ X_k=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1
 \end{equation*}
 La \emph{FFT} o \emph{trasformata veloce di Fourier} individua una famiglia di algoritmi in grado di calcolare la DFT in tempo $O(N \log N)$ al posto dell'usuale $O(N^{2})$ ottenibile banalmente attraverso la definizione.\\
 Molti di questi algoritmi, oltre che ad essere computazionalmente efficienti, si prestano bene anche ad un'implementazione parallela.\\
-In questo lavoro e stata realizzata un'implementazione del noto algoritmo di Cooley-Tukey.
+In questo lavoro è stata realizzata un'implementazione del noto algoritmo di Cooley-Tukey.
+\section{Algoritmo}
+L'algoritmo di Cooley-Tukey prevede di calcolare la DFT del vettore $x$ attraverso il calcolo separato delle DFT delle sottosequenze di indice pari e dispari della sequenza originaria e quindi la loro ricombinazione attraverso \emph{operazioni butterlfy} tra elementi in posizione analoga delle due sottosequenze per ottenere la trasformata della originale.\\
+L'immagine seguente illustra quanto appena enunciato per una sequenza di lunghezza 8
+\begin{figure}[H] 
+  \centering
+      \includegraphics[width=\textwidth]{immagini/cooley-tukey}
+  \caption{Ricombinazione in Cooley-Tukey per una sequenza di lunghezza 8}
+\end{figure}
+Questo rimescolamento dell'input iniziale, operato a ritroso fino al caso base di sequenze di lunghezza 2, permette di notare come l'algoritmo di CT sia costituito da una rete ascendente che ha come input il vettore originale rimescolato in ordine \emph{bitreversal}.
+\begin{figure}[H] 
+  \centering
+      \includegraphics[width=\textwidth]{immagini/alg-asc}
+  \caption{bitreversal di una sequenza di lughezza 8 e computazione su rete ascendente}
+\end{figure}
+Ora, considerando una sequenza di lunghezza N e avendo a disposizione P processori, è possibile dividere la sequenza iniziale in P blocchi da $\frac{N}{P}$ elementi. Il processore $i$-esimo sarà responsabile dell'$i$-esimo blocco. Notiamo come la computazione sia inizialmente priva di comunicazioni in quanto ogni processore dispone localmente dei dati da elaborare. Soltanto le ultime $\log_{2} P$ fasi richiedono infatti l'utilizzo di dati di responsabilità di un altro processore. In queste fasi che chiameremo ``esterne'' (analogamente consideriamo ``interne'' le fasi precedenti), il processore $x$, utilizzando la notazione vista a lezione comunicherà prima con  con $C_{0}x$, quindi con $C_{1}x$,...
+In generale, nella $j$-esima fase esterna, si avrà lo scambio dei rispettivi blocchi di responsabilità tra
+$$x  \longleftrightarrow  C_{j}x \quad \textrm{per} \quad j=0,...,\log_{2} P-1 $$
+
+\section{Implementazione}
+\section{Prestazioni}
 \subsection*{Note su FFT Sequenziale e Cache}
 Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
 L'algoritmo implementato infatti, per la natura stessa degli operatori \emph{butterfly}, risulta assolutamente non-cachefriendly.\\
@@ -78,8 +100,7 @@ Analogamente per gli stage out-of-cache si hanno circa $81/60$ Mflops/s.
 \label{Miss}
 \end{figure}
 
-\begin{figure}[h!]
-  
+\begin{figure}[h!] 
   \centering
       \includegraphics[width=\textwidth]{immagini/Mflops}
   \caption{Potenza di calcolo sfruttata. Maggiore è migliore}
