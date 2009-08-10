@@ -48,8 +48,16 @@
 \begin{document}
 \include{mytitle}
 
-
-\subsection{Note su FFT Sequenziale e Cache}
+\section*{Introduzione}
+Un vettore $x$ di lunghezza N può essere visto come una sequenza $x_0,...,x_{N-1}$ di N numeri complessi. Si definisce $X$ \emph{trasformata discreta di Fourier (DFT, discrete Fourier transform)}  di $x$ la sequenza $X_0,...,X_{N-1}$ espressa dalla seguente relazione:
+\begin{equation*}
+\label{eq:def-dft}
+X_k=\sum_{n=0}^{N-1}x_ne^{-\jmath\frac{2\pi}{N}kn} \quad k=0,...,N-1
+\end{equation*}
+La \emph{FFT} o \emph{trasformata veloce di Fourier} individua una famiglia di algoritmi in grado di calcolare la DFT in tempo $O(N \log N)$ al posto dell'usuale $O(N^{2})$ ottenibile banalmente attraverso la definizione.\\
+Molti di questi algoritmi, oltre che ad essere computazionalmente efficienti, si prestano bene anche ad un'implementazione parallela.\\
+In questo lavoro e stata realizzata un'implementazione del noto algoritmo di Cooley-Tukey.
+\subsection*{Note su FFT Sequenziale e Cache}
 Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
 L'algoritmo implementato infatti, per la natura stessa degli operatori \emph{butterfly}, risulta assolutamente non-cachefriendly.\\
 L'accesso in memoria non è locale: ad ogni stadio dell'algoritmo un valore dell'input viene letto/sovrascritto una ed una sola volta. Quando l'accesso ai dati non è spazialmente localizzato e la struttura di computazione è rigida la classica modalità di mapping\\
