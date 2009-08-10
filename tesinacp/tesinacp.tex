@@ -1,0 +1,81 @@
+\documentclass[12pt,a4paper,oneside,openright]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[none]{hyphenat} 
+\usepackage{float} % parametro H in figur : posizionamento esattamente li
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{enumerate} %lettere o altro negli indici
+\usepackage{algorithmic} %float con un algoritmo
+\usepackage[boxed]{algorithm}
+\usepackage{subfig}    % + figure in un float figure
+
+%con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
+%%\usepackage{emptypage}
+
+
+
+\usepackage{fancyhdr}
+\setcounter{tocdepth}{3}
+
+\include{miei_comandi}
+\frenchspacing
+%\pagestyle{headings} % {headings,plain ,empty}
+\linespread{1.3}
+\DeclareGraphicsRule{.eps,.ps,.png}{bmp}{.bb}{} % formati utilizzabili con ordine di preferenza 
+                                                % cosi non devo indicare le estensioni
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+
+%\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
+
+%per impaginare con giustifica sx-dx
+  \tolerance 1414
+  \hbadness 1414
+  \emergencystretch 1.5em
+  \hfuzz 0.3pt
+  \widowpenalty=10000
+  \vfuzz \hfuzz
+  \raggedbottom
+
+\title{}
+\begin{document}
+\include{mytitle}
+
+
+\subsection{Note su FFT Sequenziale e Cache}
+Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
+L'algoritmo implementato infatti, per la natura stessa degli operatori \emph{butterfly}, risulta assolutamente non-cachefriendly.\\
+L'accesso in memoria non è locale: ad ogni stadio dell'algoritmo un valore dell'input viene letto/sovrascritto una ed una sola volta. Quando l'accesso ai dati non è spazialmente localizzato e la struttura di computazione è rigida la classica modalità di mapping\\
+\begin{center}
+\emph{cache address} $=$ \emph{memory address} modulo \emph{cache\_size} 
+\end{center}
+perde di efficacia. Nel nostro caso si verifica quando la distanza tra i dati da elaborare (potenza di due) è vicina alla dimensione della cache (anch'essa potenza di due).\\
+Proponiamo qui di seguito i grafici sullo Cache Miss e MFlops per illustrare la drammaticità del problema.\\
+In entrambi i casi le performance diminuiscono drasticamente quando la taglia del problema supera $2^{16}=65536$ per mantenersi successivamente costanti.\\ La diminuzione praticamente lineare delle performance per $N=16$ visibile in Figura \ref{Miss} è conseguenza raddoppio del numero di \emph{twiddle factor} utilizzati ad ogni passo.\\
+Le performance inferiori, a parità di stage, per le istanze di taglia maggiore sono probabilmente dovute allo swap in/out dei twiddle factor il cui address mapping entra in conflitto con quello dei valori nel vettore da elaborare.\\
+Una volta oltrepassata la soglia critica il Load per Miss si stabilizza sui $5,92$ più di $100$ volte peggiore rispetto agli stage in-cache. 
+Analogamente per gli stage out-of-cache si hanno circa $81/60$ Mflops/s.
+
+\begin{figure}[h!]
+  \centering
+      \includegraphics[width=\textwidth]{immagini/Miss}
+  \caption{Caricamento di dati utili nei registri / accessi in ram. Maggiore è migliore}
+\label{Miss}
+\end{figure}
+
+\begin{figure}[h!]
+  
+  \centering
+      \includegraphics[width=\textwidth]{immagini/Mflops}
+  \caption{Potenza di calcolo sfruttata. Maggiore è migliore}
+\label{MFlops}
+\end{figure}
+Notiamo come $N=20$ e $N=24$ abbiano esattamente lo stesso andamento.
+\end{document}
