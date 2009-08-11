@@ -78,8 +78,94 @@ In generale, nella $j$-esima fase esterna, si avrà lo scambio dei rispettivi bl
 $$x  \longleftrightarrow  C_{j}x \quad \textrm{per} \quad j=0,...,\log_{2} P-1 $$
 
 \section{Implementazione}
+Per prima cosa è stata sviluppata un'implementazione sequenziale iterativa dell'algoritmo di CT cercando di seguire i suggerimenti visti a lezione per quanto riguarda l'ottimizzazione del codice. I cicli (3) utilizzati per la computazione sono stati modificati in modo da essere decrescenti (es: da N-1 a 0) e ordinati in modo da elaborare il vettore dei dati in maniera contigua (posizione i, i+1, e così via) al fine di ridurre gli accessi ed utilizzare nel modo migliore RAM e soprattutto cache.\\
+Particolare attenzione è stata inoltre riposta nella gestione dei \emph{twiddle factors}.\\
+Per elaborare una sequenza di lunghezza N è necessario calcolare $\frac{N}{2}$ \emph{twiddle factors} ($ \omega_{N}^{0},...,\omega_{N}^{\frac{N}{2}-1}$). Tuttavia soltanto nell'ultima fase vengono utilizzati tutti i \emph{twiddle factors} mentre nelle fasi precedenti si utilizzano solo alcuni di questi (ottenibili come un sottocampionamento del vettore appena calcolato). Ad esempio nella prima fase si utilizza, banalmente, $ \omega_{N}^{0}=1$, nella seconda $ \omega_{N}^{0}$ e $\omega_{N}^{\frac{N}{4}}=-j$, nella terza $ \omega_{N}^{0}$, $\omega_{N}^{\frac{N}{8}}$, $\omega_{N}^{\frac{N}{4}}$, $\omega_{N}^{\frac{3N}{8}}$ e così via.\\
+Pertanto sottocampionando progressivamente il vettore \emph{twiddle factors} mantenendo solo gli elementi in posizione dispari si è prodotto un vettore di lunghezza 2N-1 che ha in posizioni contigue i \emph{twiddle factors} opportuni che saranno impiegati in ciascun stadio. Con uno ``spreco'' di $\frac{N}{2}$ di RAM ulteriormente occupata è stato pertanto ottimizzato l'accesso in RAM/cache ai fattori di ricombinazione. Questo ha fornito un ulteriore boost prestazionale molto evidente.\\
+L'implementazione sequenziale così ottenuta è stata quindi utilizzata come base di partenza per:
+\begin{enumerate}
+\item un algoritmo ascendente con chiamate bloccanti
+\item un algoritmo ascendente con chiamate non-bloccanti
+\end{enumerate}
+\subsection{Sceletro generale dell'algoritmo}
+
+Il processore con rank 0 è eletto come coordinatore del gruppo di processori e si occupa della gestione, distribuzione e raccolta dei dati elaborati.
+
+Le fasi principali che possiamo individuare dall'algoritmo sono:
+\begin{enumerate}
+\item $P_{0}$ legge l'input da file o lo genera se richiesto
+\item $P_{0}$ dispone l'input in bit-reversal
+\item Ogni processore calcola localmente i \emph{twiddle factors} e li memorizza in un vettore
+\item $P_{0}$ distribuisce a ciascun processore la porzione di input di cui è responsabile attraverso una chiamata MPI\_Scatter
+\item Calcolo della FFT parallela prima nelle dimensioni interne e poi in quelle esterne
+\item $P_{0}$ raccoglie i risultati attraverso un MPI\_Gather
+\item $P_{0}$ scrive l'eventuale output
+\end{enumerate}
+ 
+\subsubsection{Algoritmo ascendente bloccante}
+Per l'implementazione della modalità bloccante, poichè ogni processore manda dati e li riceve dallo stesso ``collega'' si è utilizzata la primitiva
+\begin{verbatim}
+MPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag, recvbuf, 
+               recvcount, recvtype, source, recvtag, comm, status)
+\end{verbatim} 
+che prevede lo scambio mutuo di dati tra due processori.  
+\subsubsection{Algoritmo ascendente non-bloccante}
+Come già detto ogni processore gestisce $\frac{N}{P}$ elementi memorizzati in un vettore.\\
+Denominiamo con A e B rispettivamente la prima e la seconda metà del vettore (A e B contengono quindi $\frac{N}{2P}$ elementi ciascuno). Indichiamo inoltre con A' e B' i dati provenienti dal processore ``collega''.
+Per ogni stadio (completo) in cui è necessaria la comunicazione con altri processori questa avviene nel seguente modo:
+\begin{enumerate}
+\item Attesa per il completamento della ricezione di B' e l'invio di B
+\item Aggiornamento di B
+\item Invio di B e ricezione di B' 
+\item Attesa per il completamento della ricezione di A' e l'invio di A
+\item Aggiornamento di A
+\item Invio di A e ricezione di A'  
+\end{enumerate}
+In questo caso le primitive utilizzate sono quelle non bloccanti, non bufferizzate
+\begin{center}
+\begin{verbatim}
+                MPI_Isend, MPI_Irecv, MPI_Wait 
+\end{verbatim} 
+\end{center}
+La scelta di suddividere il vettore in due metà e comunicarne prima l'una e poi l'altra è nata dall'idea di
+\begin{enumerate}
+\item limitare l'impatto del costo della gestione della comunicazione. Infatti tanto più sovrapposte sono calcolo e comunicazione (pacchetti scambiati piccoli) tanto più sforzo è richiesto alla macchina per la gestione dei buffer della comunicazione
+\item cercare di limitare il ritardo dovuto alla comunicazione a quello dell'invio di $\frac{N}{2P}$ elementi + delay iniziale. 
+\end{enumerate}
+
+\subsection{Modalità d'uso}
+
+Il software sviluppato funziona per
+\begin{itemize}
+\item $N=2^{n}$; lunghezza della sequenza da elaborare
+\item $P=2^{p}$; numero di processori impiegati
+\item $P<N$; quindi risulta $\frac{N}{P}\geq 2$ in modo da avere come caso base sempre operazioni tra due elementi.
+\end{itemize}
+
+\noindent Il programma prevede 2 distinte modalità di esecuzione.\\
+La prima è utile per la valutazione delle performance dell'algoritmo, la seconda per l'effettivo impiego.
+Consideriamo $n=\log_{2}N$
+\begin{description}
+\item[ Test su sequenza nota ] Il nodo $P_{0}$ genera un'input di lunghezza $2^{n}$  e quindi procede con il calcolo parallelo della sua FFT. \\ La sintassi è:
+\begin{verbatim}
+      ./fft-asc-* test n
+\end{verbatim}
+\item[ Elaborazione dell'input fornito]  $P_{0}$ legge da file l'input che dopo l'elaborazione viene salvato in un file di output
+\begin{verbatim}
+      ./fft-asc-* read n file_input file_output
+\end{verbatim}
+dove *$\in$\{sp, cp\} per richiamare rispettivamente la versione bloccante o non bloccante.
+\end{description}
+\subsection{Formato dei file elaborati}
+Il i file sono letti/scritti con \emph{fscanf}  / \emph{fprintf}. I file devono essere costituiti da una sequenza di coppie di numeri intervallati da spazi o return. Per ciascuna coppia il primo elemento viene interpretato come parte la reale mentre il secondo come parte immaginaria dell'effettivo valore da elaborare.\\
+Ad esempio:\\
+\begin{center}
+\fbox{\parbox[c]{2cm}{\begin{center}0 0\\ 1 0\\  2 0\\ 3 0\end{center}}} $\longleftrightarrow$\fbox{\parbox[c]{2cm}{\begin{center}0 0 1\\ 0  2 0\\ 3 0\end{center}}} $\longleftrightarrow$ \fbox{\parbox[c]{2cm}{\begin{center}$0+j0$\\$ 1+j0$\\  $2+j0$\\ $3+j0$\end{center}}} 
+\end{center}
+
+
 \section{Prestazioni}
-\subsection*{Note su FFT Sequenziale e Cache}
+\subsection{Note su FFT Sequenziale e Cache}
 Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
 L'algoritmo implementato infatti, per la natura stessa degli operatori \emph{butterfly}, risulta assolutamente non-cachefriendly.\\
 L'accesso in memoria non è locale: ad ogni stadio dell'algoritmo un valore dell'input viene letto/sovrascritto una ed una sola volta. Quando l'accesso ai dati non è spazialmente localizzato e la struttura di computazione è rigida la classica modalità di mapping\\
