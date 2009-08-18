@@ -165,6 +165,63 @@ Ad esempio:\\
 
 
 \section{Prestazioni}
+
+L'algoritmo parallelo ``naive'' (basato sul codice non ottimizzato) e quello ottimizzato sono stati eseguiti un numero di volte tra 25 e 200 (in funzione della taglia dell'input) in modo da ricavare i tempi medi di esecuzione con un'affidabilità adeguata.
+
+I test sono stati tutti eseguiti con la comunicazione attraverso memoria condivisa abilitata (\emph{MP\_SHARED\_MEMORY = yes}) e selezionando lo switch ad alte prestazioni per la comunicazione tra nodi (\emph{network.mpi    $=$  switch,shared,US})
+
+\subsection{Test con carico massimo sui nodi}
+Per prima cosa entrambi gli algoritmi sono stati lanciati con il parametro \emph{blocking = unlimited} nei file .job. In questa modalità vengono allocati per ogni nodo il maggior numero di processori possibile in modo da ridurre il più possibile il tempo dovuto alle comunicazioni tra processori di nodi diversi. \\
+
+\begin{figure}[H] 
+  \centering
+       \includegraphics[ width=\textwidth]{immagini/algoritmo_normale_tempo_calcolo_senza_rete}
+  \caption{In verde scuro il miglior tempo. In verde chiaro i tempi descrescenti}
+\end{figure}
+\begin{figure}[H] 
+  \centering
+      \includegraphics[ height=0.4\textheight]{immagini/scalabilita_normale_senza_rete}
+  \caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
+\end{figure}
+\begin{figure}[H] 
+  \centering
+      \includegraphics[height=0.4\textheight]{immagini/comunicazione_normale_senza_rete}
+  \caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+\end{figure}
+
+\begin{figure}[H] 
+  \centering
+       \includegraphics[ width=\textwidth]{immagini/algoritmo_ottimizzato_tempo_calcolo_senza_rete}
+  \caption{In verde scuro il miglior tempo. In verde chiaro i tempi descrescenti}
+\end{figure}
+\begin{figure}[H] 
+  \centering
+      \includegraphics[height=0.4\textheight]{immagini/scalabilita_ottimizzata_senza_rete}
+  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
+\end{figure}
+\begin{figure}[H] 
+  \centering
+      \includegraphics[height=0.4\textheight]{immagini/comunicazione_ottimizzata_senza_rete}
+  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+\end{figure}
+
+Dalle tempistiche assoulte emerge come per entrambe le versioni al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
+
+I grafici mostrano, inaspettatamente, che con pochi processori, sono proprio i problemi con taglia n=18, n=19 a trarre il maggior beneficio dall'utilizzo di 2 e 4 processori.
+
+Osservando la tabella dei tempi di comunicazione della tabella seguente si osserva come nel passaggi da 2 a 4 processori il tempo, pur raddoppiando, rimanga contenuto e tuttavia il tempo complessivo impiegato dall'algoritmo migliora solo marginalmente : con un raddoppio di processori si ha un miglioramento solo lineare.
+
+\begin{figure}[H] 
+  \centering
+      \includegraphics[width=\textwidth]{immagini/algoritmo_normale_tempo_comunicazione_senza_rete}
+\end{figure}
+
+Passando ad 8 processori si verifica però un miglioramento più che doppio rispetto al caso con 4. Questo ci fa supporre che ci sia qualche collo di bottiglia che deve essere considerato (vedremo in seguito).
+
+Come ultime osservazioni notiamo come nell'algoritmo ottimizzato non sia ancora arrivato al limite di scalabilità con le taglie di problemi prese in esame: infatti lo speedup per 8 o 16 processori risulta inferiore al crescere della taglia (es:  per n=22,n=23,n=24) ma taglie maggiori hanno un trend di miglioramento più promettente. Sebbene il costo di comunicazione sia proporzionalmente maggiore per taglie inferiori (e questo dovrebbe pertanto penalizzarle) si ha che, raddoppiando il numero di processori dimezza il rapporto $\frac{N}{P}$, il guadagno a livello sequenziale è più che doppio (anche triplo in alcuni casi) e questo boost dovuto ad un utilizzo migliore della cache fornisce risultati significativi.
+
+Possiamo dire, prima di passare all'analisi del caso seguente, che i grafici non rispecchiano minimamente quanto ci si aspetterebbe dalla teoria e sono assai dissimili dal caso ideale.
+
 \subsection{Note su FFT Sequenziale e Cache}
 Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
 L'algoritmo implementato infatti, per la natura stessa degli operatori \emph{butterfly}, risulta assolutamente non-cachefriendly.\\
