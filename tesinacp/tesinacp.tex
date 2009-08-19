@@ -320,7 +320,7 @@ Nel nostro caso per taglie di problema ``piccole'', indicativamente fino a n=16,
 
 Dalle  due implementazioni algoritmi (ottimizzato e non) che condividono la parte di comunicazione ma differiscono nel codice sequenziale è emerso come codici meno ottimizzati risultino più scalabili. Tuttavia le loro performance assolute (almeno nel nostro caso) rimangono inferiori rispetto ad implementazioni sequenzialmente efficienti.\\ Con un'implementazione più efficiente infatti è possibile ottenere le stesse performance assolute ma utilizzando un minor numero di processori/risorse.
 
-Per ultimo mostriamo le performance assolute che è possibile ottenere selezionando opportunamente il miglior risultato al variare della taglia del problema e della modalità di \emph{blocking} e i corrispondenti MFlips/s totali spremuti alla macchina.
+Per ultimo mostriamo le performance assolute che è possibile ottenere selezionando opportunamente il miglior risultato al variare della taglia del problema e della modalità di \emph{blocking} e i corrispondenti MFlops/s totali spremuti alla macchina.
 \begin{figure}[htp] 
   \centering
   \linespread{1}
@@ -331,6 +331,6 @@ Per ultimo mostriamo le performance assolute che è possibile ottenere seleziona
 \begin{figure}[htp] 
   \centering
       \includegraphics[width=0.70\textwidth]{immagini/mflips}
-  \caption{\small MFlips/s al variare di taglia e \#processori}
+  \caption{\small MFlops/s al variare di taglia e \#processori}
 \end{figure}
 \end{document}
