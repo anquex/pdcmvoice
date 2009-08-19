@@ -191,12 +191,12 @@ Per prima cosa entrambi gli algoritmi sono stati lanciati con il parametro \emph
 \begin{figure}[H] 
   \centering
       \includegraphics[ height=0.4\textheight]{immagini/scalabilita_normale_senza_rete}
-  \caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
+	\caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 \begin{figure}[H] 
   \centering
       \includegraphics[height=0.4\textheight]{immagini/comunicazione_normale_senza_rete}
-  \caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+    \caption{\textsf{Algoritmo naive} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
 \begin{figure}[H] 
@@ -207,12 +207,12 @@ Per prima cosa entrambi gli algoritmi sono stati lanciati con il parametro \emph
 \begin{figure}[H] 
   \centering
       \includegraphics[height=0.4\textheight]{immagini/scalabilita_ottimizzata_senza_rete}
-  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
+        \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 \begin{figure}[H] 
   \centering
       \includegraphics[height=0.4\textheight]{immagini/comunicazione_ottimizzata_senza_rete}
-  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+ 	  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
 Dalle tempistiche assoulte emerge come per entrambe le versioni al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
@@ -239,29 +239,32 @@ Questi test sono stati condotti con \emph{blocking = 1} per 2 e 4 processi. Aven
 \begin{figure}[H] 
   \centering
       \includegraphics[ height=0.4\textheight]{immagini/scalabilita_normale_con_rete}
-  \caption{\textsf{Algoritmo naive} con \emph{blocking = ``minimo''}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
-\end{figure}
-\begin{figure}[H] 
-  \centering
-      \includegraphics[height=0.4\textheight]{immagini/comunicazione_normale_con_rete}
   \caption{\textsf{Algoritmo naive} con \emph{blocking = ``minimo''}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
 \begin{figure}[H] 
   \centering
-      \includegraphics[ height=0.4\textheight]{immagini/scalabilita_ottimizzata_con_rete}
-  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = ``minimo''}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
+      \includegraphics[height=0.4\textheight]{immagini/comunicazione_normale_con_rete}
+
+    \caption{\textsf{Algoritmo naive} con \emph{blocking = ``minimo''}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
+
+\begin{figure}[H] 
+  \centering
+      \includegraphics[ height=0.4\textheight]{immagini/scalabilita_ottimizzata_con_rete}
+        \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = ``minimo''}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+\end{figure}
+
 \begin{figure}[H] 
   \centering
       \includegraphics[height=0.4\textheight]{immagini/comunicazione_ottimizzata_con_rete}
-  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = ``minimo''}, scalabilità per taglie tra $2^{18}$-$2^{24}$}
+  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = ``minimo''}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
 Nei grafici ora l'effettto ``sella'' del passaggio da 4 a 8 processori è sparito. 
 
 L'algoritmo naive ripercorre l'andamendo del grafico di scalabilità ideale in cui a taglie maggiori corrispondono speedup più elevati.
-Notiamo come, sebbene il costo di comunicazione con 2 processori sia ora più elevato (circa il doppio) in quanto per la comunicazione viene ora sfruttata lo switch le prestazioni fornite siano migliori rispetto a quelle ottenute in precedenza al variare di tutte le taglie/ numero di processori impegati.
+Notiamo come, sebbene il costo di comunicazione con 2 processori sia ora più elevato (circa il doppio) in quanto per la comunicazione viene ora sfruttata lo switch, le prestazioni fornite siano migliori rispetto a quelle ottenute in precedenza al variare di tutte le taglie/ numero di processori impegati.
 Questo è possibile poichè ora, visto che non abbiamo più contesa tra i processori per l'accesso alla RAM (almeno con 2 e 4 processi), l'algoritmo sequenziale opera con piena efficienza.
 Notiamo altresi osservando la tabella dei tempi sottostante come il tempo di comunicazione rimanga invariato al crescere del numero di processori impiegati da 2 a 8.
 \begin{figure}[H] 
