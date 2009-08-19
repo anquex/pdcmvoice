@@ -274,6 +274,12 @@ Notiamo altresi osservando la tabella dei tempi sottostante come il tempo di com
 
 Ora entrambi gli algoritmi con soli 8 processori forniscono risultati migliori di quanto ottenuto nel test precedente.
 
+Osservando la tabella dei tempi di calcolo totali (sotto) per l'algoritmo ottimizzato con \emph{blocking = ``minimo''} notiamo come il costo di comunicazione via rete, essendo molto elevato per le taglie di problema più piccole, renda l'esecuzione dell'algoritmo in questa configurazione controproducente per n=10,...,n=14 e sia poco scalabile per  n=15,...,17.
+\begin{figure}[htp] 
+  \centering
+      \includegraphics[width=0.7\textwidth, height=0.43\textheight]{immagini/algoritmo_ottimizzato_tempo_calcolo_con_rete}
+\end{figure}
+Il mantenersi stabile del costo di comunicazione fa si che vi siano dimensioni dell'istanza (n=14,n=15,n=16) per cui l'utilizzo di 2 processori è penalizzante mentre l'utilizzo di ben 8 risulta essere il caso più vantaggioso.
 
 \subsubsection{Note su FFT Sequenziale e Cache}
 Durante l'implementazione dell'algoritmo è emersa la critica dipendenza tra le prestazioni ottenute dall'algoritmo FFT-DIT2 rispetto alla dimensione della cache della macchina su cui viene lanciato.\\
@@ -284,21 +290,21 @@ L'accesso in memoria non è locale: ad ogni stadio dell'algoritmo un valore dell
 \end{center}
 perde di efficacia. Nel nostro caso si verifica quando la distanza tra i dati da elaborare (potenza di due) è vicina alla dimensione della cache (anch'essa potenza di due).\\
 Proponiamo qui di seguito i grafici sullo Cache Miss e MFlops per illustrare la drammaticità del problema.\\
-In entrambi i casi le performance diminuiscono drasticamente quando la taglia del problema supera $2^{16}=65536$ per mantenersi successivamente costanti.\\ La diminuzione praticamente lineare delle performance per $n=16$ visibile in Figura \ref{Miss} è conseguenza raddoppio del numero di \emph{twiddle factor} utilizzati ad ogni passo.\\
+In entrambi i casi le performance diminuiscono drasticamente quando la taglia del problema supera $2^{15}=32768$ (che corrisponde a un vettore di \emph{twiddle factors} di esattamente 64KB: pari alla dimensione della cache L1 del processore) per mantenersi successivamente costanti fino a $2^{22}$ (vettore di 8MB pari alla cache L2).\\ La diminuzione praticamente lineare delle performance per $n=16$ visibile in Figura \ref{Miss} è conseguenza raddoppio del numero di \emph{twiddle factor} utilizzati ad ogni passo.\\
 Le performance inferiori, a parità di stage, per le istanze di taglia maggiore sono probabilmente dovute allo swap in/out dei twiddle factor il cui address mapping entra in conflitto con quello dei valori nel vettore da elaborare.\\
 Una volta oltrepassata la soglia critica il Loads per Miss si stabilizza sui $5,92$ più di $100$ volte peggiore rispetto agli stage in-cache. 
 Analogamente per gli stage out-of-cache si hanno circa $81/60$ Mflops/s.
 
 \begin{figure}[h!]
   \centering
-      \includegraphics[width=\textwidth]{immagini/Miss}
+      \includegraphics[width=0.8\textwidth]{immagini/Miss}
   \caption{Caricamento di dati utili nei registri / accessi in ram. Maggiore è migliore}
 \label{Miss}
 \end{figure}
 
 \begin{figure}[h!] 
   \centering
-      \includegraphics[width=\textwidth]{immagini/Mflops}
+      \includegraphics[width=0.8\textwidth]{immagini/Mflops}
   \caption{Potenza di calcolo sfruttata. Maggiore è migliore}
 \label{MFlops}
 \end{figure}
@@ -306,7 +312,25 @@ Notiamo come $n=20$ e $n=24$ abbiano esattamente lo stesso andamento.
 
 \section*{Conclusioni}
 
-Dai test condotti è emersa la critica dipendenza dell'algoritmo fft rispetto alla banda con la RAM. Infatti esso non gode di località spaziale e deve continuamente scorrere tutti gli elementi del vettore da elaborare.
+Dai test condotti è emersa la critica dipendenza dell'algoritmo $\mathcal{FFT}$ rispetto alla banda con la RAM. Infatti esso non gode di località spaziale e deve continuamente scorrere tutti gli elementi del vettore da elaborare. Le macchine parallele dotate di nodi con processori veloci e accesso alla memoria a bus condiviso evidenziano particolarmente questo limite.
 
-bla bla bla
+Come conseguenza di ciò si è mostrato come, con lo stesso algoritmo, in funzione della taglia del problema da risolvere e delle caratteristiche tecniche della macchina (banda con la memoria, banda di rete, latenza di rete,prestazioni floating point, dimensioni delle cache) possa risultare conveniente oppure sconvente concentrare il calcolo in un nodo o distribuirlo omogeneamente su tutto il calcolatore.
+
+Nel nostro caso per taglie di problema ``piccole'', indicativamente fino a n=16, conviene concentrare il calcolo su un nodo mentre per taglie maggiori è conveniente distribuirlo il più possibile.
+
+Dalle  due implementazioni algoritmi (ottimizzato e non) che condividono la parte di comunicazione ma differiscono nel codice sequenziale è emerso come codici meno ottimizzati risultino più scalabili. Tuttavia le loro performance assolute (almeno nel nostro caso) rimangono inferiori rispetto ad implementazioni sequenzialmente efficienti.\\ Con un'implementazione più efficiente infatti è possibile ottenere le stesse performance assolute ma utilizzando un minor numero di processori/risorse.
+
+Per ultimo mostriamo le performance assolute che è possibile ottenere selezionando opportunamente il miglior risultato al variare della taglia del problema e della modalità di \emph{blocking} e i corrispondenti MFlips/s totali spremuti alla macchina.
+\begin{figure}[htp] 
+  \centering
+  \linespread{1}
+      \includegraphics[width=0.65\textwidth]{immagini/best_performance}
+  \caption{\small Tabella con i migliori tempi ottenuti con l'implementazione ottimizzata al variare di taglia,processori e \emph{blocking}. In verde i risultati sequenziali. In viola quelli con \emph{blocking \= unlimited}. In azzurro \emph{blocking \= unlimited}. In bianco nessun miglioramento. In grassetto il miglior tempo a parità di taglia}
+\end{figure}
+
+\begin{figure}[htp] 
+  \centering
+      \includegraphics[width=0.70\textwidth]{immagini/mflips}
+  \caption{\small MFlips/s al variare di taglia e \#processori}
+\end{figure}
 \end{document}
