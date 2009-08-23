@@ -61,7 +61,7 @@ Molti di questi algoritmi, oltre che ad essere computazionalmente efficienti, si
 In questo lavoro è stata realizzata un'implementazione del noto algoritmo di Cooley-Tukey.
 \section{Algoritmo}
 L'algoritmo di Cooley-Tukey prevede di calcolare la DFT del vettore $x$ attraverso il calcolo separato delle DFT delle sottosequenze di indice pari e dispari della sequenza originaria e quindi la loro ricombinazione attraverso \emph{operazioni butterfly} tra elementi in posizione analoga delle due sottosequenze per ottenere la trasformata dell'ingresso originale.\\
-L'immagine seguente illustra quanto appena enunciato per una sequenza di lunghezza 8
+L'immagine seguente illustra quanto appena enunciato per una sequenza di lunghezza 8.
 \begin{figure}[H] 
   \centering
       \includegraphics[width=\textwidth]{immagini/cooley-tukey}
@@ -73,7 +73,7 @@ Questo rimescolamento dell'input iniziale, operato a ritroso fino al caso base d
       \includegraphics[width=\textwidth]{immagini/alg-asc}
   \caption{bitreversal di una sequenza di lughezza 8 e computazione su rete ascendente}
 \end{figure}
-Ora, considerando una sequenza di lunghezza N e avendo a disposizione P processori, è possibile dividere la sequenza iniziale in P blocchi da $\frac{N}{P}$ elementi. Il processore $i$-esimo sarà responsabile dell'$i$-esimo blocco. Notiamo come la computazione sia inizialmente priva di comunicazioni in quanto ogni processore dispone localmente dei dati da elaborare. Soltanto le ultime $\log_{2} P$ fasi richiedono infatti l'utilizzo di dati di responsabilità di un altro processore. In queste fasi che chiameremo ``esterne'' (analogamente consideriamo ``interne'' le fasi precedenti), il processore $x$, utilizzando la notazione vista a lezione, comunicherà prima con $C_{0}x$, quindi con $C_{1}x$,...
+Ora, considerando una sequenza di lunghezza N e avendo a disposizione P processori, è possibile dividere la sequenza iniziale in P blocchi da $\frac{N}{P}$ elementi. Il processore $i$-esimo sarà responsabile dell'$i$-esimo blocco. Notiamo come la computazione sia inizialmente priva di comunicazioni in quanto ogni processore dispone localmente dei dati da elaborare. Soltanto le ultime $\log_{2} P$ fasi richiedono infatti l'utilizzo di dati di responsabilità di un altro processore. In queste fasi che chiameremo ``esterne'' (analogamente consideriamo ``interne'' le fasi precedenti), il processore $x$, utilizzando la notazione vista a lezione, comunicherà prima con $C_{0}x$, quindi con $C_{1}x$, etc.
 In generale, nella $j$-esima fase esterna, si avrà lo scambio dei rispettivi blocchi di responsabilità tra
 $$x  \longleftrightarrow  C_{j}x \quad \textrm{per} \quad j=0,...,\log_{2} P-1 $$
 
@@ -117,7 +117,7 @@ Si è anche sviluppata un'implementazione della comunicazione attraverso primiti
 
 \subsubsection{Struttura dei dati}
 
-Un problema di taglia N è memorizzato ed elaborato su un vettore di double di dimensione 8N Byte.
+Un problema di taglia N è memorizzato ed elaborato su un vettore di \emph{double} di dimensione 8N Byte.
 Considerando il valore $i$-esimo della sequenza da elaborare questo ha la sua parte reale memorizzata in posizione $2i$ e quella immaginaria in posizione $2i+1$.
 
 
@@ -210,18 +210,18 @@ Per prima cosa entrambi gli algoritmi sono stati lanciati con il parametro \emph
  	  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
-Dalle tempistiche assoulte emerge come per entrambe le versioni al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
+Dalle tempistiche assoulte emerge come, per entrambe le versioni, al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
 
-I grafici mostrano, inaspettatamente, che con pochi processori, sono proprio i problemi con taglia piccola a trarne il maggior beneficio. Si noti infatti come le taglie n=18, n=19, n=20 godano di uno speedup più elevato utilizzando 2 o 4 processori. Per problemi di taglia elevata  il tempo di calcolo tende a diminuire in maniera molto contenuta (quasi inconsistente per l'algoritmo ottimizzato) mentre il tempo di comunicazione (si veda la tabella seguente) tende a raddoppiare raddoppiando la taglia oppure il numero di processori impiegati nei passaggi P=2 $\rightarrow$ P=4 e P=8 $\rightarrow$ P=16. Nel passaggio da P=4 $\rightarrow$ P=8 si ha un incremento curiosamente molto inferiore.\\ Alla luce di queste considerazioni comunque il tempo di comunicazione non è tale da giustificare lo scarso incremento di performance (solo lineare raddoppiando il numero di processori)
+I grafici mostrano, inaspettatamente, che con pochi processori, sono proprio i problemi con taglia piccola a trarne il maggior beneficio. Si noti infatti come le taglie n=18, n=19, n=20 godano di uno speedup più elevato utilizzando 2 o 4 processori. Per problemi di taglia elevata  il tempo di calcolo tende a diminuire in maniera molto contenuta (quasi inconsistente per l'algoritmo ottimizzato) mentre il tempo di comunicazione (si veda la tabella seguente) tende a raddoppiare raddoppiando la taglia oppure il numero di processori impiegati nei passaggi P=2 $\rightarrow$ P=4 e P=8 $\rightarrow$ P=16. Nel passaggio da P=4 $\rightarrow$ P=8 si ha un incremento curiosamente molto inferiore.\\ In ogni caso, alla luce di queste considerazioni, il tempo di comunicazione non è tale da giustificare lo scarso incremento di performance (solo lineare raddoppiando il numero di processori)
 
 \begin{figure}[H] 
   \centering
       \includegraphics[width=\textwidth]{immagini/algoritmo_normale_tempo_comunicazione_senza_rete}
 \end{figure}
 
-Passando da 4 a  8 processori si verifica il tempo di calcolo migliora incredibilmente:  si può dire che dimezzi (addirittura è meno della metà in alcuni casi per l'algoritmo ottimizzato). Questo ci fa supporre che ci sia qualche collo di bottiglia che deve essere considerato (vedremo in seguito).
+Passando da 4 a  8 processori il tempo di calcolo migliora incredibilmente:  si può dire che dimezzi (addirittura è meno della metà in alcuni casi per l'algoritmo ottimizzato). Questo ci fa supporre che ci sia qualche collo di bottiglia che deve essere considerato (vedremo in seguito).
 
-Come ultime osservazioni notiamo come nell'algoritmo ottimizzato non sia ancora arrivato al limite di scalabilità con le taglie di problemi prese in esame: infatti lo speedup per 8 o 16 processori risulta inferiore al crescere della taglia (es:  per n=22,n=23,n=24) ma taglie maggiori hanno un trend di miglioramento più promettente. Sebbene il costo di comunicazione sia proporzionalmente maggiore per taglie inferiori (e questo dovrebbe pertanto penalizzarle) si ha che raddoppiando il numero di processori dimezza il rapporto $\frac{N}{P}$. Questo fa si che il guadagno a livello di codice sequenziale (si guardi la Figura \ref{mflips} per P=1) sia più che doppio (anche triplo in alcuni casi) e questo fornisce un boost prestazionale via via sempre maggiore al diminuire della taglia del problema che colma il maggior costo relativo delle comunicazioni.
+Come ultime osservazioni notiamo come nell'algoritmo ottimizzato non sia ancora arrivato al limite di scalabilità con le taglie di problemi prese in esame: infatti lo speedup per 8 o 16 processori risulta inferiore al crescere della taglia (es:  per n=22,n=23,n=24) ma taglie maggiori hanno un trend di miglioramento più promettente. Sebbene il costo di comunicazione sia proporzionalmente maggiore per taglie inferiori (e questo dovrebbe pertanto penalizzarle) si ha che raddoppiando il numero di processori dimezza il rapporto $\frac{N}{P}$. Questo fa si che il guadagno a livello di codice sequenziale (si guardi la Figura \ref{mflips} per P=1) sia più che doppio (anche triplo in alcuni casi) e questo fornisce un boost prestazionale ,via via sempre maggiore al diminuire della taglia del problema, che colma il maggior costo relativo delle comunicazioni.
 
 Possiamo dire, prima di passare all'analisi del caso seguente, che i grafici non rispecchiano minimamente quanto ci si aspetterebbe dalla teoria e sono assai dissimili dal caso ideale.
 
@@ -257,7 +257,7 @@ Questi test sono stati condotti con \emph{blocking = 1} per 2 e 4 processi. Aven
 Nei grafici ora l'effettto ``sella'' del passaggio da 4 a 8 processori è sparito. 
 
 L'algoritmo naive ripercorre l'andamendo del grafico di scalabilità ideale in cui a taglie maggiori corrispondono speedup più consistenti.
-Notiamo come, sebbene il costo di comunicazione con 2 processori sia ora più elevato (circa il doppio) in quanto per la comunicazione viene ora sfruttata lo switch, le prestazioni fornite siano migliori rispetto a quelle ottenute in precedenza al variare di tutte le taglie/ numero di processori impegati.
+Notiamo come, sebbene il costo di comunicazione con 2 processori sia ora più elevato (circa il doppio) in quanto per la comunicazione viene utilizzato lo switch, le prestazioni fornite siano migliori rispetto a quelle ottenute in precedenza al variare di tutte le taglie/ numero di processori impegati.
 Questo è possibile poichè ora, visto che non abbiamo più contesa tra i processori per l'accesso alla RAM (almeno con 2 e 4 processi), l'algoritmo sequenziale opera con piena efficienza.
 Notiamo altresi osservando la tabella dei tempi sottostante come il tempo di comunicazione rimanga invariato al crescere del numero di processori impiegati da 2 a 8.
 \begin{figure}[H] 
@@ -267,7 +267,7 @@ Notiamo altresi osservando la tabella dei tempi sottostante come il tempo di com
 
 Ora entrambi gli algoritmi con soli 8 processori forniscono risultati migliori di quanto ottenuto nel test precedente.
 
-Osservando la tabella dei tempi di calcolo totali (sotto) per l'algoritmo ottimizzato con \emph{blocking = ``minimo''} notiamo come il costo di comunicazione via rete, essendo molto elevato per le taglie di problema più piccole, renda l'esecuzione dell'algoritmo in questa configurazione controproducente per n=10,...,n=14 e sia poco scalabile per  n=15,...,17.
+Osservando la seguente tabella dei tempi di calcolo totali per l'algoritmo ottimizzato con \emph{blocking = ``minimo''} notiamo come il costo di comunicazione via rete, essendo molto elevato per le taglie di problema più piccole, renda l'esecuzione dell'algoritmo in questa configurazione controproducente per n=10,...,n=14 e sia poco scalabile per  n=15,...,17.
 \begin{figure}[htp] 
   \centering
       \includegraphics[width=0.7\textwidth, height=0.43\textheight]{immagini/algoritmo_ottimizzato_tempo_calcolo_con_rete}
