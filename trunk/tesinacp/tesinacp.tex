@@ -107,7 +107,7 @@ Le fasi principali che possiamo individuare dall'algoritmo sono:
 \end{enumerate}
  
 \subsubsection{Comunicazione}
-La comunicazione in ogni stadi ha luogo attraverso una chiamata boccante
+La comunicazione in ogni stadi ha luogo attraverso una chiamata bloccante
 \begin{verbatim}
 MPI_Sendrecv(sendbuf, sendcount, sendtype, dest, sendtag, recvbuf, 
                recvcount, recvtype, source, recvtag, comm, status)
@@ -210,7 +210,7 @@ Per prima cosa entrambi gli algoritmi sono stati lanciati con il parametro \emph
  	  \caption{\textsf{Algoritmo ottimizzato} con \emph{blocking = unlimited}, \% di tempo speso in comunicazione per taglie tra $2^{18}$-$2^{24}$}
 \end{figure}
 
-Dalle tempistiche assoulte emerge come, per entrambe le versioni, al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
+Dalle tempistiche assolute emerge come, per entrambe le versioni, al crescere della taglia ci sia un continuo miglioramento fino al punto critico in cui il costo della comunicazione sovrasta quello effettivo di calcolo. Poichè l'algoritmo ottimizzato è più efficiente a livello sequenziale l'impatto della comunicazione lo penalizza maggiormente: questo è evidente dal fatto che sebbene i risultati assoluti siano sempre molto migliori, lo speedup parallelo è inferiore. Inoltre, per problemi di taglia modesta o piccola, si ha che il punto di trade-off in cui è controproducente utilizzare più processori è anticipato rispetto all'algoritmo naive. 
 
 I grafici mostrano, inaspettatamente, che con pochi processori, sono proprio i problemi con taglia piccola a trarne il maggior beneficio. Si noti infatti come le taglie n=18, n=19, n=20 godano di uno speedup più elevato utilizzando 2 o 4 processori. Per problemi di taglia elevata  il tempo di calcolo tende a diminuire in maniera molto contenuta (quasi inconsistente per l'algoritmo ottimizzato) mentre il tempo di comunicazione (si veda la tabella seguente) tende a raddoppiare raddoppiando la taglia oppure il numero di processori impiegati nei passaggi P=2 $\rightarrow$ P=4 e P=8 $\rightarrow$ P=16. Nel passaggio da P=4 $\rightarrow$ P=8 si ha un incremento curiosamente molto inferiore.\\ In ogni caso, alla luce di queste considerazioni, il tempo di comunicazione non è tale da giustificare lo scarso incremento di performance (solo lineare raddoppiando il numero di processori)
 
@@ -306,11 +306,11 @@ Notiamo come $n=20$ e $n=24$ abbiano esattamente lo stesso andamento.
 
 Dai test condotti è emersa la critica dipendenza dell'algoritmo $\mathcal{FFT}$ rispetto alla banda con la RAM. Infatti esso non gode di località spaziale e deve continuamente scorrere tutti gli elementi del vettore da elaborare. Le macchine parallele dotate di nodi con processori veloci e accesso alla memoria a bus condiviso evidenziano particolarmente questo limite.
 
-Come conseguenza di ciò si è mostrato come, con lo stesso algoritmo, in funzione della taglia del problema da risolvere e delle caratteristiche tecniche della macchina (banda con la memoria, banda di rete, latenza di rete,prestazioni floating point, dimensioni delle cache) possa risultare conveniente oppure sconvente concentrare il calcolo in un nodo o distribuirlo omogeneamente su tutto il calcolatore.
+Come conseguenza di ciò si è mostrato come, con lo stesso algoritmo, in funzione della taglia del problema da risolvere e delle caratteristiche tecniche della macchina (banda con la memoria, banda di rete, latenza di rete,prestazioni floating point, dimensioni delle cache) possa risultare conveniente oppure sconveniente concentrare il calcolo in un nodo o distribuirlo omogeneamente su tutto il calcolatore.
 
 Nel nostro caso per taglie di problema ``piccole'', indicativamente fino a n=16, conviene concentrare il calcolo su un nodo mentre per taglie maggiori è conveniente distribuirlo il più possibile.
 
-Dalle  due implementazioni algoritmi (ottimizzato e non) che condividono la parte di comunicazione ma differiscono nel codice sequenziale è emerso come codici meno ottimizzati risultino più scalabili. Tuttavia le loro performance assolute (almeno nel nostro caso) rimangono inferiori rispetto ad implementazioni sequenzialmente efficienti.\\ Con un'implementazione più efficiente infatti è possibile ottenere le stesse performance assolute ma utilizzando un minor numero di processori/risorse.
+Dalle  due implementazioni degli algoritmi (ottimizzato e non) che condividono la parte di comunicazione ma differiscono nel codice sequenziale è emerso come codici meno ottimizzati risultino più scalabili. Tuttavia le loro performance assolute (almeno nel nostro caso) rimangono inferiori rispetto ad implementazioni sequenzialmente efficienti.\\ Con un'implementazione più efficiente infatti è possibile ottenere le stesse performance assolute ma utilizzando un minor numero di processori/risorse.
 
 Per ultimo mostriamo le performance assolute che è possibile ottenere selezionando opportunamente il miglior risultato al variare della taglia del problema e della modalità di \emph{blocking} e i corrispondenti MFlops/s totali forniti dalla macchina.
 \begin{figure}[htp] 
