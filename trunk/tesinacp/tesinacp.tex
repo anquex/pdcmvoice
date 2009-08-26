@@ -306,7 +306,7 @@ Notiamo come $n=20$ e $n=24$ abbiano esattamente lo stesso andamento.
 
 Dai test condotti è emersa la critica dipendenza dell'algoritmo $\mathcal{FFT}$ rispetto alla banda con la RAM. Infatti esso non gode di località spaziale e deve continuamente scorrere tutti gli elementi del vettore da elaborare. Le macchine parallele dotate di nodi con processori veloci e accesso alla memoria a bus condiviso evidenziano particolarmente questo limite.
 
-Come conseguenza di ciò si è mostrato come, con lo stesso algoritmo, in funzione della taglia del problema da risolvere e delle caratteristiche tecniche della macchina (banda con la memoria, banda di rete, latenza di rete,prestazioni floating point, dimensioni delle cache) possa risultare conveniente oppure sconveniente concentrare il calcolo in un nodo o distribuirlo omogeneamente su tutto il calcolatore.
+In conseguenza di ciò si è mostrato come, con lo stesso algoritmo, in funzione della taglia del problema da risolvere e delle caratteristiche tecniche della macchina (banda con la memoria, banda di rete, latenza di rete, prestazioni floating point, dimensioni delle cache) possa risultare conveniente oppure sconveniente concentrare il calcolo in un nodo o distribuirlo omogeneamente su tutto il calcolatore.
 
 Nel nostro caso per taglie di problema ``piccole'', indicativamente fino a n=16, conviene concentrare il calcolo su un nodo mentre per taglie maggiori è conveniente distribuirlo il più possibile.
 
@@ -324,7 +324,7 @@ Per ultimo mostriamo le performance assolute che è possibile ottenere seleziona
 
   \centering
       \includegraphics[width=0.70\textwidth]{immagini/mflips}
-  \caption{\small MFlops/s al variare di taglia e \#processori}
+  \caption{\small MFlops/s al variare di taglia e \# processori}
 	 \label{mflips}
 \end{figure}
 
