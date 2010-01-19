@@ -1,0 +1,54 @@
+\documentclass[12pt,a4paper,oneside,openright]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[none]{hyphenat} 
+\usepackage{float} % parametro H in figur : posizionamento esattamente li
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{enumerate} %lettere o altro negli indici
+\usepackage{algorithmic} %float con un algoritmo
+\usepackage[boxed]{algorithm}
+\usepackage{subfig}    % + figure in un float figure
+
+%con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
+%%\usepackage{emptypage}
+
+
+
+\usepackage{fancyhdr}
+\setcounter{tocdepth}{3}
+
+\include{miei_comandi}
+\frenchspacing
+%\pagestyle{headings} % {headings,plain ,empty}
+\linespread{1.3}
+\DeclareGraphicsRule{.eps,.ps,.png}{bmp}{.bb}{} % formati utilizzabili con ordine di preferenza 
+                                                % cosi non devo indicare le estensioni
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+
+%\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
+
+%per impaginare con giustifica sx-dx
+  \tolerance 1414
+  \hbadness 1414
+  \emergencystretch 1.5em
+  \hfuzz 0.3pt
+  \widowpenalty=10000
+  \vfuzz \hfuzz
+  \raggedbottom
+
+\title{}
+\begin{document}
+\include{mytitle}
+
+%\tableofcontents
+
+
+\end{document}
