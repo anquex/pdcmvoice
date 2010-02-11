@@ -13,13 +13,15 @@
 \usepackage{booktabs}
 \usepackage{enumerate} %lettere o altro negli indici
 \usepackage{algorithmic} %float con un algoritmo
-\usepackage[boxed]{algorithm}
+\usepackage[ruled]{algorithm} %[boxed]
 \usepackage{subfig}    % + figure in un float figure
 \usepackage{datetime}
+\usepackage[rgb]{xcolor}
+\usepackage{tikz}
+\usepackage{fullpage}
 
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
 %%\usepackage{emptypage}
-
 
 
 \usepackage{fancyhdr}
@@ -32,6 +34,7 @@
                                                 % cosi non devo indicare le estensioni
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
+\newcommand{\greenberg}{\ensuremath{\mbox{\sc Greenberg}}}
 
 %\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
 
@@ -48,7 +51,146 @@
 \begin{document}
 \include{mytitle}
 
-%\tableofcontents
+\tableofcontents
+%\listofalgorithms
+
+
+\chapter{Introduction}
+
+Generally speaking a set of actors contending for a common resource define a \emph{conflicting set}. As always, limited resources require policies to access them in an efficient and hopefully fair way. When the system is distributed, and this is our business, resource access can be assimilated to a coordination problem.\\ 
+Physical medium access is our contended resource and several stations connect to the same physical medium to share it.\\ At the beginning of computer networks, multiple access channel (MAC) was a big issue for efficient communications: so packet switched buffered networks were introduced reducing the conflicting set to only two stations and simplifying  the original problem. But switched networks could be realized only because the medium was wired: in fact a large collision domain could be sliced into smaller pieces and joined again together in ring, star or mesh structures.\\ 
+In a wireless context the problem can be no more avoided.\\  
+
+Nowdays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
+
+In particular we analyze the scenario where a reader broadcast a query to the in-range nodes. Once the request is received devices with datas of interest are all interested in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic show a bursty nature which is the worst case for all shared medium scenarios.\\
+
+This problem is referred in literature with different names: \emph{Batch Resolution Problem}, \emph{The Reader Collision Problem}, \emph{Object Identification Problem}.\\
+Algorithms trying to solve efficiently this problem are defined as \emph{Batch Resolution Algorithms}.\\ 
+
+For our terminology, given a query, it determines a subset of nodes which have to reply to it with one (and only one) message: this set of nodes constitute our \emph{batch}. The size of the batch can ben know in advance, in lucky and optimistic scenarios, or can change in function of the query or time.
+
+Since each node has exactly one message to deliver, the problem of obtaining all the messages or counting the number of nodes involved by the resolution process is exactly the same.
+
+Instead the problem differs when we are not so interested in the exact number of nodes but we would appreciate a estimate of the actual batch size, rather accurate if possible.
+
+The knowledge of the batch size $n$ is an important factor for parameter optimization, for efficient resolution trying to minimize the time taken by the process.
+
+\begin{comment}
+This necessitates the usage of algorithms for resolving batch collisions (conflicts) with unknown conflict multiplicity $n$.
+
+In this paper we present a novel approach to the problem of collision resolution for batch conflicts. We show how the conventional tree algorithms for collision resolution can be used to obtain progressively accurate estimation of the multiplicity. We use the estimation to propose a more efficient binary tree algorithm, termed Estimating Binary Tree (EBT) algorithm. The EBT algorithm is suited for implementation when the conflicting nodes are passive, such as e.g. RFID tags. We extend the approach to design the Interval Estimation Conflict Resolution (IECR) algorithm. For $n \rightarrow \infty $  we prove that the efficiency achieved by IECR for batch arrivals is identical with the efficiency that Gallager’s FCFS algorithm achieves for Poisson packet arrivals. For finite n, the simulation results show that IECR is, to the best of our knowledge, the most efficient batch resolution algorithm reported to date.
+\end{comment}
+
+\section{Model, Scenario, Terminology}
+
+We consider the following standard model of a multiple access channel. A large number of geographically dispersed nodes communicate through a common channel. Any node generate and transmit data on the channel. Transmissions start at integer multiples of unit of time and last one unit of time, also called a ``slot''.\\
+
+For this condition to be true in SLOTTED ALOHA, there must be some form of synchronization that inform the nodes about the beginning of the new slot (or at least the beginning of a cycle of slots). Slot size if equal to the fixed packet transmission time and a node can start a transmission only at the beginning of the slot, otherwise it will stay quiet until the next slot to come.\\
+
+In CSMA networks each node is able to determine the beginning of a new slot by sensing to the channel: when the channel is listened free a device can start transmitting it's message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it can sense no more to the channel and so it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it is results in a success or a collision. On the other hand empty slots takes less time than transmissions.\\
+% precisare T_{s} T_{p} T_{c} ??
+
+CSMA/CD is not suitable for pervasive wireless devices such as sensors or RFID tags since they has to be keep as simple as possible to satisfy energy and cost requirements: they do not implement this MAC scheme and so no detection/reduction of collision time is possible.\\
+
+We assume that there is no external source of interference and that a transmission can fail only when a collision take place.
+In each slot, when $k$ nodes transmit simultaneously, the success or the transmission depends on $k$:
+\begin{itemize}
+\item if $k=0$ then no transmission were attempted. The slot is said to be \emph{empty} or \emph{idle};
+\item if $k=1$ then the transmission succeeds. The slot is said to be \emph{successful} and the node that transmitted \emph{resolved};
+\item if $k\geq 2$. there is a conflict, meaning that the transmission interfere destructively so that none succeeds. The slot is said to be \emph{collided}.
+\end{itemize}
+
+We assume that at the beginning of the algorithm there is no \emph{resolved node} and that they all are in the initial batch.
+Another consideration is that a node that has already been resolved in the current process no longer take place in it and it remain quiet until the current resolution ends up, eventually waiting for the next one to start.
+
+
+\chapter{Batch Resolution}
+
+Most of the batch resolution algorithm were originally thought for slotted ALOHA scenarios.\\
+This algorithms can be flawlessly ported to the CSMA scheme:
+\begin{itemize}
+\item 
+\item
+\end{itemize}
+  
+\section{Binary Tree Algorithms}
+\subsection{Basic Binary Tree}
+Basic binary tree algorithm was first introduced by Capetanakis in 1979.
+We have a batch of size $n$.\\
+When a batch resolution process starts, initially all the nodes try to transmit and we can have 3 different events: \emph{idle}, \emph{success}, \emph{collision}.	\\
+If we get \emph{idle} or  \emph{success} events the resolution process stop meaning respectively that there were no nodes to resolve or there was only one node and that node's message was successfully received.\\
+If we got a \emph{collision} we know that at least 2 nodes are present and we have to solve the collision to obtain their messages. In this case all the $n$ nodes play the algorithm.\\
+Each node choose to transmit with probability $p$ and to not transmit with probability $1-p$. Nodes that choosed to transmit  are said to own to set D while the others to set E. Of course 
+\subsection{Modified Binary Tree}
+
+\chapter{Batch Size Estimate Techniques}
+We present here some noteworthy techniques for batch size estimate that can be found in literature.
+If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.
+\section{Cidon}
+\section{Greenberg}
+
+Greenberg algorithm is simply straightforward.
+\algsetup{indent=2em} 
+\begin{algorithm}[h!]
+\caption{\greenberg}
+\label{alg:greenberg}
+\begin{algorithmic}
+\STATE $i\gets 0$
+\REPEAT
+	\STATE $i\gets i+1$ 
+	\STATE choose to transmit with probability $2^{-i}$
+\UNTIL {no collision occurs}
+\STATE $\hat{n} \gets 2^{i}$
+\end{algorithmic}
+\end{algorithm}
+
+The idea behind algorithm \ref{alg:greenberg} is quite simple. As the algorithm goes on the initial unknown batch size $n$
+comes progressively sliced into smaller pieces. Only the nodes virtually inside the slice are allowed to transmit.\\
+If two o more nodes decide to transmit we get a collision,\\
+An important note is that the algorithm always involve al the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
+Each choice is independent of what the nodes did in the previous steps. 
+
+
+
+\begin{figure}[t]
+    
+    \begin{tikzpicture}[scale=.95]  
+        \draw (0, 0) circle (3.8cm);
+        \foreach \x  in {0, 30, ..., 330}
+        \draw (-\x+90:3.8) -- (-\x+90:4.0) (-\x+90:4.4) node {$\x^\circ$};
+        \foreach \x  in {0,1, ..., 3}
+        \draw[dashed,ultra thin,gray] (0,0)circle(\x);
+        \draw[->,dashed,gray](0,0) to[] (3.5,0);
+        %Add labels with names of the primary and secondary colors.
+        \foreach \x/\text in {1/f$_{S}$, 3/f$_{W}$}
+        \draw (\x,0) node [below]{\text};
+        \foreach \x/\text in {.5,.6,...,1.5}
+        \draw [-,thin,red] (90:\x) arc(90:135:\x);
+        \draw[-,ultra thin,red,dashed] (0,0) to[] (0,7);
+        \draw[-,ultra thin,red,dashed] (0,0) to[] (-5.4,5);
+        \foreach \x/\text in {2.5,2.6,...,3.5}
+        \draw [-,thin,blue] (60:\x) arc(60:165:\x); 
+        \draw[-,ultra thin,blue,dashed] (0,0) to[] (3.5,6);
+        \draw[-,ultra thin,blue,dashed] (0,0) to[] (-7,1.9);
+            
+        \draw [<->,ultra thin,blue!20] (65:5) arc(65:160:5);
+        \draw [<->,ultra thin,red!20] (95:7) arc(95:130:7);
+        \path[font=\footnotesize]
+        (-3.5,6.5) node[above right] {$Swell\ Sea$}
+        (-5,2.5) node[left] {$Wind\ Sea$};
+        %(.5,0) node[above right] {$0.1\ Hz$}
+        %   (3.8,.2) node[left] {$0.3\ Hz$};
+        %   
+    
+    \end{tikzpicture}
+    \caption[Idealised directional spectrum]{Immagine provvisoria da usare come base di partenza}
+    \label{fig:sp2d}
+\end{figure}
+
+\section{Window Based}
+\chapter{Inital Batch size estimate}
+\chapter{Comparison}
 
 \include{bibliography}
 \end{document}
