@@ -34,8 +34,11 @@
                                                 % cosi non devo indicare le estensioni
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
-\newcommand{\greenberg}{\ensuremath{\mbox{\sc Greenberg}}}
+\newcommand{\algname}[1]{\ensuremath{\mbox{\sc #1}}}
 
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\renewcommand{\algorithmiccomment}[1]{// #1}
 %\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
 
 %per impaginare con giustifica sx-dx
@@ -117,11 +120,37 @@ This algorithms can be flawlessly ported to the CSMA scheme:
 \section{Binary Tree Algorithms}
 \subsection{Basic Binary Tree}
 Basic binary tree algorithm was first introduced by Capetanakis in 1979.
-We have a batch of size $n$.\\
+At slot $\tau$ we have a batch $\mathcal{B}$ of size $n$.\\
 When a batch resolution process starts, initially all the nodes try to transmit and we can have 3 different events: \emph{idle}, \emph{success}, \emph{collision}.	\\
-If we get \emph{idle} or  \emph{success} events the resolution process stop meaning respectively that there were no nodes to resolve or there was only one node and that node's message was successfully received.\\
+The supervisor broadcast the result of the transmission to all the nodes.\\
+If we get \emph{idle} or  \emph{success} events the resolution process stop meaning respectively that there were no nodes to resolve or there was only one node and that node's message was successfully received. That node delivered its message and will no longer take part in the current batch resolution.\\
 If we got a \emph{collision} we know that at least 2 nodes are present and we have to solve the collision to obtain their messages. In this case all the $n$ nodes play the algorithm.\\
-Each node choose to transmit with probability $p$ and to not transmit with probability $1-p$. Nodes that choosed to transmit  are said to own to set D while the others to set E. Of course 
+Each node choose to transmit with probability $p$ and to not transmit with probability $1-p$. Nodes that choosed to transmit  are said to own to set $\mathcal{R}$ while the others to set $\mathcal{S}$. Of course $\mathcal{R}  \cap \mathcal{S} = \emptyset$ and $\mathcal{B} = \mathcal{R}  \cup \mathcal{S}$\\
+Nodes in $\mathcal{S}$ wait untill all terminal in $\mathcal{R}$ transmit successfully their packets, then they transmit.\\
+Nodes in $\mathcal{R}$ are allowded to transmit in slot $\tau +1$
+
+
+\algsetup{indent=2em} 
+\begin{algorithm}[h!]
+\caption{\algname{Collision binary tree ($\mathcal{B}$)}}
+\label{alg:binarytree}
+\begin{algorithmic}
+\STATE \COMMENT{current slot status can be \emph{idle}, \emph{success}, \emph{collision}}
+\REQUIRE $\mathcal{B}$ batch with $|\mathcal{B}|=n$
+\STATE each node transmit its message
+\IF{(\emph{idle} or \emph{success})}
+	\STATE conflict resolution ended.
+\ELSE
+	\STATE each node flip a coin
+	\STATE $\mathcal{R} \gets$ \{ nodes that flipped head\}
+	\STATE $\mathcal{S} \gets$ \{ nodes that flipped tail\}
+	\STATE \algname{Collision binary tree ($\mathcal{R}$)}
+	\STATE \algname{Collision binary tree ($\mathcal{S}$)}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+
 \subsection{Modified Binary Tree}
 
 \chapter{Batch Size Estimate Techniques}
@@ -133,7 +162,7 @@ If the technique was not already identified by a name or associated to a acronym
 Greenberg algorithm is simply straightforward.
 \algsetup{indent=2em} 
 \begin{algorithm}[h!]
-\caption{\greenberg}
+\caption{\algname{Greenberg}}
 \label{alg:greenberg}
 \begin{algorithmic}
 \STATE $i\gets 0$
