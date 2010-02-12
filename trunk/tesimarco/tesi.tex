@@ -66,7 +66,7 @@ In a wireless context the problem can be no more avoided.\\
 
 Nowdays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
 
-In particular we analyze the scenario where a reader broadcast a query to the in-range nodes. Once the request is received devices with datas of interest are all interested in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic show a bursty nature which is the worst case for all shared medium scenarios.\\
+In particular we analyze the scenario where a reader broadcast a query to the in-range nodes. Once the request is received devices with datas of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic show a bursty nature which is the worst case for all shared medium scenarios.\\
 
 This problem is referred in literature with different names: \emph{Batch Resolution Problem}, \emph{The Reader Collision Problem}, \emph{Object Identification Problem}.\\
 Algorithms trying to solve efficiently this problem are defined as \emph{Batch Resolution Algorithms}.\\ 
@@ -118,16 +118,19 @@ This algorithms can be flawlessly ported to the CSMA scheme:
 \end{itemize}
   
 \section{Binary Tree Algorithms}
-\subsection{Basic Binary Tree}
 Basic binary tree algorithm was first introduced by Capetanakis in 1979.
+\subsection{Basic Binary Tree}
 At slot $\tau$ we have a batch $\mathcal{B}$ of size $n$.\\
 When a batch resolution process starts, initially all the nodes try to transmit and we can have 3 different events: \emph{idle}, \emph{success}, \emph{collision}.	\\
 The supervisor broadcast the result of the transmission to all the nodes.\\
 If we get \emph{idle} or  \emph{success} events the resolution process stop meaning respectively that there were no nodes to resolve or there was only one node and that node's message was successfully received. That node delivered its message and will no longer take part in the current batch resolution.\\
 If we got a \emph{collision} we know that at least 2 nodes are present and we have to solve the collision to obtain their messages. In this case all the $n$ nodes play the algorithm.\\
 Each node choose to transmit with probability $p$ and to not transmit with probability $1-p$. Nodes that choosed to transmit  are said to own to set $\mathcal{R}$ while the others to set $\mathcal{S}$. Of course $\mathcal{R}  \cap \mathcal{S} = \emptyset$ and $\mathcal{B} = \mathcal{R}  \cup \mathcal{S}$\\
-Nodes in $\mathcal{S}$ wait untill all terminal in $\mathcal{R}$ transmit successfully their packets, then they transmit.\\
-Nodes in $\mathcal{R}$ are allowded to transmit in slot $\tau +1$
+Nodes in $\mathcal{S}$ wait until all terminal in $\mathcal{R}$ transmit successfully their packets, then they transmit.\\
+Nodes in $\mathcal{R}$ are allowded to transmit in slot $\tau +1$.\\
+
+
+Intuitively we can think that choosing with equal probability ($p=1/2$) between retransmitting or waiting can be a good choice. This is the case, since the algorithm is in some sense ``symmetric'', but this is not true in general, as we will see for \algname{MBT}. Since $p=1/2$ we can think to simply toss a coin to split the batch.\\
 
 
 \algsetup{indent=2em} 
@@ -150,6 +153,41 @@ Nodes in $\mathcal{R}$ are allowded to transmit in slot $\tau +1$
 \end{algorithmic}
 \end{algorithm}
 
+Let $L_{n}$ be the expected running time in slots required to resolve a conflict among $n$ nodes using \algname{SBT}.
+Let $Q_{i}(n)={n\choose i} p^{i} (1-p)^{n-i}$ the probability that $i$ among $n$ nodes decide to transmit in the next slot (probability that $|\mathcal{R}|=i$). So if $i$ nodes decides to transmit we have first to solve a conflict of size $|\mathcal{R}|=i$ with expected time $L_{i}$ and later a conflict of size $|\mathcal{S}|=n-i$ with expected time $L_{n-i}$. $L_{n}$ is given by the cost of the current slot (1) plus the time to solve all the possibile decompositions of the current set.\\
+$L_{n}$ can be recursively computed (considering the factorial in $Q_{i}(n)$) collecting  $L_{n}$ in the following:
+\begin{equation}
+L_{n} = 1 + \sum_{i=0}^{n} Q_{i}(n) (L_{i}+L_{n-i})
+\end{equation}
+with
+\begin{equation*}
+L_{0} = L_{1}  = 1
+\end{equation*}
+
+To obtain an upper bound on the expeted time as $ n \rightarrow \infty$ further analysis techniques has to be used but here we want simply focus on how the algorithm behave when $n$ grows.\\
+
+\begin{center}
+\begin{tabular}{cccccc}
+$L_{2} = 5.0000 $&$L_{7} = 19.2009 $  &$L_{12} = 33.6238 $  &$L_{17} = 48.0522 $  &$L_{22} = 62.4783 $ \\ 
+$L_{3} = 7.6667 $&$L_{8} = 22.0854 $  &$L_{13} = 36.5096 $  &$L_{18} = 50.9375 $  &$L_{23} = 65.3636 $ \\ 
+$L_{4} = 10.5238 $&$L_{9} = 24.9690 $  &$L_{14} = 39.3955 $  &$L_{19} = 53.8227 $  &$L_{24} = 68.2489 $ \\ 
+$L_{5} = 13.4190 $&$L_{10} = 27.8532 $  &$L_{15} = 42.2812 $  &$L_{20} = 56.7078 $  &$L_{25} = 71.1344 $ \\  
+$L_{6} = 16.3131 $&$L_{11} = 30.7382 $  &$L_{16} = 45.1668 $  &$L_{21} = 59.5930 $  &$L_{26} = 74.0198 $ \\  
+\end{tabular} 
+\end{center}
+
+\begin{comment}
+$L_{2} = 5.0000 $&$L_{7} = 19.2009 $  &$L_{12} = 33.6238 $  &$L_{17} = 48.0522 $  &$L_{22} = 62.4783 $  &$L_{27} = 76.9053 $  \\ 
+$L_{3} = 7.6667 $&$L_{8} = 22.0854 $  &$L_{13} = 36.5096 $  &$L_{18} = 50.9375 $  &$L_{23} = 65.3636 $  &$L_{28} = 79.7908 $   \\ 
+$L_{4} = 10.5238 $&$L_{9} = 24.9690 $  &$L_{14} = 39.3955 $  &$L_{19} = 53.8227 $  &$L_{24} = 68.2489 $  &$L_{29} = 82.6763 $   \\ 
+$L_{5} = 13.4190 $&$L_{10} = 27.8532 $  &$L_{15} = 42.2812 $  &$L_{20} = 56.7078 $  &$L_{25} = 71.1344 $  &$L_{30} = 85.5618 $  \\  
+$L_{6} = 16.3131 $&$L_{11} = 30.7382 $  &$L_{16} = 45.1668 $  &$L_{21} = 59.5930 $  &$L_{26} = 74.0198 $  &$L_{31} = 88.4473 $  \\  
+\end{comment}
+
+
+Considering the efficiency $\eta_{n}=n/L_{n}$ (messages over slots) we have a decreasing serie $\eta_{1}=1$, $\eta_{2}=0.40$, \dots, $\eta_{16}=0.3542$ , \dots, $\eta_{31}=0.3505$. It can be shown \cite{capetanakis} that $\eta_{\infty} \approx 0.347$.\\
+Since the algorithm is much more efficient in solving small batches respect to large ones we would prefer to have (ideally) $n$ batches of size 1 rather than 1 batch of size $n$.\\
+So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be used to split the nodes into small groups and resolve them faster. \\This is the idea behind many improvements over the basic binary tree algorithm and it shows the importance of having an accurate estimate of $n$ when the cardinality is initially unknown.
 
 \subsection{Modified Binary Tree}
 
