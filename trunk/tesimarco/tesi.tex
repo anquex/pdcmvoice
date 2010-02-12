@@ -219,7 +219,7 @@ So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be
 \ovalbox{
 \begin{tikzpicture}[level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
 
-\node [circle,draw,label=below:\itshape C] (r){1}{
+\node [circle,draw,label=below:\itshape C,label=above:$\epsilon$] (r){1}{
   	child{node [circle,draw,label=below:\itshape C] {2} {
 		child{ node [circle,draw,label=below:$n_{1}$] {3} edge from parent node[ above, pos=.5] {0}
 			}
