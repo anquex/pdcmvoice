@@ -126,6 +126,7 @@ On the other hand windows based algorithms are more energy saving since a device
 \section{Binary Tree Algorithms}
 Basic binary tree algorithm was first introduced by Capetanakis in 1979.
 \subsection{Basic Binary Tree}
+\label{basicbinarytreedescription}
 At slot $\tau$ we have a batch $\mathcal{B}$ of size $n$.\\
 When a batch resolution process starts, initially all the nodes try to transmit and we can have 3 different events: \emph{idle}, \emph{success}, \emph{collision}.	\\
 The supervisor broadcast the result of the transmission to all the nodes.\\
@@ -160,7 +161,7 @@ Intuitively we can think that choosing with equal probability ($p=1/2$) between 
 \end{algorithm}
 
 Let $L_{n}$ be the expected running time in slots required to resolve a conflict among $n$ nodes using \algname{SBT}.
-Let $Q_{i}(n)={n\choose i} p^{i} (1-p)^{n-i}$ the probability that $i$ among $n$ nodes decide to transmit in the next slot (probability that $|\mathcal{R}|=i$). So if $i$ nodes decides to transmit we have first to solve a conflict of size $|\mathcal{R}|=i$ with expected time $L_{i}$ and later a conflict of size $|\mathcal{S}|=n-i$ with expected time $L_{n-i}$. $L_{n}$ is given by the cost of the current slot (1) \textcolor{red}{plus the expected time to solve all the possible decompositions of the current set}.\\
+Let $Q_{i}(n)={n\choose i} p^{i} (1-p)^{n-i}$ the probability that $i$ among $n$ nodes decide to transmit in the next slot (probability that $|\mathcal{R}|=i$). So if $i$ nodes decide to transmit we have first to solve a conflict of size $|\mathcal{R}|=i$ with expected time $L_{i}$ and later a conflict of size $|\mathcal{S}|=n-i$ with expected time $L_{n-i}$. $L_{n}$ is given by the cost of the current slot (1) \textcolor{red}{plus the expected time to solve all the possible decompositions of the current set}.\\
 $L_{n}$ can be recursively computed (considering the factorial in $Q_{i}(n)$) collecting  $L_{n}$ in the following:
 \begin{equation}
 L_{n} = 1 + \sum_{i=0}^{n} Q_{i}(n) (L_{i}+L_{n-i})
@@ -248,7 +249,7 @@ So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be
 \label{example-bbt}
 \end{figure}
 
-In figure \ref{example-bbt} we provide an example to further investigate the behavior of the algorithm. We notice that the instance start with a collision in slot 1. Then nodes $n_{1}$, $n_{2}$, $n_{3}$ decide to proceed with a retransmission while $n_{4}$, $n_{5}$ remain idle. In slot 2 we see another collision, after it $n_{1}$ decide to transmit again while $n_{2}$ and $ n_{3}$ to stay quiet. In slot 3 we have the first resolution, $n_{1}$ send successfully its message and won't no more take part to the collision resolution.\\
+In Figure \ref{example-bbt} we provide an example to further investigate the behavior of the algorithm. We notice that the instance start with a collision in slot 1. Then nodes $n_{1}$, $n_{2}$, $n_{3}$ decide to proceed with a retransmission while $n_{4}$, $n_{5}$ remain idle. In slot 2 we see another collision, after it $n_{1}$ decide to transmit again while $n_{2}$ and $ n_{3}$ to stay quiet. In slot 3 we have the first resolution, $n_{1}$ send successfully its message and won't no more take part to the collision resolution.\\
 We notice that we can know the cardinality of a collision only after it has been fully  resolved. For example we know only after slot 6 that the collision in slot 2 involved 3 nodes.\\
 
 \subsubsection{Nodes addresses}
@@ -262,34 +263,35 @@ We assume, following the conventional approach, to visit the tree in pre-order, 
 Initially all nodes are enabled so the prefix is the empty string $\epsilon$, the root address. $\epsilon$ is considered to be prefix of any string.\\
 Let $b_{1..k}$, with $b_{i} \in \{0,1\}$, be the current enabled $k$-bit prefix and \emph{event} $\in \{I,S,C\}$.\\
 The possible cases are: \textcolor{red}{qui incasino un po' le cose con una notazione un po' imprecisa}
-\begin{enumerate}
-\item if \emph{event} is $C$: no matter about $b_{1..k}$, next enabled interval will be $b_{1..k}0$ 
-\item if \emph{event} is not $C$ and $b_{k}=0$: we successfully resolved the left part of the sub-tree, now we will look for right one. Next enabled prefix will be $b_{1..k-1}1$
-\item if \emph{event} is not $C$ and $b_{k}=1$: we successfully resolved the right part of the sub-tree, now we will look for right one. Let $t = \arg\underset{i \in 1..k}{\max}|b_{i}=0$, in other words the position of the right most 0 in the prefix, if any. The new enabled interval will be $b_{t-1}1$.\\
+\begin{enumerate}[i.]
+\item \emph{event} is $C$: no matter about $b_{1..k}$, next enabled interval will be $b_{1..k}0$ 
+\item \emph{event} is not $C$ and $b_{k}=0$: we successfully resolved the left part of the sub-tree, now we will look for right one. Next enabled prefix will be $b_{1..k-1}1$
+\item \emph{event} is not $C$ and $b_{k}=1$: we successfully resolved the right part of the sub-tree, now we will look for right one. Let $t = \arg\underset{i \in 1..k}{\max}|b_{i}=0$, in other words the position of the right most 0 in the prefix, if any. The new enabled interval will be $b_{t-1}1$.\\
 If $t$ is undefined then in $b_{1..k}$ there is no 0. This means that $b_{1..k} = \epsilon$ or $b_{1..k}=\underbrace{1\dots 1}_{k}$ in both cases this indicates all the three has been explored.\\ So this work also for termination condition.\\
 You can see this rule applied after slot 6 and 12 for right branch exploration and 13 for termination.
 \end{enumerate}
 
 \subsubsection{\textcolor{red}{Real value approach}}
 \textcolor{red}{Decidere se inserire o meno le considerazioni sulla visione degli indirizzi dei nodi come numeri reali tra 0 e 1 e della risoluzione come intervalli reali abilitati contenenti un solo nodo}\\
-Every length binary string can be also interpreted as a number in the interval $[0,1)$
+Every length binary string can be also interpreted as a real number in the interval $[0,1)$
 \begin{equation*}
 11001 \leftrightarrow 1 \cdot 2^{-1} + 1 \cdot 2^{-2} + 0 \cdot 2^{-3} + 0 \cdot 2^{-4} +1 \cdot 2^{-5} 
 \end{equation*}
 by associating to each position in the string a different power of 2.\\
+So we could think, instead of tossing a coin only when needed, to initially to a coin, in the same manner, $L$ times to get a $L$-bits randomized string.
+In this way each node can be immediately be assigned to a set of length $2^{-L}$
 
 \subsection{Modified Binary Tree}
 
-Modified binary tree is a simple way to improve the basic variant for the binary tree algorithm.\\ The observation is that, during the tree traversal, sometimes we know in advance if the next slot there will be a collision. This happens when, after a collided slot ($\tau$), we get and idle slot ($\tau+1$) in the left branch of the binary tree: visiting the right branch ($\tau+2$) we will get a collision for sure.\\
-In fact in slot ($\tau$) we know that in the sub-tree there are at least 2 nodes and none of them owns to the left-branch sub-tree ($\tau+1$). So they must be in the right sub-tree and when enabled to transmit ($\tau+2$) transmissions will brake.
-Solution is to use previous node ($\tau+2$) as a virtual node, to skip it, and continue visiting node ($\tau+1$).$sibling$.$leftchild$ in slot $(\tau+2)$.
-This let us save a slot.
-
+Modified binary tree is a simple way to improve the basic variant for the binary tree algorithm.\\ The observation is that, during the tree traversal, sometimes we know in advance if the next slot there will be collided. This happens when, after a collided slot ($\tau$), we get and idle slot ($\tau+1$) in the left branch of the binary tree: visiting the right branch ($\tau+2$) we will get a collision for sure.\\
+In fact in slot ($\tau$) we know that in the sub-tree there are at least 2 nodes and none of them owns to the left-branch sub-tree ($\tau+1$). So they must be in the right sub-tree and when enabled to transmit ($\tau+2$) transmissions will disrupt.
+Solution is to keep previous node ($\tau+2$) as a virtual node, to skip it, and continue visiting node ($\tau+1$).$sibling$.$leftchild$ in slot $(\tau+2)$.
+This let us save a slot.\\
 
 \begin{figure}[htbp!]
 \centering
 \ovalbox{
-\begin{tikzpicture}[level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
+\begin{tikzpicture}[scale=0.8, level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
 
 \node [circle,draw,label=below:\itshape C,label=above:$\epsilon$] (r){1}{
   	child{node [circle,draw,label=below:\itshape C] {2} {
@@ -310,19 +312,30 @@ This let us save a slot.
 			}edge from parent node[ above, pos=.6] {1}}
 		} edge from parent node[ above, pos=.5] {0}}
 		child{ node [circle,draw,label=below:\itshape I ] {13} edge from parent node[ above, pos=.5] {1}}
-		} edge from parentnode[ above, pos=.5] {1}
-	}
-	
+		} edge from parent node[ above, pos=.5] {1}
+	}	
 };
-
-\draw [-latex,blue,thin,dashed] (s9) .. controls ++(45:2) and ++(0.5,2) .. (s11);
+\draw [-latex,blue,thin,dashed] (s9) .. controls ++(46:1.6) and ++(0.5,1.6) .. (s11);
 \draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
+%scale =1;
+%\draw [-latex,blue,thin,dashed] (s9) .. controls ++(45:2) and ++(0.5,2) .. (s11);
+%\draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
 \end{tikzpicture}
 }
-\caption{Same example as in Figure \ref{example-bbt} but using \algname{MBT}: tree structure remains the same but node 10 is skipped in the traversal}
+\caption{Same example as in Figure \ref{example-bbt} but using \algname{MBT}: tree structure do not change but node 10 is skipped in the traversal. $\tau=8$}
 \label{example-mbt}
 \end{figure}
 
+Expected time analysis is similar to section \ref{basicbinarytreedescription}. \textcolor{red}{The only difference is that after a collision, if we get and idle slot, we will skip the ``next one'' (and we won't pay for it). So we can see that the expected slot cost is $\left[1 \cdot (1-Q_{0}(n))+ 0\cdot Q_{0}(n)\right]$}. Then\\
+\begin{equation}
+L_{n}^{MBT} = \left(1 - Q_{0}(n)\right)+\sum_{i=0}^{n} Q_{i}(n) (L_{i}^{MBT}+L_{n-i}^{MBT})
+\end{equation}
+with
+\begin{equation*}
+L_{0}^{MBT} = L_{1}^{MBT}  = 1
+\end{equation*}
+Intuitively in this case, since an higher probability to stay silent, reduce the expected slot cost optimal transmit probability won't no more be $1/2$. At the same time lowering the transmit probability will increase the number of (wasted) idle slots. So the new optimal probability p will be somewhere in the interval (0,1/2).\\
+It can be shown that best achievable result is for $p=0.4175$ and, with this $p$, efficiency $\eta \approx 0.381$ as $n \to \infty$ which is asinthoticaly +10\% faster than basic BT.
 \chapter{Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.
