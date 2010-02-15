@@ -8,10 +8,11 @@
 \usepackage{epsfig}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
-\usepackage{float} % parametro H in figur : posizionamento esattamente li
+\usepackage{float} % parametro H in figure : posizionamento esattamente li
 \usepackage{verbatim}
 \usepackage{booktabs}
 \usepackage{enumerate} %lettere o altro negli indici
+\usepackage{hyperref} % prima di algorithm
 \usepackage{algorithmic} %float con un algoritmo
 \usepackage[ruled]{algorithm} %[boxed]
 \usepackage{subfig}    % + figure in un float figure
@@ -22,10 +23,14 @@
 \usepackage{fullpage}
 \usepackage{fancybox}
 
+
+%\pagestyle{headings} % {headings,plain ,empty}
+
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
 %%\usepackage{emptypage}
 
-
+%\usepackage[all]{hypcap}
+ 
 \usepackage{fancyhdr}
 \setcounter{tocdepth}{3}
 
@@ -41,7 +46,8 @@
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \renewcommand{\algorithmiccomment}[1]{// #1}
-%\author{\emph{Marco Bettiol}\quad{} 586580\\\emph{Antonio Quercia}\quad{}  588537}
+
+\author{Marco Bettiol}
 
 %per impaginare con giustifica sx-dx
   \tolerance 1414
@@ -52,7 +58,7 @@
   \vfuzz \hfuzz
   \raggedbottom
 
-\title{}
+\title{Batch Size Estimate}
 \begin{document}
 \include{mytitle}
 
@@ -66,7 +72,7 @@ Generally speaking a set of actors contending for a common resource define a \em
 Physical medium access is our contended resource and several stations connect to the same physical medium to share it.\\ At the beginning of computer networks, multiple access channel (MAC) was a big issue for efficient communications: so packet switched buffered networks were introduced reducing the conflicting set to only two stations and simplifying  the original problem. But switched networks could be realized only because the medium was wired: in fact a large collision domain could be sliced into smaller pieces and joined again together in ring, star or mesh structures.\\ 
 In a wireless context the problem can be no more avoided.\\  
 
-Nowdays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
+Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
 
 In particular we analyze the scenario where a reader broadcast a query to the in-range nodes. Once the request is received devices with datas of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic show a bursty nature which is the worst case for all shared medium scenarios.\\
 
@@ -98,29 +104,46 @@ In CSMA networks each node is able to determine the beginning of a new slot by s
 
 CSMA/CD is not suitable for pervasive wireless devices such as sensors or RFID tags since they has to be keep as simple as possible to satisfy energy and cost requirements: they do not implement this MAC scheme and so no detection/reduction of collision time is possible.\\
 
-We assume that there is no external source of interference and that a transmission can fail only when a collision take place.
+We assume that there is no external source of interference and that a transmission can fail only when a collision takes place.
 In each slot, when $k$ nodes transmit simultaneously, the success or the transmission depends on $k$:
 \begin{itemize}
 \item if $k=0$ then no transmission were attempted. The slot is said to be \emph{empty} or \emph{idle};
-\item if $k=1$ then the transmission succeeds. The slot is said to be \emph{successful} and the node that transmitted \emph{resolved};
+\item if $k=1$ then the transmission succeeds. The slot is said to be \emph{successful};
 \item if $k\geq 2$. there is a conflict, meaning that the transmission interfere destructively so that none succeeds. The slot is said to be \emph{collided}.
 \end{itemize}
 
-We assume that at the beginning of the algorithm there is no \emph{resolved node} and that they all are in the initial batch.
-Another consideration is that a node that has already been resolved in the current process no longer take place in it and it remain quiet until the current resolution ends up, eventually waiting for the next one to start.
-
+We assume that nodes having new messages to deliver generated after the start of the resolution process will wait until the end before proceeding with their delivery.
 
 \chapter{Batch Resolution}
 
-Most of the batch resolution algorithm were originally developed for slotted ALOHA scenarios.\\
+The general idea is as follows: the reader probes a set of nodes, and the nodes reply back. 
+Since devices we consider operate in the wireless medium, collisions will result whenever a reader probes a set of nodes. The batch resolution algorithms use anti-collision schemes to resolve collisions.
+There are many algorithms that enable batch resolution, and these can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic}.\\
+
+%%probabilistic
+In \emph{probabilistic algorithms}, a framed ALOHA scheme is used where the reader communicates the frame length, and the nodes pick a particular slot in the frame to transmit. The reader repeats this process until all nodes have transmitted at least once successfully in a slot without collisions. 
+
+%%deterministic 
+
+\emph{Deterministic algorithms} typically use a slotted ALOHA model, where the reader identifies the set of nodes that need to transmit in a given slot, and tries to reduce the contending batch in the next slot based on the result in the previous slot. These algorithms fall into the class of tree-based algorithms with the nodes classified on a binary tree based on their id, and the reader moving down the tree at each step to identify all nodes. \\
+
+Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate contending tag subsets using a probe at the beginning of each slot.
+
+Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. So not every device is able to support this class of algorithms. For example passive tags, which are the \textcolor{red}{most dummy} devices, cannot understand this kind of requests and will continue to transmit in every resolution cycle, which lengthens the total time needed. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes (immediate feedback) that have succeeded at the end of each frame, and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmit its message and \textcolor{red}{it?} stays in silent until the end of the algorithm is said to be \emph{resolved}.\\
+They also assume a slotted model, and not a framed model, wherein the reader responds before and/or after every slot, adding overhead to the resolution.\\
+\textcolor{red}{
+Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be alway active and listening to the channel in each step of the algorithm.
+On the other hand windows based algorithms are more energy saving since a device can sleep for most of time in the transmission window and only to wake up in the slot it has decided to transmit. In a windows of $w$ slots  a node will be up only for $1/w$ of time and wait for feedback at the end of the window.}
+
+%%
+
+Most of the batch resolution algorithm were originally developed for ALOHA based scenarios.\\
 \textcolor{red}{
 These algorithms can be flawlessly ported to the CSMA scheme:
 \begin{itemize}
 \item by utilizing empty slots as ``ALOHA slot delimiters''
 \item by explicitly sending a slot delimiter marker.
 \end{itemize}
-Furthermore binary tree algorithms require explicit feedback about channel status. So they require devices to be alway active and listening to the channel in each step of the algorithm.
-On the other hand windows based algorithms are more energy saving since a device can sleep for most of time in the transmission window and only to wake up in the slot it has decided to transmit. In a windows of $w$ slots  a node will be up only for $1/w$ of time and wait for feedback at the end of the window.
 } 
  
 \section{Binary Tree Algorithms}
@@ -175,26 +198,18 @@ To obtain an upper bound on the expected time as $ n \rightarrow \infty$ further
 
 \begin{center}
 \begin{tabular}{cccccc}
-$L_{2} = 5.0000 $&$L_{7} = 19.2009 $  &$L_{12} = 33.6238 $  &$L_{17} = 48.0522 $  &$L_{22} = 62.4783 $ \\ 
-$L_{3} = 7.6667 $&$L_{8} = 22.0854 $  &$L_{13} = 36.5096 $  &$L_{18} = 50.9375 $  &$L_{23} = 65.3636 $ \\ 
-$L_{4} = 10.5238 $&$L_{9} = 24.9690 $  &$L_{14} = 39.3955 $  &$L_{19} = 53.8227 $  &$L_{24} = 68.2489 $ \\ 
-$L_{5} = 13.4190 $&$L_{10} = 27.8532 $  &$L_{15} = 42.2812 $  &$L_{20} = 56.7078 $  &$L_{25} = 71.1344 $ \\  
-$L_{6} = 16.3131 $&$L_{11} = 30.7382 $  &$L_{16} = 45.1668 $  &$L_{21} = 59.5930 $  &$L_{26} = 74.0198 $ \\  
+$L_{2} = 4.0000 $&$L_{7} = 18.2009 $  &$L_{12} = 31.6238 $  &$L_{17} = 47.0522 $  &$L_{22} = 61.4783 $ \\ 
+$L_{3} = 6.6667 $&$L_{8} = 21.0854 $  &$L_{13} = 35.5096 $  &$L_{18} = 49.9375 $  &$L_{23} = 64.3636 $ \\ 
+$L_{4} = 9.5238 $&$L_{9} = 23.9690 $  &$L_{14} = 38.3955 $  &$L_{19} = 52.8227 $  &$L_{24} = 67.2489 $ \\ 
+$L_{5} = 12.4190 $&$L_{10} = 26.8532 $  &$L_{15} = 41.2812 $  &$L_{20} = 55.7078 $  &$L_{25} = 70.1344 $ \\  
+$L_{6} = 15.3131 $&$L_{11} = 29.7382 $  &$L_{16} = 44.1668 $  &$L_{21} = 58.5930 $  &$L_{26} = 73.0198 $ \\  
 \end{tabular} 
 \end{center}
 
-\begin{comment}
-$L_{2} = 5.0000 $&$L_{7} = 19.2009 $  &$L_{12} = 33.6238 $  &$L_{17} = 48.0522 $  &$L_{22} = 62.4783 $  &$L_{27} = 76.9053 $  \\ 
-$L_{3} = 7.6667 $&$L_{8} = 22.0854 $  &$L_{13} = 36.5096 $  &$L_{18} = 50.9375 $  &$L_{23} = 65.3636 $  &$L_{28} = 79.7908 $   \\ 
-$L_{4} = 10.5238 $&$L_{9} = 24.9690 $  &$L_{14} = 39.3955 $  &$L_{19} = 53.8227 $  &$L_{24} = 68.2489 $  &$L_{29} = 82.6763 $   \\ 
-$L_{5} = 13.4190 $&$L_{10} = 27.8532 $  &$L_{15} = 42.2812 $  &$L_{20} = 56.7078 $  &$L_{25} = 71.1344 $  &$L_{30} = 85.5618 $  \\  
-$L_{6} = 16.3131 $&$L_{11} = 30.7382 $  &$L_{16} = 45.1668 $  &$L_{21} = 59.5930 $  &$L_{26} = 74.0198 $  &$L_{31} = 88.4473 $  \\  
-\end{comment}
 
+Considering the efficiency $\eta_{n}=n/L_{n}$ (messages over slots) we have a decreasing serie $\eta_{1}=1$, $\eta_{2}=0.50$, $\eta_{3}=0.4499$, \dots, $\eta_{16}=0.3622$ , \dots, $\eta_{31}=0.3505$. It can be shown \cite{capetanakis} that $\eta_{\infty} \approx 0.347$.\\
 
-Considering the efficiency $\eta_{n}=n/L_{n}$ (messages over slots) we have a decreasing serie $\eta_{1}=1$, $\eta_{2}=0.40$, \dots, $\eta_{16}=0.3542$ , \dots, $\eta_{31}=0.3505$. It can be shown \cite{capetanakis} that $\eta_{\infty} \approx 0.347$.\\
-
-Since the algorithm is much more efficient in solving small batches respect to large ones we would prefer to have (ideally) $n$ batches of size 1 rather than 1 batch of size $n$.\\
+Since the algorithm is much more efficient in solving small batches respect to large ones we would prefer to have (ideally)  $n$ batches of size 1 rather than 1 batch of size $n$.\\
 So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be used to split the nodes into small groups and resolve them faster. \\This is the idea behind many improvements over the basic binary tree algorithm and it shows the importance of having an accurate estimate of $n$ when the cardinality is initially unknown.
 
 \begin{figure}
@@ -245,7 +260,7 @@ So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be
 };
 \end{tikzpicture}
 }
-\caption{An istance of the binary tree algorithm for $n=5$ nodes. The number inside the each circle identifies the slot number. The label below identifies the event occurring: \textit{I} for \emph{idle}, \textit{C} for \emph{collision}, $n_{i}$ for resolution of node $i$ }.
+\caption{An istance of the binary tree algorithm for $n=5$ nodes. The number inside the each circle identifies the slot number. The label below identifies the event occurring: \textit{I} for \emph{idle}, \textit{C} for \emph{collision}, $n_{i}$ for resolution of node $i$. 0/1 branches is analogous to head/tail.}.
 \label{example-bbt}
 \end{figure}
 
@@ -258,29 +273,44 @@ Looking carefully to the tree you can see that each node resolved is characteriz
 
 \subsubsection{Tree traversal rules}
 
-The inquirer must provide feedback about the event in a slot but tree walking can be either explicit or implicit. It is explicit if, with feedback, the reader provide also the address in the root of the currently enabled sub-tree. Otherwise it is said to be implicit and each node compute autonomously the new enabled sub-tree.\\
+\textcolor{red}{
+The inquirer must provide feedback about the event in a slot but tree walking can be either explicit or implicit. It is explicit if, with feedback, the reader provide also the address in the root of the currently enabled sub-tree. Otherwise it is said to be implicit and each node compute autonomously the new enabled sub-tree.}\\
 We assume, following the conventional approach, to visit the tree in pre-order, giving precedence to sub-trees starting with 0.\\
-Initially all nodes are enabled so the prefix is the empty string $\epsilon$, the root address. $\epsilon$ is considered to be prefix of any string.\\
-Let $b_{1..k}$, with $b_{i} \in \{0,1\}$, be the current enabled $k$-bit prefix and \emph{event} $\in \{I,S,C\}$.\\
+Initially all nodes are enabled so the prefix is the empty string $\epsilon=b_{1..0}$, the root address. $\epsilon$ is considered to be prefix of any string.\\
+Let $b_{1..k}$, with $b_{i} \in \{0,1\}$, $k \geq0$, be the current enabled $k$-bit prefix and \emph{event} $\in \{I,S,C\}$.\\
 The possible cases are: \textcolor{red}{qui incasino un po' le cose con una notazione un po' imprecisa}
 \begin{enumerate}[i.]
-\item \emph{event} is $C$: no matter about $b_{1..k}$, next enabled interval will be $b_{1..k}0$ 
-\item \emph{event} is not $C$ and $b_{k}=0$: we successfully resolved the left part of the sub-tree, now we will look for right one. Next enabled prefix will be $b_{1..k-1}1$
-\item \emph{event} is not $C$ and $b_{k}=1$: we successfully resolved the right part of the sub-tree, now we will look for right one. Let $t = \arg\underset{i \in 1..k}{\max}|b_{i}=0$, in other words the position of the right most 0 in the prefix, if any. The new enabled interval will be $b_{t-1}1$.\\
-If $t$ is undefined then in $b_{1..k}$ there is no 0. This means that $b_{1..k} = \epsilon$ or $b_{1..k}=\underbrace{1\dots 1}_{k}$ in both cases this indicates all the three has been explored.\\ So this work also for termination condition.\\
-You can see this rule applied after slot 6 and 12 for right branch exploration and 13 for termination.
+\item \emph{event} is $C$: no matter about $b_{1..k}$, next enabled interval will be $b_{1..k}0$;
+\item \emph{event} is not $C$ and $b_{k}=0$: we successfully resolved the left part of the sub-tree, now we will look for right one. Next enabled prefix will be $b_{1..k-1}1$;
+\item \emph{event} is not $C$ and $b_{k}=1$: we completed the  resolution of a left sub-tree, now we will look in the way back to the root for the first right sub-tree still unresolved. Let $t$ be $ \arg\underset{i \in 1..k}{\max}|b_{i}=0$ (or $t\gets 0$ if $b_{1..k}$ having 1 or more 1), in other words the position of the right most 0 in the prefix, if any. The new enabled interval will be $b_{t-1}1$. You can see this rule applied after slot 6 and 12 in the example;
+\item termination condition is checking $b_{1..k}=\epsilon$.
 \end{enumerate}
 
 \subsubsection{\textcolor{red}{Real value approach}}
-\textcolor{red}{Decidere se inserire o meno le considerazioni sulla visione degli indirizzi dei nodi come numeri reali tra 0 e 1 e della risoluzione come intervalli reali abilitati contenenti un solo nodo}\\
+\textcolor{red}{Decidere se inserire o meno le considerazioni sulla visione degli indirizzi (alias ID) dei nodi come numeri reali tra 0 e 1 e della risoluzione come intervalli reali abilitati contenenti un solo nodo. Utile per collegarsi a popovski/cidon e alla suddivisione in insiemi in generale}\\
 Every length binary string can be also interpreted as a real number in the interval $[0,1)$
 \begin{equation*}
 11001 \leftrightarrow 1 \cdot 2^{-1} + 1 \cdot 2^{-2} + 0 \cdot 2^{-3} + 0 \cdot 2^{-4} +1 \cdot 2^{-5} 
 \end{equation*}
 by associating to each position in the string a different power of 2.\\
-So we could think, instead of tossing a coin only when needed, to initially to a coin, in the same manner, $L$ times to get a $L$-bits randomized string.
-In this way each node can be immediately be assigned to a set of length $2^{-L}$
+In general a given a string $\mathbf{b_{i}}=(b_{i1}b_{i2}b_{i3}\ldots)$, with $b_{ij} \in \{0,1\}$, can be associated to a real number $r_{i} \in [0,1)$ by a bijective map $r$:\\
 
+\begin{equation}
+r_{i}=r(\mathbf{b_{i}})=\sum_{j=1}^{\infty} \ \frac{b_{ij}}{2^{j}}
+\end{equation}
+
+So we could think, instead of tossing a coin only when needed, to initially flip a coin, in the same manner, $L$ times to get a $L$-bits randomized string.
+In this way each node can be immediately be assigned to a set of length $2^{-L}$. There are $2^{L}$ relatively ordered distinct sets in the interval [0,1).\\
+Given a finite control string $\mathbf{a_{i}}=(a_{i1}a_{i2}\ldots a_{ik})$, it enables all the nodes identified by real number $x$ within the interval:
+\begin{equation}
+	r(\mathbf{a_{i}})\leq x <r(\mathbf{a_{i}})+2^{-k}
+\end{equation}
+
+\textcolor{red}{QUESTA OSSERVAZIONE é SOLO FRUTTO DEL MIO SACCO E MI SEMBRAVA INTERESSANTE.\\
+An interesting observation is that the distribution of the nodes into the real interval depends upon $p$, the probability  to obtain 0 or 1 tossing a biased coin.
+è interessante perchè per il basic binary tree p ottimo è 0.5 per cui si ottiene una distribuzione sperabilmente uniforme dei nodi (o poisson?). Mentre 0.5 non è ottimo per il Modified binary tree: p ottimo 0.4175. quindi la distribuzione migliore per il MBT è una specie di esponenziale discreta e la profondità dell'albero aumenta più ci si avvicina a 1. Questo è quello che mi dice l'intuizione e non ho visto scritto da nessuna parte (magari sul paper orginale del MBT c'è). per cui il MBT non può essere utilizzato banalmente per fare stime tramite una risoluzione parziale di un qualunque sotto intervallo $[0,x)$ con k nodi poichè $n \neq \frac{k}{x} $ (popovski) a meno che non sia nota la distribuzione dei nodi $f(x) $e si normalizzi per $f(x)$ al posto che $x$. 
+NOTA: in popovski pg 295  dicono \emph{To summarize, we can say that without any modification, the BT (or the MBT) algorithm offers a way to estimate the unknown conflict multiplicity}. il che è ok ma solo se MBT usa p=0.5
+per cui $f(x)=x$. studiare $f(x,p)$?}
 \subsection{Modified Binary Tree}
 
 Modified binary tree is a simple way to improve the basic variant for the binary tree algorithm.\\ The observation is that, during the tree traversal, sometimes we know in advance if the next slot there will be collided. This happens when, after a collided slot ($\tau$), we get and idle slot ($\tau+1$) in the left branch of the binary tree: visiting the right branch ($\tau+2$) we will get a collision for sure.\\
@@ -291,7 +321,7 @@ This let us save a slot.\\
 \begin{figure}[htbp!]
 \centering
 \ovalbox{
-\begin{tikzpicture}[scale=0.8, level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
+\begin{tikzpicture}[scale=1, level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
 
 \node [circle,draw,label=below:\itshape C,label=above:$\epsilon$] (r){1}{
   	child{node [circle,draw,label=below:\itshape C] {2} {
@@ -315,18 +345,19 @@ This let us save a slot.\\
 		} edge from parent node[ above, pos=.5] {1}
 	}	
 };
-\draw [-latex,blue,thin,dashed] (s9) .. controls ++(46:1.6) and ++(0.5,1.6) .. (s11);
-\draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
-%scale =1;
-%\draw [-latex,blue,thin,dashed] (s9) .. controls ++(45:2) and ++(0.5,2) .. (s11);
+%scale=0.8
+%\draw [-latex,blue,thin,dashed] (s9) .. controls ++(46:1.6) and ++(0.5,1.6) .. (s11);
 %\draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
+%scale =1;
+\draw [-latex,blue,thin,dashed] (s9) .. controls ++(45:2) and ++(0.5,2) .. (s11);
+\draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
 \end{tikzpicture}
 }
 \caption{Same example as in Figure \ref{example-bbt} but using \algname{MBT}: tree structure do not change but node 10 is skipped in the traversal. $\tau=8$}
 \label{example-mbt}
 \end{figure}
 
-Expected time analysis is similar to section \ref{basicbinarytreedescription}. \textcolor{red}{The only difference is that after a collision, if we get and idle slot, we will skip the ``next one'' (and we won't pay for it). So we can see that the expected slot cost is $\left[1 \cdot (1-Q_{0}(n))+ 0\cdot Q_{0}(n)\right]$}. Then\\
+Expected time analysis is analogous  to section \ref{basicbinarytreedescription}. \textcolor{red}{The only difference is that after a collision, if we get and idle slot, we will skip the ``next one'' (and we won't pay for it). So we can see that the expected slot cost is $\left[1 \cdot (1-Q_{0}(n))+ 0\cdot Q_{0}(n)\right]$}. Then\\
 \begin{equation}
 L_{n}^{MBT} = \left(1 - Q_{0}(n)\right)+\sum_{i=0}^{n} Q_{i}(n) (L_{i}^{MBT}+L_{n-i}^{MBT})
 \end{equation}
@@ -334,8 +365,8 @@ with
 \begin{equation*}
 L_{0}^{MBT} = L_{1}^{MBT}  = 1
 \end{equation*}
-Intuitively in this case, since an higher probability to stay silent, reduce the expected slot cost optimal transmit probability won't no more be $1/2$. At the same time lowering the transmit probability will increase the number of (wasted) idle slots. So the new optimal probability p will be somewhere in the interval (0,1/2).\\
-It can be shown that best achievable result is for $p=0.4175$ and, with this $p$, efficiency $\eta \approx 0.381$ as $n \to \infty$ which is asinthoticaly +10\% faster than basic BT.
+Intuitively in this case, since an higher probability to stay silent, reduces the expected slot cost, optimal transmit probability won't no more be $1/2$. At the same time lowering the transmit probability will increase the number of (wasted) idle slots. So the new optimal probability p will be somewhere in the interval (0,1/2).\\
+It can be shown that best achievable result is for $p=0.4175$ and, with this $p$, ef ficiency $\eta \approx 0.381$ as $n \to \infty$ which is asinthoticaly +10\% faster than basic BT.
 \chapter{Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.
@@ -348,8 +379,6 @@ risoluzione di un batch parziale. mapping come in ``Real value approach''
 Greenberg algorithm is simply straightforward.
 \algsetup{indent=2em} 
 \begin{algorithm}[h!]
-\caption{\algname{Greenberg}}
-\label{alg-greenberg}
 \begin{algorithmic}
 \STATE $i\gets 0$
 \REPEAT
@@ -358,6 +387,8 @@ Greenberg algorithm is simply straightforward.
 \UNTIL {no collision occurs}
 \STATE $\hat{n} \gets 2^{i}$
 \end{algorithmic}
+\caption{\algname{Greenberg}}
+\label{alg-greenberg}
 \end{algorithm}
 
 The idea behind algorithm \ref{alg-greenberg} is quite simple. As the algorithm goes on the initial unknown batch size $n$
