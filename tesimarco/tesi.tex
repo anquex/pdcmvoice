@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper,twocolumns]{report}
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -24,6 +24,8 @@
 \usepackage{fullpage}
 \usepackage{fancybox}
 \usepackage{rotating}
+\usepackage{supertabular}
+\usepackage{lscape}
 
 
 %\pagestyle{headings} % {headings,plain ,empty}
@@ -89,6 +91,7 @@
 \tableofcontents
 %\listofalgorithms
 \listoffigures
+\listoftables
 
 
 \chapter{Introduction}
@@ -425,6 +428,9 @@ Each choice is independent of what the nodes did in the previous steps.
 
 
 
+
+
+
 \begin{figure*}[htb!]
     \centering
     \usetikzlibrary{snakes}
@@ -493,7 +499,7 @@ Each choice is independent of what the nodes did in the previous steps.
 \end{figure*}
 
 \begin{table}[htdp]
-\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}]$. The ratio $E[\hat{n}]/n$ monotonically decrease and gets stable at $0.9142$}
+\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}]$. The ratio $E[\hat{n}]/n$ monotonically decreases and gets stable at $0.9142$}
 \begin{center}
 \begin{tabular}{rr@{.}lr@{.}l}
  n & \multicolumn{2}{r}{$E[\hat{n}]$} & \multicolumn{2}{c}{$E[\hat{n}]/n$} \\ \hline \hline
@@ -520,12 +526,37 @@ Each choice is independent of what the nodes did in the previous steps.
 
 
 \section{Window Based}
-\chapter{Inital Batch size estimate}
-We investigated about a fast algorithm for moltipicity estimation.
+\chapter{Initial Batch size estimate}
+We investigated about a fast algorithm for multipicity estimation.\\
+
+Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively :
+\begin{enumerate}
+\item the probability to get an empty slot (no transmissions)
+\begin{equation}q_{0}(p,n)=(1-p)^{n}\end{equation} 
+\item the probability to get a successful transmission (one transmission)
+\begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \end{equation} 
+\item the probability to get a collision (two or more transmissions)
+\begin{equation}q_{2}(p,n)=1-q_{0}-q_{1}\end{equation}
+\end{enumerate}
+
+In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability p. Naming each slot $i$ starting with 1, 2, \dots, we have:
+\begin{equation}
+	p_{i}=p(i)=2^{i}
+\end{equation}
+
+Given $n$ nodes, the probability to terminate algorithm \ref{alg-greenberg} in slot $i$ is given by:
+\begin{equation}
+f(n,i)=\prod_{k=1}^{i-1}q_{2}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))  
+\label{eq:bgstopprobability}
+\end{equation}
+
+
 \chapter{Comparison}
 
 
+
 \begin{comment}
+
 \begin{sidewaystable}
 \centering
 \begin{tabular}{|llllllllp{1in}lp{1in}|}
@@ -555,6 +586,7 @@ III; for the Flints see Tables II and IV; for the Animal Bones see
 Table V.}\label{rotfloat2} \end{sidewaystable} 
 \end{comment}
 
+\include{appendix}
 
 
 \include{bibliography}
