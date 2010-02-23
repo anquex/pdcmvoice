@@ -1,9 +1,31 @@
-\appendix
+\begin{appendices}
 
-\chapter{Appendix}
+\chapter[Appendix]{}
+
+\section{Greenberg bounded \emph{m}-moments}
+
+In general for base $b$ greenberg algorithm the first and second moments are bounded by:
+
+\begin{equation}
+\phi= \frac{1}{\log b} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-b^{k}x}(1+b^{k}x))x^{-2} \, dx
+\end{equation}
+
+\begin{equation}
+\Phi= \frac{1}{\log b} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-b^{k}x}(1+b^{k}x))x^{-3} \, dx
+\end{equation}
+
+\textcolor{red}{note sul calcolo\\ va velocemente a 0 quind basta considerare un intervallo iniziale  limitato\\
+anche per produttoria con k è lo stesso.\\ risolto con quad matlab}
 
 \section{Greenberg Stop Probability}
 In following table \ref{basic-greenberg-stop-probabilities} we report how the end  up probability (equation \ref{eq:bgstopprobability}) is distributed among slots given a batch of size $n$.  Column ``$n$'' lists  the considered batch sizes. $\hat{n}$ is the resulting estimation (without corrections) when ending up in the underneath slot.\\  For sake of simplicity considered values are all powers of 2.\\
+Datas presented were post-processed to become more accessible:
+\begin{itemize}
+\item values above $10^{-3}$ are reported in format ('\emph{\%1.3f}');
+\item values below $10^{-12}$ are not presented since are tight close to 0.
+\item other values are presented in exponential notation and rounded to the first meaningful digit ('\emph{\%1.e}')
+\end{itemize}
+
 
 \begin{sidewaystable}
 %%%%%
@@ -66,3 +88,5 @@ n & slot:& 7 &8 &9 &10 &11 &12 &13 &14 &15 &16 &17 &18 &19 &20 &21 &22 \\
 \caption{Analytically computed basic Greeenberg stop probabilities}
 \label{basic-greenberg-stop-probabilities}
 \end{sidewaystable}
+
+\end{appendices}
