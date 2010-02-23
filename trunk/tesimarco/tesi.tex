@@ -25,7 +25,7 @@
 \usepackage{fancybox}
 \usepackage{rotating}
 \usepackage{supertabular}
-\usepackage{lscape}
+\usepackage{appendix}
 
 
 %\pagestyle{headings} % {headings,plain ,empty}
@@ -36,6 +36,9 @@
 %\usepackage[all]{hypcap}
 
 \usepackage{fancyhdr}
+
+\renewcommand{\appendixname}{}
+\renewcommand{\appendixtocname}{Appendices}
 \setcounter{tocdepth}{3}
 
 \frenchspacing
@@ -401,6 +404,29 @@ We present here some noteworthy techniques for batch size estimate that can be f
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.
 \section{CBT}
 non è propriamente di stima ma di risoluzione parziale, cmq può essere usato come alg di stima 
+
+\begin{figure}[htbp!]
+\centering
+\ovalbox{
+\begin{tikzpicture}[level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
+
+\node [circle,draw,label=below:\itshape C,label=above:$\epsilon$] (r){1}{
+  	child{node [circle,draw,label=below:\itshape C] {2} {
+		child{ node [circle,draw,label=below:$n_{1}$] {3} edge from parent node[ above, pos=.5] {0}
+			}
+		child{ node [circle,draw, label=below:\itshape C] {4}{		
+			child{ node [circle,draw,label=below:$n_{2}$] {5} edge from parent node[ above, pos=.6] {0}}
+			child{ node [circle,draw,label=below:$n_{3}$] {6} edge from parent node[ above, pos=.6] {1}}
+			} edge from parent node[ above, pos=.5] {1}}
+			} edge from parent node[above, pos=.5] {0}
+  		}
+	child {node {} {child {node {} edge from parent[draw=none]} child {node {} edge from parent[draw=none]}}edge from parent[draw=none]}
+};
+\end{tikzpicture}
+}
+\caption[CBT example]{ Same example as in Figure \ref{example-bbt} but CBT ends up after two consecutive successful transmissions}
+\end{figure}
+
 \section{Cidon}
 risoluzione di un batch parziale. mapping come in ``Real value approach''
 \section{Greenberg}
@@ -494,9 +520,19 @@ Each choice is independent of what the nodes did in the previous steps.
         %   
     
     \end{tikzpicture}
-    \caption[Idealised directional spectrum]{Immagine provvisoria da usare come base di partenza}
+    \caption[Basic greenberg batch split idea]{caption}
     \label{fig:sp2d}
 \end{figure*}
+
+Using Mellin's transform 
+
+\begin{equation}
+\phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-2} \, dx
+\end{equation}
+
+\begin{equation}
+\Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-3} \, dx
+\end{equation}
 
 \begin{table}[htdp]
 \caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}]$. The ratio $E[\hat{n}]/n$ monotonically decreases and gets stable at $0.9142$}
@@ -526,9 +562,10 @@ Each choice is independent of what the nodes did in the previous steps.
 
 
 \section{Window Based}
-\chapter{Initial Batch size estimate}
+\chapter{Initial batch size estimate}
 We investigated about a fast algorithm for multipicity estimation.\\
 
+\section{Greenberg Inspection}
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively :
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
@@ -536,7 +573,7 @@ Given a current slot transmission probability $p$ and a batch of size $n$ we def
 \item the probability to get a successful transmission (one transmission)
 \begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \end{equation} 
 \item the probability to get a collision (two or more transmissions)
-\begin{equation}q_{2}(p,n)=1-q_{0}-q_{1}\end{equation}
+\begin{equation}q_{2+}(p,n)=1-q_{0}-q_{1}\end{equation}
 \end{enumerate}
 
 In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability p. Naming each slot $i$ starting with 1, 2, \dots, we have:
@@ -546,9 +583,11 @@ In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated wit
 
 Given $n$ nodes, the probability to terminate algorithm \ref{alg-greenberg} in slot $i$ is given by:
 \begin{equation}
-f(n,i)=\prod_{k=1}^{i-1}q_{2}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))  
+f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))  
 \label{eq:bgstopprobability}
 \end{equation}
+
+An overview of the behaviour of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities}.
 
 
 \chapter{Comparison}
