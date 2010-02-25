@@ -26,6 +26,7 @@
 \usepackage{rotating}
 \usepackage{supertabular}
 \usepackage{appendix}
+\usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
 
 
 %\pagestyle{headings} % {headings,plain ,empty}
@@ -178,7 +179,7 @@ These algorithms can be flawlessly ported to the CSMA scheme:
 } 
  
 \section{Binary Tree Algorithms}
-Basic binary tree algorithm was first introduced by Capetanakis in 1979.
+Basic binary tree algorithm was first introduced by Capetanakis  \cite{capetanakis} in 1979.
 \subsection{Basic Binary Tree}
 \label{basicbinarytreedescription}
 At slot $\tau$ we have a batch $\mathcal{B}$ of size $n$.\\
@@ -401,11 +402,22 @@ It can be shown that best achievable result is for $p=0.4175$ and, with this $p$
 Not using optimal probabililty for $p$ but 1/2 results in about 1.5\% peak performance loss which is a moderate decrease.\\
 \chapter{Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
-If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.
-\section{CBT}
-non è propriamente di stima ma di risoluzione parziale, cmq può essere usato come alg di stima 
+If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
 
-\begin{figure}[htbp!]
+In general, we assume not to have any \emph{a priori} statistical knowledge about the multiplicity of the nodes involved in a collision. So estimation techniques must provide efficient ways to obtain an estimate for the general zero-knowledge scenario.\\
+\section{CBT}
+
+The most simple idea to obtain an estimate of the batch size could be to solve a minimum amount of nodes to obtain an estimate. This can be done, for example, by using deterministic algorithms such as CBT.\\
+The clipped binary tree algorithm is identical to the modified binary tree algorithm with $p=1/2$ except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
+When the algorithm stops we know than the last two nodes resolved owns to the same level $i$ of the tree (root is at level=0).\\
+We could think to obtain an estimate as:
+\begin{equation*}
+\hat{n}\gets2^{i}
+\end{equation*}
+The idea is interesting but the fact of considering recursively subsets of subsets of the initial batch brings to disastrous performance: as reported in \cite{greenberg87}, second and all higher moments of this estimate are infinite.\\
+So this simple method is not good to obtain an estimate. 
+
+\begin{figure}[H]
 \centering
 \ovalbox{
 \begin{tikzpicture}[level/.style={thick,level distance = 17mm, sibling distance=80mm/#1}]
@@ -424,11 +436,26 @@ non è propriamente di stima ma di risoluzione parziale, cmq può essere usato c
 };
 \end{tikzpicture}
 }
-\caption[CBT example]{ Same example as in Figure \ref{example-bbt} but CBT ends up after two consecutive successful transmissions}
+\caption[CBT example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
 \end{figure}
 
 \section{Cidon}
-risoluzione di un batch parziale. mapping come in ``Real value approach''
+
+Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describe a complete resolution algorithm based on two phases:
+ 
+\begin{enumerate}
+\item to get an estimate of the initial batch using a partial deterministic resolution scheme. 
+\item to perform an optimized complete deterministic resolution basing on the results of phase 1. 
+\end{enumerate}
+
+The strategy adopted to obtain the estimate is to resolve a small portion of the batch and to accumulate the number of successful transmission resulted.\\
+
+Initially we fix a probability $p_{\epsilon}$ that determines how the initial batch is split the very first time.\\
+We named it $p_{\epsilon}$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
+
+As usual we have initially a batch of unknown size $n$.
+At the beginning of the algorithm each node chooses to transmit with probability $p_{\epsilon}$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$
+ 
 \section{Greenberg}
 
 Greenberg algorithm is simply straightforward.
@@ -450,12 +477,7 @@ The idea behind algorithm \ref{alg-greenberg} is quite simple. As the algorithm 
 comes progressively sliced into smaller pieces. Only the nodes virtually inside the slice are allowed to transmit.\\
 If two o more nodes decide to transmit we get a collision,\\
 An important note is that the algorithm always involve all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
-Each choice is independent of what the nodes did in the previous steps. 
-
-
-
-
-
+Each choice is independent of what the nodes did in the previous steps.\\
 
 \begin{figure*}[htb!]
     \centering
@@ -535,27 +557,28 @@ Using Mellin's transform
 \end{equation}
 
 \begin{table}[htdp]
-\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}]$. The ratio $E[\hat{n}]/n$ monotonically decreases and gets stable at $0.9142$}
+\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$}
 \begin{center}
-\begin{tabular}{rr@{.}lr@{.}l}
- n & \multicolumn{2}{r}{$E[\hat{n}]$} & \multicolumn{2}{c}{$E[\hat{n}]/n$} \\ \hline \hline
-1 &     2&00 &   2&0000 \\ 
-2 &     2&56 &   1&2822 \\ 
-4 &     4&21 &   1&0533 \\ 
-8 &     7&89 &   0&9863 \\ 
-16 &    15&20 &   0&9498 \\ 
-32 &    29&82 &   0&9320 \\ 
-64 &    59&08 &   0&9231 \\ 
-128 &   117&59 &   0&9186 \\ 
-256 &   234&60 &   0&9164 \\ 
-512 &   468&64 &   0&9153 \\ 
-1024 &   936&71 &   0&9148 \\ 
-2048 &  1872&86 &   0&9145 \\ 
-4096 &  3745&14 &   0&9143 \\ 
-8192 &  7489&72 &   0&9143 \\ 
-16384 & 14978&86 &   0&9142 \\ 
-32768 & 29957&16 &   0&9142 \\ 
-65536 & 59913&74 &   0&9142 \\ 
+\begin{tabular}{rD{.}{.}{5.2}D{.}{.}{1.4}}
+ n & \multicolumn{1}{r}{$E[\hat{n}|n]$} & \multicolumn{1}{c}{$E[\hat{n}|n]/n$} \\ \hline \hline
+1 &     2.00 &   2.0000 \\ 
+2 &     2.56 &   1.2822 \\ 
+4 &     4.21 &   1.0533 \\ 
+8 &     7.89 &   0.9863 \\ 
+16 &  15.20 &   0.9498 \\ 
+32 &    29.82 &   0.9320 \\ 
+64 &    59.08 &   0.9231 \\ 
+128 &   117.59 &   0.9186 \\ 
+256 &   234.60 &   0.9164 \\ 
+512 &   468.64 &   0.9153 \\ 
+1024 &   936.71 &   0.9148 \\ 
+2048 &  1872.86 &   0.9145 \\ 
+4096 &  3745.14 &   0.9143 \\ 
+8192 &  7489.72 &   0.9143 \\ 
+16384 & 14978.86 &   0.9142 \\ 
+32768 & 29957.16 &   0.9142 \\ 
+65536 & 59913.74 &   0.9142 \\ 
+
 \end{tabular}
 \end{center}
 \end{table}%
