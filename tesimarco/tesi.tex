@@ -29,6 +29,8 @@
 \usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
 
 
+\usetikzlibrary{arrows}
+\usetikzlibrary{snakes}
 %\pagestyle{headings} % {headings,plain ,empty}
 
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
@@ -55,6 +57,7 @@
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \renewcommand{\algorithmiccomment}[1]{// #1}
 
+\algsetup{indent=2em} 
 
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -319,6 +322,7 @@ The possible cases are: \textcolor{red}{qui incasino un po' le cose con una nota
 \end{enumerate}
 
 \subsubsection{\textcolor{red}{Real value approach}}
+\label{realvalueapproach}
 \textcolor{red}{Decidere se inserire o meno le considerazioni sulla visione degli indirizzi (alias ID) dei nodi come numeri reali tra 0 e 1 e della risoluzione come intervalli reali abilitati contenenti un solo nodo. Utile per collegarsi a popovski/cidon e alla suddivisione in insiemi in generale}\\
 Every length binary string can be also interpreted as a real number in the interval $[0,1)$
 \begin{equation*}
@@ -411,9 +415,9 @@ The most simple idea to obtain an estimate of the batch size could be to solve a
 The clipped binary tree algorithm is identical to the modified binary tree algorithm with $p=1/2$ except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
 When the algorithm stops we know than the last two nodes resolved owns to the same level $i$ of the tree (root is at level=0).\\
 We could think to obtain an estimate as:
-\begin{equation*}
+\begin{equation}
 \hat{n}\gets2^{i}
-\end{equation*}
+\end{equation}
 The idea is interesting but the fact of considering recursively subsets of subsets of the initial batch brings to disastrous performance: as reported in \cite{greenberg87}, second and all higher moments of this estimate are infinite.\\
 So this simple method is not good to obtain an estimate. 
 
@@ -450,16 +454,70 @@ Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describ
 
 The strategy adopted to obtain the estimate is to resolve a small portion of the batch and to accumulate the number of successful transmission resulted.\\
 
-Initially we fix a probability $p_{\epsilon}$ that determines how the initial batch is split the very first time.\\
+Initially we fix a probability $p_{\epsilon}$ that determines how the whole batch is split at the very first time.\\
 We named it $p_{\epsilon}$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
 
-As usual we have initially a batch of unknown size $n$.
-At the beginning of the algorithm each node chooses to transmit with probability $p_{\epsilon}$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$
+As usual we have initially a batch $\mathcal{B}$ of unknown size $n$.
+At the beginning of the algorithm each node chooses to transmit with probability $p_{\epsilon}$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$, and the nodes in $\mathcal{E}$ use a complete batch resolution algorithm to resolve the conflicts among the nodes in $\mathcal{E}$. At the end of this part we know the exact value of $\mathcal{E}$ by accumulating the number of successful transmissions during the resolution. We call this counter $j$.
+So, after this estimation phase, since we expect that the nodes are uniformly distributed in the real interval [0,1) and we solved the first part of the interval from 0 to $p_{\epsilon}$ we found that our expected density can be supposed to be $\frac{j}{p_{\epsilon}}$.
+Then we simply compute our estimate $\hat{n}$ as: 
+
+\begin{equation}
+\hat{n} \gets \frac{j}{p_{\epsilon}}
+\end{equation}
+In this  case, since we already resolved the nodes in $\mathcal{E}$, we are more interested only in the cardinality of the remaining batch to solve $\mathcal{D}$ which we can compute as:
+
+\begin{equation}
+\hat{k}=E[size(\mathcal{D})] \gets  \frac{j}{p_{\epsilon}}(1-p_{\epsilon})
+\end{equation}
+ 
+
+\begin{algorithm}[h!]
+\begin{algorithmic}[1]
+	\REQUIRE $p_{\epsilon}$, fraction of the whole batch to solve
+	\STATE \COMMENT{Phase 1}
+	\STATE each node flip a coin getting 0 with probability $p_{\epsilon}$, 1 otherwise
+	\STATE $\mathcal{E} \gets$ \{ nodes that flipped 0\}
+	\STATE $\mathcal{D} \gets$ \{ nodes that flipped 1\}
+	\STATE \algname{Complete collision resolution ($\mathcal{E}$) }
+	\STATE  $\hat{k} \gets |\mathcal{E}|/p_{\epsilon}$
+	\STATE \COMMENT{Phase 2}
+	\STATE \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) }
+	\end{algorithmic}
+\caption{\algname{Cidon}}
+\label{alg-cidon}
+\end{algorithm}
+
+Note that $|\mathcal{E}| = 0$ does not imply $|\mathcal{D}| = 0$ so a complete resolution algorithm has always to be performed on $\mathcal{D}$.
+Recalling subsection ``Real Value Approach'' in \ref{realvalueapproach}, operation on line 2 in Alg. \ref{alg-cidon} is equivalent to force each node to generate a unique ID expressed as a fixed length real value in the interval [0,1).\\
+Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
+\begin{figure}[H]
+    \centering
+    \ovalbox{
+    \begin{tikzpicture}
+    \draw [thick, [-)] (0,0) node[label=below:0] {}-- (10,0) node[label=below:1] {};
+    
+    \foreach \x / \y in{1/$n_{1}$,2/$n_{2}$,3.5/$n_{3}$,4/$n_{4}$,5.5/$n_{5}$,7.6/$n_{6}$,9.2/$n_{7}$}
+    \draw[->] (\x,1) node [label=above:\y]{} -- (\x,0.3);
+    
+    % 
+    \draw[->] (3,-1) node [label=below:$<p_{\epsilon}\leq$]{} -- (3,-0.3);
+    \draw[snake=crosses, very thick] (3,0) node [label=above:0.3] {}-- (3.2,0);
+    
+    \end{tikzpicture}
+    }
+    \caption[Cidon initial split]{In this example $p_{\epsilon}=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $p_{\epsilon}$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $p_{\epsilon}$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \label{cidon-nodes-id}
+\end{figure}
+ 
+ Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
+
+\subsection{Estimate Accuracy}
  
 \section{Greenberg}
 
 Greenberg algorithm is simply straightforward.
-\algsetup{indent=2em} 
+
 \begin{algorithm}[h!]
 \begin{algorithmic}
 \STATE $i\gets 0$
@@ -481,7 +539,6 @@ Each choice is independent of what the nodes did in the previous steps.\\
 
 \begin{figure*}[htb!]
     \centering
-    \usetikzlibrary{snakes}
     \begin{tikzpicture}[scale=0.9]  
         \draw (0, 0) circle (3.8cm);
         \foreach \x in {3.5,13.5,...,360}
