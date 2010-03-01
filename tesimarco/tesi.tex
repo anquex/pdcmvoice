@@ -45,7 +45,6 @@
 \setcounter{tocdepth}{3}
 
 \frenchspacing
-%\pagestyle{headings} % {headings,plain ,empty}
 \linespread{1.3}
 \DeclareGraphicsRule{.eps,.ps,.png}{bmp}{.bb}{} % formati utilizzabili con ordine di preferenza 
                                                 % cosi non devo indicare le estensioni
@@ -402,8 +401,12 @@ with
 L_{0}^{MBT} = L_{1}^{MBT}  = 1
 \end{equation*}
 Intuitively in this case, since an higher probability to stay silent, reduces the expected slot cost, optimal transmit probability won't no more be $1/2$. At the same time lowering the transmit probability will increase the number of (wasted) idle slots. So the new optimal probability $p$ will be somewhere in the interval (0,1/2).\\
-It can be shown that best achievable result is for $p=0.4175$ and, with this $p$, ef ficiency $\eta \approx 0.381$ as $n \to \infty$ which is asinthoticaly +10\% faster than basic BT.
-Not using optimal probabililty for $p$ but 1/2 results in about 1.5\% peak performance loss which is a moderate decrease.\\
+It can be shown\footnote{  J.L Massey,\emph{Collision-Resolution Algorithms and Random-Access Communications}, CISM Courses and Lectures, vol. 265, pp. 73–137. Springer, Berlin (1981)} that best achievable result is for $p=0.4175$ and, with this $p$, efficiency $\eta \approx 0.381$ as $n \to \infty$ which is asintotically +10\% faster than basic BT.\\
+In general we have: 
+\begin{equation}
+L_{n}\leq C \cdot n +1 \qquad \textrm{where} \qquad C=2.623
+\end{equation}
+Not using optimal probability for $p$ but 1/2 results in about 1.5\% peak performance loss which is a moderate decrease.\\
 \chapter{Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
@@ -513,12 +516,26 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
  Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
 
 \subsection{Estimate Accuracy}
+
+Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $p_{\epsilon}$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $p_{\epsilon}$ the first one and $1-p_{\epsilon}$ the other one.  Therefore, we have the following:
+
+\begin{enumerate}[1)]
+\item \begin{equation}P(J=j|n)={n \choose j}p_{\epsilon}^{j}(1-p_{\epsilon})^{n-j}\end{equation}
+\item \begin{equation}E[J|n]=np_{\epsilon}\end{equation}
+\item \begin{equation}\textrm{var}(J|n)=np_{\epsilon}(1-p_{\epsilon})\end{equation}
+\end{enumerate}
+
+\textcolor{red}{Chebychev's Inequality} 
+ 
+ \begin{equation}
+P\left( \left| \frac{\hat{n}}{n}-p_{\epsilon}\right|\right) \leq \frac{1-p_{\epsilon}}{\epsilon^{2}n}
+ \end{equation}
  
 \section{Greenberg}
 
 Greenberg algorithm is simply straightforward.
 
-\begin{algorithm}[h!]
+\begin{algorithm}[H]
 \begin{algorithmic}
 \STATE $i\gets 0$
 \REPEAT
@@ -599,7 +616,7 @@ Each choice is independent of what the nodes did in the previous steps.\\
         %   
     
     \end{tikzpicture}
-    \caption[Basic greenberg batch split idea]{caption}
+    \caption[Basic greenberg batch split idea]{Visually nodes can be thought to be uniformly distributed on the circumference of a circle. By performing Greenberg's algorithm we go and analyze each time a smaller sector (in this case the half of the previous one) of the circle and find when a sector contains only 1 or no nodes.  Not overlapping sectors are drawn to maintain the image simple but in general nodes gets redistributed to each step of the algorithm}
     \label{fig:sp2d}
 \end{figure*}
 
