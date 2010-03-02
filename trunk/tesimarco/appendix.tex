@@ -3,7 +3,10 @@
 \chapter[Appendix]{}
 
 \section{Probability}
+\textcolor{red}{sezione provvisoria}
 \subsection{Binomial Distribution}
+\subsubsection{Poisson Approximation}
+The binomial distribution converges towards the Poisson distribution as the number of trials goes to infinity while the product $np$ remains fixed. Therefore the Poisson distribution with parameter $\lambda = np$ can be used as an approximation to $B(n, p)$ of the binomial distribution if $n$ is sufficiently large and $p$ is sufficiently small. According to two rules of thumb, this approximation is good if $n \geq 20$ and $p \leq 0.05$, or if $n \geq 100$ and $np \leq 10$.
 \subsection{Poisson Distribution}
 
 \section{Greenberg bounded \emph{m}-moments}
@@ -21,7 +24,134 @@ In general for base $b$ greenberg algorithm the first and second moments are bou
 \textcolor{red}{note sul calcolo\\ va velocemente a 0 quind basta considerare un intervallo iniziale  limitato\\
 anche per produttoria con k è lo stesso.\\ risolto con quad matlab}
 
-\section{Greenberg Stop Probability}
+\section{CBT Estimate Experimental Distribution}
+
+Following tables \ref{CBT-table-1}, \ref{CBT-table-2}, \ref{CBT-table-3} show the behavior of CBT Algorithm (section \ref{cbt-estimation}) for estimation.  Simulation was implemented in matlab.
+The resulting distribution of $\hat{n}$ fixed $n$ is the result of averaging 100000 runs of CBT Algorihm applied on uniformly random generated nodes ID batches.\\ 
+\begin{table}[H]
+\caption[]{Experimentally computed CBT Estimate Distributon. Table 1/3}
+\label{CBT-table-1}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{r|cccccccccccc}
+n&$\hat{n}:$&2&4&8&16&32&64&128&256&512&1024&2048 \\\hline
+
+2 &&0.499 &0.253 &0.125 &0.061 &0.031 &0.015 &0.007 &0.004 &0.002 &9e-04 &4e-04\\\hline
+
+4 &&&0.189 &0.303 &0.225 &0.133 &0.072 &0.038 &0.020 &0.010 &0.005 &0.002\\\hline
+
+8 &&&0.055 &0.212 &0.261 &0.201 &0.126 &0.071 &0.037 &0.019 &0.009 &0.005\\\hline
+
+16 &&&8e-04 &0.070 &0.209 &0.252 &0.197 &0.125 &0.070 &0.038 &0.019 &0.010\\\hline
+
+32 &&&&0.003 &0.075 &0.213 &0.249 &0.195 &0.123 &0.069 &0.037 &0.018\\\hline
+
+64 &&&&&0.004 &0.077 &0.208 &0.250 &0.193 &0.124 &0.069 &0.037\\\hline
+
+128 &&&&&&0.005 &0.081 &0.208 &0.247 &0.191 &0.123 &0.069\\\hline
+
+256 &&&&&&2e-05 &0.006 &0.079 &0.209 &0.246 &0.193 &0.123\\\hline
+
+512 &&&&&&&&0.005 &0.081 &0.207 &0.245 &0.193\\\hline
+
+1024 &&&&&&&&&0.005 &0.080 &0.208 &0.245\\\hline
+
+2048 &&&&&&&&&2e-05 &0.005 &0.080 &0.209\\\hline
+
+4096 &&&&&&&&&&1e-05 &0.006 &0.082\\\hline
+
+8192 &&&&&&&&&&&1e-05 &0.006\\\hline
+
+16384 &&&&&&&&&&&&2e-05\\\hline
+
+32768 &&&&&&&&&&&&\\\hline
+
+\end{tabular}
+}
+
+\end{table}
+\begin{table}[H]
+\caption{Experimentally computed CBT Estimate Distributon. Table 2/3}
+\label{CBT-table-2}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{r|cccccccccccc}
+n&$\hat{n}:$&4096&8192&16384&32768&$2^{16}$&$2^{17}$&$2^{18}$&$2^{19}$&$2^{20}$&$2^{21}$&$2^{22}$ \\\hline
+
+2 &&2e-04 &1e-04 &1e-04 &&&&1e-05 &&&&\\\hline
+
+4 &&0.001 &5e-04 &3e-04 &1e-04 &6e-05 &4e-05 &&2e-05 &1e-05 &&\\\hline
+
+8 &&0.002 &0.001 &6e-04 &3e-04 &9e-05 &8e-05 &4e-05 &1e-05 &&&\\\hline
+
+16 &&0.005 &0.003 &0.001 &6e-04 &3e-04 &2e-04 &6e-05 &2e-05 &2e-05 &&\\\hline
+
+32 &&0.009 &0.005 &0.003 &0.001 &6e-04 &3e-04 &1e-04 &1e-04 &6e-05 &1e-05 &1e-05\\\hline
+
+64 &&0.019 &0.009 &0.005 &0.002 &0.001 &7e-04 &3e-04 &7e-05 &4e-05 &&2e-05\\\hline
+
+128 &&0.037 &0.019 &0.010 &0.005 &0.003 &0.001 &5e-04 &4e-04 &2e-04 &5e-05 &4e-05\\\hline
+
+256 &&0.068 &0.038 &0.019 &0.009 &0.005 &0.002 &0.001 &6e-04 &3e-04 &6e-05 &8e-05\\\hline
+
+512 &&0.123 &0.071 &0.037 &0.019 &0.010 &0.005 &0.002 &0.001 &6e-04 &3e-04 &2e-04\\\hline
+
+1024 &&0.193 &0.122 &0.070 &0.037 &0.019 &0.010 &0.005 &0.002 &0.001 &6e-04 &2e-04\\\hline
+
+2048 &&0.246 &0.194 &0.123 &0.068 &0.037 &0.019 &0.010 &0.005 &0.002 &0.001 &6e-04\\\hline
+
+4096 &&0.210 &0.246 &0.193 &0.121 &0.068 &0.037 &0.019 &0.009 &0.004 &0.003 &0.001\\\hline
+
+8192 &&0.080 &0.208 &0.247 &0.192 &0.123 &0.070 &0.037 &0.019 &0.009 &0.005 &0.002\\\hline
+
+16384 &&0.006 &0.080 &0.208 &0.247 &0.192 &0.123 &0.069 &0.037 &0.019 &0.010 &0.005\\\hline
+
+32768 &&&0.006 &0.079 &0.209 &0.248 &0.194 &0.122 &0.069 &0.036 &0.019 &0.010\\\hline
+
+\end{tabular}
+}
+
+\end{table}
+\begin{table}[H]
+\caption{Experimentally computed CBT Estimate Distributon. Table 3/3}
+\label{CBT-table-3}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{r|ccccccccccc}
+n&$\hat{n}:$&$2^{23}$&$2^{24}$&$2^{25}$&$2^{26}$&$2^{27}$&$2^{28}$&$2^{29}$&$2^{30}$&$2^{31}$&$2^{32}$ \\\hline
+
+2 &&&&&&&&&&&\\\hline
+
+4 &&&&&&&&&&&\\\hline
+
+8 &&&&&&&&&&&\\\hline
+
+16 &&&&&&&&&&&\\\hline
+
+32 &&1e-05 &&&&&&&&&\\\hline
+
+64 &&2e-05 &&&&1e-05 &&&&&\\\hline
+
+128 &&4e-05 &&1e-05 &&&&&&&\\\hline
+
+256 &&4e-05 &1e-05 &&2e-05 &&&1e-05 &&&\\\hline
+
+512 &&7e-05 &2e-05 &1e-05 &3e-05 &1e-05 &&&&&\\\hline
+
+1024 &&2e-04 &1e-04 &4e-05 &&2e-05 &1e-05 &&&&\\\hline
+
+2048 &&3e-04 &1e-04 &3e-05 &3e-05 &3e-05 &3e-05 &&&&\\\hline
+
+4096 &&6e-04 &3e-04 &9e-05 &7e-05 &1e-05 &&&&&\\\hline
+
+8192 &&0.001 &8e-04 &3e-04 &2e-04 &8e-05 &7e-05 &2e-05 &3e-05 &1e-05 &\\\hline
+
+16384 &&0.002 &0.001 &6e-04 &3e-04 &1e-04 &1e-04 &4e-05 &&&\\\hline
+
+32768 &&0.005 &0.002 &0.001 &6e-04 &3e-04 &2e-04 &1e-04 &1e-05 &2e-05 &1e-05\\\hline
+
+\end{tabular}
+}
+\end{table}
+
+\section{Greenberg Estimate Distribution}
 In following table \ref{basic-greenberg-stop-probabilities} we report how the end  up probability (equation \ref{eq:bgstopprobability}) is distributed among slots given a batch of size $n$.  Column ``$n$'' lists  the considered batch sizes. $\hat{n}$ is the resulting estimation (without corrections) when ending up in the underneath slot.\\  For sake of simplicity considered values are all powers of 2.\\
 Datas presented were post-processed to become more accessible:
 \begin{itemize}
