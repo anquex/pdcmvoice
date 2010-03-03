@@ -27,6 +27,56 @@
 \usepackage{supertabular}
 \usepackage{appendix}
 \usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
+\usepackage{listings}
+\usepackage{textcomp} % per upquote=true di listings
+
+\captionsetup[lstlisting]{skip=10pt}
+\lstset{ %
+language=Matlab,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+tabsize=2,	                % sets default tabsize to 2 spaces
+captionpos=t,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
+escapeinside={\%*}{*)}          % if you want to add a comment within your code
+}
+
+\definecolor{listinggray}{gray}{0.9} 
+\definecolor{lbcolor}{rgb}{0.95,0.95,0.95} 
+
+\lstset{
+%	backgroundcolor=\color{lbcolor},
+	tabsize=4,
+	rulecolor=,
+        basicstyle=\scriptsize,
+        upquote=true,
+        aboveskip={1.5\baselineskip},
+        columns=fixed,
+        showstringspaces=false,
+        extendedchars=true,
+        breaklines=true,
+        prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+        frame=single,
+        showtabs=false,
+        showspaces=false,
+        showstringspaces=false,
+        identifierstyle=\ttfamily,
+        keywordstyle=\color[rgb]{0,0,1},
+        commentstyle=\color[rgb]{0.133,0.545,0.133},
+        stringstyle=\color[rgb]{0.627,0.126,0.941},
+        extendedchars=true,
+        inputencoding=utf8,
+}
 
 
 \usetikzlibrary{arrows}
@@ -92,6 +142,9 @@
 
 \title{Batch Size Estimate}
 \begin{document}
+
+\showcaptionsetup{figure}
+
 \include{mytitle}
 
 \tableofcontents
@@ -415,7 +468,8 @@ In general, we assume not to have any \emph{a priori} statistical knowledge abou
 \section{CBT}
 \label{cbt-estimation}
 The most simple idea to obtain an estimate of the batch size could be to solve a minimum amount of nodes to obtain an estimate. This can be done, for example, by using deterministic algorithms such as CBT.\\
-The clipped binary tree algorithm is identical to the modified binary tree algorithm with $p=1/2$ except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
+CBT is a partial resolution algorithm since only a fraction of the packets of the batch are successfully transmitted.
+The clipped binary tree algorithm is identical to the modified binary tree algorithm (with $p=1/2$ since we require the nodes to be uniformly distributed in the interval [0,1) ) except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
 When the algorithm stops we know than the last two nodes resolved owns to the same level $i$ of the tree (root is at level=0).\\
 We could think to obtain an estimate as:
 \begin{equation}
@@ -448,7 +502,9 @@ So this simple method is not good to obtain an estimate.
 \caption[CBT example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
 \end{figure}
 
-Experimental results show that the variance of the obtained estimate is extremely high and the resulting accuracy is really poor.  
+Experimental results show that the variance of the obtained estimate is extremely high and the resulting accuracy is really poor.\\ 
+This is due to the fact that the batch of interest we use for the estimate becomes, at each level, smaller and smaller: the estimate, even for huge sizes, depends only on very few (3-5) nodes (those with lower addresses). So estimate is quite unstable.\\
+Results are reported in Appendix in tables  \ref{CBT-table-1}. Notice how slowly the distribution probability decrease.
 \section{Cidon}
 
 Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describe a complete resolution algorithm based on two phases:
