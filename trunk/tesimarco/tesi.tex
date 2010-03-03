@@ -575,7 +575,7 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
  Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
 
 \subsection{Estimate Accuracy}
-
+\label{cidon-estimate-accuracy}
 Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $p_{\epsilon}$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $p_{\epsilon}$ the first one and $1-p_{\epsilon}$ the other one.  Therefore, we have the following:
 
 \begin{enumerate}[1)]
@@ -608,6 +608,7 @@ Greenberg algorithm is simply straightforward.
 	\STATE choose to transmit with probability $2^{-i}$
 \UNTIL {no collision occurs}
 \STATE $\hat{n} \gets 2^{i}$
+\STATE $\hat{n}_{+} \gets \hat{n}/\phi$
 \end{algorithmic}
 \caption{\algname{Greenberg}}
 \label{alg-greenberg}
@@ -728,6 +729,28 @@ Using Mellin's transform
 We investigated about a fast algorithm for multiplicity estimation.\\
 
 \section{Cidon Normal Approximation}
+We remember from section \ref{cidon-estimate-accuracy} that
+\begin{equation}P(J=j|n)={n \choose j}p_{\epsilon}^{j}(1-p_{\epsilon})^{n-j}\end{equation}
+and
+\begin{equation}\hat{n}=j/p\end{equation}
+Given $k$ and $n$
+\begin{equation}P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=?\end{equation}
+\begin{equation}P\left(\frac{n}{k}\leq j/p \leq kn \big| k,n,p\right)\end{equation}
+\begin{equation}P\left(\frac{np}{k}\leq j \leq knp \big| k,n,p\right)\end{equation}
+
+$J$ is $Binomial(n,p)$ which, under some conditions (precisare), can be considered $\mathcal{N}(np,np(1-p))$\\
+$k$ esprime dei bound per l'errore della stima, vogliamo trovare p affinchè con probabilità maggiore del 0.99 il vincolo sia rispettato
+
+\begin{equation}
+P\left(\frac{np}{k}\leq j \leq knp \big| k,n,p\right)\quad=\quad P(j \leq knp ) - P(j < \frac{np}{k} ) \qquad \geq\qquad 0.99
+\end{equation}
+
+il cui valore, visto che $k$ e $n$ sono fissati, dipende solo da $p$\\ 
+Risolvo per via numerica
+\begin{equation}
+solve \left(P(j \leq knp ) - P(j < \frac{np}{k}) = 0.99 \right) \to p_{\epsilon}
+\end{equation}
+
 \section{Greenberg Inspection}
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively :
 \begin{enumerate}
