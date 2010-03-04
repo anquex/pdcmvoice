@@ -29,6 +29,7 @@
 \usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
 \usepackage{listings}
 \usepackage{textcomp} % per upquote=true di listings
+\usepackage{epstopdf} % per importare gli eps
 
 \captionsetup[lstlisting]{skip=10pt}
 \lstset{ %
@@ -90,6 +91,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \usepackage{fancyhdr}
 
+\newcommand{\pc}{p_{\epsilon}}
 \renewcommand{\appendixname}{}
 \renewcommand{\appendixtocname}{Appendices}
 \setcounter{tocdepth}{3}
@@ -516,35 +518,35 @@ Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describ
 
 The strategy adopted to obtain the estimate is to resolve a small portion of the batch and to accumulate the number of successful transmission resulted.\\
 
-Initially we fix a probability $p_{\epsilon}$ that determines how the whole batch is split at the very first time.\\
-We named it $p_{\epsilon}$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
+Initially we fix a probability $\pc$ that determines how the whole batch is split at the very first time.\\
+We named it $\pc$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
 
 As usual we have initially a batch $\mathcal{B}$ of unknown size $n$.
-At the beginning of the algorithm each node chooses to transmit with probability $p_{\epsilon}$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$, and the nodes in $\mathcal{E}$ use a complete batch resolution algorithm to resolve the conflicts among the nodes in $\mathcal{E}$. At the end of this part we know the exact value of $\mathcal{E}$ by accumulating the number of successful transmissions during the resolution. We call this counter $j$.
-So, after this estimation phase, since we expect that the nodes are uniformly distributed in the real interval [0,1) and we solved the first part of the interval from 0 to $p_{\epsilon}$ we found that our expected density can be supposed to be $\frac{j}{p_{\epsilon}}$.
+At the beginning of the algorithm each node chooses to transmit with probability $\pc$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$, and the nodes in $\mathcal{E}$ use a complete batch resolution algorithm to resolve the conflicts among the nodes in $\mathcal{E}$. At the end of this part we know the exact value of $\mathcal{E}$ by accumulating the number of successful transmissions during the resolution. We call this counter $j$.
+So, after this estimation phase, since we expect that the nodes are uniformly distributed in the real interval [0,1) and we solved the first part of the interval from 0 to $\pc$ we found that our expected density can be supposed to be $\frac{j}{\pc}$.
 Then we simply compute our estimate $\hat{n}$ as: 
 
 \begin{equation}
-\hat{n} \gets \frac{j}{p_{\epsilon}}
+\hat{n} \gets \frac{j}{\pc}
 \end{equation}
 In this  case, since we already resolved the nodes in $\mathcal{E}$, we are more interested only in the cardinality of the remaining batch to solve $\mathcal{D}$ which we can compute as:
 
 \begin{equation}
-\hat{k}=E[size(\mathcal{D})] \gets  \frac{j}{p_{\epsilon}}(1-p_{\epsilon})
+\hat{k}=E[size(\mathcal{D})] \gets  \frac{j}{\pc}(1-\pc)
 \end{equation}
  
 
 \begin{algorithm}[h!]
 \begin{algorithmic}[1]
-	\REQUIRE $p_{\epsilon}$, fraction of the whole batch to solve
+	\REQUIRE $\pc$, fraction of the whole batch to solve
 	\STATE \COMMENT{Phase 1}
-	\STATE each node flip a coin getting 0 with probability $p_{\epsilon}$, 1 otherwise
+	\STATE each node flip a coin getting 0 with probability $\pc$, 1 otherwise
 	\STATE $\mathcal{E} \gets$ \{ nodes that flipped 0\}
 	\STATE $\mathcal{D} \gets$ \{ nodes that flipped 1\}
 	\STATE \algname{Complete collision resolution ($\mathcal{E}$) }
-	\STATE  $\hat{k} \gets |\mathcal{E}|/p_{\epsilon}$
+	\STATE  $\hat{k} \gets |\mathcal{E}|/\pc$
 	\STATE \COMMENT{Phase 2}
-	\STATE \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) }
+	\STATE \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) }
 	\end{algorithmic}
 \caption{\algname{Cidon}}
 \label{alg-cidon}
@@ -563,37 +565,41 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
     \draw[->] (\x,1) node [label=above:\y]{} -- (\x,0.3);
     
     % 
-    \draw[->] (3,-1) node [label=below:$<p_{\epsilon}\leq$]{} -- (3,-0.3);
+    \draw[->] (3,-1) node [label=below:$<\pc\leq$]{} -- (3,-0.3);
     \draw[snake=crosses, very thick] (3,0) node [label=above:0.3] {}-- (3.2,0);
     
     \end{tikzpicture}
     }
-    \caption[Cidon initial split]{In this example $p_{\epsilon}=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $p_{\epsilon}$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $p_{\epsilon}$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \caption[Cidon initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
     \label{cidon-nodes-id}
 \end{figure}
  
- Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $p_{\epsilon}$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
+ Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
 
 \subsection{Estimate Accuracy}
 \label{cidon-estimate-accuracy}
-Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $p_{\epsilon}$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $p_{\epsilon}$ the first one and $1-p_{\epsilon}$ the other one.  Therefore, we have the following:
+Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
 
 \begin{enumerate}[1)]
-\item \begin{equation}P(J=j|n)={n \choose j}p_{\epsilon}^{j}(1-p_{\epsilon})^{n-j}\end{equation}
-\item \begin{equation}E[J|n]=np_{\epsilon}\end{equation}
-\item \begin{equation}\textrm{var}(J|n)=np_{\epsilon}(1-p_{\epsilon})\end{equation}
+\item \begin{equation}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}\end{equation}
+\item \begin{equation}E[J|n]=n\pc\label{cidon-e-estimate}\end{equation}
+\item \begin{equation}\textrm{var}(J|n)=n\pc(1-\pc)\end{equation}
 \end{enumerate}
 
-By applying Chebychev's Inequality and remebering $\hat{n}=j/p_{\epsilon}$ we can establish a relation between the relative error in the estimate and it's probability.  
+By applying Chebychev's Inequality and remebering 
+\begin{equation} 
+\hat{n}=j/\pc 
+\end{equation}
+ we can establish a relation between the relative error in the estimate and it's probability.  
  
  \begin{equation}
-P\left( \left| \hat{n}-np_{\epsilon}\right| \geq \epsilon n \,|\, n \right) \leq \frac{1-p_{\epsilon}}{\epsilon^{2}n}
+P\left( \left| \hat{n}-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n}
  \end{equation}
 
 \textcolor{red}{qua è da rivedere decisamente}
 So if we want to obtain a relative error below $\epsilon$ with probability $c$ we have to initially solve a fraction
 \begin{equation}
-p_{\epsilon}=1-c(\epsilon^{2}n)
+\pc=1-c(\epsilon^{2}n)
 \end{equation}
 of the whole batch.
 \section{Greenberg}
@@ -697,7 +703,7 @@ Using Mellin's transform
 \end{equation}
 
 \begin{table}[htdp]
-\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$}
+\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
 \begin{center}
 \begin{tabular}{rD{.}{.}{5.2}D{.}{.}{1.4}}
  n & \multicolumn{1}{r}{$E[\hat{n}|n]$} & \multicolumn{1}{c}{$E[\hat{n}|n]/n$} \\ \hline \hline
@@ -728,11 +734,40 @@ Using Mellin's transform
 \chapter{Initial batch size estimate}
 We investigated about a fast algorithm for multiplicity estimation.\\
 
-\section{Cidon Normal Approximation}
+\section{Cidon Evaluation}
+
+\begin{equation*}
+\end{equation*}
 We remember from section \ref{cidon-estimate-accuracy} that
-\begin{equation}P(J=j|n)={n \choose j}p_{\epsilon}^{j}(1-p_{\epsilon})^{n-j}\end{equation}
+\begin{equation*}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}\end{equation*}
 and
-\begin{equation}\hat{n}=j/p\end{equation}
+\begin{equation*}\hat{n}=j/p\end{equation*}
+Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. So J is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
+we got:
+\begin{equation}
+E[\hat{n}|n,\pc]=\frac{1}{\pc}E\left[j|n,\pc\right]=n, \qquad \forall \,\pc
+\end{equation}
+This shows that Cidon provides an unbiased estimator ($E[\hat{n}|n]=n$) independently from $\pc$: $\pc$ influences only the variance of the estimator. 
+
+\begin{equation}
+\begin{split}
+\textrm{var}(\hat{n}|n) & =E[\hat{n}^{2}|n]- E[\hat{n}|n]^{2}\\
+& = \frac{1}{\pc^{2}}E[j^{2}|n] - n^{2}\\
+& = \frac{n\pc(1-\pc)+n^{2}\pc^{2}}{\pc^{2}}- n^{2}\\
+& = n \frac{(1-\pc)}{\pc}
+\end{split}
+\end{equation}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/Cidon/cidon-variance-p}
+%\epsfile{file=matlab/Cidon/cidon-variance-p.eps,scale=0.8}
+\caption{With Cidon accuracy of the estimate dramatically improves until $\pc=0.1$.}
+\label{default}
+\end{center}
+\end{figure}
+
+
 Given $k$ and $n$
 \begin{equation}P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=?\end{equation}
 \begin{equation}P\left(\frac{n}{k}\leq j/p \leq kn \big| k,n,p\right)\end{equation}
@@ -748,11 +783,11 @@ P\left(\frac{np}{k}\leq j \leq knp \big| k,n,p\right)\quad=\quad P(j \leq knp ) 
 il cui valore, visto che $k$ e $n$ sono fissati, dipende solo da $p$\\ 
 Risolvo per via numerica
 \begin{equation}
-solve \left(P(j \leq knp ) - P(j < \frac{np}{k}) = 0.99 \right) \to p_{\epsilon}
+solve \left(P(j \leq knp ) - P(j < \frac{np}{k}) = 0.99 \right) \to \pc
 \end{equation}
 
-\section{Greenberg Inspection}
-Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively :
+\section{Greenberg Evaluation}
+Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively:
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
 \begin{equation}q_{0}(p,n)=(1-p)^{n}\end{equation} 
@@ -775,6 +810,7 @@ f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))
 
 An overview of the behaviour of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities}.
 
+\subsection{base $b$ Greenberg}
 
 \chapter{Comparison}
 
