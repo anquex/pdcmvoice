@@ -22,7 +22,7 @@ grid on;
  set(h1, 'Marker', 'o', 'MarkerFaceColor', [0.5 0.5 0.5], 'MarkerEdgeColor', [0 0 0], 'MarkerSize', 4.0);
  
  saveas(fh, 'cidon-variance-p', 'epsc');
- saveas(fh, 'cidon-variance-p', 'jpg');
+ %saveas(fh, 'cidon-variance-p', 'jpg');
 %set(gca,'XTick',-pi:pi/2:pi)
 %set(gca,'XTickLabel',[0:0.1:1])
 % TRICK FOR LATEX IN LEGEND

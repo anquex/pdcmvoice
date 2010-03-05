@@ -29,7 +29,7 @@
 \usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
 \usepackage{listings}
 \usepackage{textcomp} % per upquote=true di listings
-\usepackage{epstopdf} % per importare gli eps
+\usepackage{epstopdf} % per importare gli eps con \includegraphics
 
 \captionsetup[lstlisting]{skip=10pt}
 \lstset{ %
@@ -198,7 +198,7 @@ In each slot, when $k$ nodes transmit simultaneously, the success or the transmi
 \begin{itemize}
 \item if $k=0$ then no transmission were attempted. The slot is said to be \emph{empty} or \emph{idle};
 \item if $k=1$ then the transmission succeeds. The slot is said to be \emph{successful};
-\item if $k\geq 2$. there is a conflict, meaning that the transmission interfere destructively so that none succeeds. The slot is said to be \emph{collided}.
+\item if $k\geq 2$ there is a conflict, meaning that the transmission interfere destructively so that none succeeds. The slot is said to be \emph{collided}.
 \end{itemize}
 
 We assume that nodes having new messages to deliver generated after the start of the resolution process will wait until the end before proceeding with their delivery.
@@ -218,7 +218,7 @@ In \emph{probabilistic algorithms}, a framed ALOHA scheme is used where the read
 
 Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate contending tag subsets using a probe at the beginning of each slot.
 
-Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. So not every device is able to support this class of algorithms. For example passive tags, which are the \textcolor{red}{most dummy} devices, cannot understand this kind of requests and will continue to transmit in every resolution cycle, which lengthens the total time needed. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes (immediate feedback) that have succeeded at the end of each frame, and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmit its message and \textcolor{red}{it?} stays in silent until the end of the algorithm is said to be \emph{resolved}.\\
+Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. So not every device is able to support this class of algorithms. For example passive tags, which are the \textcolor{red}{most dummy} devices, cannot understand this kind of requests and will continue to transmit in every resolution cycle, which lengthens the total time needed. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes (immediate feedback) that have succeeded at the end of each frame, and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmit its message and \textcolor{red}{it?} stays in silent until the end of the algorithm is said \emph{resolved}.\\
 They also assume a slotted model, and not a framed model, wherein the reader responds before and/or after every slot, adding overhead to the resolution.\\
 \textcolor{red}{
 Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be alway active and listening to the channel in each step of the algorithm.
@@ -581,7 +581,8 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
 Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
 
 \begin{enumerate}[1)]
-\item \begin{equation}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}\end{equation}
+\item \begin{equation}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}
+           \label{cidon-J}\end{equation}
 \item \begin{equation}E[J|n]=n\pc\label{cidon-e-estimate}\end{equation}
 \item \begin{equation}\textrm{var}(J|n)=n\pc(1-\pc)\end{equation}
 \end{enumerate}
@@ -742,8 +743,8 @@ We remember from section \ref{cidon-estimate-accuracy} that
 \begin{equation*}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}\end{equation*}
 and
 \begin{equation*}\hat{n}=j/p\end{equation*}
-Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. So J is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
-we got:
+Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. So $J$ is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
+we get:
 \begin{equation}
 E[\hat{n}|n,\pc]=\frac{1}{\pc}E\left[j|n,\pc\right]=n, \qquad \forall \,\pc
 \end{equation}
@@ -762,30 +763,56 @@ This shows that Cidon provides an unbiased estimator ($E[\hat{n}|n]=n$) independ
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-variance-p}
 %\epsfile{file=matlab/Cidon/cidon-variance-p.eps,scale=0.8}
-\caption{Cidon's  estimate accuracy dramatically improves until $\pc=0.1$.}
-\label{default}
+\caption{\emph{Cidon}:  estimate accuracy dramatically improves while $\pc\leq0.1$.}
 \end{center}
 \end{figure}
 
-
-Given $k$ and $n$
-\begin{equation}P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=?\end{equation}
-\begin{equation}P\left(\frac{n}{k}\leq j/p \leq kn \big| k,n,p\right)\end{equation}
-\begin{equation}P\left(\frac{np}{k}\leq j \leq knp \big| k,n,p\right)\end{equation}
-
-$J$ is $Binomial(n,p)$ which, under some conditions (precisare), can be considered $\mathcal{N}(np,np(1-p))$\\
-$k$ esprime dei bound per l'errore della stima, vogliamo trovare p affinchè con probabilità maggiore del 0.99 il vincolo sia rispettato
-
+Variance is strict monotonically decreasing in $\pc$.
+Anyway it is difficult to establish in what measure an estimate can be considered accurate.\\
+Given $n$, let $k \geq1$ define the minimum required accurancy in the following way: 
 \begin{equation}
-P\left(\frac{np}{k}\leq j \leq knp \big| k,n,p\right)\quad=\quad P(j \leq knp ) - P(j < \frac{np}{k} ) \qquad \geq\qquad 0.99
+\frac{n}{k}\leq\hat{n}\leq kn
+\label{cidon-accuracy-constrains}
 \end{equation}
-
-il cui valore, visto che $k$ e $n$ sono fissati, dipende solo da $p$\\ 
-Risolvo per via numerica
+Let $\theta$ be the probability we require for constrains \eqref{cidon-accuracy-constrains} to be satisfied.\\
+If we set $\theta=0.99$, we can find the minimum $\pc$, ensuring the estimate to be within confidence interval \eqref{cidon-accuracy-constrains}, by solving the following problem.\\
 \begin{equation}
-solve \left(P(j \leq knp ) - P(j < \frac{np}{k}) = 0.99 \right) \to \pc
+\begin{split}
+P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq j/\pc \leq kn \big| k,n,\pc\right)\\
+=&P\left(\frac{n\pc}{k}\leq j \leq kn\pc \big| k,n,\pc\right)
+\end{split}
+\label{cidon-accuracy-bounds}
 \end{equation}
+Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses the constrains for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectable when $n\leq 200$.  \\
+\begin{equation}
+f(k,n,\pc) = P\left(\left\lceil \frac{n\pc}{k}\right\rceil\leq j \leq \left\lfloor kn\pc\right\rfloor \big| k,n,\pc\right)\geq \theta
+\end{equation}
+Fixed $k$, $n$ and $\theta$, $\pc$ can be found by numerically solving\footnote{in this work we used bisection method}:
+\begin{equation}
+f(k,n,\pc) = \theta
+\end{equation}
+Figure below shows $\pc$ in function of $k$ for different batch sizes.\\
 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/Cidon/cidon-k-p-minimum}
+\caption{\emph{Cidon}: Minimum $\pc$ required for accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\label{cidon-k-p-minimum}
+\end{center}
+\end{figure}
+
+Figure \ref{cidon-k-p-minimum} shows how the fraction of the initial batch to resolve for estimate to be within  required confidence interval with high probability deeply depends on the size of the problem: smaller sizes require much higher $\pc$.\\
+At the same time, considering absolute cost in elapsed slots, Figure  \ref{cidon-k-L-minimum} shows that, for a wide range of $k$, the time required is quite independent of the size of the problem.\\
+Time required by the largest considered $n$ provides a bound for smaller ones.\\
+Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI time taken is plotted: this bound is not so tight for very small batches. With small batches BRAs performs better than what is reported.   
+\begin{figure}[htb!]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/Cidon/cidon-k-L-minimum}
+\caption{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\label{cidon-k-L-minimum}
+\end{center}
+\end{figure}
+\newpage
 \section{Greenberg Evaluation}
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively:
 \begin{enumerate}
