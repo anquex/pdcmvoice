@@ -1,10 +1,11 @@
-\documentclass[12pt,a4paper,twocolumns]{report}
+\documentclass[12pt,a4paper]{report}
+%\documentclass[12pt,a4paper,twoside,openright]{book}
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{latexsym}
-\usepackage{graphicx}
+\usepackage[final]{graphicx} %draft % To include graphics
 \usepackage{epsfig}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
@@ -21,7 +22,7 @@
 \usepackage[rgb]{xcolor}
 \usepackage{color} %testo colorato
 \usepackage{tikz}
-\usepackage{fullpage}
+\usepackage[]{fullpage}
 \usepackage{fancybox}
 \usepackage{rotating}
 \usepackage{supertabular}
@@ -30,6 +31,15 @@
 \usepackage{listings}
 \usepackage{textcomp} % per upquote=true di listings
 \usepackage{epstopdf} % per importare gli eps con \includegraphics
+\usepackage{numprint}
+%\usepackage{indentfirst}
+%\usepackage[Lenny]{fncychap} % [Sonny[Lenny]
+
+
+
+
+% LINKS
+%http://www.kronto.org/thesis/tips/index.html
 
 \captionsetup[lstlisting]{skip=10pt}
 \lstset{ %
@@ -51,6 +61,8 @@ breakatwhitespace=false,        % sets if automatic breaks should only happen at
 title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
+
+
 
 \definecolor{listinggray}{gray}{0.9} 
 \definecolor{lbcolor}{rgb}{0.95,0.95,0.95} 
@@ -82,10 +94,10 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \usetikzlibrary{arrows}
 \usetikzlibrary{snakes}
-%\pagestyle{headings} % {headings,plain ,empty}
+%\pagestyle{headings} % {headings,plain ,empty} richiamato automaticamente da \usepackage[headings]{fullpage}
 
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
-%%\usepackage{emptypage}
+\usepackage{emptypage}
 
 %\usepackage[all]{hypcap}
 
@@ -131,7 +143,6 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
     urlcolor=black           % color of external links
 }
 
-\author{Marco Bettiol}
 
 %per impaginare con giustifica sx-dx
   \tolerance 1414
@@ -143,36 +154,48 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
   \raggedbottom
 
 \title{Batch Size Estimate}
-\begin{document}
+\author{Marco Bettiol}
 
-\showcaptionsetup{figure}
+\begin{document}
 
 \include{mytitle}
 
+%% DEDICATION
+\begin{comment}
+\begin{flushright}
+\null\vspace{\stretch{5}}
+\emph{\large Ai miei genitori}
+\vspace{\stretch{1}}\null
+\end{flushright}
+\begin{abstract}
+This thesis
+\end{abstract}
+\end{comment}
+
+
 \tableofcontents
-%\listofalgorithms
 \listoffigures
 \listoftables
-
+%\listofalgorithms
 
 \chapter{Introduction}
 
 Generally speaking a set of actors contending for a common resource define a \emph{conflicting set}. As always, limited resources require policies to access them in an efficient and hopefully fair way. When the system is distributed, and this is our business, resource access can be assimilated to a coordination problem.\\ 
-Physical medium access is our contended resource and several stations connect to the same physical medium to share it.\\ At the beginning of computer networks, multiple access channel (MAC) was a big issue for efficient communications: so packet switched buffered networks were introduced reducing the conflicting set to only two stations and simplifying  the original problem. But switched networks could be realized only because the medium was wired: in fact a large collision domain could be sliced into smaller pieces and joined again together in ring, star or mesh structures.\\ 
+Physical medium access is our contended resource and several stations to the same physical medium to share it.\\ At the beginning of computer networks, multiple access channel (MAC) was a big issue for efficient communications: as consequence packet switched buffered networks were introduced reducing the conflicting set to only two stations and simplifying  the original problem. Other the other hand switched networks could be realized only because the medium was wired: in fact a large collision domain could be sliced into smaller pieces and joined again together in ring, star or mesh structures.\\ 
 In a wireless context the problem can be no more avoided.\\  
 
 Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
 
-In particular we analyze the scenario where a reader broadcast a query to the in-range nodes. Once the request is received devices with datas of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic show a bursty nature which is the worst case for all shared medium scenarios.\\
+In particular we analyze the scenario where a reader broadcasts a query to the in-range nodes. Once the request is received, devices with datas of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium,  while collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic shows a bursty nature which is the worst case for all shared medium scenarios.\\
 
 This problem is referred in literature with different names: \emph{Batch Resolution Problem}, \emph{The Reader Collision Problem}, \emph{Object Identification Problem}.\\
-Algorithms trying to solve efficiently this problem are defined as \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
+Algorithms trying to solve this problem efficiently  are defined as \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
 
-For our terminology, given a query, it determines a subset of nodes which have to reply to it with one (and only one) message: this set of nodes constitute our \emph{batch}. The size of the batch can ben know in advance, in lucky and optimistic scenarios, or can change in function of the query or time.
+For our terminology, given a query, it determines a subset of nodes which havs to reply to it with one (and only one) message: this set of nodes constitutes our \emph{batch}. The size of the batch can ben known in advance, in lucky and optimistic scenarios, or it can change in function of the query or time.
 
 Since each node has exactly one message to deliver, the problem of obtaining all the messages or counting the number of nodes involved by the resolution process is exactly the same.
 
-Instead the problem differs when we are not so interested in the exact number of nodes but we would appreciate a estimate of the actual batch size, rather accurate if possible.
+Instead the problem differs when we are not so interested in the exact number of nodes but we would appreciate a estimate of the actual batch size, rather accurate if it is possible.
 
 The knowledge of the batch size $n$ is an important factor for parameter optimization, for efficient resolution trying to minimize the time taken by the process.
 
@@ -184,21 +207,21 @@ In this paper we present a novel approach to the problem of collision resolution
 
 \section{Model, Scenario, Terminology}
 
-We consider the following standard model of a multiple access channel. A large number of geographically dispersed nodes communicate through a common channel. Any node generate and transmit data on the channel. Transmissions start at integer multiples of unit of time and last one unit of time, also called a ``slot''.\\
+We consider the following standard model of a multiple access channel. A large number of geographically dispersed nodes communicate through a common channel. Any node generates and transmits data on the channel. Transmissions start at integer multiples of  time unit and last one unit of time, also called a ``slot''.\\
 
-For this condition to be true in SLOTTED ALOHA, there must be some form of synchronization that inform the nodes about the beginning of the new slot (or at least the beginning of a cycle of slots). Slot size if equal to the fixed packet transmission time and a node can start a transmission only at the beginning of the slot, otherwise it will stay quiet until the next slot to come.\\
+For this condition to be true in SLOTTED ALOHA, there must be some forms of synchronization that inform the nodes about the beginning of the new slot (or at least the beginning of a cycle of slots). Slot size is equal to the fixed packet transmission time and a node can start a transmission only at the beginning of the slot, otherwise it will stay quiet until the next slot will come.\\
 
-In CSMA networks each node is able to determine the beginning of a new slot by sensing to the channel: when the channel is listened free a device can start transmitting it's message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it can sense no more to the channel and so it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it is results in a success or a collision. On the other hand empty slots takes less time than transmissions.\\
+In CSMA networks each node is able to determine the beginning of a new slot by sensing to the channel: when the channel is listened free a device can start transmitting its message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it can sense no more to the channel and consequently it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, either if  it results in a success or a collision. On the other hand empty slots takes less time than transmissions.\\
 % precisare T_{s} T_{p} T_{c} ??
 
-CSMA/CD is not suitable for pervasive wireless devices such as sensors or RFID tags since they has to be keep as simple as possible to satisfy energy and cost requirements: they do not implement this MAC scheme and so no detection/reduction of collision time is possible.\\
+CSMA/CD is not suitable for pervasive wireless devices such as sensors or RFID tags since they have to be keep as simple as possible to satisfy energy and cost requirements: they do not implement this MAC scheme and so no detection/reduction of collision time is possible.\\
 
 We assume that there is no external source of interference and that a transmission can fail only when a collision takes place.
 In each slot, when $k$ nodes transmit simultaneously, the success or the transmission depends on $k$:
 \begin{itemize}
-\item if $k=0$ then no transmission were attempted. The slot is said to be \emph{empty} or \emph{idle};
+\item if $k=0$ then no transmission are attempted. The slot is said to be \emph{empty} or \emph{idle};
 \item if $k=1$ then the transmission succeeds. The slot is said to be \emph{successful};
-\item if $k\geq 2$ there is a conflict, meaning that the transmission interfere destructively so that none succeeds. The slot is said to be \emph{collided}.
+\item if $k\geq 2$ there is a conflict, meaning that the transmission interferes destructively so that none succeeds. The slot is said to be \emph{collided}.
 \end{itemize}
 
 We assume that nodes having new messages to deliver generated after the start of the resolution process will wait until the end before proceeding with their delivery.
@@ -314,7 +337,7 @@ So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be
             node[ sloped, above, pos=.6] {$Q_{2}(2)$}}
 };
 \end{tikzpicture}
-\caption[Set split probabilities]{Transaction probabilities to split a set of 2 elements into two sets with $i$, $j$ elements}
+\caption[\emph{BT}: Batch split probabilities]{Transaction probabilities to split a set of 2 elements into two sets with $i$, $j$ elements}
 \end{figure}
 
 \subsubsection{Example}
@@ -349,7 +372,7 @@ So knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$ can be
 };
 \end{tikzpicture}
 }
-\caption[Basic binary tree example]{An istance of the binary tree algorithm for $n=5$ nodes. The number inside the each circle identifies the slot number. The label below identifies the event occurring: \textit{I} for \emph{idle}, \textit{C} for \emph{collision}, $n_{i}$ for resolution of node $i$. 0/1 branches is analogous to head/tail.}.
+\caption[\emph{BT}: Basic binary tree example]{An istance of the binary tree algorithm for $n=5$ nodes. The number inside the each circle identifies the slot number. The label below identifies the event occurring: \textit{I} for \emph{idle}, \textit{C} for \emph{collision}, $n_{i}$ for resolution of node $i$. 0/1 branches is analogous to head/tail.}.
 \label{example-bbt}
 \end{figure}
 
@@ -443,7 +466,7 @@ This let us save a slot.\\
 \draw [-latex,blue,thin,dashed] (s11) to [bend left ](s12);
 \end{tikzpicture}
 }
-\caption[Modified binary tree example]{Same example as in Figure \ref{example-bbt} but using \algname{MBT}: tree structure do not change but node 10 is skipped in the traversal. $\tau=8$}
+\caption[\emph{MBT}: Modified binary tree example]{Same example as in Figure \ref{example-bbt} but using \algname{MBT}: tree structure do not change but node 10 is skipped in the traversal. $\tau=8$}
 \label{example-mbt}
 \end{figure}
 
@@ -459,9 +482,10 @@ Intuitively in this case, since an higher probability to stay silent, reduces th
 It can be shown\footnote{  J.L Massey,\emph{Collision-Resolution Algorithms and Random-Access Communications}, CISM Courses and Lectures, vol. 265, pp. 73–137. Springer, Berlin (1981)} that best achievable result is for $p=0.4175$ and, with this $p$, efficiency $\eta \approx 0.381$ as $n \to \infty$ which is asintotically +10\% faster than basic BT.\\
 In general we have: 
 \begin{equation}
-L_{n}\leq C \cdot n +1 \qquad \textrm{where} \qquad C=2.623
+L_{n}\leq C \cdot n +1 \qquad \textrm{where} \qquad C=2.622
 \end{equation}
-Not using optimal probability for $p$ but 1/2 results in about 1.5\% peak performance loss which is a moderate decrease.\\
+Not using optimal probability for $p$ but 1/2 results, for large $n$, in about 0.2\% peak performance loss  ($C=2.667$) which is a really moderate decrease.\\
+What is even more important  is that 0.4175 is close to the optimal bias for small $n$ as well.
 \chapter{Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
@@ -501,7 +525,7 @@ So this simple method is not good to obtain an estimate.
 };
 \end{tikzpicture}
 }
-\caption[CBT example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
+\caption[\emph{CBT}: example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
 \end{figure}
 
 Experimental results show that the variance of the obtained estimate is extremely high and the resulting accuracy is really poor.\\ 
@@ -570,14 +594,19 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
     
     \end{tikzpicture}
     }
-    \caption[Cidon initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \caption[\emph{Cidon} initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
     \label{cidon-nodes-id}
 \end{figure}
  
- Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity. 
+ Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity.\\
+ 
+ Expected running time depends on the BRA used but in general can be considered $O(\pc n)$: time is linear in the size of $\mathcal{E}$.
 
-\subsection{Estimate Accuracy}
+\subsection{Estimate accuracy}
 \label{cidon-estimate-accuracy}
+
+In the original paper \cite{cidon} there is no detailed analysis of the behaviour of the algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
+    
 Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
 
 \begin{enumerate}[1)]
@@ -587,25 +616,36 @@ Let $J$ be an integer random variable which expresses the number of nodes in $\m
 \item \begin{equation}\textrm{var}(J|n)=n\pc(1-\pc)\end{equation}
 \end{enumerate}
 
-By applying Chebychev's Inequality and remebering 
-\begin{equation} 
-\hat{n}=j/\pc 
-\end{equation}
- we can establish a relation between the relative error in the estimate and it's probability.  
+By applying Chebychev's Inequality \eqref{eq:cheby},  we have for any $\epsilon>0$
  
  \begin{equation}
-P\left( \left| \hat{n}-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n}
+P\left( \left| J-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}
+\label{eq:cidon-cheby}
  \end{equation}
+ Let $\hat{N}$ be a real-valued random variable that expresses our estimate upon $n$. Then from \eqref{cidon-J} - \eqref{eq:cidon-cheby}:
 
-\textcolor{red}{qua è da rivedere decisamente}
-So if we want to obtain a relative error below $\epsilon$ with probability $c$ we have to initially solve a fraction
-\begin{equation}
-\pc=1-c(\epsilon^{2}n)
-\end{equation}
-of the whole batch.
+\begin{enumerate}[1)]
+\item \begin{equation}P(\hat{N}=n|n)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n\end{equation}
+\item \begin{equation}E[\hat{N}|n]=n\end{equation}
+\item  \begin{equation}
+P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n}
+\label{eq:cidon-cheby}
+ \end{equation}
+\end{enumerate}
+\clearpage
 \section{Greenberg}
 
-Greenberg algorithm is simply straightforward.
+Let, as usual, $n$ be our batch size.\\
+Basic Greenberg algorithm's strategy is to search for \emph{a power of 2} that is close to $n$ with high probability.\\
+The probabilistic test is defined to look for $\hat{n}$ which tries to satisfy:\\
+\begin{equation}
+\hat{n}\geq 2^{i} \approx n
+\end{equation}
+Let each of the $n$ conflicting stations either transmit or not transmit in accordance with whether the outcome of a biased binary coin is 0 or 1. The coin is biased to turn up 0 with probability  $2^{-i}$ and 1 with complementary probability. Since the expected number of transmitters is $2^{-i}n$, having a conflict as event supports the hypothesis that $n\geq2^{i}$.\\
+Using this test repeatedly with $i=1, 2, 3, \ldots$ leads to the Greenberg \emph{base 2 estimation algorithm}.\\
+Each of the conflicting stations executes Algorithm (\ref{alg-greenberg}), resulting in a string of collisions whose lenght determines $\hat{n}$.\\
+
+As $i$ increases, the probability that at most one node transmits increases monotonically and approaces 1 extremely rapidly as $i$ increases past $\log_{2}n$ so we expect $i$ is close to $\log_{2}n$.\\
 
 \begin{algorithm}[H]
 \begin{algorithmic}
@@ -615,62 +655,32 @@ Greenberg algorithm is simply straightforward.
 	\STATE choose to transmit with probability $2^{-i}$
 \UNTIL {no collision occurs}
 \STATE $\hat{n} \gets 2^{i}$
-\STATE $\hat{n}_{+} \gets \hat{n}/\phi$
 \end{algorithmic}
-\caption{\algname{Greenberg}}
+\caption{\algname{Basic Greenberg}}
 \label{alg-greenberg}
 \end{algorithm}
 
-The idea behind algorithm \ref{alg-greenberg} is quite simple. As the algorithm goes on the initial unknown batch size $n$
-comes progressively sliced into smaller pieces. Only the nodes virtually inside the slice are allowed to transmit.\\
-If two o more nodes decide to transmit we get a collision,\\
-An important note is that the algorithm always involve all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
-Each choice is independent of what the nodes did in the previous steps.\\
+The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the algorithm goes on the initial unknown batch (of size $n$) comes progressively sliced into smaller pieces. Only the nodes virtually inside the slice are allowed to transmit. Slices get thinner and thinner until at most one node is contained in a slice. Figure \ref{fig:greeberg-split} intuitively tries to explain the idea.\\ 
 
-\begin{figure*}[htb!]
+\begin{figure}[htb!]
     \centering
     \begin{tikzpicture}[scale=0.9]  
         \draw (0, 0) circle (3.8cm);
         \foreach \x in {3.5,13.5,...,360}
         \draw[snake=crosses] (\x:3.7) --(\x:3.8);
-        %\foreach \x  in {0, 30, ..., 330}
-        %\draw (-\x+90:3.8) -- (-\x+90:4.0) (-\x+90:4.4) node {$\x^\circ$};
-       
-       %\foreach \x in {0,45,..., 315}
-       %\draw[-,ultra thin,dashed] (0,0) to[] (\x:6);
        \draw[-,ultra thin,dashed] (180:6) to[] (0:6); 
        \draw[-,ultra thin,dashed] (0,0) to[] (-90:6);
        \draw[-,ultra thin,dashed] (0,0) to[] (-135:6);
        \draw[-,ultra thin,dashed] (0,0) to[] (-157.5:6);
        \draw[-,ultra thin,dashed] (0,0) to[] (-168.75:6); 
        \draw[-,ultra thin,dashed] (0,0) to[] (-174.375:6);  
-       % \foreach \x  in {0,1, ..., 3}
-       % \draw[dashed,ultra thin,gray] (0,0)circle(\x);
-        
-       % \draw[->,dashed,gray](0,0) to[] (3.5,0);
-        %Add labels with names of the primary and secondary colors.
-        
-        %\foreach \x/\text in {1/f$_{S}$, 3/f$_{W}$}
-        %\draw (\x,0) node [below]{\text};
-        
         %arco rosso
         \foreach \x/\text in {1.6,1.7,...,2.5}
         \draw [-,thin,red!50] (0:\x) arc(0:-90:\x);
-       
-        %\draw[-,ultra thin,red,dashed] (0,0) to[] (0,7);
-        %\draw[-,ultra thin,red,dashed] (0,0) to[] (-5.4,5);
-        
-       
-        
         %arco  blue
         \foreach \x/\text in {2.6,2.7,...,3.5}
         \draw [-,thin,blue!50] (0:\x) arc(0:180:\x); 
-        
-        %\draw[-,ultra thin,blue,dashed] (0,0) to[] (-15:6);
-        %\draw[-,ultra thin,blue,dashed] (0,0) to[] (3.5,6);
-        %\draw[-,ultra thin,blue,dashed] (0,0) to[] (-7,1.9);
-            
-        %arco rosso
+        %arco verde
         \foreach \x/\text in {.6,.7,...,1.5}
         \draw [-,thin,green!80] (-90:\x) arc(-90:-135:\x);
 
@@ -682,19 +692,23 @@ Each choice is independent of what the nodes did in the previous steps.\\
         (90:6)      node[above right] {$\pi$}  (95:2)      node[below] {$n/2$}
         (-45:6)      node[below right] {$\pi/2$} (-50:2.7)      node[right] {$n/4$}
         (-112.5:6)      node[below left] {$\pi/4$} (-118:2)      node[below left] {$n/8$};
-        %(-3.5,6.5) node[above right] {$Swell\ Sea$}
-        %(-5,2.5) node[left] {$Wind\ Sea$};
-        %(.5,0) node[above right] {$0.1\ Hz$}
-        %   (3.8,.2) node[left] {$0.3\ Hz$};
-        %   
-    
     \end{tikzpicture}
-    \caption[Basic greenberg batch split idea]{Visually nodes can be thought to be uniformly distributed on the circumference of a circle. By performing Greenberg's algorithm we go and analyze each time a smaller sector (in this case the half of the previous one) of the circle and find when a sector contains only 1 or no nodes.  Not overlapping sectors are drawn to maintain the image simple but in general nodes gets redistributed to each step of the algorithm}
-    \label{fig:sp2d}
-\end{figure*}
+    \caption[\emph{Basic Greenberg} batch split idea]{Visually nodes can be thought to be uniformly distributed on the circumference of a circle. By performing Greenberg's algorithm we go and analyze each time a smaller sector (in this case the half of the previous one) of the circle and find when a sector contains only 1 or no nodes.  Not overlapping sectors are drawn to maintain the image simple but in general nodes gets redistributed to each step of the algorithm}
+    \label{fig:greeberg-split}
+\end{figure}
 
-Using Mellin's transform 
+Expected running time is $O(log_{2}n)$. In particular, since in the SLOTTED ALOHA model considered in the paper reader feedback is supposed to be transmitted at the end of each transmission slot, expected running time can be expressed, in slot numbers, as $\approx 1+\log_{2}n$.\\
 
+An important note is that the algorithm always involve all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
+Each choice is independent of what the node did in the previous steps. \\ 
+This is of great importance and allows $\hat{n}$ to have bounded moments: it can be shown for large $n$ that
+\begin{equation}
+E[\hat{n}] \approx n\phi
+\end{equation}
+\begin{equation}
+E[\hat{n}^{2}] \approx n\Phi
+\end{equation}
+where
 \begin{equation}
 \phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-2} \, dx
 \end{equation}
@@ -703,8 +717,11 @@ Using Mellin's transform
 \Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-3} \, dx
 \end{equation}
 
-\begin{table}[htdp]
-\caption[Expected Estimate with Greenberg]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
+\noindent $\phi$ and $\Phi$ where obtained in \cite{greenberg87} using advanced mathematical analysis supported by Mellin integral transform\footnote{in this work we only report these as final results, please refer to the original paper to see how $\phi$ and $\Phi$ where obtained.}.
+In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table \ref{table:phi-Phi} to provide an idea of the behaviour of $\phi$ as function of $n$.\\
+
+\begin{table}[htd!]
+\caption[\emph{Basic Greenberg} Expected Estimate]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
 \begin{center}
 \begin{tabular}{rD{.}{.}{5.2}D{.}{.}{1.4}}
  n & \multicolumn{1}{r}{$E[\hat{n}|n]$} & \multicolumn{1}{c}{$E[\hat{n}|n]/n$} \\ \hline \hline
@@ -724,11 +741,32 @@ Using Mellin's transform
 8192 &  7489.72 &   0.9143 \\ 
 16384 & 14978.86 &   0.9142 \\ 
 32768 & 29957.16 &   0.9142 \\ 
-65536 & 59913.74 &   0.9142 \\ 
-
+65536 & 59913.74 &   0.9142
 \end{tabular}
 \end{center}
-\end{table}%
+\label{table:phi-Phi}
+\end{table}
+The fact that, for large $n$, $E[\hat{n}] \approx n\phi$ suggests treating $\hat{n}_{+} = \hat{n}/\phi$ as a estimate of n.\\
+
+
+Interestingly, a simple variant of the estimation algorithm has disastrous performance. Consider the algorithm in which each station involved in the initial collision transmits to he channel with probability $\frac{1}{2}$. If this causes another collision, then those that just transmitted again transmit with probability $\frac{1}{2}$. The others drop out. This continues, with the stations continuing to try to transmit always being a subset of those that just transmitted, until there is no collision. Take $2^{i}$ as the estimate of the multiplicity of conflict where $i$ is the number of the steps until ther is no collision. It can be shown that the second and all higher moments of this estimate are infinite.
+
+\subsection{base \emph{b} variant}
+
+Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to difer from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to remedy this limit: providing and estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
+Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.
+\begin{algorithm}[H]
+\begin{algorithmic}
+\STATE $i\gets 0$
+\REPEAT
+	\STATE $i\gets i+1$
+	\STATE transmit with probability $b^{-i}$
+\UNTIL {no collision occurs}
+\STATE $\hat{n} \gets 2^{i}$
+\end{algorithmic}
+\caption{\algname{base \emph{b} Greenberg}}
+\label{alg-greenberg-base-b}
+\end{algorithm}
 
 
 \section{Window Based}
@@ -783,7 +821,7 @@ P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq
 \end{split}
 \label{cidon-accuracy-bounds}
 \end{equation}
-Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses the constrains for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectable when $n\leq 200$.  \\
+Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses a constrain for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectable when $n\leq 200$.  \\
 \begin{equation}
 f(k,n,\pc) = P\left(\left\lceil \frac{n\pc}{k}\right\rceil\leq j \leq \left\lfloor kn\pc\right\rfloor \big| k,n,\pc\right)\geq \theta
 \end{equation}
@@ -803,8 +841,9 @@ Figure below shows $\pc$ in function of $k$ for different batch sizes.\\
 
 Figure \ref{cidon-k-p-minimum} shows how the fraction of the initial batch to resolve for estimate to be within  required confidence interval with high probability deeply depends on the size of the problem: smaller sizes require much higher $\pc$.\\
 At the same time, considering absolute cost in elapsed slots, Figure  \ref{cidon-k-L-minimum} shows that, for a wide range of $k$, the time required is quite independent of the size of the problem.\\
-Time required by the largest considered $n$ provides a bound for smaller ones.\\
+Time required by the largest considered $n$ provides a  bound for smaller ones.\\
 Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI time taken is plotted: this bound is not so tight for very small batches. With small batches BRAs performs better than what is reported.   
+
 \begin{figure}[htb!]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-k-L-minimum}
@@ -812,7 +851,7 @@ Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI 
 \label{cidon-k-L-minimum}
 \end{center}
 \end{figure}
-\newpage
+
 \section{Greenberg Evaluation}
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively:
 \begin{enumerate}
@@ -838,6 +877,7 @@ f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))
 An overview of the behaviour of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities}.
 
 \subsection{base $b$ Greenberg}
+\section{Modified Greenberg with MLE}
 
 \chapter{Comparison}
 
@@ -875,7 +915,6 @@ Table V.}\label{rotfloat2} \end{sidewaystable}
 \end{comment}
 
 \include{appendix}
-
 
 \include{bibliography}
 \end{document}
