@@ -110,3 +110,7 @@ set(h3, 'Marker', 'd', 'MarkerFaceColor', [.8 .8 .8], 'MarkerEdgeColor', [0 0 0]
 
 set(gca,'XTick',1:0.1:2);
 set(gca,'YScale','log');
+
+grid on;
+
+saveas(fh, 'cidon-k-L-minimum', 'epsc');

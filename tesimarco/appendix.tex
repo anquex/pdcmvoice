@@ -4,6 +4,12 @@
 
 \section{Probability}
 \textcolor{red}{sezione provvisoria}
+\subsection{Chebyshev's inequality}
+Let $X$ be a \emph{random variable} with expected value $\mu$ and finite variance $\sigma^{2}$. Then for any real number $k>0$,
+\begin{equation}
+\Pr(\left|X-\mu\right|\geq k)\leq\frac{\sigma^{2}}{k^2}
+\label{eq:cheby}
+\end{equation}
 \subsection{Binomial Distribution}
 
 $B(n,p)$
@@ -44,7 +50,7 @@ anche per produttoria con k è lo stesso.\\ risolto con quad matlab}
 \section{CBT Estimate Experimental Distribution}
 
 Following tables \ref{CBT-table-1} shows the behavior of CBT Algorithm (section \ref{cbt-estimation}) for estimation.  Simulation was implemented in matlab.
-The resulting distribution of $\hat{n}$ fixed $n$ is the result of averaging 10$0^{\cdot}$000 runs of CBT Algorihm applied on uniformly random generated nodes ID batches.\\ 
+The resulting distribution of $\hat{n}$ fixed $n$ is the result of averaging \numprint{100000} runs of CBT Algorihm applied on uniformly random generated nodes ID batches.\\ 
 
 \begin{table}[H]
 \caption[Experimentally computed CBT Estimate Distributon]{Experimentally computed CBT Estimate Distributon. Table 1/3}
