@@ -48,12 +48,11 @@ In general for base $b$ greenberg algorithm the first and second moments are bou
 \label{eq:greenberg-b-Phi}
 \end{equation}
 
+\noindent $\phi(b)$ was computed using the code below. Even if the integral is improper the integrand function goes fast to 0 and so the product does when $k$ grows. We found that considering interval (0,40) for numerical integration provided good results.\\
 \lstinputlisting{matlab/Greenberg_base_b/phi/calculatephi.m}
 \lstinputlisting{matlab/Greenberg_base_b/phi/f4.m}
 \lstinputlisting{matlab/Greenberg_base_b/phi/f3.m}
 \lstinputlisting{matlab/Greenberg_base_b/phi/f2.m}
-\textcolor{red}{note sul calcolo\\ va velocemente a 0 quind basta considerare un intervallo iniziale  limitato\\
-anche per produttoria con k è lo stesso.\\ risolto con quad matlab}
 
 
 \section{CBT Estimate Experimental Distribution}
