@@ -783,7 +783,7 @@ Looking at Table \ref{table:greenberg-b-phi} you can notice how smaller $b$ resu
 %nota della tabella, assicurarsi che sia nella stessa pagina
 
 \begin{table}[H]
-\caption[\emph{Greenberg}: different $b$ summary]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorihm cost ($\lesssim \log_{2}n$).}
+\caption[\emph{Greenberg}: different $b$ summary]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorithm cost ($\lesssim \log_{2}n$).}
 \label{table:greenberg-b-phi}
 \begin{center}
 \begin{threeparttable}
@@ -859,7 +859,7 @@ This shows that Cidon provides an unbiased estimator ($E[\hat{n}|n]=n$) independ
 
 Variance is strict monotonically decreasing in $\pc$.
 Anyway it is difficult to establish in what measure an estimate can be considered accurate.\\
-Given $n$, let $k \geq1$ define the minimum required accurancy in the following way: 
+Given $n$, let $k \geq1$ define the minimum required accuracy in the following way: 
 \begin{equation}
 \frac{n}{k}\leq\hat{n}\leq kn
 \label{cidon-accuracy-constrains}
@@ -873,7 +873,7 @@ P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq
 \end{split}
 \label{cidon-accuracy-bounds}
 \end{equation}
-Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses a constrain for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectable when $n\leq 200$.  \\
+Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses a constrain for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectible when $n\leq 200$.  \\
 \begin{equation}
 f(k,n,\pc) = P\left(\left\lceil \frac{n\pc}{k}\right\rceil\leq j \leq \left\lfloor kn\pc\right\rfloor \big| k,n,\pc\right)\geq \theta
 \end{equation}
