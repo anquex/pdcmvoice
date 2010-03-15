@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{latexsym}
 \usepackage[final]{graphicx} %draft % To include graphics
-\usepackage{epsfig}
+%\usepackage{epsfig}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[none]{hyphenat} 
 \usepackage[small,bf]{caption}
@@ -33,10 +33,14 @@
 \usepackage{epstopdf} % per importare gli eps con \includegraphics
 \usepackage{numprint}
 %\usepackage{indentfirst}
-%\usepackage[Lenny]{fncychap} % [Sonny[Lenny]
+%\usepackage[Lenny]{fncychap} % [Sonny[Lenny] 
+\usepackage{threeparttable} %gestire le note sotto le tabelle float
+\usepackage{relsize} %dimensioni relative più grandi o piccole
 
-
-
+%definisce il comando \symbolfootnote per mettere le note con simbolo. che nelle equazioni altrimenti c'è casino
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+%use \symbolfootnote[1-2-3-4...-9]{footnote}
 
 % LINKS
 %http://www.kronto.org/thesis/tips/index.html
@@ -63,6 +67,10 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
 
+% il compilatore converte gli eps di matlab in pdf e poi da quelli importa le immagini
+% se trova il pdf prima usa quello per cui le modificihe all'eps vengono ignorate
+% è pertanto necessario caricare prima l'eps per produrre il nuovo pdf da importare
+\DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg}
 
 \definecolor{listinggray}{gray}{0.9} 
 \definecolor{lbcolor}{rgb}{0.95,0.95,0.95} 
@@ -605,7 +613,7 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
 \subsection{Estimate accuracy}
 \label{cidon-estimate-accuracy}
 
-In the original paper \cite{cidon} there is no detailed analysis of the behaviour of the algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
+In the original paper \cite{cidon} there is no detailed analysis of the behavior of the algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
     
 Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
 
@@ -701,7 +709,7 @@ Expected running time is $O(log_{2}n)$. In particular, since in the SLOTTED ALOH
 
 An important note is that the algorithm always involve all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
 Each choice is independent of what the node did in the previous steps. \\ 
-This is of great importance and allows $\hat{n}$ to have bounded moments: it can be shown for large $n$ that
+This is of great importance and allows $\hat{n}$ to have bounded moments: it can be shown for large $n$ that:
 \begin{equation}
 E[\hat{n}] \approx n\phi
 \end{equation}
@@ -710,17 +718,17 @@ E[\hat{n}^{2}] \approx n\Phi
 \end{equation}
 where
 \begin{equation}
-\phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-2} \, dx
+\phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-2} \, dx = 0.91422\dots
 \end{equation}
 
 \begin{equation}
-\Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-3} \, dx
+\Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-3} \, dx =1.23278\dots
 \end{equation}
 
 \noindent $\phi$ and $\Phi$ where obtained in \cite{greenberg87} using advanced mathematical analysis supported by Mellin integral transform\footnote{in this work we only report these as final results, please refer to the original paper to see how $\phi$ and $\Phi$ where obtained.}.
-In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table \ref{table:phi-Phi} to provide an idea of the behaviour of $\phi$ as function of $n$.\\
+In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table \ref{table:phi-Phi} to provide an idea of the behavior of $\phi$ as function of $n$.\\
 
-\begin{table}[htd!]
+\begin{table}[H]
 \caption[\emph{Basic Greenberg} Expected Estimate]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
 \begin{center}
 \begin{tabular}{rD{.}{.}{5.2}D{.}{.}{1.4}}
@@ -753,8 +761,8 @@ Interestingly, a simple variant of the estimation algorithm has disastrous perfo
 
 \subsection{base \emph{b} variant}
 
-Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to difer from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to remedy this limit: providing and estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
-Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.
+Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to differ from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to remedy this limit: providing and estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
+Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.\\
 \begin{algorithm}[H]
 \begin{algorithmic}
 \STATE $i\gets 0$
@@ -762,11 +770,55 @@ Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.
 	\STATE $i\gets i+1$
 	\STATE transmit with probability $b^{-i}$
 \UNTIL {no collision occurs}
-\STATE $\hat{n} \gets 2^{i}$
+\STATE $\hat{n}(b) \gets 2^{i}$
+\STATE $\hat{n}_{+}(b) \gets \hat{n}(b)/\phi(b)$
 \end{algorithmic}
 \caption{\algname{base \emph{b} Greenberg}}
 \label{alg-greenberg-base-b}
 \end{algorithm}
+
+$\phi(b)$ corrects the bias of the estimator. $\phi(b)$ is the optimal correction when $n$ is large.
+Looking at Table \ref{table:greenberg-b-phi} you can notice how smaller $b$ results in smaller $\phi(b)$. This means that $b$ deeply biases the estimate: if $b^{'} < b^{''}$ then $E[\hat{n}(b^{'})] < E[\hat{n}(b^{''})]$.\\ This is a result of the following fact: let $i^{''}$ be the expected slot the base $b^{''}$ algorithm will end up given a batch size $n$, then $i^{''} \leq log_{b^{''}} n$. Let $i^{'}$ be the same for $b^{''}$. If $b^{'} < b^{''}$ then $b^{'i^{'}} > b^{''i^{''}}$ \symbolfootnote[2]{This comes from experimental observations.}
+
+%nota della tabella, assicurarsi che sia nella stessa pagina
+
+\begin{table}[H]
+\caption[\emph{Greenberg}]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorihm cost ($\lesssim \log_{2}n$).}
+\label{table:greenberg-b-phi}
+\begin{center}
+\begin{threeparttable}
+\begin{tabular}{lccl}
+$b$ & $\phi(b)$\tnote{a} &\,\,\,& Expected cost in slots-1\\
+\toprule
+2          & $\approx 0.9142$ && $\lesssim 1 \qquad\,\,\, \times \log_{2} n$\\
+1.1       & $\approx 0.3484$ && $ \lesssim 7.27$\\
+1.01     & $\approx 0.1960$ && $ \lesssim 69.66$\\
+1.001   & $\approx 0.1348$ && $ \lesssim 693.49$\\
+1.0001 & $\approx 0.1027$ && $ \lesssim 6931.81$\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item [a] {\footnotesize \smaller Code used to compute $\phi(b)$ is provided in Appendix \ref{sec:greenberg-moments}}
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+It can be shown \cite{greenberg87} that, \emph{for all n greater than some constant $n_{0}(b)$}
+\begin{enumerate}
+\item \begin{equation} 
+		\left |\frac{E[\hat{n}_{+}(b)]}{n}-1 \right | < \epsilon(b) 
+	  \end{equation}
+\item \begin{equation}
+		\frac{\sigma(\hat{n}_{+}(b))}{n}< \epsilon(b)
+	\end{equation}
+\end{enumerate}
+\emph{where $\epsilon(b) \rightarrow 0$ as $b \rightarrow 1$.}
+
+In other words when $b \rightarrow 1$ and $n$ is large the estimate becomes unbiased and variance goes to 0: we have ideally a perfect estimator.\\
+Our experimental results showed that this estimator is not so good for real life scenarios.  
+
+
 
 
 \section{Window Based}
@@ -874,7 +926,26 @@ f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))
 \label{eq:bgstopprobability}
 \end{equation}
 
-An overview of the behaviour of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities}.
+An overview of the behavior of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities}.\\
+
+We note how, for any fixed $n$, the distribution is well behaved: initially it is monotonically increasing, later a monotonically decreasing part follows.\\
+
+
+\begin{figure}[htbp]
+\begin{center}
+%\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
+\includegraphics[scale=0.7]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity-init}
+\caption{\emph{Basic Greenberg}:  small sizes distribution.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+%\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
+\includegraphics[scale=0.7]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity}
+\caption{\emph{Basic Greenberg}:  large size distribution.}
+\end{center}
+\end{figure}
 
 \subsection{base $b$ Greenberg}
 \section{Modified Greenberg with MLE}
