@@ -602,7 +602,7 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
     
     \end{tikzpicture}
     }
-    \caption[\emph{Cidon} initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \caption[\emph{Cidon}: initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
     \label{cidon-nodes-id}
 \end{figure}
  
@@ -701,7 +701,7 @@ The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the
         (-45:6)      node[below right] {$\pi/2$} (-50:2.7)      node[right] {$n/4$}
         (-112.5:6)      node[below left] {$\pi/4$} (-118:2)      node[below left] {$n/8$};
     \end{tikzpicture}
-    \caption[\emph{Basic Greenberg} batch split idea]{Visually nodes can be thought to be uniformly distributed on the circumference of a circle. By performing Greenberg's algorithm we go and analyze each time a smaller sector (in this case the half of the previous one) of the circle and find when a sector contains only 1 or no nodes.  Not overlapping sectors are drawn to maintain the image simple but in general nodes gets redistributed to each step of the algorithm}
+    \caption[\emph{Basic Greenberg}: batch split idea]{Visually nodes can be thought to be uniformly distributed on the circumference of a circle. By performing Greenberg's algorithm we go and analyze each time a smaller sector (in this case the half of the previous one) of the circle and find when a sector contains only 1 or no nodes.  Not overlapping sectors are drawn to maintain the image simple but in general nodes gets redistributed to each step of the algorithm}
     \label{fig:greeberg-split}
 \end{figure}
 
@@ -783,7 +783,7 @@ Looking at Table \ref{table:greenberg-b-phi} you can notice how smaller $b$ resu
 %nota della tabella, assicurarsi che sia nella stessa pagina
 
 \begin{table}[H]
-\caption[\emph{Greenberg}]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorihm cost ($\lesssim \log_{2}n$).}
+\caption[\emph{Greenberg}: different $b$ summary]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorihm cost ($\lesssim \log_{2}n$).}
 \label{table:greenberg-b-phi}
 \begin{center}
 \begin{threeparttable}
@@ -813,9 +813,9 @@ It can be shown \cite{greenberg87} that, \emph{for all n greater than some const
 		\frac{\sigma(\hat{n}_{+}(b))}{n}< \epsilon(b)
 	\end{equation}
 \end{enumerate}
-\emph{where $\epsilon(b) \rightarrow 0$ as $b \rightarrow 1$.}
+\emph{where $\epsilon(b) \to 0$ as $b \to 1$.}
 
-In other words when $b \rightarrow 1$ and $n$ is large the estimate becomes unbiased and variance goes to 0: we have ideally a perfect estimator.\\
+In other words when $b \to 1$ and $n$ is large the estimate becomes unbiased and variance goes to 0: we have ideally a perfect estimator.\\
 Our experimental results showed that this estimator is not so good for real life scenarios.  
 
 
@@ -853,7 +853,7 @@ This shows that Cidon provides an unbiased estimator ($E[\hat{n}|n]=n$) independ
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-variance-p}
 %\epsfile{file=matlab/Cidon/cidon-variance-p.eps,scale=0.8}
-\caption{\emph{Cidon}:  estimate accuracy dramatically improves while $\pc\leq0.1$.}
+\caption[\emph{Cidon}: Variance behavior]{\emph{Cidon}:  estimate accuracy dramatically improves while $\pc\leq0.1$.}
 \end{center}
 \end{figure}
 
@@ -886,7 +886,7 @@ Figure below shows $\pc$ in function of $k$ for different batch sizes.\\
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-k-p-minimum}
-\caption{\emph{Cidon}: Minimum $\pc$ required for accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy $k$]{\emph{Cidon}: Minimum $\pc$ required for accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
 \label{cidon-k-p-minimum}
 \end{center}
 \end{figure}
@@ -899,7 +899,7 @@ Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI 
 \begin{figure}[htb!]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-k-L-minimum}
-\caption{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\caption[\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$]{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
 \label{cidon-k-L-minimum}
 \end{center}
 \end{figure}
@@ -927,28 +927,44 @@ f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))
 \end{equation}
 
 An overview of the behavior of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\
+\begin{equation}
+\textrm{Pr}\left( \hat{n}=2^{i}|n\right)=f(n,i)  
+\end{equation}
 
-Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large}
-We note how, for any fixed $n$, the distribution is well behaved: initially it is monotonically increasing, then a monotonically decreasing part follows.\\
+Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behave for small and large sizes.
+We note that, for any fixed $n$, the distribution is well behaved: initially it is monotonically increasing, then a monotonically decreasing part follows.\\
+It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces a shift of 1 slot to the right but the values assumed are the same (see Figure \ref{fig:greenberg-dist-large} ).\\
 
 
 \begin{figure}[htbp]
 \begin{center}
 %\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
 \includegraphics[scale=0.7]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity-init}
-\caption{\emph{Basic Greenberg}:  small sizes distribution.}
+\caption{\emph{Basic Greenberg}:  small $2^{k}$ sizes distribution.}
 \label{fig:greenberg-dist-small}
 \end{center}
 \end{figure}
 
-\begin{figure}[htbp]
+
+\begin{figure}[H]
 \begin{center}
 %\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
 \includegraphics[scale=0.7]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity}
-\caption{\emph{Basic Greenberg}:  large size distribution.}
+\caption{\emph{Basic Greenberg}:  large $2^{k}$ sizes distribution.}
 \label{fig:greenberg-dist-large}
 \end{center}
 \end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+%\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
+\includegraphics[scale=.7]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-intermediate-values}
+\caption{\emph{Basic Greenberg}:  general sizes distribution.}
+\label{fig:greenberg-dist-general}
+\end{center}
+\end{figure}
+This is not only true for sizes power of two but for any size. Figure \ref{fig:greenberg-dist-general} shows the case where size $n'$ has color $c$ and size $2n'$ has, again, color $c$ but a different marker: values are the same but shifted right. Interestingly the highest peaks are located in $n=683$ and $n=1366$.
 
 \subsection{base $b$ Greenberg}
 \section{Modified Greenberg with MLE}
