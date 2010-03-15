@@ -26,26 +26,35 @@ oppure dal libro $np(1-p)\geq 10$.
 
 
 \subsection{Poisson Distribution}
+
 \subsection{Normal Distribution}
+
  $\mathcal{N}(\mu,\sigma^{2})$
 \begin{equation}
 f(x)= \frac{1}{\sqrt{2\pi\sigma^{2}}}\exp{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}
 \end{equation}
 
 \section{Greenberg bounded \emph{m}-moments}
-
+\label{sec:greenberg-moments}
 In general for base $b$ greenberg algorithm the first and second moments are bounded by:
 
 \begin{equation}
 \phi(b)= \frac{1}{\log b} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-b^{k}x}(1+b^{k}x))x^{-2} \, dx
+\label{eq:greenberg-b-phi}
 \end{equation}
 
 \begin{equation}
 \Phi(b)= \frac{1}{\log b} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-b^{k}x}(1+b^{k}x))x^{-3} \, dx
+\label{eq:greenberg-b-Phi}
 \end{equation}
 
+\lstinputlisting{matlab/Greenberg_base_b/phi/calculatephi.m}
+\lstinputlisting{matlab/Greenberg_base_b/phi/f4.m}
+\lstinputlisting{matlab/Greenberg_base_b/phi/f3.m}
+\lstinputlisting{matlab/Greenberg_base_b/phi/f2.m}
 \textcolor{red}{note sul calcolo\\ va velocemente a 0 quind basta considerare un intervallo iniziale  limitato\\
 anche per produttoria con k è lo stesso.\\ risolto con quad matlab}
+
 
 \section{CBT Estimate Experimental Distribution}
 
