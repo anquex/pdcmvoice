@@ -636,7 +636,7 @@ P\left( \left| J-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{\pc(1-\p
 \item \begin{equation}P(\hat{N}=n|n)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n\end{equation}
 \item \begin{equation}E[\hat{N}|n]=n\end{equation}
 \item  \begin{equation}
-P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n}
+P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}
 \label{eq:cidon-cheby}
  \end{equation}
 \end{enumerate}
@@ -967,6 +967,29 @@ It turns out that, for batch sizes larger than 128, the distribution is ``stable
 This is not only true for sizes power of two but for any size. Figure \ref{fig:greenberg-dist-general} shows the case where size $n'$ has color $c$ and size $2n'$ has, again, color $c$ but a different marker: values are the same but shifted right. Interestingly the highest peaks are located in $n=683$ and $n=1366$.
 
 \subsection{base $b$ Greenberg}
+\subsection{Considerations}
+Greenberg method is really good from the point view of running cost since it is $O(\log_{2}n)$ respect to the size  $n$ of the problem but it has also some non negligible drawbacks:
+\begin{enumerate}[\bf a)]
+\item estimation phase results in a sequence of colliding messages. These provides informations about the cardinality of the batch but do not help to solve an, even small, portion of the eventually following batch resolution problem and can not carry auxiliary infromations. An algorithm that allows to get an estimate while transmitting successfully messages would offer some advantages when the problem is not only the pure estimation but also a subsequent resolution.
+\item it does not allow to achieve arbitrary precision in the estimate.\\ In fact we have that:
+	\begin{enumerate}[\it i.]
+		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without any error.
+		\item the end-up distribution is not sharp enough but it spans over a few slots: this is shown by Figure \ref{fig:greenberg-dist-large}. The Figure shows that, for the examined batch sizes, fixed a problem of size $n$ we have about:
+		\begin{itemize}
+		\item 0.02\textpertenthousand\  estimate is $16n$;
+		\item 3\textpertenthousand\  estimate is $8n$;
+		\item 1.2\% estimate is $4n$;
+		\item 12.9\% estimate is $2n$;
+		\item 39.6\% estimate is $n$;
+		\item 36.8\% estimate is $\frac{n}{2}$: perfect $\checkmark$;
+		\item \ 9.1\% estimate is $\frac{n}{4}$;
+		\item \  3 \textperthousand\ estimate is $\frac{n}{8}$;
+		\item \ 0.02\textpertenthousand\ estimate is $\frac{n}{16}$;
+		\end{itemize}
+		It is difficult to discriminate between $n$ and $\frac{n}{2}$ 
+	\end{enumerate}
+\end{enumerate}
+
 \section{Modified Greenberg with MLE}
 
 \chapter{Comparison}
