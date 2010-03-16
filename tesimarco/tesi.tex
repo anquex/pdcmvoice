@@ -66,6 +66,7 @@ title=\lstname,                 % show the filename of files included with \lsti
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 % il compilatore converte gli eps di matlab in pdf e poi da quelli importa le immagini
 % se trova il pdf prima usa quello per cui le modificihe all'eps vengono ignorate
@@ -637,7 +638,6 @@ P\left( \left| J-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{\pc(1-\p
 \item \begin{equation}E[\hat{N}|n]=n\end{equation}
 \item  \begin{equation}
 P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}
-\label{eq:cidon-cheby}
  \end{equation}
 \end{enumerate}
 \clearpage
@@ -908,11 +908,11 @@ Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI 
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively:
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
-\begin{equation}q_{0}(p,n)=(1-p)^{n}\end{equation} 
+\begin{equation}q_{0}(p,n)=(1-p)^{n} \label{eq:greenberg-prob-empty}\end{equation}
 \item the probability to get a successful transmission (one transmission)
-\begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \end{equation} 
+\begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \label{eq:greenberg-prob-succ}\end{equation} 
 \item the probability to get a collision (two or more transmissions)
-\begin{equation}q_{2+}(p,n)=1-q_{0}-q_{1}\end{equation}
+\begin{equation}q_{2+}(p,n)=1-q_{0}-q_{1}\label{eq:greenberg-prob-coll}\end{equation}
 \end{enumerate}
 
 In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability p. Naming each slot $i$ starting with 1, 2, \dots, we have:
@@ -980,19 +980,58 @@ Greenberg method is really good from the point view of running cost since it is 
 		\item 3\textpertenthousand\  estimate is $8n$;
 		\item 1.2\% estimate is $4n$;
 		\item 12.9\% estimate is $2n$;
-		\item 39.6\% estimate is $n$;
-		\item 36.8\% estimate is $\frac{n}{2}$: perfect $\checkmark$;
+		\item 39.6\% estimate is $n$; $\checkmark$
+		\item 36.8\% estimate is $\frac{n}{2}$;
 		\item \ 9.1\% estimate is $\frac{n}{4}$;
 		\item \  3 \textperthousand\ estimate is $\frac{n}{8}$;
 		\item \ 0.02\textpertenthousand\ estimate is $\frac{n}{16}$;
 		\end{itemize}
 		It is difficult to discriminate between $n$ and $\frac{n}{2}$ 
 	\end{enumerate}
+\item to get a tighter estimate, base $b$ Greenberg has to be used. Anyway to improve the accuracy very small $b$ has to be used (see Table \ref{table:greenberg-b-phi}) and this results in a worse running times: even if theoretically it remains $O(log_{b}n)$ which is a lower order term compared to $n$, in practice estimate time can be no more neglected. In this case, for reasons expressed in {\bf a)}, using Greenberg  could be a bad choice.
 \end{enumerate}
 
-\section{Modified Greenberg with MLE}
+\section{Greenberg with MLE}
+
+Let $n$ be a batch size and $p$ be a given transmission probability. As expressed by \eqref{eq:greenberg-prob-empty} \eqref{eq:greenberg-prob-succ} \eqref{eq:greenberg-prob-coll}, varying $n$ while $p$ is fixed results in very different probabilities for \emph{idle}, \emph{successful} and \emph{collided} slots.
+
+\begin{figure}[H]
+\begin{center}
+%\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
+\includegraphics[scale=.7]{matlab/Greenberg_MLE/draw_coll_idle_succ_fixed_p}
+\caption[Event probability fixed $p$]{Event probability for fixed $p=1/1024$.  $q_{0}(p,n) \approx  q_{1}(p,n)$ for $n=1023$}
+\end{center}
+\end{figure}
+
+It is quite immediate to see that:
+\begin{itemize}
+\item $q_{0}(p,n) \approx q_{1}(p,n)$ when $n\approx 1/p$ and, obviously,
+\item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $n \ll 1/p$
+\item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $n \gg 1/p$
+\end{itemize}
+$q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly decreasing. If we could repeat a large number $T$ of test transmission with  probability $p$ each, we could simply use the ratio collision/$T$ or idle/$T$ to uniquely determined our batch size. This is not true for successful transmissions since $q_{1}(p,n)$ is non monotonic.\\
+ 
+ Let $T$ be a number of slots of our choice and $N_{0}$, $N_{1}$, $N_{2+}$ represent the number of time slots with no transmissions, one transmission and collision respectively. Of course $N_{0}+N_{1}+N_{2+}=T$ and
+ \begin{eqnarray*}
+E[N_{0}] &=& Tq_{0}(p,n)\\
+E[N_{1}] &=& Tq_{1}(p,n)\\
+E[N_{2+}] &=& Tq_{2+}(p,n)
+\end{eqnarray*}
+
+
+\begin{equation}
+f_{T}(i,s,c,p',n')= \textrm{Pr}(N_{0}=i,N_{1}=s,N_{2+}=c|n=n',p=p')
+\end{equation}
+
+\begin{equation}
+MLE(i,s,c,l)=\argmax_{\displaystyle{n'}} \left( f_{T}(i,s,c,p(l),n')\cdot f(n',l)\right)
+\end{equation}
 
 \chapter{Comparison}
+
+
+
+
 
 
 
