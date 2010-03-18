@@ -85,6 +85,7 @@ h1=semilogy(accuracy,expectedT(1,:),'black');
 h2=semilogy(accuracy,expectedT(2,:),'black');
 h3=semilogy(accuracy,expectedT(3,:),'black');
 
+
 legend('$n=100$','$n=1000$','$n=10000$');
 hl = legend;
 set(hl, 'Interpreter', 'Latex');

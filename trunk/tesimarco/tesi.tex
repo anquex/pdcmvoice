@@ -19,8 +19,8 @@
 \usepackage[ruled]{algorithm} %[boxed]
 \usepackage{subfig}    % + figure in un float figure
 \usepackage{datetime}
-\usepackage[rgb]{xcolor}
-\usepackage{color} %testo colorato
+%\usepackage{xcolor} va in conflitto con il paccketto color se c'è l'opzione [usenames]
+\usepackage[usenames, dvipsnames]{color} %testo colorato
 \usepackage{tikz}
 \usepackage[]{fullpage}
 \usepackage{fancybox}
@@ -44,6 +44,10 @@
 
 % LINKS
 %http://www.kronto.org/thesis/tips/index.html
+
+% COMANDO PER PRIMA REVISIONE
+
+\newcommand{\rev}[1]{\textcolor{Cerulean}{#1}}
 
 \captionsetup[lstlisting]{skip=10pt}
 \lstset{ %
@@ -189,22 +193,23 @@ This thesis
 
 \chapter{Introduction}
 
-Generally speaking a set of actors contending for a common resource define a \emph{conflicting set}. As always, limited resources require policies to access them in an efficient and hopefully fair way. When the system is distributed, and this is our business, resource access can be assimilated to a coordination problem.\\ 
-Physical medium access is our contended resource and several stations to the same physical medium to share it.\\ At the beginning of computer networks, multiple access channel (MAC) was a big issue for efficient communications: as consequence packet switched buffered networks were introduced reducing the conflicting set to only two stations and simplifying  the original problem. Other the other hand switched networks could be realized only because the medium was wired: in fact a large collision domain could be sliced into smaller pieces and joined again together in ring, star or mesh structures.\\ 
-In a wireless context the problem can be no more avoided.\\  
+Generally speaking a set of actors contending for a common resource define a \emph{conflicting set}. As always, limited resources require policies to access them in an efficient and hopefully fair way. When the system is distributed, and this is our case, resource access can be assimilated to a coordination problem.\\ 
+\rev{The contended resource in our scenario is the physical transmission medium that is shared by several stations.}\\ \rev{At the beginning of wired computer networks, multiple access control (MAC) was a big issue for efficient communications. The introduction of packet buffered switches  in LANs reduced the conflicting set to \textcolor{red}{only two stations (NOTA: \emph{why??} RISPOSTA:perchè un cavo ha solo 2 estremità e nelle reti switched ogni porta appartiene ad un solo dominio di collisione (non è un hub ma uno switch))}  simplifying  the original problem. Switched networks, in fact, split large collision domains into smaller pieces thus realizing in ring, star or mesh structures.\\ 
+In a wireless context the problem can not be easily avoided, due to the broadcast nature of the wireless medium.\\  
+}
+Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
 
-Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connection with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for: discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
+In particular we analyze the scenario where a reader broadcasts a query to the in-range nodes. Once the request is received, devices with data of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium,  while collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in destructive interference with inefficient waste of energy/time. This data traffic shows a bursty nature which is the worst case for all shared medium scenarios.\\
 
-In particular we analyze the scenario where a reader broadcasts a query to the in-range nodes. Once the request is received, devices with datas of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium,  while collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in noise and an inefficient waste of energy/time since the channel is going to be occupied for some more time in future. This data traffic shows a bursty nature which is the worst case for all shared medium scenarios.\\
+This problem is referred in literature with different names: \emph{Batch/Conflict Resolution Problem}, \emph{Reader Collision Problem}, \emph{Object Identification Problem}.\\
+Algorithms trying to solve this problem efficiently  are called \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
 
-This problem is referred in literature with different names: \emph{Batch Resolution Problem}, \emph{The Reader Collision Problem}, \emph{Object Identification Problem}.\\
-Algorithms trying to solve this problem efficiently  are defined as \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
-
-For our terminology, given a query, it determines a subset of nodes which havs to reply to it with one (and only one) message: this set of nodes constitutes our \emph{batch}. The size of the batch can ben known in advance, in lucky and optimistic scenarios, or it can change in function of the query or time.
+In our terminology a query determines a subset of nodes which have to reply with one (and only one) message: this set of nodes constitutes the \emph{batch}. The size of the batch can be known in advance, in lucky and optimistic scenarios, or \rev{it} can change in time.
 
 Since each node has exactly one message to deliver, the problem of obtaining all the messages or counting the number of nodes involved by the resolution process is exactly the same.
 
-Instead the problem differs when we are not so interested in the exact number of nodes but we would appreciate a estimate of the actual batch size, rather accurate if it is possible.
+\rev{
+Instead the problem differs when we are not interested in the exact number of nodes but rather we aim at an estimate of the actual batch size, as accurate as possible.}
 
 The knowledge of the batch size $n$ is an important factor for parameter optimization, for efficient resolution trying to minimize the time taken by the process.
 
@@ -214,7 +219,7 @@ This necessitates the usage of algorithms for resolving batch collisions (confli
 In this paper we present a novel approach to the problem of collision resolution for batch conflicts. We show how the conventional tree algorithms for collision resolution can be used to obtain progressively accurate estimation of the multiplicity. We use the estimation to propose a more efficient binary tree algorithm, termed Estimating Binary Tree (EBT) algorithm. The EBT algorithm is suited for implementation when the conflicting nodes are passive, such as e.g. RFID tags. We extend the approach to design the Interval Estimation Conflict Resolution (IECR) algorithm. For $n \rightarrow \infty $  we prove that the efficiency achieved by IECR for batch arrivals is identical with the efficiency that Gallager’s FCFS algorithm achieves for Poisson packet arrivals. For finite n, the simulation results show that IECR is, to the best of our knowledge, the most efficient batch resolution algorithm reported to date.
 \end{comment}
 
-\section{Model, Scenario, Terminology}
+\section{Model}
 
 We consider the following standard model of a multiple access channel. A large number of geographically dispersed nodes communicate through a common channel. Any node generates and transmits data on the channel. Transmissions start at integer multiples of  time unit and last one unit of time, also called a ``slot''.\\
 
@@ -234,6 +239,7 @@ In each slot, when $k$ nodes transmit simultaneously, the success or the transmi
 \end{itemize}
 
 We assume that nodes having new messages to deliver generated after the start of the resolution process will wait until the end before proceeding with their delivery.
+\section{Goals}
 
 \chapter{Batch Resolution}
 
@@ -479,9 +485,9 @@ This let us save a slot.\\
 \label{example-mbt}
 \end{figure}
 
-Expected time analysis is analogous  to section \ref{basicbinarytreedescription}. \textcolor{red}{The only difference is that after a collision, if we get and idle slot, we will skip the ``next one'' (and we won't pay for it). So we can see that the expected slot cost is $\left[1 \cdot (1-Q_{0}(n))+ 0\cdot Q_{0}(n)\right]$}. Then\\
+Expected time analysis is analogous  to section \ref{basicbinarytreedescription}. \textcolor{red}{The only difference is that after a collision, if we get and idle slot, we will skip the ``next one'' (and we won't pay for it). So we can see that the expected slot cost is $\left[1 \cdot \bigl(1-Q_{0}(n)\bigr)+ 0\cdot Q_{0}(n)\right]$}. Then\\
 \begin{equation}
-L_{n}^{MBT} = \left(1 - Q_{0}(n)\right)+\sum_{i=0}^{n} Q_{i}(n) (L_{i}^{MBT}+L_{n-i}^{MBT})
+L_{n}^{MBT} = \bigl(1 - Q_{0}(n)\bigr)+\sum_{i=0}^{n} Q_{i}(n) (L_{i}^{MBT}+L_{n-i}^{MBT})
 \end{equation}
 with
 \begin{equation*}
@@ -628,16 +634,16 @@ Let $J$ be an integer random variable which expresses the number of nodes in $\m
 By applying Chebychev's Inequality \eqref{eq:cheby},  we have for any $\epsilon>0$
  
  \begin{equation}
-P\left( \left| J-n\pc\right| \geq \epsilon n \,|\, n \right) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}
+P\Bigl( \left| J-n\pc\right| \geq \epsilon n \,|\, n \Bigr) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}
 \label{eq:cidon-cheby}
  \end{equation}
  Let $\hat{N}$ be a real-valued random variable that expresses our estimate upon $n$. Then from \eqref{cidon-J} - \eqref{eq:cidon-cheby}:
 
 \begin{enumerate}[1)]
-\item \begin{equation}P(\hat{N}=n|n)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n\end{equation}
+\item \begin{equation}P\left(\hat{N}=n|n\right)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n\end{equation}
 \item \begin{equation}E[\hat{N}|n]=n\end{equation}
 \item  \begin{equation}
-P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}
+P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,\big|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}
  \end{equation}
 \end{enumerate}
 \clearpage
@@ -718,18 +724,18 @@ E[\hat{n}^{2}] \approx n\Phi
 \end{equation}
 where
 \begin{equation}
-\phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-2} \, dx = 0.91422\dots
+\phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}\bigl(1-e^{-2^{k}x}(1+2^{k}x)\bigr)x^{-2} \, dx = 0.91422\dots
 \end{equation}
 
 \begin{equation}
-\Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-2^{k}x}(1+2^{k}x))x^{-3} \, dx =1.23278\dots
+\Phi= \frac{1}{\log2} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}\bigl(1-e^{-2^{k}x}(1+2^{k}x)\bigr)x^{-3} \, dx =1.23278\dots
 \end{equation}
 
 \noindent $\phi$ and $\Phi$ where obtained in \cite{greenberg87} using advanced mathematical analysis supported by Mellin integral transform\footnote{in this work we only report these as final results, please refer to the original paper to see how $\phi$ and $\Phi$ where obtained.}.
 In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table \ref{table:phi-Phi} to provide an idea of the behavior of $\phi$ as function of $n$.\\
 
 \begin{table}[H]
-\caption[\emph{Basic Greenberg} Expected Estimate]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
+\caption[\emph{Basic Greenberg}: Expected Estimate]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
 \begin{center}
 \begin{tabular}{rD{.}{.}{5.2}D{.}{.}{1.4}}
  n & \multicolumn{1}{r}{$E[\hat{n}|n]$} & \multicolumn{1}{c}{$E[\hat{n}|n]/n$} \\ \hline \hline
@@ -810,7 +816,7 @@ It can be shown \cite{greenberg87} that, \emph{for all n greater than some const
 		\left |\frac{E[\hat{n}_{+}(b)]}{n}-1 \right | < \epsilon(b) 
 	  \end{equation}
 \item \begin{equation}
-		\frac{\sigma(\hat{n}_{+}(b))}{n}< \epsilon(b)
+		\frac{\sigma\bigl(\hat{n}_{+}(b)\bigr)}{n}< \epsilon(b)
 	\end{equation}
 \end{enumerate}
 \emph{where $\epsilon(b) \to 0$ as $b \to 1$.}
@@ -823,7 +829,7 @@ Our experimental results showed that this estimator is not so good for real life
 
 \section{Window Based}
 \chapter{Initial batch size estimate}
-We investigated about a fast algorithm for multiplicity estimation.\\
+We investigated about a fast algorithms for multiplicity estimation.\\
 
 \section{Cidon Evaluation}
 
@@ -912,7 +918,7 @@ Given a current slot transmission probability $p$ and a batch of size $n$ we def
 \item the probability to get a successful transmission (one transmission)
 \begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \label{eq:greenberg-prob-succ}\end{equation} 
 \item the probability to get a collision (two or more transmissions)
-\begin{equation}q_{2+}(p,n)=1-q_{0}-q_{1}\label{eq:greenberg-prob-coll}\end{equation}
+\begin{equation}q_{2+}(p,n)=1-q_{0}(p,n)-q_{1}(p,n)\label{eq:greenberg-prob-coll}\end{equation}
 \end{enumerate}
 
 In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability p. Naming each slot $i$ starting with 1, 2, \dots, we have:
@@ -922,7 +928,7 @@ In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated wit
 
 Given $n$ nodes, the probability to terminate algorithm \ref{alg-greenberg} in slot $i$ is given by:
 \begin{equation}
-f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \dot (q_{0}(p_{i},n)+q_{1}(p_{i},n))  
+f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \cdot \bigl( q_{0}(p_{i},n)+q_{1}(p_{i},n)\bigr)  
 \label{eq:bgstopprobability}
 \end{equation}
 
@@ -968,7 +974,7 @@ This is not only true for sizes power of two but for any size. Figure \ref{fig:g
 
 \subsection{base $b$ Greenberg}
 \subsection{Considerations}
-Greenberg method is really good from the point view of running cost since it is $O(\log_{2}n)$ respect to the size  $n$ of the problem but it has also some non negligible drawbacks:
+Greenberg method is really good from the point view of running cost since it is $O\bigl(\log_{2}n\bigr)$ respect to the size  $n$ of the problem but it has also some non negligible drawbacks:
 \begin{enumerate}[\bf a)]
 \item estimation phase results in a sequence of colliding messages. These provides informations about the cardinality of the batch but do not help to solve an, even small, portion of the eventually following batch resolution problem and can not carry auxiliary infromations. An algorithm that allows to get an estimate while transmitting successfully messages would offer some advantages when the problem is not only the pure estimation but also a subsequent resolution.
 \item it does not allow to achieve arbitrary precision in the estimate.\\ In fact we have that:
@@ -1009,9 +1015,11 @@ It is quite immediate to see that:
 \item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $n \ll 1/p$
 \item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $n \gg 1/p$
 \end{itemize}
-$q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly decreasing. If we could repeat a large number $T$ of test transmission with  probability $p$ each, we could simply use the ratio collision/$T$ or idle/$T$ to uniquely determined our batch size. This is not true for successful transmissions since $q_{1}(p,n)$ is non monotonic.\\
+$q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly decreasing. If we could repeat a large number $T$ of test transmission with  probability $p$ each, we could simply use the ratio collision/$T$ or idle/$T$ to uniquely determined our batch size. This is not true for successful transmissions since $q_{1}(p,n)$ is non-monotonic.\\
  
- Let $T$ be a number of slots of our choice and $N_{0}$, $N_{1}$, $N_{2+}$ represent the number of time slots with no transmissions, one transmission and collision respectively. Of course $N_{0}+N_{1}+N_{2+}=T$ and
+ Let $T$ be a number of slots of our choice and $N_{0}$, $N_{1}$, $N_{2+}$ random variables which represent the number of time slots with no transmissions, one transmission and collision respectively.\\
+ sono binomiali\\
+ Of course $N_{0}+N_{1}+N_{2+}=T$ and
  \begin{eqnarray*}
 E[N_{0}] &=& Tq_{0}(p,n)\\
 E[N_{1}] &=& Tq_{1}(p,n)\\
@@ -1024,7 +1032,7 @@ f_{T}(i,s,c,p',n')= \textrm{Pr}(N_{0}=i,N_{1}=s,N_{2+}=c|n=n',p=p')
 \end{equation}
 
 \begin{equation}
-MLE(i,s,c,l)=\argmax_{\displaystyle{n'}} \left( f_{T}(i,s,c,p(l),n')\cdot f(n',l)\right)
+MLE(i,s,c,l)=\argmax_{\displaystyle{n'}} \Bigl( f_{T}\bigl(i,s,c,p(l),n')\cdot f\bigl(n',l\bigr)\Bigr)
 \end{equation}
 
 \chapter{Comparison}
