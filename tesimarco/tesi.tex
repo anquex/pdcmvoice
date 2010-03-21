@@ -261,7 +261,7 @@ In these applications:
 BRAs can run oblivious of the batch multiplicity $n$: they would anyway solve the problem but expected time required would not be as short as possible. In fact, the knowledge of the conflict multiplicity $n$ is the most critical factor to optimize the resolution and to allow the usage of advanced resolutions schemes which take advantage of the knowledge of $n$. Thus the importance of \emph{Batch Size Estimate} follows.\\
 
 Hence, in this work, we will analyze different estimate techniques dealing with the quality and time taken by the estimate process.\\
-Most of works in which estimate techniques are proposed (such as \cite{cidon},\cite{greenberg87}) define the estimate  algorithm but do not provide data about the quality of the estimate or time taken by the process. In these works, in fact, after proposing an estimate scheme, the authors concentrate on the definition of an optimized resolution scheme considering a perfect knowledge of the batch size $n$ and ignoring the fact that only and estimate of $n$ can be provided without requiring the complete resolution of the batch.\\
+Most of works in which estimate techniques are proposed (such as \cite{cidon,greenberg87}) define the estimate  algorithm but do not provide data about the quality of the estimate or time taken by the process. In these works, in fact, after proposing an estimate scheme, the authors concentrate on the definition of an optimized resolution scheme considering a perfect knowledge of the batch size $n$ and ignoring the fact that only and estimate of $n$ can be provided without requiring the complete resolution of the batch.\\
 In this work we will focus on the estimate phase preferring analytical analysis when possible and using computer based simulations when analytical analysis showed to be too complex or impractical.\\
 Finally, we will try to propose improvements for some techniques in order to achieve better quality in the estimate and we will try to compare all the estimate algorithms to provide a comprehensive overview with pros and cons. 
 
@@ -285,9 +285,24 @@ This master thesis is structured as follows:
 \chapter{Batch Resolution}
 \label{ch:Batch Resolution}
 
-The general idea is as follows: the reader probes a set of nodes, and the nodes reply back. 
-Since devices we consider operate in the wireless medium, collisions will result whenever a reader probes a set of nodes. The batch resolution algorithms use anti-collision schemes to resolve collisions.
-There are many algorithms that enable batch resolution, and these can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic}.\\
+Pure-ALOHA was the very first random-access protocol ever developed. It is trivially simple:
+\begin{itemize}
+\item If you have data to send, send the data immediatly
+\item If the message collides with another transmission, try resending "later"
+\end{itemize}
+Slotted-ALOHA is an improvement over Pure-ALOHA in which time is \emph{slotted} and transmissions can start only at the beginning of a slot boundary. Slotted-ALOHA assumes there is feedback from the receiver at the end of each slot so that all nodes learn whether or not a collision occurred.\\
+ALOHA protocol was studied under the assumption that a large number of identical sources transmit on the channel such that the number of new packets generated during any slot is a Poisson random variable with mean $\lambda$ (packets/slot).\\
+Slotted ALOHA has equilibrium rate (maximum throughput) of $1/e\approx 0.368$ packets/slot but it has proven maximum stable throughput 0 (hence it is unstable).\\
+The attempt to obtain stable throughput random-access protocols brought to the discovery of CRAs.\\
+A \emph{Collision Resolution Algorithm} (CRA) can be defined as a random-access protocol such that, whenever a collision occurs, then at some later time all senders will simultaneously learn from the feedback information that all packets involved in that collision have now been  successfully transmitted. The crux of collision resolution is the exploitation of the feedback information to control the ``random'' retransmission process.\\%massey
+
+CRAs are interesting since their are able to solve conflicts of unknown multiplicities. Furthermore they are not tailored to solve only conflicts among packets arrivals characterized by Poisson's distributions but they are robust since they work for any arrival process characterized by an average arrival rate $\lambda$.\\
+
+CRAs can also be used to solve collisions among a batch of nodes which have a message to deliver. In this case CRAs are commonly called \emph{Batch Resolution Algorithms} (BRAs).\\
+
+In particular, the scenario we consider is the following: the reader probes a set of nodes that reply. 
+Devices, operating in a wireless medium, try to reply as soon as possible. If two ore more devices reply at the same time we get a collision and the delivery of the messages fails. Consequently we require each node to run a distributed algorithm which implements anti-collision schemes in order to resolve all the nodes.
+There are many algorithms that enable batch resolution, and these, according to \cite{lucent}, can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic}.\\
 
 %%probabilistic
 In \emph{probabilistic algorithms}, a framed ALOHA scheme is used where the reader communicates the frame length, and the nodes pick a particular slot in the frame to transmit. The reader repeats this process until all nodes have transmitted at least once successfully in a slot without collisions. 
@@ -296,7 +311,7 @@ In \emph{probabilistic algorithms}, a framed ALOHA scheme is used where the read
 
 \emph{Deterministic algorithms} typically use a slotted ALOHA model, where the reader identifies the set of nodes that need to transmit in a given slot, and tries to reduce the contending batch in the next slot based on the result in the previous slot. These algorithms fall into the class of tree-based algorithms with the nodes classified on a binary tree based on their id, and the reader moving down the tree at each step to identify all nodes. \\
 
-Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate contending tag subsets using a probe at the beginning of each slot.
+Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate  subsets of contending nodes using a probe at the beginning of each slot.
 
 Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. So not every device is able to support this class of algorithms. For example passive tags, which are the \textcolor{red}{most dummy} devices, cannot understand this kind of requests and will continue to transmit in every resolution cycle, which lengthens the total time needed. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes (immediate feedback) that have succeeded at the end of each frame, and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmit its message and it stays silent until the end of the algorithm is said \emph{resolved}.\\
 They also assume a slotted model, and not a framed model, wherein the reader responds before and/or after every slot, adding overhead to the resolution.\\
@@ -311,6 +326,8 @@ These algorithms can be flawlessly ported to the CSMA scheme.
  
 \section{Binary Tree Algorithms}
 Basic binary tree algorithm was first introduced by Capetanakis  \cite{capetanakis} in 1979.
+Concern over the instability of most ALOHA-like protocols led some researchers to search for random-access schemes that were provably stable. The breakthrough in these efforts was made in 1977 by J.  Capetanakis  \cite{capetanakis77}, then a MIT doctoral student working with Prof. R. Gallager, and independently achieved shortly thereafter by two Soviet researchers, B. Tsybakov and V. Mihhailov \cite{tsybakov}.
+
 \subsection{Basic Binary Tree}
 \label{basicbinarytreedescription}
 At slot $\tau$ we have a batch $\mathcal{B}$ of size $n$.\\
@@ -333,11 +350,11 @@ Intuitively we can think that choosing with equal probability ($p=1/2$) between 
 \begin{algorithmic}
 \STATE \COMMENT{current slot status can be \emph{idle}, \emph{success}, \emph{collision}}
 \REQUIRE $\mathcal{B}$ batch with $|\mathcal{B}|=n$
-\STATE each node transmit its message
+\STATE each node transmits its message
 \IF{(\emph{idle} or \emph{success})}
-	\STATE conflict resolution ended.
+	\STATE return
 \ELSE
-	\STATE each node flip a coin
+	\STATE each node flips a coin
 	\STATE $\mathcal{R} \gets$ \{ nodes that flipped head\}
 	\STATE $\mathcal{S} \gets$ \{ nodes that flipped tail\}
 	\STATE \algname{Collision binary tree ($\mathcal{R}$)}
@@ -346,7 +363,7 @@ Intuitively we can think that choosing with equal probability ($p=1/2$) between 
 \end{algorithmic}
 \end{algorithm}
 
-Let $L_{n}$ be the expected running time in slots required to resolve a conflict among $n$ nodes using \algname{SBT}.
+Let $L_{n}$ be the expected running time in slots required to resolve a conflict among $n$ nodes using \algname{BT}.
 Let $Q_{i}(n)={n\choose i} p^{i} (1-p)^{n-i}$ the probability that $i$ among $n$ nodes decide to transmit in the next slot (probability that $|\mathcal{R}|=i$). So if $i$ nodes decide to transmit we have first to solve a conflict of size $|\mathcal{R}|=i$ with expected time $L_{i}$ and later a conflict of size $|\mathcal{S}|=n-i$ with expected time $L_{n-i}$. $L_{n}$ is given by the cost of the current slot (1) \textcolor{red}{plus the expected time to solve all the possible decompositions of the current set}.\\
 $L_{n}$ can be recursively computed (considering the factorial in $Q_{i}(n)$) collecting  $L_{n}$ in the following:
 \begin{equation}
