@@ -222,7 +222,7 @@ We consider the following standard model of a multiple access channel. A large n
 In \emph{pure-slotted} systems some form of synchronization among nodes is required to inform the nodes about the beginning of slots (or at least the beginning of a cycle of slots). Nodes can start a transmission only at the beginning of the slot, otherwise they will stay quiet until the next slot to come.\\}
 
 \rev{
-In \emph{CSMA} networks each node is able to determine the beginning of a new slot by sensing the channel: when the channel is idle a device can start transmitting its message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it cannot sense the channel so that it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it results in a success or a collision. On the other hand, empty slots take less time than transmissions.\\}
+In \emph{CSMA} networks each node is able to determine the beginning of a new slot by sensing the energy on the channel: when the channel is idle a device can start transmitting its message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it cannot sense the channel so that it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it results in a success or a collision. On the other hand, empty slots take less time than transmissions.\\}
 
 % precisare T_{s} T_{p} T_{c} ??
 
@@ -252,7 +252,7 @@ Ideally, nodes should discover their neighbors as quickly as possible as rapid d
 \item \emph{Object identification}, where physical objects are bridged to virtual ones by attaching to each object a sensor or an RFID tag. This allows asset tracking (e.g. libraries, animals), automated inventory and stock-keeping, toll collecting, and similar tasks. Wireless connection allows unobtrusive management and monitoring of resources.
 \end{itemize}
 
-In this applications:
+In these applications:
 \begin{itemize}
 \item communications show spatially and timely correlated contention
 \item in general, density of nodes is time-varying. When a node wakes up it has no knowledge of the environment around it. In particular this shows to be true if nodes sleep for most of time and seldom wake up to transmit.
