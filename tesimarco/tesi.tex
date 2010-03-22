@@ -562,6 +562,38 @@ L_{n}\leq C \cdot n +1 \qquad \textrm{where} \qquad C=2.622
 \end{equation}
 Not using optimal probability for $p$ but 1/2 results, for large $n$, in about 0.2\% peak performance loss  ($C=2.667$) which is a really moderate decrease.\\
 What is even more important  is that 0.4175 is close to the optimal bias for small $n$ as well.
+
+\section{ \emph{m}-groups tree resolution}
+More advanced algorithms for batch resolution, such as those presented in \cite{cidon} and \cite{greenberg87}, share a common idea: divide the initial batch into $m$ groups. We will not deal here about the details of the algorithms and the different ways  they use to choose $m$. Instead we will concentrate on the common part of these algorithms: divide a batch of size $n$ into $m$ groups and apply a BRA to each group.\\
+Given $m$ groups, the probability to have exactly $i$ among $n$ nodes in a group is given by:
+\begin{equation}
+{n \choose i} \left(\frac{1}{m}\right)^{i} \left(1-\frac{1}{m}\right)^{n-i}
+\end{equation}
+Let $L_{k}$ be the expected cost to solve a batch of size $k$ with a chosen BRA. Then the expected cost to solve a batch of size $n$ dividing it into $m$ groups is given by:
+\begin{equation}
+\label{eq:BT+m-group-ALOHA}
+L'_{n}(\rho)=m \sum_{i=0}^{n}L_{i}{n \choose i} \left(\frac{1}{m}\right)^{i} \left(1-\frac{1}{m}\right)^{n-i}
+\end{equation}
+where $\rho=n/m$ is the expected number of nodes in a group.\\ Figure \ref{m-groups-MBT-ALOHA} shows the results obtained computing  \eqref{eq:BT+m-group-ALOHA} for some batch sizes $n$ varying $\rho$.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-ALOHA}
+\caption[$m$ groups split. ALOHA scenario]{Results were obtained using MBT with optimal probability $p$ in a in slotted ALOHA scenario. Splitting the batch into groups provides better results than applying a BRA to the original batch size for $y$-axis values below 1.}
+\label{m-groups-MBT-ALOHA}
+\end{center}
+\end{figure}
+
+Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: only knowing exactly the batch size $n$ we can set $m$ to the optimal value. In most cases we only have an estimate of the batch size. If this estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can drive to performance loss when $\rho \approx 0.5$ or smaller.  
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-CSMA}
+\caption[$m$ groups split. CSMA scenario]{ SEZIONE PROVVISORIA. ma l'idea è che con  CSMA è preferibile sovrastimare. ho usato CSF=0.25 giusto per provare... il costo è modellato sempre come ALOHA, cosa che potrebbe non essere così realistica...}
+\label{m-groups-MBT-CSMA}
+\end{center}
+\end{figure}
+
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
@@ -890,7 +922,7 @@ Our experimental results showed that this estimator is not so good for real life
 
 
 \section{Window Based}
-\chapter{Performance Analysis}
+\chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
 We investigated about a fast algorithms for multiplicity estimation.\\
 
