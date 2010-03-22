@@ -294,39 +294,39 @@ Slotted-ALOHA is an improvement over Pure-ALOHA in which time is \emph{slotted} 
 ALOHA protocol was studied under the assumption that a large number of identical sources transmit on the channel such that the number of new packets generated during any slot is a Poisson random variable with mean $\lambda$ (packets/slot).\\
 Slotted ALOHA has equilibrium rate (maximum throughput) of $1/e\approx 0.368$ packets/slot but it has proven maximum stable throughput 0 (hence it is unstable).\\
 The attempt to obtain stable throughput random-access protocols brought to the discovery of CRAs.\\
+
 A \emph{Collision Resolution Algorithm} (CRA) can be defined as a random-access protocol such that, whenever a collision occurs, then at some later time all senders will simultaneously learn from the feedback information that all packets involved in that collision have now been  successfully transmitted. The crux of collision resolution is the exploitation of the feedback information to control the ``random'' retransmission process.\\%massey
 
 CRAs are interesting since their are able to solve conflicts of unknown multiplicities. Furthermore they are not tailored to solve only conflicts among packets arrivals characterized by Poisson's distributions but they are robust since they work for any arrival process characterized by an average arrival rate $\lambda$.\\
 
 CRAs can also be used to solve collisions among a batch of nodes which have a message to deliver. In this case CRAs are commonly called \emph{Batch Resolution Algorithms} (BRAs).\\
 
-In particular, the scenario we consider is the following: the reader probes a set of nodes that reply. 
-Devices, operating in a wireless medium, try to reply as soon as possible. If two ore more devices reply at the same time we get a collision and the delivery of the messages fails. Consequently we require each node to run a distributed algorithm which implements anti-collision schemes in order to resolve all the nodes.
-There are many algorithms that enable batch resolution, and these, according to \cite{lucent}, can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic}.\\
+In particular, the scenario we consider is the following: the reader probes a set of nodes. 
+In-range devices try to reply as soon as possible transmitting in the wireless medium. If two ore more devices reply at the same time we get a collision and the delivery of the messages fails. Consequently we require each node to run a distributed algorithm which implements anti-collision schemes in order to resolve all the nodes.\\
+There are many algorithms that enable batch resolution, and these, according to \cite{lucent}, can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic} \footnote{Both classes of algorithms use a probabilistic approach to solve the problem. As aforementioned, CRA were initially thought to solve Poisson-like packets arrivals. Hence, each packet is characterized by an arrival time. CRAs are able so solve collisions respecting the \emph{first-come first-served} (FCFS) policy. In \emph{Batch Resolution Problem} packets can be associated to virtual arrival times. Once the arrival time (alias node ID) is fixed each run of the same \emph{deterministic} algorithm behaves in the same way and nodes always get resolved in the same order and time amount. On the other hand, \emph{probabilistic} algorithms are not able to maintain the relative order among resolved nodes in different runs of the algorithms even if they globally solve the same initial collision.}.\\
 
 %%probabilistic
-In \emph{probabilistic algorithms}, a framed ALOHA scheme is used where the reader communicates the frame length, and the nodes pick a particular slot in the frame to transmit. The reader repeats this process until all nodes have transmitted at least once successfully in a slot without collisions. 
+In \emph{probabilistic algorithms}, a framed ALOHA\footnote{ framed ALOHA is a modification of slotted ALOHA where consecutive slots are grouped. Each node is allowed to choose only one slot per group. Its transmission is allowed to take place only in the choosed slot.} scheme is used where the reader communicates the frame length, and the nodes pick a particular slot in the frame to transmit. The reader repeats this process until all nodes have transmitted at least once successfully in a slot without collisions.\\ 
 
 %%deterministic 
 
-\emph{Deterministic algorithms} typically use a slotted ALOHA model, where the reader identifies the set of nodes that need to transmit in a given slot, and tries to reduce the contending batch in the next slot based on the result in the previous slot. These algorithms fall into the class of tree-based algorithms with the nodes classified on a binary tree based on their id, and the reader moving down the tree at each step to identify all nodes. \\
+\emph{Deterministic algorithms} typically use a slotted ALOHA model tries to reduce the contending batch in the next slot based on the transmission result in the previous one. These algorithms fall into the class of tree-based algorithms with the nodes classified on a binary tree and the reader moving down the tree at each step to identify all nodes. \\
 
 Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate  subsets of contending nodes using a probe at the beginning of each slot.
 
-Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. So not every device is able to support this class of algorithms. For example passive tags, which are the \textcolor{red}{most dummy} devices, cannot understand this kind of requests and will continue to transmit in every resolution cycle, which lengthens the total time needed. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes (immediate feedback) that have succeeded at the end of each frame, and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmit its message and it stays silent until the end of the algorithm is said \emph{resolved}.\\
-They also assume a slotted model, and not a framed model, wherein the reader responds before and/or after every slot, adding overhead to the resolution.\\
-\textcolor{red}{
-Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be alway active and listening to the channel in each step of the algorithm.
-On the other hand windows based algorithms are more energy saving since a device can sleep for most of time in the transmission window and only to wake up in the slot it has decided to transmit. In a windows of $w$ slots  a node will be up only for $1/w$ of time and wait for feedback at the end of the window.}
+Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. Consequently not every device is able to support this class of algorithms. For example passive tags, which are the most dummy devices, cannot understand this kind of requests and they will continue to transmit in every resolution cycle. This lengthens the total time needed for the resolution process to complete. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes that have succeeded at the end of each slot (immediate feedback), and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmits its message is said \emph{resolved} and stays silent until the end of the algorithm.\\
+Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be alway active and listening to the channel in each step of the algorithm. 
+\rev{Moreover, reader feedback in each slot adds overhead to the resolution}\\
+On the other hand windows based algorithms are more energy saving since a device can sleep for most of time in the transmission window and only wake up in the slot it has decided to transmit on. In a windows of $w$ slots  a node will be up only for $1/w$ of time and wait for feedback at the end of the window.
 
 %%
 
-Most of the batch resolution algorithm were originally developed for ALOHA based scenarios.\\
+Most of the batch resolution algorithms  were originally developed for slotted scenarios.\\
 These algorithms can be flawlessly ported to the CSMA scheme.
  
 \section{Binary Tree Algorithms}
 Basic binary tree algorithm was first introduced by Capetanakis  \cite{capetanakis} in 1979.
-Concern over the instability of most ALOHA-like protocols led some researchers to search for random-access schemes that were provably stable. The breakthrough in these efforts was made in 1977 by J.  Capetanakis  \cite{capetanakis77}, then a MIT doctoral student working with Prof. R. Gallager, and independently achieved shortly thereafter by two Soviet researchers, B. Tsybakov and V. Mihhailov \cite{tsybakov}.
+Concern over the instability of most ALOHA-like protocols led some researchers to search for random-access schemes that were provably stable. The breakthrough in these efforts was made in 1977 by J.  Capetanakis  \cite{capetanakis77}, then a MIT doctoral student working with Prof. R. Gallager\footnote{}, and independently achieved shortly thereafter by two Soviet researchers, B. Tsybakov and V. Mihhailov \cite{tsybakov}.
 
 \subsection{Basic Binary Tree}
 \label{basicbinarytreedescription}
