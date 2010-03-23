@@ -563,7 +563,7 @@ L_{n}\leq C \cdot n +1 \qquad \textrm{where} \qquad C=2.622
 Not using optimal probability for $p$ but 1/2 results, for large $n$, in about 0.2\% peak performance loss  ($C=2.667$) which is a really moderate decrease.\\
 What is even more important  is that 0.4175 is close to the optimal bias for small $n$ as well.
 
-\section{ \emph{m}-groups tree resolution}
+\subsection{ \emph{m}-groups tree resolution}
 More advanced algorithms for batch resolution, such as those presented in \cite{cidon} and \cite{greenberg87}, share a common idea: divide the initial batch into $m$ groups. We will not deal here about the details of the algorithms and the different ways  they use to choose $m$. Instead we will concentrate on the common part of these algorithms: divide a batch of size $n$ into $m$ groups and apply a BRA to each group.\\
 Given $m$ groups, the probability to have exactly $i$ among $n$ nodes in a group is given by:
 \begin{equation}
@@ -586,13 +586,25 @@ where $\rho=n/m$ is the expected number of nodes in a group.\\ Figure \ref{m-gro
 
 Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: only knowing exactly the batch size $n$ we can set $m$ to the optimal value. In most cases we only have an estimate of the batch size. If this estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can drive to performance loss when $\rho \approx 0.5$ or smaller.  
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-CSMA}
 \caption[$m$ groups split. CSMA scenario]{ SEZIONE PROVVISORIA. ma l'idea è che con  CSMA è preferibile sovrastimare. ho usato CSF=0.25 giusto per provare... il costo è modellato sempre come ALOHA, cosa che potrebbe non essere così realistica...}
 \label{m-groups-MBT-CSMA}
 \end{center}
 \end{figure}
+
+\subsection{Estimating Binary Tree}
+
+\emph{Estimating Binary Tree} (EBT) has been recently proposed in \cite{popovski}. It does not work on parameters' optimization but tries to use simple heuristics to skip tree nodes which would result in collision with high probability.\\
+Given a batch of size $n$, the keys to understand EBT are the following:
+\begin{itemize}
+\item in the most lucky scenario running BT result in a balanced binary tree where all the leaves are at the same level.
+\item consequently it seems to be a good idea to assume that nodes in (\textcolor{red}{at?}) levels in the tree less than $\lfloor \log_{2}n\rfloor$ will likely result in collided slots.
+\end{itemize}
+EBT tries to skip inner nodes of the tree by visiting only nodes at level equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{apriori} known a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}. Assume that there are $k$ nodes whose \emph{id} is in the sub-interval [0,$\pc$) and that they have been previously resolved: all and only the nodes with \emph{id} less than $\pc$ successfully transmitted their messages.  $\hat{n}=k/\pc$ provides a good estimate of $n$ that become more and more accurate as the algorithm goes on. \\
+Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.
+
 
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
@@ -641,7 +653,7 @@ Experimental results show that the variance of the obtained estimate is extremel
 This is due to the fact that the batch of interest we use for the estimate becomes, at each level, smaller and smaller: the estimate, even for huge sizes, depends only on very few (3-5) nodes (those with lower addresses). So estimate is quite unstable.\\
 Results are reported in Appendix in tables  \ref{CBT-table-1}. Notice how slowly the distribution probability decrease.
 \section{Cidon}
-
+\label{se:cidon}
 Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describe a complete resolution algorithm based on two phases:
  
 \begin{enumerate}
