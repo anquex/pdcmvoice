@@ -14,9 +14,9 @@ Let $X$ be a \emph{random variable} with expected value $\mu$ and finite varianc
 \subsection{Binomial Distribution}
 
 $B(n,p)$
-\subsubsection{Poisson Approximation}
+\subsubsection*{Poisson Approximation}
 The binomial distribution converges towards the Poisson distribution as the number of trials goes to infinity while the product $np$ remains fixed. Therefore the Poisson distribution with parameter $\lambda = np$ can be used as an approximation to $B(n, p)$ of the binomial distribution if $n$ is sufficiently large and $p$ is sufficiently small. According to two rules of thumb, this approximation is good if $n \geq 20$ and $p \leq 0.05$, or if $n \geq 100$ and $np \leq 10$.
-\subsubsection{Normal Approximation}
+\subsubsection*{Normal Approximation}
 If $n$ is large enough, then the skew of the distribution is not too great. In this case, if a suitable continuity correction is used, then an excellent approximation to $B(n, p)$ is given by the normal distribution $\mathcal{N}(np,np(1-p))$\\
 The approximation generally improves as $n$ increases and is better when $p$ is not near to 0 or 1. Various rules of thumb may be used to decide whether $n$ is large enough, and $p$ is far enough from the extremes of zero or unity:
 One rule is that both $n p$ and $n(1-p)$ must be greater than 5. However, the specific number varies from source to source, and depends on how good an approximation one wants; some sources give 10.\\
@@ -34,6 +34,17 @@ oppure dal libro $np(1-p)\geq 10$.
 \begin{equation}
 f(x)= \frac{1}{\sqrt{2\pi\sigma^{2}}}\exp{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}
 \end{equation}
+
+\section{Binary Trees Performance Summary}
+\begin{center}
+\begin{tabular}{cccccc}
+$L_{2} = 5.0000 $&$L_{7} = 19.2009 $  &$L_{12} = 32.6238 $  &$L_{17} = 48.0522 $  &$L_{22} = 62.4783 $ \\ 
+$L_{3} = 7.6667 $&$L_{8} = 22.0854 $  &$L_{13} = 36.5096 $  &$L_{18} = 50.9375 $  &$L_{23} = 65.3636 $ \\ 
+$L_{4} = 10.5238 $&$L_{9} = 24.9690 $  &$L_{14} = 39.3955 $  &$L_{19} = 53.8227 $  &$L_{24} = 68.2489 $ \\ 
+$L_{5} = 13.4190 $&$L_{10} = 27.8532 $  &$L_{15} = 42.2812 $  &$L_{20} = 56.7078 $  &$L_{25} = 71.1344 $ \\  
+$L_{6} = 16.3131 $&$L_{11} = 30.7382 $  &$L_{16} = 45.1668 $  &$L_{21} = 59.5930 $  &$L_{26} = 74.0198 $ \\  
+\end{tabular} 
+\end{center}
 
 \section{Greenberg bounded \emph{m}-moments}
 \label{sec:greenberg-moments}
