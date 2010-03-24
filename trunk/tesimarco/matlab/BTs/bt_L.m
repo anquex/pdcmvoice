@@ -4,18 +4,18 @@ clc;
 
 hold all;
 
-nmax=19;
+nmax=1000;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 p=0.50;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
 
-q=inline('nchoosek(n,i).*p.^i.*(1-p).^(n-i)','n','i','p');
 for n=0:nmax
     for i=0:n
-        Q(i+1,n+1)=q(n,i,p);
+        Q(i+1,n+1)=binopdf(i,n,p);
     end
 end
 
+%{
 L=zeros(nmax+1,1);
 L(1)=1;
 L(2)=1;
@@ -37,14 +37,14 @@ nmax/L(nmax+1)
 
 h1=plot([0:nmax],L);
 
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 p=0.50;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
 
-q=inline('nchoosek(n,i).*p.^i.*(1-p).^(n-i)','n','i','p');
 for n=0:nmax
     for i=0:n
-        Q(i+1,n+1)=q(n,i,p);
+        Q(i+1,n+1)=binopdf(i,n,p);
     end
 end
 
@@ -63,6 +63,9 @@ for n=2:nmax
     L(n+1)=(1+Q(n+1,n+1)+s)/(1-Q(0+1,n+1)-Q(n+1,n+1));
 end
 
+Lso=L;
+
+%{
 L
 
 nmax/L(nmax+1)
@@ -70,15 +73,14 @@ nmax/L(nmax+1)
 h2=plot([0:nmax],L);
 
 
-
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 p=0.4175;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
 
-q=inline('nchoosek(n,i).*p.^i.*(1-p).^(n-i)','n','i','p');
 for n=0:nmax
     for i=0:n
-        Q(i+1,n+1)=q(n,i,p);
+        Q(i+1,n+1)=binopdf(i,n,p);
     end
 end
 
@@ -96,10 +98,12 @@ for n=2:nmax
     %for MBT
     L(n+1)=(1+Q(n+1,n+1)+s)/(1-Q(0+1,n+1)-Q(n+1,n+1));
 end
-
+%{
 L
 
+
 nmax/L(nmax+1)
+
 
 h3=plot([0:nmax],L);
 
@@ -137,3 +141,4 @@ Pos(3)=1.05*Pos(3); % Double the length
 set(h,'position',Pos) % Implement it
 
 saveas(fh, 'bin-trees-expected-time', 'epsc');
+%}
