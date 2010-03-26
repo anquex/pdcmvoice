@@ -95,7 +95,7 @@ set(gca,'XMinorTick','on');
 
 set(gca,'Box','off');
 hx=xlabel('Batch Size','Interpreter','Latex');
-hy=ylabel('Performance Improvement in \%','Interpreter','Latex');
+hy=ylabel('Expected Performance Improvement in \%','Interpreter','Latex');
 set(hx, 'FontSize', 12);
 set(hy, 'FontSize', 12);
 title('Comparison of EBT vs EBT with optimal MBT','Interpreter','Latex','FontSize', 14)
