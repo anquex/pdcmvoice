@@ -98,7 +98,7 @@ hx=xlabel('Batch Size','Interpreter','Latex');
 hy=ylabel('Expected Performance Improvement in \%','Interpreter','Latex');
 set(hx, 'FontSize', 12);
 set(hy, 'FontSize', 12);
-title('Comparison of EBT vs EBT with optimal MBT','Interpreter','Latex','FontSize', 14)
+title('Comparison of EBT vs EBT with optimum MBT','Interpreter','Latex','FontSize', 14)
 set(fh, 'color', 'white'); % sets the color to white
 fh=figure(1);
 saveas(fh, 'EBT-EBT_MBT-Comparison', 'epsc');
