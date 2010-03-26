@@ -2,6 +2,12 @@ clc
 clear all;
 close all;
 
+
+if(matlabpool('size') == 0)
+    maxNumCompThreads(2);
+    matlabpool local 2;
+end;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COMPUTE L_n with a given tree algorithm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,9 +21,11 @@ p=0.4175;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
 
 for n=0:nmax
-    for i=0:n
-        Q(i+1,n+1)=binopdf(i,n,p);
+    tmp=zeros(1,nmax+1);
+    parfor i=0:n
+        tmp(i+1)=binopdf(i,n,p);
     end
+    Q(:,n+1)=tmp;
 end
 
 L=zeros(nmax+1,1);
@@ -45,9 +53,12 @@ batchsizes=[10,100,1000];
 for t=1:length(batchsizes)
     n=batchsizes(t);
     n2=n/4;
-    dn=2*n;
+    dn=8*n;
+    if (n==10)
+        dn=4*n;
+    end
     v=n2:dn;
-    if (length(v)>50)
+    if (length(v)>100)
         v=round(linspace(n2,dn,100));
     end
     M=zeros(1,length(v));
@@ -77,7 +88,8 @@ set(hl, 'Interpreter', 'Latex');
 set(hl, 'FontSize', 13);
 
 grid on;
-set(gca,'Ytick',[.8:0.025:1.05])
+set(gca,'Ytick',[.65:0.05:1.1])
+set(gca,'Ylim',[0.65 1.1])
 
 set(h{1}, 'LineWidth', 1.0);
 
@@ -86,7 +98,9 @@ set(h{1}, 'LineWidth', 1.0);
 %set(h{2}, 'LineStyle', '-', 'LineWidth', 1.0, 'Color',' Black');
 %set(h{2}, 'Marker', 's', 'MarkerFaceColor', [1 1 1], 'MarkerEdgeColor', [0 0 0], 'MarkerSize', 4.0);
 %set(h{3}, 'LineStyle', '-', 'LineWidth', 1.0, 'Color',' Black');
-%set(h{3}, 'Marker', 'd', 'MarkerFaceColor', [.8 .8 .8], 'MarkerEdgeColor', [0 0 0], 'MarkerSize', 5.0);
+%set(h{3}, 'Marker', 'd', 'MarkerFaceColor', [.8 .8 .8], 'MarkerEdgeColor',
+%[0 0 0], 'MarkerSize', 5.0);
+set(gca,'Xtick',sort([0:0.5:4,0.25]))
 
 fh = figure(1); % returns the handle to the figure object
 set(fh, 'color', 'white'); % sets the color to white
