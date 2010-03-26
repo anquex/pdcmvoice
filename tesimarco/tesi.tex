@@ -1,5 +1,5 @@
 \documentclass[12pt,a4paper]{report}
-%\documentclass[10pt,a4paper,twoside,openright]{book}
+%\documentclass[12pt,a4paper,twoside,openright]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -660,7 +660,7 @@ Given a batch of size $n$, the keys to understand EBT are the following:
 \item consequently it seems to be a good idea to assume that nodes at levels in the tree less than $\lfloor \log_{2}n\rfloor$ will likely result in collided slots.
 \end{itemize}
 
-EBT tries to skip inner nodes of the tree by visiting only nodes at level equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{apriori} known, a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}.\\
+EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{apriori} known, a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}.\\
  Assume that there are $k$ nodes whose \emph{id}s are in the sub-interval [0,$\pc$) and that they have been previously resolved: all and only the nodes with \emph{id} less than $\pc$ successfully transmitted their messages.  Let $\hat{n}$ express the estimate of $n$. When $\pc$ is greater than 0, setting $\hat{n}$ to $\displaystyle\frac{k}{\pc}$ provides a good estimate of $n$ that becomes more and more accurate as the algorithm goes on. EBT uses $\hat{n}$ (as soon as it is available) to choose the right level in the tree to analyze.\\
  
  The most straightforward  interpretation of the EBT algorithm can be:
@@ -681,15 +681,16 @@ Here we gave only a short insight about the algorithm and the estimate technique
 \subsection{EBT combined with optimal MBT}
 
 In this section we describe an improvement over EBT we developed.\\
-EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) allowing to estimate the level to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. The problem is that with this $p$ the tree is no more balanced since the nodes are recursively splitted  in sets of expected different sizes: $np$ and $n(1-p)$.\\ 
+EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) and allows to estimate the level in the tree to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. Nevertheless, when $p$ is optimum, the recursive splitting of the original set into 2 subsets, whose expected size is $np$ and $n(1-p)$, returns an unbalanced collision tree\\ 
 
 The ideas are the following: 
 \begin{itemize}
-\item when a node realizes to belong to a sub-tree whose root has path $\mathbf{a}$, it must always remain in that sub-tree,
-\item after a collision takes place in a node at level $\hat{N}=\lfloor\log_{2}\hat{n}\rfloor$, the nodes interested in the collision  gets redistributed in the collided interval.
+\item nodes \emph{id}s are initially uniformly distributed in the tree,
+\item changing a part of a nodes \emph{id} is allowed if it doesn't affects the already visited conflicting sets,
+\item after that a collision takes place in a node at level $\hat{N}=\lfloor\log_{2}\hat{n}\rfloor$, the nodes interested in the collision  can be redistributed in the collided domain.
 \end{itemize}
 
-Let each node $n_{i}$ is identified by a $L$-length binary string $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{iL})$. Then, if applying the MBT we get a collision, each node interested by the collision updates its \emph{id} as follows: $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots, b_{i\hat{N}}c_{i1}\ldots c_{iL_{\hat{N}}})$ where $c_{i}k=0$ with probability $p=0.4175$ and $c_{i}k=1$ with probability $1-p$.\\  
+Let each node $n_{i}$ to be identified by a $L$-length binary string $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{iL})$. Applying the MBT we resolve a sub-batch or, otherwise, get a collision. In case of collision each node involved updates its \emph{id} as follows: $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{i\hat{N}}c_{i1}\ldots c_{i(L-\hat{N})})$ where $c_{ik}=0$ with probability $p=0.4175$ and $c_{ik}=1$ with probability $1-p$.\\  
 
 This modified version of EBT can be briefly described as follows:
  \begin{enumerate}
@@ -711,7 +712,9 @@ This modified version of EBT can be briefly described as follows:
 \end{center}
 \end{figure}
 
-Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage of the ratio between the expected cost of EBT over  the expected cost of the modified EBT. It results oscillatory with mean 1.42.
+Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage between the expected cost of EBT over  the expected cost of the modified EBT. It results oscillatory with mean 1.42.\\
+
+The \emph{EBT with optimal MBT Algorithm}, proposed in this work, is the average case best \emph{tree-based algorithm} known so far.
 
 \section{Others}
 In this section we will shortly describe non \emph{tree-based} algorithms for batch resolution.
