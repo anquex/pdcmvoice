@@ -190,7 +190,7 @@ This thesis
 %\listofalgorithms
 
 \chapter{Introduction}
-
+ 
 \marginpar{NOTA, A FIANCO}
 \textcolor{red}{PARTI IN BLU AGGIUNTE O CORRETTE}\\
 
@@ -214,7 +214,7 @@ Since each node has exactly one message to deliver, the problem of obtaining all
 Instead the problem differs when we are not interested in the exact number of nodes but rather we aim at an estimate of the actual batch size, as accurate as possible.}
 
 \rev{
-The knowledge of the batch size $n$ is an important factor for parameters' optimization in order to improve the resolution efficiency  through the minimization of the time taken by the process.\\}
+The knowledge of the batch size $n$ is an important factor for parameters optimization in order to improve the resolution efficiency  through the minimization of the time taken by the process.\\}
 
 \section{Model}
 \label{se:model}
@@ -639,7 +639,7 @@ where $\rho={\displaystyle\frac{n}{m}}$ is the expected number of nodes in a gro
 Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If this estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
 \marginpar{RICHIEDO VERIFICA PER CMSA...\\ $\leftarrow$}
-In CSMA scenario the performances depends on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that for CSMA is better to have empty slots with high probability ($\rho small$). CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
+In CSMA scenario the performances depends on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that for CSMA is better to have empty slots with high probability ($\rho$ small). CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
 
 \begin{figure}[H]
 \begin{center}
@@ -663,7 +663,55 @@ Given a batch of size $n$, the keys to understand EBT are the following:
 EBT tries to skip inner nodes of the tree by visiting only nodes at level equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{apriori} known, a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}.\\
  Assume that there are $k$ nodes whose \emph{id}s are in the sub-interval [0,$\pc$) and that they have been previously resolved: all and only the nodes with \emph{id} less than $\pc$ successfully transmitted their messages.  Let $\hat{n}$ express the estimate of $n$. When $\pc$ is greater than 0, setting $\hat{n}$ to $\displaystyle\frac{k}{\pc}$ provides a good estimate of $n$ that becomes more and more accurate as the algorithm goes on. EBT uses $\hat{n}$ (as soon as it is available) to choose the right level in the tree to analyze.\\
  
-Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.
+ The most straightforward  interpretation of the EBT algorithm can be:
+ \begin{enumerate}
+\item Run the CBT algorithm.
+\item Repeat until the end of the process the following steps:
+\begin{enumerate}[a)]
+\item Update the estimate $\hat{n}$,
+\item Start a new MBT at the next node at level $\lfloor\log_{2}\hat{n}\rfloor$.
+
+\end{enumerate}
+
+\end{enumerate}
+
+ 
+Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
+
+\subsection{EBT combined with optimal MBT}
+
+In this section we describe an improvement over EBT we developed.\\
+EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) allowing to estimate the level to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. The problem is that with this $p$ the tree is no more balanced since the nodes are recursively splitted  in sets of expected different sizes: $np$ and $n(1-p)$.\\ 
+
+The ideas are the following: 
+\begin{itemize}
+\item when a node realizes to belong to a sub-tree whose root has path $\mathbf{a}$, it must always remain in that sub-tree,
+\item after a collision takes place in a node at level $\hat{N}=\lfloor\log_{2}\hat{n}\rfloor$, the nodes interested in the collision  gets redistributed in the collided interval.
+\end{itemize}
+
+Let each node $n_{i}$ is identified by a $L$-length binary string $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{iL})$. Then, if applying the MBT we get a collision, each node interested by the collision updates its \emph{id} as follows: $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots, b_{i\hat{N}}c_{i1}\ldots c_{iL_{\hat{N}}})$ where $c_{i}k=0$ with probability $p=0.4175$ and $c_{i}k=1$ with probability $1-p$.\\  
+
+This modified version of EBT can be briefly described as follows:
+ \begin{enumerate}
+\item Run the CBT algorithm;
+\item Repeat until the end of the process the following steps:
+\begin{enumerate}[a)]
+\item Update the estimate $\hat{n}$;
+\item Start a new MBT at the next node at level $\lfloor\log_{2}\hat{n}\rfloor$ and perform only the first transmission;
+\item If the transmission results in a collision, colliding nodes regenerate their \emph{id};
+\item Continue  with the current MBT.
+\end{enumerate}
+\end{enumerate}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/BTs/EBT-EBT_MBT-Comparison}
+\caption[\emph{EBT} vs \emph{EBT with optimal MBT} Performance Comparison]{EBT with optimal MBT provides a minimum expected performance improvement over EBT of 1.2\% and 1.42\% in mean.}
+\label{EBTvsEBTopt}
+\end{center}
+\end{figure}
+
+Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage of the ratio between the expected cost of EBT over  the expected cost of the modified EBT. It results oscillatory with mean 1.42.
 
 \section{Others}
 In this section we will shortly describe non \emph{tree-based} algorithms for batch resolution.
@@ -688,7 +736,7 @@ Following  these ideas, IERC achieves the same efficiency $\eta=0.4871$ of FCFS 
 \subsection{Window Based Approaches}
 \textcolor{red}{solo per dire che esistono, magari qualche riferimento bibliografico...\\}
 
-\marginpar{NUOVA, RICHIEDO VERIFICA}
+\marginpar{NUOVA, RICHIEDO VERIFICA DEL CONTENUTO}
 Another possible approach to the batch resolution is to consider a \emph{framed}-ALOHA-like scenarios.\\
 In \emph{framed}-ALOHA, a frame (\emph{alias} window) is a sequence of consecutive slots.  When a node in the collision batch decides to transmit, it uniformly picks one and only one slot in the window and transmits in that slot.\\
 In windows based scenario usually we can work on the optimization of two parameters: $m$, the length of the window in slots, and $p$, the probability that a node transmits in the current window.
@@ -700,7 +748,7 @@ Innovate approaches to the problem uses hybrid transmission scheme working by cy
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
 If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
 
-In general, we assume not to have any \emph{a priori} statistical knowledge about the multiplicity of the nodes involved in a collision. So estimation techniques must provide efficient ways to obtain an estimate for the general zero-knowledge scenario.\\
+In general, we assume not to have any \emph{a priori} statistical knowledge about the multiplicity of the nodes involved in a collision. Hence estimation techniques must provide efficient ways to obtain an estimate for the general zero-knowledge scenario.\\
 \section{Clipped Binary Tree}
 \label{cbt-estimation}
 The most simple idea to obtain an estimate of the batch size could be to solve a minimum amount of nodes to obtain an estimate. This can be done, for example, by using deterministic algorithms such as \emph{Clipped Binary Tree} (CBT).\\
@@ -1133,7 +1181,7 @@ An overview of the behavior of $f(n,i)$ is presented in table \ref{basic-greenbe
 \textrm{Pr}\left( \hat{n}=2^{i}|n\right)=f(n,i)  
 \end{equation}
 
-Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behave for small and large sizes.
+Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behaves respectively for small and large sizes.
 We note that, for any fixed $n$, the distribution is well behaved: initially it is monotonically increasing, then a monotonically decreasing part follows.\\
 It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces a shift of 1 slot to the right but the values assumed are the same (see Figure \ref{fig:greenberg-dist-large} ).\\
 
@@ -1207,9 +1255,9 @@ Let $n$ be a batch size and $p$ be a given transmission probability. As expresse
 
 It is quite immediate to see that:
 \begin{itemize}
-\item $q_{0}(p,n) \approx q_{1}(p,n)$ when $n\approx 1/p$ and, obviously,
-\item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $n \ll 1/p$
-\item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $n \gg 1/p$
+\item $q_{0}(p,n) \approx q_{1}(p,n)$ when $n\approx {\displaystyle\frac{1}{p}}$ and, obviously,
+\item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $n \ll {\displaystyle\frac{1}{p}}$,
+\item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $n \gg {\displaystyle\frac{1}{p}}$.
 \end{itemize}
 $q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly decreasing. If we could repeat a large number $T$ of test transmission with  probability $p$ each, we could simply use the ratio collision/$T$ or idle/$T$ to uniquely determined our batch size. This is not true for successful transmissions since $q_{1}(p,n)$ is non-monotonic.\\
  
@@ -1217,9 +1265,9 @@ $q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly de
  sono binomiali\\
  Of course $N_{0}+N_{1}+N_{2+}=T$ and
  \begin{eqnarray*}
-E[N_{0}] &=& Tq_{0}(p,n)\\
-E[N_{1}] &=& Tq_{1}(p,n)\\
-E[N_{2+}] &=& Tq_{2+}(p,n)
+E[N_{0}] &=& Tq_{0}(p,n),\\
+E[N_{1}] &=& Tq_{1}(p,n),\\
+E[N_{2+}] &=& Tq_{2+}(p,n).
 \end{eqnarray*}
 
 

@@ -87,7 +87,8 @@ set(h{1}, 'LineWidth', 1.0);
 %set(h{2}, 'LineStyle', '-', 'LineWidth', 1.0, 'Color',' Black');
 %set(h{2}, 'Marker', 's', 'MarkerFaceColor', [1 1 1], 'MarkerEdgeColor', [0 0 0], 'MarkerSize', 4.0);
 %set(h{3}, 'LineStyle', '-', 'LineWidth', 1.0, 'Color',' Black');
-%set(h{3}, 'Marker', 'd', 'MarkerFaceColor', [.8 .8 .8], 'MarkerEdgeColor', [0 0 0], 'MarkerSize', 5.0);
+%set(h{3}, 'Marker', 'd', 'MarkerFaceColor', [.8 .8 .8], 'MarkerEdgeColor',
+%[0 0 0], 'MarkerSize', 5.0);
 
 fh = figure(1); % returns the handle to the figure object
 set(fh, 'color', 'white'); % sets the color to white
