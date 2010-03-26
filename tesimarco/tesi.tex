@@ -678,21 +678,21 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
  
 Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
 
-\subsection{EBT combined with optimal MBT}
+\subsection{EBT combined with optimum MBT}
 
 In this section we describe an improvement over EBT we developed.\\
-EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) and allows to estimate the level in the tree to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. Nevertheless, when $p$ is optimum, the recursive splitting of the original set into 2 subsets, whose expected size is $np$ and $n(1-p)$, returns an unbalanced collision tree\\ 
+EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) and allows to estimate the level in the tree to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. Nevertheless, when $p$ is optimum, the recursive splitting of the original set into 2 subsets, whose expected size is $np$ and $n(1-p)$, returns an unbalanced collision tree.\\ 
 
-The ideas are the following: 
+\noindent The ideas are the following: 
 \begin{itemize}
-\item nodes \emph{id}s are initially uniformly distributed in the tree,
-\item changing a part of a nodes \emph{id} is allowed if it doesn't affects the already visited conflicting sets,
-\item after that a collision takes place in a node at level $\hat{N}=\lfloor\log_{2}\hat{n}\rfloor$, the nodes interested in the collision  can be redistributed in the collided domain.
+\item Initially nodes \emph{id}s are uniformly distributed in the tree,
+\item Changing a part of a node \emph{id} is allowed if this doesn't affects the already visited conflicting sets,
+\item After a collision takes place in a node at level $\hat{N}=\lfloor\log_{2}\hat{n}\rfloor$, the devices involved in the collision  can be redistributed in the collided domain.
 \end{itemize}
 
 Let each node $n_{i}$ to be identified by a $L$-length binary string $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{iL})$. Applying the MBT we resolve a sub-batch or, otherwise, get a collision. In case of collision each node involved updates its \emph{id} as follows: $\mathbf{b_{i}}=(b_{i1}b_{i2}\ldots b_{i\hat{N}}c_{i1}\ldots c_{i(L-\hat{N})})$ where $c_{ik}=0$ with probability $p=0.4175$ and $c_{ik}=1$ with probability $1-p$.\\  
 
-This modified version of EBT can be briefly described as follows:
+\noindent This modified version of EBT can be briefly described as follows:
  \begin{enumerate}
 \item Run the CBT algorithm;
 \item Repeat until the end of the process the following steps:
@@ -704,7 +704,7 @@ This modified version of EBT can be briefly described as follows:
 \end{enumerate}
 \end{enumerate}
 
-\begin{figure}[t]
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/BTs/EBT-EBT_MBT-Comparison}
 \caption[\emph{EBT} vs \emph{EBT with optimal MBT} Performance Comparison]{EBT with optimal MBT provides a minimum expected performance improvement over EBT of 1.2\% and 1.42\% in mean.}
@@ -712,9 +712,9 @@ This modified version of EBT can be briefly described as follows:
 \end{center}
 \end{figure}
 
-Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage between the expected cost of EBT over  the expected cost of the modified EBT. It results oscillatory with mean 1.42.\\
+Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage between  the EBT and the modified EBT algorithm in terms of expected cost ratio. Performance gain results oscillatory with mean 1.42.\\
 
-The \emph{EBT with optimal MBT Algorithm}, proposed in this work, is the average case best \emph{tree-based algorithm} known so far.
+The \emph{EBT using optimum MBT Algorithm}, proposed in this work, is the average case best \emph{tree-based algorithm with implicit estimate} known so far.
 
 \section{Others}
 In this section we will shortly describe non \emph{tree-based} algorithms for batch resolution.
