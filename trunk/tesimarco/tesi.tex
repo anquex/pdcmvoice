@@ -749,16 +749,16 @@ Innovate approaches to the problem uses hybrid transmission scheme working by cy
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
-If a technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
+If a technique was not already identified by a name or associated to a acronym we used the name of one the authors as reference.\\
 
 In general, we assume not to have any \emph{a priori} statistical knowledge about the multiplicity of the nodes involved in a collision. Hence estimation techniques must provide efficient ways to obtain an estimate for the general zero-knowledge scenario.\\
 \section{Clipped Binary Tree}
 \label{cbt-estimation}
-The most simple idea to obtain an estimate of the batch size could be to solve a minimum amount of nodes to obtain an estimate. This can be done, for example, by using deterministic algorithms such as \emph{Clipped Binary Tree} (CBT).\\
+The most simple idea to obtain an estimate of the batch size is to solve a minimum amount of nodes. This can be done, for example, by using deterministic algorithms such as \emph{Clipped Binary Tree} (CBT).\\
 CBT is a partial resolution algorithm since only a fraction of the packets of the batch are successfully transmitted.
 The clipped binary tree algorithm is identical to the modified binary tree algorithm (with $p=1/2$ since we require the nodes to be uniformly distributed in the interval [0,1) ) except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
-When the algorithm stops we know than the last two nodes resolved owns to the same level $i$ of the tree (root is at level=0).\\
-We could think to obtain an estimate as:
+When the algorithm stops we know than the last two nodes resolved owns to the same level $i$ of the tree (root is assumed to be at level 0).\\
+We can obtain an estimate as:
 \begin{equation}
 \hat{n}\gets2^{i}
 \end{equation}
@@ -797,11 +797,11 @@ Results are reported in Appendix in tables  \ref{CBT-table-1}. Notice how slowly
 Cidon and Sidi proposed this approach in \cite{cidon}. In this work they describe a complete resolution algorithm based on two phases:
  
 \begin{enumerate}
-\item to get an estimate of the initial batch using a partial deterministic resolution scheme. 
-\item to perform an optimized complete deterministic resolution basing on the results of phase 1. 
+\item Estimating of the initial batch using a partial deterministic resolution scheme. 
+\item Performing an optimized complete deterministic resolution based on the results of phase 1. 
 \end{enumerate}
 
-The strategy adopted to obtain the estimate is to resolve a small portion of the batch and to accumulate the number of successful transmission resulted.\\
+The strategy adopted to obtain the estimate is to resolve a small part of the batch and to accumulate the number of successful transmission resulted.\\
 
 Initially we fix a probability $\pc$ that determines how the whole batch is split at the very first time.\\
 We named it $\pc$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
