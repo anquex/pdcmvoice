@@ -611,6 +611,7 @@ Using probability $p={\displaystyle\frac{1}{2}}$  results, for large $n$, in abo
 
 
 \subsection{\emph{m} Groups Tree Resolution}
+\label{se:mgroups}
 \marginpar{NUOVA}
 
 More advanced algorithms for batch resolution, such as those presented in \cite{cidon} and \cite{greenberg87}, share a common idea: divide the initial batch into $m$ groups. We will not deal here about the details of the algorithms and the different approaches  they use to choose $m$. Instead we will concentrate on the common part of these algorithms: divide a batch of size $n$ into $m$ groups and apply a BRA to each group.\\
@@ -636,7 +637,7 @@ where $\rho={\displaystyle\frac{n}{m}}$ is the expected number of nodes in a gro
 \end{center}
 \end{figure}
 
-Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.27$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
+Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
 \marginpar{RICHIEDO VERIFICA PER CMSA...\\ $\leftarrow$}
 In a CSMA scenario the performances depends on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
@@ -803,43 +804,19 @@ Cidon and Sidi proposed this approach in \cite{cidon}. In their work they descri
 
 The strategy adopted to obtain the estimate is to resolve a small part of the initial batch and to accumulate the number of successful transmissions resulting.\\
 
-Initially we fix a probability $\pc$ that determines how the whole batch is split at the very first time.\\
-We named it $\pc$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
+A node either takes part to the estimate phase or to the following resolution phase but not both.
+The probability $\pc$, which is an algorithm input parameter, determines this choice.
+We called it $\pc$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
 
-As usual we have initially a batch $\mathcal{B}$ of unknown size $n$.
-At the beginning of the algorithm each node chooses to transmit with probability $\pc$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. If a conflict occurs, it is known that $|\mathcal{E}|\geq2$, and the nodes in $\mathcal{E}$ use a complete batch resolution algorithm to resolve the conflicts among the nodes in $\mathcal{E}$. At the end of this part we know the exact value of $\mathcal{E}$ by accumulating the number of successful transmissions during the resolution. We call this counter $j$.
-So, after this estimation phase, since we expect that the nodes are uniformly distributed in the real interval [0,1) and we solved the first part of the interval from 0 to $\pc$ we found that our expected density can be supposed to be $\frac{j}{\pc}$.
+As usual we consider a batch $\mathcal{B}$ of unknown size $n$.
+At the beginning of the algorithm each node chooses to transmit with probability $\pc$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. When a conflict occurs ( $|\mathcal{E}|\geq2$), a complete batch resolution algorithm is started to resolve the conflicts among  the nodes in $\mathcal{E}$ . By simply accumulating in $j$, during the estimate phase, the number of resolved nodes, we know the exact value of $|\mathcal{E}|$.
 Then we simply compute our estimate $\hat{n}$ as: 
 
 \begin{equation}
-\hat{n} \gets \frac{j}{\pc}
+\hat{n} \gets \frac{j}{\pc}.
 \end{equation}
-In this  case, since we already resolved the nodes in $\mathcal{E}$, we are more interested only in the cardinality of the remaining batch to solve $\mathcal{D}$ which we can compute as:
-
-\begin{equation}
-\hat{k}=E[size(\mathcal{D})] \gets  \frac{j}{\pc}(1-\pc)
-\end{equation}
- 
-
-\begin{algorithm}[h!]
-\begin{algorithmic}[1]
-	\REQUIRE $\pc$, fraction of the whole batch to solve
-	\STATE \COMMENT{Phase 1}
-	\STATE each node flip a coin getting 0 with probability $\pc$, 1 otherwise
-	\STATE $\mathcal{E} \gets$ \{ nodes that flipped 0\}
-	\STATE $\mathcal{D} \gets$ \{ nodes that flipped 1\}
-	\STATE \algname{Complete collision resolution ($\mathcal{E}$) }
-	\STATE  $\hat{k} \gets |\mathcal{E}|/\pc$
-	\STATE \COMMENT{Phase 2}
-	\STATE \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) }
-	\end{algorithmic}
-\caption{\algname{Cidon}}
-\label{alg-cidon}
-\end{algorithm}
-
-Note that $|\mathcal{E}| = 0$ does not imply $|\mathcal{D}| = 0$ so a complete resolution algorithm has always to be performed on $\mathcal{D}$.
-Recalling subsection ``Real Value Approach'' in \ref{realvalueapproach}, operation on line 2 in Alg. \ref{alg-cidon} is equivalent to force each node to generate a unique ID expressed as a fixed length real value in the interval [0,1).\\
-Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
+When the nodes are uniformly distributed in the real interval [0,1), $\displaystyle \frac{j}{\pc}$  identifies also the expect nodes density in the interval [0, 1) and the nodes in $\mathcal{E}$ are those whose \emph{id} can be mapped to a value belonging to the sub-interval [0, $\pc$).\\
+Following Figure \ref{cidon-nodes-id} shows the case providing a simple example.
 \begin{figure}[H]
     \centering
     \ovalbox{
@@ -855,13 +832,47 @@ Following Figure \ref{cidon-nodes-id} show the case providing a simple example.
     
     \end{tikzpicture}
     }
-    \caption[\emph{Cidon}: initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generate its own ID. Nodes whose ID is less than $\pc$ owns to $\mathcal{E}$. Nodes whose ID is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \caption[\emph{Cidon}: initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generates its own \emph{id} from the standard uniform distribution on the interval [0,1). Nodes whose \emph{id} is less than $\pc$ owns to $\mathcal{E}$. Nodes whose \emph{id} is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
     \label{cidon-nodes-id}
 \end{figure}
+
+After the first phase,  the nodes in $\mathcal{E}$ are resolved, but those in $\mathcal{D}$ not yet. To speedup their resolution we are interested in the estimate $\hat{k}$ of $|\mathcal{D}|$, which we can compute as:
+
+\begin{equation}
+\hat{k} \gets  \frac{j}{\pc}(1-\pc).
+\end{equation}
+
+Then the resolution of $\mathcal{D}$ begins. We note that $|\mathcal{E}| = 0$ does not imply $|\mathcal{D}| = 0$ and consequently a complete resolution algorithm has always to be performed on $\mathcal{D}$.
  
- Procedure \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages while \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: speedup is allowed by the knowledge of its expected multiplicity.\\
+ \begin{algorithm}[h!]
+\begin{algorithmic}[1]
+	\REQUIRE $\mathcal{B}$ batch with $|\mathcal{B}|=n$
+	\REQUIRE $\pc$, fraction of the whole batch to solve
+	\STATE \COMMENT{Phase 1}
+	\STATE each node flips a coin getting 0 with probability $\pc$, 1 otherwise
+	\STATE $\mathcal{E} \,\gets$ \{ nodes that flipped 0\}
+	\STATE $\mathcal{D} \gets$ \{ nodes that flipped 1\}
+	\STATE \algname{Complete collision resolution ($\mathcal{E}$) }
+	\STATE  $\hat{k} \gets |\mathcal{E}|/\pc$
+	\STATE \COMMENT{Phase 2}
+	\STATE \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) }
+	\end{algorithmic}
+\caption{\algname{Cidon($\mathcal{B}$, $\pc$)}}
+\label{alg-cidon}
+\end{algorithm}
+ High level peudo-code of \emph{Cidon} algorithm is presented in Alg. \ref{alg-cidon}.\\ \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages. \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: the speedup is allowed by the knowledge of its expected multiplicity.\\
  
- Expected running time depends on the BRA used but in general can be considered $O(\pc n)$: time is linear in the size of $\mathcal{E}$.
+ The original paper proposes to use an \emph{$m$ groups split} (Section \ref{se:mgroups}) approach to resolve $\mathcal{D}$ where 
+ \begin{equation}
+m = \max(1, \lceil\alpha \hat{k}-\beta\rceil),
+\end{equation}
+
+and each group is resolved by applying the MBT Alg.\\
+The parameter $\alpha$ determines the number of groups, and therefore the efficiency, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small: many of them would be empty resulting in a waste of time. 
+ 
+ $\alpha=0.786$ determines $\rho\approx 1.27$ which is the optimum \emph{unique} nodes per group density. $\beta$ and $\pc$ depends on operational requirements: setting $\beta=8$ and  $\pc=0.1$ showed to be a good compromise to get efficient resolution for a wide range of batch sizes.\\  
+ 
+Expected  cost of the estimate phase depends on the BRA used but in general can be considered $O(\pc n)$: time is linear in the size of $\mathcal{E}$.
 
 \subsection{Estimate accuracy}
 \label{cidon-estimate-accuracy}
