@@ -631,20 +631,20 @@ where $\rho={\displaystyle\frac{n}{m}}$ is the expected number of nodes in a gro
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-ALOHA}
-\caption[$m$ groups split: ALOHA scenario]{Results were obtained using MBT with optimal probability $p$ in a slotted ALOHA scenario. Splitting the batch into groups provides better results than applying a BRA to the original batch size when $y$-axis values below 1.}
+\caption[$m$ groups split: ALOHA scenario]{\emph{$m$ groups split: ALOHA scenario}. Results were obtained using MBT with optimal probability $p$ in a slotted ALOHA scenario. Splitting the batch into groups provides better results than applying a BRA to the original batch size when $y$-axis values are below 1.}
 \label{m-groups-MBT-ALOHA}
 \end{center}
 \end{figure}
 
-Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If this estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
+Figure \ref{m-groups-MBT-ALOHA} shows that  $\rho\approx 1.27$ provides the best achievable performance. Furthermore we notice how the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain always better than the trivial application of the BRA. On the other hand overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
 \marginpar{RICHIEDO VERIFICA PER CMSA...\\ $\leftarrow$}
-In CSMA scenario the performances depends on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that for CSMA is better to have empty slots with high probability ($\rho$ small). CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
+In a CSMA scenario the performances depends on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-CSMA}
-\caption[$m$ groups split: CSMA scenario]{IMMAGINE PROVVISORIA, $m$ groups split: CSMA scenario}
+\caption[$m$ groups split: CSMA scenario]{\emph{$m$ groups split: ALOHA scenario}. Results were obtained using MBT with optimal probability $p$ in a slotted CSMA scenario. CSMA is more robust to inaccurate estimate than ALOHA.}
 \label{m-groups-MBT-CSMA}
 \end{center}
 \end{figure}
@@ -669,7 +669,7 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
 \item Repeat until the end of the process the following steps:
 \begin{enumerate}[a)]
 \item Update the estimate $\hat{n}$,
-\item Start a new MBT at the next node at level $\lfloor\log_{2}\hat{n}\rfloor$.
+\item Start a new CBT at the next node from level $\lfloor\log_{2}\hat{n}\rfloor$.
 
 \end{enumerate}
 
@@ -678,7 +678,7 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
  
 Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
 
-\subsection{EBT combined with optimum MBT}
+\subsection{EBT combined with optimum MBT (DA BUTTARE)}
 
 In this section we describe an improvement over EBT we developed.\\
 EBT assumes the nodes to be uniformly distributed in the interval [0,1): this means that their \emph{id} is generated flipping a fair coin. This is a necessary condition for the collision tree to be balanced (the expected height of each leaf is the same) and allows to estimate the level in the tree to analyze using $\lfloor\log_{2}\hat{n}\rfloor$.\\ We remember also that the optimal probability $p$ that provides the best performance  for the MBT is $p=0.4175$. Nevertheless, when $p$ is optimum, the recursive splitting of the original set into 2 subsets, whose expected size is $np$ and $n(1-p)$, returns an unbalanced collision tree.\\ 
@@ -749,7 +749,7 @@ Innovate approaches to the problem uses hybrid transmission scheme working by cy
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
 We present here some noteworthy techniques for batch size estimate that can be found in literature.
-If the technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
+If a technique was not already identified by a name or associated to a acronym we used the name of one authors as reference.\\
 
 In general, we assume not to have any \emph{a priori} statistical knowledge about the multiplicity of the nodes involved in a collision. Hence estimation techniques must provide efficient ways to obtain an estimate for the general zero-knowledge scenario.\\
 \section{Clipped Binary Tree}

@@ -4,7 +4,7 @@ clc;
 
 hold all;
 
-nmax=2;
+nmax=20;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 p=0.50;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
@@ -98,10 +98,10 @@ for n=2:nmax
     %for MBT
     L(n+1)=(1+Q(n+1,n+1)+s)/(1-Q(0+1,n+1)-Q(n+1,n+1));
 end
-%{
+
 L
 
-
+%{
 nmax/L(nmax+1)
 
 
