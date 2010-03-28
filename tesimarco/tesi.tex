@@ -870,7 +870,7 @@ m = \max(1, \lceil\alpha \hat{k}-\beta\rceil),
 and each group is resolved by applying the MBT algorithm.\\
 The parameter $\alpha$ determines the number of groups, and therefore the efficiency, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small: many of them would be empty resulting in a waste of time. 
  
- $\alpha=0.786$ determines $\rho\approx 1.27$ which is the optimum \emph{unique} nodes per group density. $\beta$ and $\pc$ depends on operational requirements: setting $\beta=8$ and  $\pc=0.1$ showed to be a good compromise to get efficient resolution for a wide range of batch sizes.\\  
+ $\alpha=0.786$ determines $\rho\approx 1.27$ which is the \emph{unique} optimum  nodes per group density. $\beta$ and $\pc$ depends on operational requirements: setting $\beta=8$ and  $\pc=0.1$ showed to be a good compromise to get efficient resolution for a wide range of batch sizes.\\  
  
 Expected  cost of the estimate phase depends on the BRA used but in general can be considered $O(\pc n)$: time is linear in the size of $\mathcal{E}$.
 
@@ -930,10 +930,11 @@ Let each of the $n$ conflicting stations either transmit or not transmit in acco
 Using this test repeatedly with $i=1, 2, 3, \ldots$ leads to the Greenberg \emph{base 2 estimation algorithm}.\\
 Each of the conflicting stations executes Algorithm (\ref{alg-greenberg}), resulting in a string of collisions whose lenght determines $\hat{n}$.\\
 
-As $i$ increases, the probability that at most one node transmits increases monotonically and approaces 1 extremely rapidly as $i$ increases past $\log_{2}n$ so we expect $i$ is close to $\log_{2}n$.\\
+As $i$ increases, the probability that at most one node transmits monotonically grows and approaches 1 extremely rapidly as $i$ increases past $\log_{2}n$ so we expect $i$ is close to $\log_{2}n$.\\
 
 \begin{algorithm}[H]
 \begin{algorithmic}
+\STATE \COMMENT Each node runs this algorithm
 \STATE $i\gets 0$
 \REPEAT
 	\STATE $i\gets i+1$
@@ -941,7 +942,7 @@ As $i$ increases, the probability that at most one node transmits increases mono
 \UNTIL {no collision occurs}
 \STATE $\hat{n} \gets 2^{i}$
 \end{algorithmic}
-\caption{\algname{Basic Greenberg}}
+\caption{\algname{Basic Greenberg ($\mathcal{B}$)}}
 \label{alg-greenberg}
 \end{algorithm}
 
@@ -1101,8 +1102,11 @@ Our experimental results showed that this estimator is not so good for real life
 \section{Window Based}
 \chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
-We investigated about a fast algorithms for multiplicity estimation.\\
 
+We presented some algorithms for multiplicity estimation in the previous Chapter.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
+We will analyze \emph{Cidon} to show which is the minimum amount of nodes to be resolved for the estimate to be within user-required constrains with high probability.\\  
+We will analyze the behavior of \emph{Greenberg} when varying the batch size.\\
+Finally, we propose and analyze a modification of \emph{Greenberg} which tries to refine the raw estimate provided by the original algorithm.
 \section{Cidon Evaluation}
 
 \begin{equation*}
