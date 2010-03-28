@@ -867,7 +867,7 @@ Then the resolution of $\mathcal{D}$ begins. We note that $|\mathcal{E}| = 0$ do
 m = \max(1, \lceil\alpha \hat{k}-\beta\rceil),
 \end{equation}
 
-and each group is resolved by applying the MBT Alg.\\
+and each group is resolved by applying the MBT algorithm.\\
 The parameter $\alpha$ determines the number of groups, and therefore the efficiency, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small: many of them would be empty resulting in a waste of time. 
  
  $\alpha=0.786$ determines $\rho\approx 1.27$ which is the optimum \emph{unique} nodes per group density. $\beta$ and $\pc$ depends on operational requirements: setting $\beta=8$ and  $\pc=0.1$ showed to be a good compromise to get efficient resolution for a wide range of batch sizes.\\  
@@ -877,33 +877,47 @@ Expected  cost of the estimate phase depends on the BRA used but in general can 
 \subsection{Estimate accuracy}
 \label{cidon-estimate-accuracy}
 
-In the original paper \cite{cidon} there is no detailed analysis of the behavior of the algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
+In the original paper \cite{cidon} there is no detailed analysis of the behavior of the estimate algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
     
 Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
 
-\begin{enumerate}[1)]
-\item \begin{equation}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}
-           \label{cidon-J}\end{equation}
-\item \begin{equation}E[J|n]=n\pc\label{cidon-e-estimate}\end{equation}
-\item \begin{equation}\textrm{var}(J|n)=n\pc(1-\pc)\end{equation}
-\end{enumerate}
+\begin{equation}
+	P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j},
+           \label{cidon-J}
+\end{equation}
+
+\begin{equation}
+E[J|n]=n\pc ,
+\label{cidon-e-estimate}
+\end{equation}
+
+\begin{equation}
+\textrm{var}(J|n)=n\pc(1-\pc).
+\end{equation}
+
 
 By applying Chebychev's Inequality \eqref{eq:cheby},  we have for any $\epsilon>0$
  
  \begin{equation}
-P\Bigl( \left| J-n\pc\right| \geq \epsilon n \,|\, n \Bigr) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}
+P\Bigl( \left| J-n\pc\right| \geq \epsilon n \,|\, n \Bigr) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}.
 \label{eq:cidon-cheby}
  \end{equation}
- Let $\hat{N}$ be a real-valued random variable that expresses our estimate upon $n$. Then from \eqref{cidon-J} - \eqref{eq:cidon-cheby}:
+ 
+ Let $\hat{N}={\displaystyle \frac{\hat{J}}{\pc}}$ be a real-valued random variable that expresses our estimate of $n$. Then from the aforementioned equations \eqref{cidon-J} - \eqref{eq:cidon-cheby} follows that:
 
-\begin{enumerate}[1)]
-\item \begin{equation}P\left(\hat{N}=n|n\right)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n\end{equation}
-\item \begin{equation}E[\hat{N}|n]=n\end{equation}
-\item  \begin{equation}
-P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,\big|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}
+\begin{equation}
+P\left(\hat{N}=n|n\right)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n,
+\end{equation}
+
+\begin{equation}
+E[\hat{N}|n]=n,
+\end{equation}
+and, finally,
+ \begin{equation}
+P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,\big|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}.
  \end{equation}
-\end{enumerate}
-\clearpage
+which shows that in this estimation method we can trade off the accuracy with the consumption of resources, time or messages.
+
 \section{Greenberg}
 
 Let, as usual, $n$ be our batch size.\\
