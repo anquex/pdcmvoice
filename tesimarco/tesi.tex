@@ -920,21 +920,21 @@ which shows that in this estimation method we can trade off the accuracy with th
 
 \section{Greenberg}
 
-Let, as usual, $n$ be our batch size.\\
-Basic Greenberg algorithm's strategy is to search for \emph{a power of 2} that is close to $n$ with high probability.\\
+
+\emph{Basic Greenberg algorithm} strategy is to search for \emph{a power of 2} that is close to $n$ with high probability.\\
 The probabilistic test is defined to look for $\hat{n}$ which tries to satisfy:\\
 \begin{equation}
 \hat{n}\geq 2^{i} \approx n
 \end{equation}
 Let each of the $n$ conflicting stations either transmit or not transmit in accordance with whether the outcome of a biased binary coin is 0 or 1. The coin is biased to turn up 0 with probability  $2^{-i}$ and 1 with complementary probability. Since the expected number of transmitters is $2^{-i}n$, having a conflict as event supports the hypothesis that $n\geq2^{i}$.\\
-Using this test repeatedly with $i=1, 2, 3, \ldots$ leads to the Greenberg \emph{base 2 estimation algorithm}.\\
+Using this test repeatedly with $i=1, 2, 3, \ldots$, leads to the Greenberg \emph{base 2 estimation algorithm}.\\
 Each of the conflicting stations executes Algorithm (\ref{alg-greenberg}), resulting in a string of collisions whose lenght determines $\hat{n}$.\\
 
-As $i$ increases, the probability that at most one node transmits monotonically grows and approaches 1 extremely rapidly as $i$ increases past $\log_{2}n$ so we expect $i$ is close to $\log_{2}n$.\\
+The probability that at most one node transmits monotonically grows and approaches 1 extremely rapidly as $i$ increases past $\log_{2}n$. Consequently, we expect $i$ is close to $\log_{2}n$.\\
 
 \begin{algorithm}[H]
 \begin{algorithmic}
-\STATE \COMMENT Each node runs this algorithm
+\STATE \COMMENT Each node performs these operations
 \STATE $i\gets 0$
 \REPEAT
 	\STATE $i\gets i+1$
@@ -946,7 +946,7 @@ As $i$ increases, the probability that at most one node transmits monotonically 
 \label{alg-greenberg}
 \end{algorithm}
 
-The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the algorithm goes on the initial unknown batch (of size $n$) comes progressively sliced into smaller pieces. Only the nodes virtually inside the slice are allowed to transmit. Slices get thinner and thinner until at most one node is contained in a slice. Figure \ref{fig:greeberg-split} intuitively tries to explain the idea.\\ 
+The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the algorithm goes on the initial unknown batch (of size $n$) is progressively sliced into smaller pieces. Only the nodes virtually inside the enabled slice are allowed to transmit. Slices get thinner and thinner until at most one node is contained in a slice. Figure \ref{fig:greeberg-split} intuitively tries to explain the idea.\\ 
 
 \begin{figure}[htb!]
     \centering
@@ -983,16 +983,16 @@ The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the
     \label{fig:greeberg-split}
 \end{figure}
 
-Expected running time is $O(log_{2}n)$. In particular, since in the SLOTTED ALOHA model considered in the paper reader feedback is supposed to be transmitted at the end of each transmission slot, expected running time can be expressed, in slot numbers, as $\approx 1+\log_{2}n$.\\
+Expected running time is $O(log_{2}n)$. In particular, since in the \emph{slotted}-ALOHA model considered in the paper reader feedback is supposed to be transmitted at the end of each transmission slot, expected running time can be expressed, in slot numbers, as $\approx 1+\log_{2}n$.\\
 
-An important note is that the algorithm always involve all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
+An important note is that the algorithm always involves all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
 Each choice is independent of what the node did in the previous steps. \\ 
 This is of great importance and allows $\hat{n}$ to have bounded moments: it can be shown for large $n$ that:
 \begin{equation}
-E[\hat{n}] \approx n\phi
+E[\hat{n}] \approx n\phi,
 \end{equation}
 \begin{equation}
-E[\hat{n}^{2}] \approx n\Phi
+E[\hat{n}^{2}] \approx n\Phi,
 \end{equation}
 where
 \begin{equation}
@@ -1004,7 +1004,7 @@ where
 \end{equation}
 
 \noindent $\phi$ and $\Phi$ where obtained in \cite{greenberg87} using advanced mathematical analysis supported by Mellin integral transform\footnote{in this work we only report these as final results, please refer to the original paper to see how $\phi$ and $\Phi$ where obtained.}.
-In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table \ref{table:phi-Phi} to provide an idea of the behavior of $\phi$ as function of $n$.\\
+In general $\phi$ and $\Phi$ depend on the size of the problem. Following Table \ref{table:phi-Phi} shows the behavior of the expected estimate (and therefore $\phi$) as function of $n$.\\
 
 \begin{table}[H]
 \caption[\emph{Basic Greenberg}: Expected Estimate]{Given a batch of size $n$ the expected estimate applying base 2 Greenberg is $E[\hat{n}|n]$. The ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.}
@@ -1032,14 +1032,14 @@ In general $\phi$ and $\Phi$ depend on the size of the problem. We present Table
 \end{center}
 \label{table:phi-Phi}
 \end{table}
-The fact that, for large $n$, $E[\hat{n}] \approx n\phi$ suggests treating $\hat{n}_{+} = \hat{n}/\phi$ as a estimate of n.\\
+The fact that, for large $n$, $E[\hat{n}] \approx n\phi$ suggests a way for correcting the estimate bias and allows to assume $\hat{n}_{+} = {\displaystyle\frac{\hat{n}}{\phi}}$ as a estimate of n. Owing to the contribution of periodic functions, $\hat{n}_{+}$ is not an asymptotically unbiased estimate of $n$, in the sense that  $E[\hat{n}_{+}]/n$ does not tend to 1 as $n$ gets large. Fortunately, the amplitude of the periodic functions turns out to be less than $2 \cdot10^{-5}$, so this bias is negligible for all practical purposes.\\
 
 
-Interestingly, a simple variant of the estimation algorithm has disastrous performance. Consider the algorithm in which each station involved in the initial collision transmits to he channel with probability $\frac{1}{2}$. If this causes another collision, then those that just transmitted again transmit with probability $\frac{1}{2}$. The others drop out. This continues, with the stations continuing to try to transmit always being a subset of those that just transmitted, until there is no collision. Take $2^{i}$ as the estimate of the multiplicity of conflict where $i$ is the number of the steps until ther is no collision. It can be shown that the second and all higher moments of this estimate are infinite.
+Interestingly, a simple variant of the estimation algorithm has provably disastrous performance. Consider the algorithm in which each station involved in the initial collision transmits to he channel with probability $\frac{1}{2}$. If this causes another collision, then those that just transmitted, transmit again with probability $\frac{1}{2}$. The others drop out. This continues, with the stations trying to transmit always being a subset of those that just transmitted, until there is no collision. Take $2^{i}$ as the estimate of the multiplicity of conflict where $i$ is the number of the steps until ther is no collision. It can be shown that the second and all higher moments of this estimate are infinite.
 
 \subsection{base \emph{b} variant}
 
-Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to differ from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to remedy this limit: providing and estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
+Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to differ from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to overcome this limitation: providing an estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
 Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.\\
 \begin{algorithm}[H]
 \begin{algorithmic}
@@ -1051,17 +1051,17 @@ Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.\\
 \STATE $\hat{n}(b) \gets 2^{i}$
 \STATE $\hat{n}_{+}(b) \gets \hat{n}(b)/\phi(b)$
 \end{algorithmic}
-\caption{\algname{base \emph{b} Greenberg}}
+\caption{\algname{base \emph{b} Greenberg ($\mathcal{B}$)}}
 \label{alg-greenberg-base-b}
 \end{algorithm}
 
 $\phi(b)$ corrects the bias of the estimator. $\phi(b)$ is the optimal correction when $n$ is large.
-Looking at Table \ref{table:greenberg-b-phi} you can notice how smaller $b$ results in smaller $\phi(b)$. This means that $b$ deeply biases the estimate: if $b^{'} < b^{''}$ then $E[\hat{n}(b^{'})] < E[\hat{n}(b^{''})]$.\\ This is a result of the following fact: let $i^{''}$ be the expected slot the base $b^{''}$ algorithm will end up given a batch size $n$, then $i^{''} \leq log_{b^{''}} n$. Let $i^{'}$ be the same for $b^{''}$. If $b^{'} < b^{''}$ then $b^{'i^{'}} > b^{''i^{''}}$ \symbolfootnote[2]{This comes from experimental observations.}
+Looking at Table \ref{table:greenberg-b-phi} you can notice how smaller $b$ results in smaller $\phi(b)$. This means that $b$ deeply biases the estimate: if $b^{'} < b^{''}$ then $E[\hat{n}(b^{'})] < E[\hat{n}(b^{''})]$.\\ This is a result of the following fact: let $i^{''}$ be the expected slot the base $b^{''}$ algorithm will end up given a batch size $n$, then $i^{''} \leq log_{b^{''}} n$. Let $i^{'}$ be the same for $b^{'}$. If $b^{'} < b^{''}$ then $b^{'i^{'}} > b^{''i^{''}}$ \symbolfootnote[2]{This comes from experimental observations.}
 
 %nota della tabella, assicurarsi che sia nella stessa pagina
 
 \begin{table}[H]
-\caption[\emph{Greenberg}: different $b$ summary]{Following table shows how $\phi$ and ``Expected algorithm \ref{alg-greenberg-base-b} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorithm cost ($\lesssim \log_{2}n$).}
+\caption[\emph{Greenberg}: different $b$ summary]{Following table shows how $\phi$ and ``Expected \emph{Greenberg base b algorithm} cost in slots'' vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorithm cost ($\lesssim \log_{2}n$).}
 \label{table:greenberg-b-phi}
 \begin{center}
 \begin{threeparttable}
@@ -1082,19 +1082,19 @@ $b$ & $\phi(b)$\tnote{a} &\,\,\,& Expected cost in slots-1\\
 \end{center}
 \end{table}
 
-It can be shown \cite{greenberg87} that, \emph{for all n greater than some constant $n_{0}(b)$}
-\begin{enumerate}
-\item \begin{equation} 
-		\left |\frac{E[\hat{n}_{+}(b)]}{n}-1 \right | < \epsilon(b) 
+It can be shown \cite{greenberg87} that, \emph{for all n greater than some constant $n_{0}(b)$}\\
+	\begin{equation} 
+		\left |\frac{E[\hat{n}_{+}(b)]}{n}-1 \right | < \epsilon(b) ,
 	  \end{equation}
-\item \begin{equation}
-		\frac{\sigma\bigl(\hat{n}_{+}(b)\bigr)}{n}< \epsilon(b)
+
+\begin{equation}
+		\frac{\sigma\bigl(\hat{n}_{+}(b)\bigr)}{n}< \epsilon(b) ,
 	\end{equation}
-\end{enumerate}
+
 \emph{where $\epsilon(b) \to 0$ as $b \to 1$.}
 
 In other words when $b \to 1$ and $n$ is large the estimate becomes unbiased and variance goes to 0: we have ideally a perfect estimator.\\
-Our experimental results showed that this estimator is not so good for real life scenarios.  
+Our experimental results showed that this base $b$ estimator is not so good for real life scenarios.  
 
 
 
