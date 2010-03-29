@@ -1111,11 +1111,11 @@ Finally, we propose and analyze a modification of \emph{Greenberg} which tries t
 
 \begin{equation*}
 \end{equation*}
-We remember from section \ref{cidon-estimate-accuracy} that
-\begin{equation*}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j}\end{equation*}
+We remember from Section \ref{cidon-estimate-accuracy} that
+\begin{equation*}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j},\end{equation*}
 and
-\begin{equation*}\hat{n}=j/p\end{equation*}
-Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. So $J$ is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
+\begin{equation*}\hat{n}=j/p.\end{equation*}
+Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. Consequently $J$ is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
 we get:
 \begin{equation}
 E[\hat{n}|n,\pc]=\frac{1}{\pc}E\left[j|n,\pc\right]=n, \qquad \forall \,\pc
@@ -1163,7 +1163,7 @@ Fixed $k$, $n$ and $\theta$, $\pc$ can be found by numerically solving\footnote{
 \begin{equation}
 f(k,n,\pc) = \theta
 \end{equation}
-Figure below shows $\pc$ in function of $k$ for different batch sizes.\\
+Figure below shows minimum $\pc$ in function of $k$ for different batch sizes.\\
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1176,7 +1176,7 @@ Figure below shows $\pc$ in function of $k$ for different batch sizes.\\
 Figure \ref{cidon-k-p-minimum} shows how the fraction of the initial batch to resolve for estimate to be within  required confidence interval with high probability deeply depends on the size of the problem: smaller sizes require much higher $\pc$.\\
 At the same time, considering absolute cost in elapsed slots, Figure  \ref{cidon-k-L-minimum} shows that, for a wide range of $k$, the time required is quite independent of the size of the problem.\\
 Time required by the largest considered $n$ provides a  bound for smaller ones.\\
-Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI time taken is plotted: this bound is not so tight for very small batches. With small batches BRAs performs better than what is reported.   
+Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI time taken is plotted: this bound is not so tight for very small batches. With very small batches BRAs performs better than what is reported.   
 
 \begin{figure}[htb!]
 \begin{center}
@@ -1197,7 +1197,7 @@ Given a current slot transmission probability $p$ and a batch of size $n$ we def
 \begin{equation}q_{2+}(p,n)=1-q_{0}(p,n)-q_{1}(p,n)\label{eq:greenberg-prob-coll}\end{equation}
 \end{enumerate}
 
-In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability p. Naming each slot $i$ starting with 1, 2, \dots, we have:
+In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability $p$. Naming each slot $i$ starting with $1, 2, \dots,$ we have:
 \begin{equation}
 	p_{i}=p(i)=2^{i}
 \end{equation}
@@ -1208,7 +1208,7 @@ f(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \cdot \bigl( q_{0}(p_{i},n)+q_{1}(p_{i},
 \label{eq:bgstopprobability}
 \end{equation}
 
-An overview of the behavior of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\
+An overview of the behavior of $f(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\ Equation \eqref{eq:bgstopprobability} define the probability for biased estimate $\hat{n}$ to be equal to $2^{i}$ when the batch size is $n$. 
 \begin{equation}
 \textrm{Pr}\left( \hat{n}=2^{i}|n\right)=f(n,i)  
 \end{equation}
