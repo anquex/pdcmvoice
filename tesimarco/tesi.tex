@@ -69,6 +69,9 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
 \DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\mymax}{max}
+
+
 
 % il compilatore converte gli eps di matlab in pdf e poi da quelli importa le immagini
 % se trova il pdf prima usa quello per cui le modificihe all'eps vengono ignorate
@@ -1314,7 +1317,7 @@ Let $\mathcal{N}$ be the set of our considered batch sizes, then we can compute
 \begin{equation}
 MLE(i,s,c,l)=\argmax_{\displaystyle{n' \in \mathcal{N}}} \Bigl( f_{T}\bigl(i,s,c,p(l),n')\cdot f\bigl(n',l\bigr)\Bigr).
 \end{equation}
-$MLE(i,s,c,l)$ is $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= \lceil\log_{2}n_{max}\rceil$ is a good practical choice.\\
+$MLE(i,s,c,l)$ is $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= L(n_{max}) = \lceil\log_{2}n_{max}\rceil$ is a good practical choice, where $\displaystyle n_{max}= \mymax_{n' \in \mathcal{N}}{n'}$.\\
 Hence, our estimate is simply the result of a look-up in the $MLE$ table,
 \begin{equation}
 \hat{n} \longleftarrow MLE(i,s,c,l)
@@ -1323,8 +1326,25 @@ Is it worth to mention that:
 \begin{itemize}
 \item  The $MLE$ table must be precomputed before running the estimate algorithm. The computational cost to fill the $MLE$ table depends on $|\mathcal{N}|$ and $L$ and, even if in general the cost is really reasonable, it does not allow for real-time computation.
 \item The size of the $MLE$ table does not depend on $|\mathcal{N}|$ but only on $T$ and $L$.
-\item The estimate deeply depends on the way the elements in $\mathcal{N}$ are chosen. 
+\item The estimate deeply depends on the way the elements in $\mathcal{N}$ are chosen. \\
 \end{itemize}
+
+The high level pseudo-code of the algorithm is the following: 
+\begin{algorithm}[H]
+\begin{algorithmic}
+\STATE precompute or load the $MLE$ table characterized by $T$, $L$, $\mathcal{N}$
+\STATE $l\gets 0$
+\REPEAT
+	\STATE $l\gets l+1$
+	\STATE $p \gets {\displaystyle\frac{1}{2^{l}}}$
+	\STATE choose to transmit with probability $p$
+\UNTIL {no collision occurs}
+\STATE $(i,s,c) \gets$ events resulting from $T$ transmissions with probability $p$
+\STATE $\hat{n}\gets MLE(i,s,c,l)$
+\end{algorithmic}
+\caption{\algname{Greenberg with MLE $(\mathcal{B},T,\mathcal{N})$}}
+\label{alg-greenberg+MLE}
+\end{algorithm}
 
 \chapter{Comparison}
 \label{ch:Comparison}
