@@ -54,9 +54,6 @@ for t=1:length(batchsizes)
     n=batchsizes(t);
     n2=n/4;
     dn=8*n;
-    if (n==10)
-        dn=4*n;
-    end
     v=n2:dn;
     if (length(v)>100)
         v=round(linspace(n2,dn,100));
