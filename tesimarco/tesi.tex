@@ -1317,7 +1317,7 @@ Let $\mathcal{N}$ be the set of our considered batch sizes, then we can compute
 \begin{equation}
 MLE(i,s,c,l)=\argmax_{\displaystyle{n' \in \mathcal{N}}} \Bigl( f_{T}\bigl(i,s,c,p(l),n')\cdot f\bigl(n',l\bigr)\Bigr).
 \end{equation}
-$MLE(i,s,c,l)$ is $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= L(n_{max}) = \lceil\log_{2}n_{max}\rceil$ is a good practical choice, where $\displaystyle n_{max}= \mymax_{n' \in \mathcal{N}}{n'}$.\\
+$MLE(i,s,c,l)$ is a $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= L(n_{max}) = \lceil\log_{2}n_{max}\rceil$ is a good practical choice, where $\displaystyle n_{max}= \mymax_{n' \in \mathcal{N}}{n'}$.\\
 Hence, our estimate is simply the result of a look-up in the $MLE$ table,
 \begin{equation}
 \hat{n} \longleftarrow MLE(i,s,c,l)
@@ -1349,9 +1349,9 @@ The high level pseudo-code of the algorithm is the following:
 (DA VERIFICARE)\\
 Once both the batch size $n$ and the $MLE$ table are fixed, the probability to estimate $\hat{n}$ can be expressed as:
 \begin{equation}
-\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n',l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s)}(n') \cdot f_{T}(i,s,c,p(l),n'),
+\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}(i,s,c,p(l),n),
 \end{equation}
- where  $\hat{X}_{MLE(i,s)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s)}(n')=0$ otherwise. 
+ where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. 
 
 \chapter{Comparison}
 \label{ch:Comparison}
