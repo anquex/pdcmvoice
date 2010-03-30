@@ -1314,7 +1314,7 @@ Let $\mathcal{N}$ be the set of our considered batch sizes, then we can compute
 \begin{equation}
 MLE(i,s,c,l)=\argmax_{\displaystyle{n' \in \mathcal{N}}} \Bigl( f_{T}\bigl(i,s,c,p(l),n')\cdot f\bigl(n',l\bigr)\Bigr).
 \end{equation}
-$MLE(i,s,c,l)$ is $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller then the real batch size $n$) and not to waste too much memory. Setting $L= \lceil\log_{2}n_{max}\rceil$ is a good practical choice.\\
+$MLE(i,s,c,l)$ is $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= \lceil\log_{2}n_{max}\rceil$ is a good practical choice.\\
 Hence, our estimate is simply the result of a look-up in the $MLE$ table,
 \begin{equation}
 \hat{n} \longleftarrow MLE(i,s,c,l)
