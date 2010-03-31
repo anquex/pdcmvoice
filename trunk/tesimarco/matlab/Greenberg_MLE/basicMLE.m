@@ -17,7 +17,7 @@ end;
 % prob_succ_cond_idle(p,n)
 
 % batchsizes per il test
-batchsizes=[0124];
+batchsizes=[1024,2048,4096];
 
 % MLE batchsizes
 b=2;
@@ -83,8 +83,19 @@ for i=1:length(batchsizes)
         for s=0:T
             for c=0:T-s
                 x=MLElookup(l,c+1,s+1);
-                E(i,x)=f(i,l)*fT(MLEp(l),n,c,T-c-s,s);
+                E(i,x)=E(i,x)+f(i,l)*fT(MLEp(l),n,c,T-c-s,s);
             end
         end 
     end
 end
+
+hold all;
+x=7:14;
+for i=1:length(batchsizes)
+    plot(x,E(i,x))
+end
+legend('1024','2048','4096','Location','NorthWest');
+xlabel('slot');
+ylabel('probability');
+fh=figure(1);
+saveas(fh, 'greenberg-mle', 'epsc');
