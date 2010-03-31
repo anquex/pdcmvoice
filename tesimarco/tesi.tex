@@ -1345,12 +1345,12 @@ The high level pseudo-code of the algorithm is the following:
 \caption{\algname{Greenberg with MLE $(\mathcal{B},T,\mathcal{N})$}}
 \label{alg-greenberg+MLE}
 \end{algorithm}
-
+Expected Running time is $\log_{2}n+T$.\\ 
 Once both the batch size $n$ and the $MLE$ table are fixed, the probability to estimate $\hat{n}$ can be expressed as:
 \begin{equation}
 \textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
 \end{equation}
- where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. 
+ where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. \\
 
 \begin{figure}[H]
 \begin{center}
