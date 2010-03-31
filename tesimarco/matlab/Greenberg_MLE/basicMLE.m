@@ -89,13 +89,15 @@ for i=1:length(batchsizes)
     end
 end
 
+close all;
 hold all;
-x=7:14;
+x=7:15;
 for i=1:length(batchsizes)
     plot(x,E(i,x))
 end
+grid on;
 legend('1024','2048','4096','Location','NorthWest');
-xlabel('slot');
-ylabel('probability');
+xlabel('$\log_{\ 2}\hat{n}$','Interpreter','Latex');
+ylabel('probability','Interpreter','Latex');
 fh=figure(1);
-saveas(fh, 'greenberg-mle', 'epsc');
+saveas(fh,['greenberg-mle-T' int2str(T)], 'epsc');
