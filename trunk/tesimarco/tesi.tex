@@ -744,8 +744,8 @@ Following  these ideas, IERC achieves the same efficiency $\eta=0.4871$ of FCFS 
 \textcolor{red}{solo per dire che esistono, magari qualche riferimento bibliografico...\\}
 
 \marginpar{NUOVA, RICHIEDO VERIFICA DEL CONTENUTO}
-Another possible approach to the batch resolution is to consider a \emph{framed}-ALOHA-like scenarios.\\
-In \emph{framed}-ALOHA, a frame (\emph{alias} window) is a sequence of consecutive slots.  When a node in the collision batch decides to transmit, it uniformly picks one and only one slot in the window and transmits in that slot.\\
+Another possible approach to the batch resolution is to consider a \emph{framed}-ALOHA-like scenario.\\
+In \emph{framed}-ALOHA, a frame (alias \emph{window}) is a sequence of consecutive slots.  When a node in the collision batch decides to transmit, it uniformly picks one and only one slot in the window and transmits in that slot.\\
 In windows based scenario usually we can work on the optimization of two parameters: $m$, the length of the window in slots, and $p$, the probability that a node transmits in the current window.
 Innovate approaches to the problem uses hybrid transmission scheme working by cycles that tries to optimize operational parameters after each transmission windows. On very inexpensive devices usually only windows based algorithms can be implemented.
 
@@ -1346,10 +1346,9 @@ The high level pseudo-code of the algorithm is the following:
 \label{alg-greenberg+MLE}
 \end{algorithm}
 
-(DA VERIFICARE)\\
 Once both the batch size $n$ and the $MLE$ table are fixed, the probability to estimate $\hat{n}$ can be expressed as:
 \begin{equation}
-\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}(i,s,c,p(l),n),
+\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
 \end{equation}
  where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. 
 
