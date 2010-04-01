@@ -648,7 +648,7 @@ In a CSMA scenario the performances depends on $\beta$ and on the ratio between 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/BTs/m-groups-MBT-CSMA}
-\caption[$m$ groups split: CSMA scenario]{\emph{$m$ groups split: ALOHA scenario}. Results were obtained using MBT with optimal probability $p$ in a slotted CSMA scenario. CSMA is more robust to inaccurate estimate than ALOHA.}
+\caption[$m$ groups split: CSMA scenario]{\emph{$m$ groups split: CSMA scenario}. Results were obtained using MBT with optimal probability $p$ in a slotted CSMA scenario. CSMA is more robust to inaccurate estimate than ALOHA.}
 \label{m-groups-MBT-CSMA}
 \end{center}
 \end{figure}
@@ -760,7 +760,7 @@ In general, we assume to have no \emph{a priori} statistical knowledge about the
 \label{cbt-estimation}
 A simple way to obtain an estimate of the batch size is to solve a minimum number of nodes. This can be done, for example, by using deterministic algorithms such as \emph{Clipped Binary Tree Algorithm} (CBT).\\
 CBT is a partial resolution algorithm since only a fraction of the packets of the batch are successfully transmitted.
-The algorithm is identical to the MBT (with $p=1/2$ since we require the nodes to be uniformly distributed in the interval [0,1) ) except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
+The algorithm is identical to the MBT (with $\displaystyle p=\frac{1}{2}$ since we require the nodes to be uniformly distributed in the interval [0,1) ) except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
 When the algorithm stops, we know than the last two resolved nodes belong to the same level $i$ of the tree (root is assumed to be at level 0).\\
 Therefore, an estimate of the initial batch size is given by:
 \begin{equation}
@@ -1040,7 +1040,7 @@ The fact that, for large $n$, $E[\hat{n}] \approx n\phi$ suggests a way for corr
 
 Interestingly, a simple variant of the estimation algorithm has provably disastrous performance. Consider the algorithm in which each station involved in the initial collision transmits to he channel with probability $\frac{1}{2}$. If this causes another collision, then those that just transmitted, transmit again with probability $\frac{1}{2}$. The others drop out. This continues, with the stations trying to transmit always being a subset of those that just transmitted, until there is no collision. Take $2^{i}$ as the estimate of the multiplicity of conflict where $i$ is the number of the steps until ther is no collision. It can be shown that the second and all higher moments of this estimate are infinite.
 
-\subsection{base \emph{b} variant}
+\subsection{Base \emph{b} variant}
 
 Using basic Algorithm \ref{alg-greenberg}, even though the expected value of $\hat{n}_{+}$ is quite close to $n$, $\hat{n}_{+}$ is likely to differ from $n$ by a factor of 2. In the original work a small generalization of the base 2 algorithm is proposed to overcome this limitation: providing an estimate whose mean is  close to $n$ but whose  distribution peaks more sharply about the mean.\\
 Simply it is suggested to use $b$ instead of 2 as base, with $1<b\leq2$.\\
@@ -1106,11 +1106,11 @@ Our experimental results showed that this base $b$ estimator is not so good for 
 \chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
 
-We presented some algorithms for multiplicity estimation in the previous Chapter.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
+Un the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
 We will analyze \emph{Cidon} to show which is the minimum amount of nodes to be resolved for the estimate to be within user-required constrains with high probability.\\  
 We will analyze the behavior of \emph{Greenberg} when varying the batch size.\\
-Finally, we propose and analyze a modification of \emph{Greenberg} which tries to refine the raw estimate provided by the original algorithm.
-\section{Cidon Evaluation}
+Finally, we propose and analyze a modification of \emph{Greenberg}, named \emph{Enhached Greenberg Algorithm (EGA)}, which tries to refine the raw estimate provided by the original algorithm.
+\section{Cidon BSE}
 
 \begin{equation*}
 \end{equation*}
@@ -1171,7 +1171,7 @@ Figure below shows minimum $\pc$ in function of $k$ for different batch sizes.\\
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-k-p-minimum}
-\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy $k$]{\emph{Cidon}: Minimum $\pc$ required for accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy  $k$]{\emph{Cidon}: Minimum $\pc$ required for accuracy at least $k$ with $\theta=0.99$, plot step is 0.02}
 \label{cidon-k-p-minimum}
 \end{center}
 \end{figure}
@@ -1184,12 +1184,12 @@ Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI 
 \begin{figure}[htb!]
 \begin{center}
 \includegraphics[scale=0.7]{matlab/Cidon/cidon-k-L-minimum}
-\caption[\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$]{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$ with $\theta=0.99$. $k$ step is 0.02}
+\caption[\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy $k$]{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy at least $k$ with $\theta=0.99$,  plot step is 0.02}
 \label{cidon-k-L-minimum}
 \end{center}
 \end{figure}
 
-\section{Greenberg Evaluation}
+\section{Greenberg BSE}
 Given a current slot transmission probability $p$ and a batch of size $n$ we define respectively:
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
@@ -1251,7 +1251,7 @@ It turns out that, for batch sizes larger than 128, the distribution is ``stable
 \end{figure}
 This is not only true for sizes power of two but for any size. Figure \ref{fig:greenberg-dist-general} shows the case where size $n'$ has color $c$ and size $2n'$ has, again, color $c$ but a different marker: values are the same but shifted right. Interestingly the highest peaks are located in $n=683$ and $n=1366$.
 
-\subsection{base $b$ Greenberg}
+\subsection{Base $b$ Greenberg}
 \subsection{Considerations}
 Greenberg method is really good from the point view of running cost since it is $O\bigl(\log_{2}n\bigr)$ respect to the size  $n$ of the problem but it has also some non negligible drawbacks:
 \begin{enumerate}[\bf a)]
@@ -1276,7 +1276,7 @@ Greenberg method is really good from the point view of running cost since it is 
 \item to get a tighter estimate, base $b$ Greenberg has to be used. Anyway to improve the accuracy very small $b$ has to be used (see Table \ref{table:greenberg-b-phi}) and this results in worse running times: even if theoretically it remains $O(log_{b}n)$ which is a lower order term compared to $n$, in practice estimate time can be no more neglected. In this case, for reasons expressed in {\bf a)}, using Greenberg  could be a bad choice.
 \end{enumerate}
 
-\section{Greenberg with MLE}
+\section{EGA BSE}
 
 Let $n$ be a batch size and $p$ be a given transmission probability. As expressed by \eqref{eq:greenberg-prob-empty} \eqref{eq:greenberg-prob-succ} \eqref{eq:greenberg-prob-coll}, varying $n$ while $p$ is fixed results in very different probabilities for \emph{idle}, \emph{successful} and \emph{collided} slots.
 
