@@ -41,7 +41,7 @@ h1=semilogy([1,accuracy],[1,minp(1,:)],'black');
 h2=semilogy([1,accuracy],[1,minp(2,:)],'black');
 h3=semilogy([1,accuracy],[1,minp(3,:)],'black');
 
-legend('$n=100$','$n=1000$','$n=10000$');
+legend('$n=10^2$','$n=10^3$','$n=10^4$');
 hl = legend;
 set(hl, 'Interpreter', 'Latex');
 set(hl, 'FontSize', 11);
@@ -86,7 +86,7 @@ h2=semilogy(accuracy,expectedT(2,:),'black');
 h3=semilogy(accuracy,expectedT(3,:),'black');
 
 
-legend('$n=100$','$n=1000$','$n=10000$');
+legend('$n=10^2$','$n=10^3$','$n=10^4$');
 hl = legend;
 set(hl, 'Interpreter', 'Latex');
 set(hl, 'FontSize', 11);
