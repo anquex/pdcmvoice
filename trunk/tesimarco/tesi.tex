@@ -614,6 +614,44 @@ L_{n}^{MBT}\leq C \cdot n +1, \qquad \textrm{where} \qquad C=2.623.
 \end{equation}
 Using probability $p={\displaystyle\frac{1}{2}}$  results, for large $n$, in about 1.6\% peak performance loss  ($C=2.667$), which is a moderate decrease. \rev{ It is important to notice that  $p=0.4175$ is close to the optimal bias for small $n$ as well.\\}
 
+\subsection{Clipped Modified Binary Tree}
+The \emph{Clipped Modified Binary Tree (CMBT)} is an adaptation of the \emph{CBT} (see following Section \ref{cbt-estimation}) algorithm for complete batch resolution. CBT is like the MBT Alg. but it ends up after two consecutive successful transmissions. Each CBT execution resolves at least two nodes but eventually the last run. Hence, since the multiplicity of the batch to resolve decreases of at least two units after each run, the algorithm terminates for sure.\\
+
+Collisions tree visit is defined by the following rules: 
+\begin{itemize}
+\item If the this run of the CBT does not resolves completely the left sub-tree of the current root, then the next CBT starts from the same root;
+\item Otherwise the CBT is applied to the right child of the current root, that will be considered the new root.
+\end{itemize}
+Applying the CBT starting each time from the current root makes the algorithm memoryless. At the same time, the root update let to skip sure collisions and empty slots associated to already resolved sub-sets.\\ 
+
+CBT most interesting propriety is its efficiency in solving very small batches. This is a consequence of being memoryless. 
+Figures \ref{fig:cmbt-vs-mbt} show how in the average case, the CMBT performs better than the MBT  for batch sizes smaller then 5. Nonetheless, for bigger batch sizes, MBT performs better than CMBT. The gap between the two algorithms gets bigger and bigger as the batch size increases.\\
+
+Therefore using CMBT is a good idea when the multiplicity of the batch to solve is less than or equal to 5 with very high probability.
+\begin{figure}[H]
+  \begin{center}		         
+  \subfloat[\emph{CMBT vs MBT}: very small sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-small}} 
+  \subfloat[\emph{CMBT vs MBT}: larger sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-large}} 
+  \end{center}
+\caption[\emph{CMBT} vs \emph{MBT}] {Performance Comparison between CMBT and MBT: the focus is on the expected cost in slots of the \emph{CMBT}  and the \emph{MBT}  algorithms for small sizes. CMBT results were obtained by runnning the algorithm on \numprint{10000} random generated instances.} 
+\label{fig:cmbt-vs-mbt}   
+\end{figure}
+
+\begin{comment}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/EBT/CMBT-vs-MBT-small}
+\caption{}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{matlab/EBT/CMBT-vs-MBT-large}
+\caption{}
+\end{center}
+\end{figure}
+\end{comment}
 
 \subsection{\emph{m} Groups Tree Resolution}
 \label{se:mgroups}
@@ -684,6 +722,7 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
  
 Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
 
+\begin{comment}
 \subsection{EBT combined with optimum MBT (DA BUTTARE)}
 
 In this section we describe an improvement over EBT we developed.\\
@@ -721,6 +760,8 @@ Let each node $n_{i}$ to be identified by a $L$-length binary string $\mathbf{b_
 Figure \ref{EBTvsEBTopt} shows the expected improvement in percentage between  the EBT and the modified EBT algorithm in terms of expected cost ratio. Performance gain results oscillatory with mean 1.42.\\
 
 The \emph{EBT using optimum MBT Algorithm}, proposed in this work, is the average case best \emph{tree-based algorithm with implicit estimate} known so far.
+
+\end{comment}
 
 \section{Others}
 In this section we will shortly describe non \emph{tree-based} algorithms for batch resolution.
