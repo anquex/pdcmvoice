@@ -715,13 +715,12 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
 \item Repeat until the end of the process the following steps:
 \begin{enumerate}[a)]
 \item Update the estimate $\hat{n}$,
-\item Start a new CBT at the next node from level $\lfloor\log_{2}\hat{n}\rfloor$.
+\item Start a new CMBT at the next node from level $\lfloor\log_{2}\hat{n}\rfloor$.
 
 \end{enumerate}
 
 \end{enumerate}
 
- 
 Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
 
 \begin{comment}
