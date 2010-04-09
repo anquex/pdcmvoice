@@ -1,5 +1,5 @@
 \documentclass[12pt,a4paper]{report}
-%\documentclass[12pt,a4paper,twoside,openright]{book}
+%\documentclass[11pt,a4paper,twoside,openright]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -26,6 +26,7 @@
 \usepackage{fancybox}
 \usepackage{rotating}
 \usepackage{supertabular}
+\usepackage{tabularx}
 \usepackage{appendix}
 \usepackage{dcolumn} %per usare direttamente il punto al posto di & nei decimali
 \usepackage{listings}
@@ -1177,9 +1178,10 @@ Hence, the probability to get $i$ idle slots, $s$ successful transmissions and $
 
 \begin{equation}
 P(i,s,c)= \frac{L!}{i!\,s!\,c!} \ p_{0}(n)^{i} \ p_{1}(n)^{s}\ p_{2+}(n)^{c} = \frac{L!}{i!\,s!\,c!} \  f(n).
+\label{eq:Pisc}
 \end{equation}
 
-Once we have tried to resolve the batch using a window approach we know how many idle, successful or collided slots there was.\\ We would like to find the estimate $\hat{n}$ as the batch size that  maximizes the probability to see the tuple $(i,s,c)$ in a $L$ length window:
+Once we have tried to resolve the batch using a window approach we know how many idle, successful or collided slots there were.\\ Then we  find the estimate $\hat{n}$ as the batch size that  maximizes the probability to see the tuple $(i,s,c)$ in a $L$ length window:
 \begin{equation}
 \hat{n}=\argmax_{\displaystyle n} f(n),
 \end{equation}
@@ -1191,13 +1193,13 @@ f'(n)=0,
 \label{eq:dummy-eq}
 \end{equation}
 and numerically solving \eqref{eq:dummy-eq} we can obtain the batch size that maximizes our function. In general the solution will not be integer-valued and a rounding operation is necessary to achieve a real world batch estimate.\\
-
-The following table show how the estimate is performed when $L=10$.
-
-\begin{table}
+\begin{table}[H]
 \centering
-\caption{bla bla}
-\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
+\caption[\emph{Window based estimate}]{Estimate given $(i,c,s)$ when $L=i+c+s =10$.}
+\label{tb:window-estimate}
+\resizebox{0.42\textwidth}{!}{
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
 \backslashbox{$c$}{$s$}&0&1&2&3&4&5&6&7&8&9 \\\hline
 1 & 3 & 3 & 4 & 5 & 6 & \multicolumn{1}{r|}{7} & \multicolumn{1}{r|}{8} & \multicolumn{1}{r|}{9} & \multicolumn{1}{r|}{10} &11 \\ \hline
 2 & 5 & 6 & 7 & 8 & 8 & \multicolumn{1}{r|}{10} & \multicolumn{1}{r|}{11} & \multicolumn{1}{r|}{12} & \multicolumn{1}{r|}{13} & - \\ \hline
@@ -1208,14 +1210,24 @@ The following table show how the estimate is performed when $L=10$.
 7 & 20 & 22 & 23 & 25 & \multicolumn{1}{l|}{-} & - & - & - & - & - \\ \hline
 8 & 26 & 28 & 30 & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & - & - & - & - & - \\ \hline
 9 & 35 & 38 & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & - & - & - & - & - \\ \hline
-10 & \multicolumn{1}{l|}{$\infty$} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & - & - & - & - & -
+10 & \multicolumn{1}{l|}{$\infty$} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & \multicolumn{1}{l|}{-} & - & - & - & - & -\\\hline
 \end{tabular}
+}
 \end{table}
+
+Table \ref{tb:window-estimate} shows the estimate provided by the explained technique when $L=10$. Cells identified by $(c,s)$ where $c+s>10$ cannot be associated to any estimate since their events are impossible.\\
+We note also that when we see only collisions, the estimator is not able to provide a finite estimate. The event $c=10$ in the table is in fact associated to $\hat{n}=\infty$. In general, when $c=L$ we have that \eqref{eq:Pisc} reduces to:
+
+\begin{equation}
+P(0,0,L)=\ p_{2+}(n)^{L} = \left[1-\left(1-\frac{1}{L}\right)^{n}-\frac{n}{L}\left(1-\frac{1}{L}\right)^{n-1}\right]^{L},
+\end{equation}
+
+which is maximized ($P(0,0,L)=1$) by $n=\infty$ for any $L$. Hence we would not to have only collisions since they do not provide any information about the cardinality of the batch and we have to use a larger  window to get a finite estimate.
 
 \chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
 
-Un the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
+In the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
 We will analyze \emph{Cidon} to show which is the minimum amount of nodes to be resolved for the estimate to be within user-required constrains with high probability.\\  
 We will analyze the behavior of \emph{Greenberg} when varying the batch size.\\
 Finally, we propose and analyze a modification of \emph{Greenberg}, named \emph{Enhached Greenberg Algorithm (EGA)}, which tries to refine the raw estimate provided by the original algorithm.
