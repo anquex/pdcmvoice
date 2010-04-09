@@ -1156,7 +1156,7 @@ Setting $L$ large compared to the batch size increases the probability to solve 
 Setting $L$ small leads to collided slots with very high probability. Thus nodes whose transmissions collided have to try again in the next contention windows. Since we don't know how many nodes took part in a collision we can state that collisions provides poor information about the batch multiplicity. More collisions we have, less accurate will be our estimate.\\
 Intuitively we can think that setting $L$ equal to the batch size  $n$ is a good choice. In fact it is, but the problem is that we do not know $n$.\\
 
-An interesting approach to the problem is expressed in \cite{lucent}. When the scenario allows to use a \emph{probabilistic-framed-ALOHA}\footnote{\emph{probabilistic-framed-ALOHA} is an extension of the \emph{framed-ALOHA} model where a node takes part to the current contention window with probabily $p$ or waits for a next one with probability $1-p$. Nodes that decide to transmit behave like in the standard \emph{framed-ALOHA}.} scheme we can play with one more parameter: $p$, the probability for a node to take part in the current transmission window. Setting $p$ small allows to keep $L$ small too and hence, when $n$ is large, provides an accurate estimate of the whole batch considering only a sub-set of it. This results in shorter estimate time.\\
+An interesting approach to the problem is expressed in \cite{lucent}. When the scenario allows to use a \emph{probabilistic-framed-ALOHA}\footnote{\emph{probabilistic-framed-ALOHA} is an extension of the \emph{framed-ALOHA} model where a node takes part to the current contention window with probabily $p$ or waits for the next one with probability $1-p$. Nodes that decide to transmit behave like in the standard \emph{framed-ALOHA}.} scheme we can play with one more parameter: $p$, the probability for a node to take part in the current transmission window. Setting $p$ small allows to keep $L$ small too and hence, when $n$ is large, provides an accurate estimate of the whole batch considering only a sub-set of it. This results in shorter estimate time.\\
 
 Since when $p=1$ \emph{probabilistic-framed-ALOHA} reduces to simple \emph{framed-ALOHA} and it is reasonable to start any estimate algorithm with $p=1$, we will show a possible approach to the problem in a \emph{framed-ALOHA} scenario. \\
 
@@ -1494,7 +1494,7 @@ Once both the batch size $n$ and the $MLE$ table are fixed, the probability to e
 \end{center}
 \end{figure}
 
-\section{GEGA}
+\section{GEGA BSE}
 
 
 \chapter{Comparison}
