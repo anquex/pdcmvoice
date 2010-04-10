@@ -11,7 +11,7 @@ end
 s=[0 s];
   
 c=10000;
-nmax=19;
+nmax=26;
 
 Lv=zeros(1,nmax+1);
 Lv(1)=1;

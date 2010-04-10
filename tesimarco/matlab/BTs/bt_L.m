@@ -4,7 +4,7 @@ clc;
 
 hold all;
 
-nmax=20;
+nmax=26;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 p=0.50;
 Q=zeros(nmax+1); % Q(i+1,n+1) <- Q_i(n)
@@ -15,7 +15,7 @@ for n=0:nmax
     end
 end
 
-%{
+
 L=zeros(nmax+1,1);
 L(1)=1;
 L(2)=1;
@@ -57,8 +57,6 @@ for n=2:nmax
     for i=1:n-1
         s=s+Q(i+1,n+1)*( L(i+1)+L(n-i+1) );
     end
-    %for Basic BT
-    %L(n+1)=(1+Q(0+1,n+1)+Q(n+1,n+1)+s)/(1-Q(0+1,n+1)-Q(n+1,n+1));
     %for MBT
     L(n+1)=(1+Q(n+1,n+1)+s)/(1-Q(0+1,n+1)-Q(n+1,n+1));
 end
