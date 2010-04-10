@@ -1,7 +1,7 @@
 \documentclass[12pt,a4paper]{report}
 %\documentclass[11pt,a4paper,twoside,openright]{book}
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[english,italian]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{slashbox} %celle tabelle divise a metà
 \usepackage{latexsym}
@@ -162,6 +162,11 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
 
+% ABSTRACT ENVIROMENT
+
+%\newenvironment{abstract}%%{\cleardoublepage\fncyblank\null \vfill\begin{center}%%\bfseries \abstractname \end{center}}%
+%{\vfill\null}
+
 %per impaginare con giustifica sx-dx
   \tolerance 1414
   \hbadness 1414
@@ -178,16 +183,51 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \include{mytitle}
 
+% LAST UPDATE
+\clearpage
+\null\vspace{\stretch{20}}
+\begin{center}
+{\large Last Update: \today  \hspace{1mm } \currenttime}
+\end{center}
+\null\vspace{\stretch{1}}
+
 %% DEDICATION
 \begin{comment}
+\clearpage
 \begin{flushright}
 \null\vspace{\stretch{5}}
-\emph{\large Ai miei genitori}
+\emph{\large 
+Ai miei genitori\\
+Allo zio Antonio\\}
 \vspace{\stretch{1}}\null
 \end{flushright}
+\clearpage
+\begin{flushright}
+\null\vspace{\stretch{1}}
+\emph{`` Ho ancora la forza di chiedere anche scusa\\
+O di incazzarmi ancora con la coscienza offesa\\
+e dirvi che comunque la mia parte\\ 
+Ve la posso garantire\ldots\ ''\\}
+{\sc Francesco Guccini\\} 
+\vspace{\stretch{1}}\null
+\emph{`` E quando pensi che sia finita,\\
+è proprio allora che comincia la salita.\\ 
+Che fantastica storia è la vita.  ''\\}
+{\sc Antonello Venditti} 
+\vspace{\stretch{3}}\null
+\end{flushright}
+
+%ABSTRACT
+\selectlanguage{english}
 \begin{abstract}
 This thesis
 \end{abstract}
+\selectlanguage{italian}
+\begin{abstract}
+This thesis
+\end{abstract}
+\selectlanguage{english}
+
 \end{comment}
 
 
@@ -1496,14 +1536,14 @@ Once both the batch size $n$ and the $MLE$ table are fixed, the probability to e
 \end{figure}
 
 \section{GEGA BSE}
-A more general form of the EGA algorithm can be obtained if we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
+The  \emph{Generalized Enhached Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
 \mathcal{N}=\{1,2,3,...\}
 \end{equation*}
 In this case the algorithm can be interpreted as follows:
 \begin{enumerate}
 \item Find the transmission probability $p$ for which the batch size is about 1 node with very high probability,
-\item Use a ``window'' of $T$ slots to refine the estimate. The idea is similar to
+\item Use $T$ consecutive slots (a ``window'') to refine the estimate. The idea is similar to a window based estimate except that a node is allowed to transmit in each slot.
 
 \end{enumerate}
 
