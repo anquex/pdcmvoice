@@ -1,4 +1,5 @@
 % !TEX root = tesi.tex
+
 \begin{appendices}
 
 \chapter[Appendix]{}
@@ -36,7 +37,7 @@ f(x)= \frac{1}{\sqrt{2\pi\sigma^{2}}}e^{\displaystyle{-\frac{(x-\mu)^{2}}{2\sigm
 \end{equation}
 
 \section{Binary Trees Performance Summary}
-
+The following tables report the expected cost in slots to solve of a given size $n$ using BT, MBT, and CMBT. Performance reports in Chapter \ref{ch:Batch Resolution} plot these data.
 \begin{table}[H]
 \caption{\emph{Basic Binary Tree}: performance report}
 \begin{center}
@@ -121,7 +122,7 @@ In general for base $b$ greenberg algorithm the first and second moments are bou
 
 \section{CBT Estimate Experimental Distribution}
 
-Following tables \ref{CBT-table-1} shows the behavior of CBT Algorithm (section \ref{cbt-estimation}) for estimation.  Simulation was implemented in matlab.
+Following table \ref{CBT-table-1} shows the behavior of CBT Algorithm (section \ref{cbt-estimation}) for estimation.  Simulation was implemented in matlab.
 The resulting distribution of $\hat{n}$ fixed $n$ is the result of averaging \numprint{100000} runs of CBT Algorihm applied on uniformly random generated nodes \emph{id} batches.\\ 
 
 \begin{table}[H]
