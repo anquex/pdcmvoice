@@ -166,7 +166,8 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 % ABSTRACT ENVIROMENT
 
 \newenvironment{abstract}%
-{\cleardoublepage \fncyblank \null \vspace{\stretch{1}} \begin{center}%\bfseries \abstractname \end{center}}%
+{\cleardoublepage \fncyblank \null \vspace{\stretch{1}} \begin{center}%
+\bfseries \abstractname \end{center}}%
 {\vspace{\stretch{3}}\null}
 
 %per impaginare con giustifica sx-dx
@@ -1526,6 +1527,7 @@ Once both the batch size $n$ and the $MLE$ table are fixed, the probability to e
 \end{equation}
  where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. \\
 
+DA COMPLETARE
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T10}
@@ -1562,7 +1564,7 @@ In this case the algorithm can be interpreted as follows:
 \begin{equation}
 \frac{d\Bigl( f_{T}\bigl(i,s,c,p(l),n)\cdot \fg\bigl(n,l\bigr)\Bigr)}{dn}=0,
 \end{equation}
-which is not trivial to solve and involves numerical problems since $\fg(n,l)$ can present very small product terms. Then we solved the problem by investigating \eqref{eq:MLEiscl} using bisection method and taking the smaller integer $n$ for which
+which is not trivial to solve and involves numerical problems since $\fg(n,l)$ can present very small product terms. Then we solved the problem by investigating \eqref{eq:MLEiscl} using bisection method and taking the smallest integer $n$ for which
 \begin{equation}
 f_{T}\bigl(i,s,c,p(l),n+1)\cdot \fg\bigl(n+1,l\bigr)-f_{T}\bigl(i,s,c,p(l),n)\cdot \fg\bigl(n,l\bigr)\leq0.
 \end{equation}
@@ -1593,8 +1595,17 @@ As example, the results of this computation when $T=10$ and $l=10$ are presented
 
 Looking at the Table \ref{tb:GEGA-T10-l10} emerges that the estimate is always finite. This is good propriety which follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
 
-The EGA MLE Table can be obtained as sub-case from the GEGA Table considering the largest allowed estimate value lower than and the smallest one larger than the estimate provided by the GEGA algorithm. The EGA estimate will be the one between the two for which the probability in \eqref{eq:MLEiscl} is maximized.
+The EGA MLE Table can be obtained as sub-case from the GEGA Table considering the largest allowed estimate value lower than and the smallest one larger than the estimate provided by the GEGA algorithm. The EGA estimate will be the one between the two for which the probability in \eqref{eq:MLEiscl} is maximized.\\
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=\textwidth]{matlab/GEGA/GEGA-bias-varying-T}
+\caption[\emph{GEGA}: Estimate Bias]{\emph{GEGA}: Estimate Bias. The tree plots show the estimate expected value over the real batch size for different $T$.}
+\label{fg:GEGA-bias}
+\end{center}
+\end{figure}
+
+The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this is fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  
 \chapter{Comparison}
 \section{Conclusions}
 \label{ch:Comparison}
