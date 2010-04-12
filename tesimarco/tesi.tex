@@ -198,7 +198,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \null\vspace{\stretch{1}}
 
 %% DEDICATION
-%\begin{comment}
+\begin{comment}
 
 \frontmatter
 \cleardoublepage
@@ -227,6 +227,7 @@ Che fantastica storia è la vita.  ''\\}
 \vspace{\stretch{3}}\null
 \end{flushright}
 
+%\end{comment}
 %ABSTRACT
 \begin{abstract}
 This thesis
@@ -534,7 +535,7 @@ Looking carefully to the tree you can see that each node resolved is characteriz
 
 \subsubsection{Nodes \emph{id} interpretation}
 \label{realvalueapproach}
-\marginpar{TUTTO RIFATTO}
+\marginpar{TUTTO \\RIFATTO}
 BRAs require each node to have a \emph{unique id} to solve the batch. Usually the nodes \emph{id}s are random generated at each algorithm run and can be used to identify a node inside the algorithm. 
 There are multiple ways to generate that the \emph{id}, such as:
 \begin{itemize}
@@ -1251,7 +1252,7 @@ and numerically solving \eqref{eq:dummy-eq} we can obtain the batch size that ma
 \centering
 \caption[\emph{Window based estimate: Possible estimates when $L=10$}]{Estimate given $(i,c,s)$ when $L=i+c+s =10$.}
 \label{tb:window-estimate}
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.6\textwidth}{!}{
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
 \backslashbox{$c$}{$s$}&0&1&2&3&4&5&6&7&8&9 \\\hline
