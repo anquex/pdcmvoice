@@ -41,6 +41,6 @@ fT1=inline(sfT1,'p','n','l','i','s','c');
 fT0(p,1024,l,8,8,5)
 %fT1(p,1024,l,8,8,5)
 tic
-[xmax, fxmax]=deasysolve(fT0,p,l,8,4,7)
+x=deasysolve(fT0,p,l,8,4,7)
 toc
 %fzero(@(n)fT1(p,n,10,8,8,0),1000,{'TolX',10^-55})
