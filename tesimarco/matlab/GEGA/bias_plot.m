@@ -40,3 +40,5 @@ set(h20, 'LineStyle', '--', 'LineWidth', 1.0, 'Color', 'Black');
 set(h30, 'LineStyle', '-', 'LineWidth', 1.0, 'Color', 'Black');
 
 %set(gca,'YTickLabel',)
+set(gca,'YLim',[1.029 1.073])
+set(gca,'XLim',[20 2000])
