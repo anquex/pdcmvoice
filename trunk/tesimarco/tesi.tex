@@ -1527,33 +1527,46 @@ Once both the batch size $n$ and the $MLE$ table are fixed, the probability to e
 \textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
 \end{equation}
  where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. \\
-
-DA COMPLETARE
+Hence the expected value of the estimate given $n$ can be trivially computed as follows:
+\begin{equation}
+E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n)
+\label{eq:EGA expected estimate given n}
+\end{equation}
+ 
+\begin{comment}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T10}
 \caption{\emph{EGA}: PROVVISORIO $T=10$  power of 2 distribution.}
 \end{center}
 \end{figure}
+\end{comment}
+
+\subsection{Performances}
+Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the allowed estimates are the same of the basic Greenberg algorithm.\\
+Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice how there is only one extremely high peak located in a single slot instead of a peak being distributed between two consecutive slots with almost equal probability. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
+Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varying $T$ for a fixed batch size: increasing $T$ the peak becomes more and more sharp.
 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T20}
-\caption{\emph{EGA}: PROVVISORIO $T=20$  power of 2 distribution.}
+\caption{\emph{EGA} with $T=20$ :  large $2^{k}$ sizes distribution.}
+\label{fg:EGA-sharp-peaks}
 \end{center}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T30}
-\caption{\emph{EGA}: PROVVISORIO $T=30$  power of 2 distribution.}
+\includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-fixed-n-varying-T}
+\caption[\emph{EGA} estimate distribution when varying $T$.]{\emph{EGA} estimate distribution when varying $T$. Plot refers to $n=1024$.}
+\label{fg:EGA-peaks-fixed-n-varing-T}
 \end{center}
 \end{figure}
 
 \section{GEGA BSE}
 The  \emph{Generalized Enhached Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
-\mathcal{N}=\{1,2,3,...\}
+\mathcal{N}=\{1,2,3,...\}.
 \end{equation*}
 In this case the algorithm can be interpreted as follows:
 \begin{enumerate}
@@ -1601,13 +1614,14 @@ The EGA MLE Table can be obtained as sub-case from the GEGA Table considering th
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=\textwidth]{matlab/GEGA/GEGA-bias-varying-T}
-\caption[\emph{GEGA}: Estimate Bias]{\emph{GEGA}: Estimate Bias. The tree plots show the estimate expected value over the real batch size for different $T$.}
+\caption[\emph{GEGA}: Estimate Bias]{\emph{GEGA}: Estimate Bias. The tree plots show the estimate expected value over the real batch size for different $T$. Data reported were computed using formula \eqref{eq:EGA expected estimate given n}.}
 \label{fg:GEGA-bias}
 \end{center}
 \end{figure}
 
 The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this is fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  
 \chapter{Comparison}
+GEGA estimate accuracy can not be dynamically adapted 
 \section{Conclusions}
 \label{ch:Comparison}
 
