@@ -6,13 +6,13 @@
 
 \section{Probability}
 This section reviews basic probability theory notions used in this work.
-\subsection{Chebyshev's inequality}
+\subsection*{Chebyshev's inequality}
 Let $X$ be a \emph{random variable} with expected value $\mu$ and finite variance $\sigma^{2}$. Then for any real number $k>0$,
 \begin{equation}
 \Pr(\left|X-\mu\right|\geq k)\leq\frac{\sigma^{2}}{k^2}
 \label{eq:cheby}
 \end{equation}
-\subsection{Binomial Distribution}
+\subsection*{Binomial Distribution}
 The binomial distribution is the discrete probability distribution of the number of successes in a sequence of $n$ independent yes/no experiments, each of which yields success with probability $p$.\\ In general, let a random variable $K=  B(n,p)$ be a binomial distribution with parameters $n$ and $p$. The probability of getting exactly $k$ successes in n trials is given by the probability mass function:
 \begin{equation}
 f(k;n,p)=\textrm{Pr}(K=k)= {n \choose k} p^{k} (1-p)^{n-k} 
@@ -33,16 +33,16 @@ Var[K]=np(1-p).
 \end{equation}
 
 
-\subsubsection{Normal Approximation}
+\subsubsection*{Normal Approximation}
 If $n$ is large enough, then the skew of the distribution is not too great. In this case, if a suitable continuity correction\footnote{when approximating a discrete random variable $\textrm{K}$ using a continuos one $\textrm{X}$, then $\textrm{Pr}(\textrm{K}\leq k) = \textrm{Pr}(\textrm{K}< k+1) \approx \textrm{Pr}(\textrm{X}\leq k+1/2)$ } is used, then an excellent approximation to $B(n, p)$ is given by the normal distribution $\mathcal{N}(np,np(1-p))$\\
 The approximation generally improves as $n$ increases and is better when $p$ is not near to 0 or 1. Various rules of thumb may be used to decide whether $n$ is large enough, and $p$ is far enough from the extremes of zero or unity:
 One rule is that both $n p$ and $n(1-p)$ must be greater than 5. However, the specific number varies from source to source, and depends on how good an approximation one wants; some sources give 10. Another easy rule is that $np(1-p)\geq 10$.
 
 
-\subsubsection{Poisson Approximation}
+\subsubsection*{Poisson Approximation}
 The binomial distribution converges towards the Poisson distribution as the number of trials goes to infinity while the product $np$ remains fixed. Therefore the Poisson distribution with parameter $\lambda = np$ can be used as an approximation to $B(n, p)$ of the binomial distribution if $n$ is sufficiently large and $p$ is sufficiently small. According to two rules of thumb, this approximation is good if $n \geq 20$ and $p \leq 0.05$, or if $n \geq 100$ and $np \leq 10$.
 
-\subsubsection{Numerical Computation}
+\subsubsection*{Numerical Computation}
 When $n$ is large and $p$ small, the numerical computation of the probability density function and cumulative distribution function show to be problematic if trivially computed by definition ($n!$ is huge).\\
 The following trick can be used for the computation when $0<k<n$:
 \begin{equation}
@@ -54,14 +54,14 @@ where
 \end{equation}
 
 
-\subsection{Poisson Distribution}
+\subsection*{Poisson Distribution}
 In probability theory and statistics, the Poisson distribution is a discrete probability distribution that expresses the probability of a number of events occurring in a fixed period of time if these events occur with a known average rate and independently of the time since the last event.\\ If the expected number of occurrences in this interval is $\lambda$, then the probability that there are exactly $k$ occurrences ($k$ being a non-negative integer, $k = 0, 1, 2, \ldots$) is equal to
 \begin{equation}
 f(k;\lambda)= \frac{\lambda^{k}e^{-\lambda}}{k!}
 \end{equation}
 
 
-\subsection{Normal Distribution}
+\subsection*{Normal Distribution}
 
  Normal distribution is denoted as $\mathcal{N}(\mu,\sigma^{2})$ where, as usual, $\mu$ identifies the mean and $\sigma^{2}$ the variance. The probability density function is defined as follows:
 \begin{equation}
@@ -367,7 +367,7 @@ n & slot:& 7 &8 &9 &10 &11 &12 &13 &14 &15 &16 &17 &18 &19 &20 &21 &22 \\
 \begin{table}[H]
  \begin{minipage}[b]{18.5cm}
 \centering
-\begin{turn}{90}
+\begin{turn}{-90}
 \resizebox{17cm}{!}{
 \begin{tabular}{|r|r|r|r|r|r|r|r|r|r|r|r|l|l|l|l|l|l|l|l|l|l|}
 \hline
