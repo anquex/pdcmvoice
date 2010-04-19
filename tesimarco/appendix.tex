@@ -50,7 +50,7 @@ f(k;n,p)=\textrm{Pr}(K=k)= e^{\displaystyle \log(\frac{n!}{k!(n-k)!} p^{k} (1-p)
 \end{equation}
 where
 \begin{equation}
-\phi=\sum_{i=1}^{n}\log i-\sum_{i=1}^{k}\log i-\sum_{i=1}^{n-k}\log i+k\log p+(n-k) \log(1-p).
+\phi=\sum_{i=k+1}^{n}\log i-\sum_{i=1}^{n-k}\log i+k\log p+(n-k) \log(1-p).
 \end{equation}
 
 
