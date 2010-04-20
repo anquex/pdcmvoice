@@ -1,6 +1,6 @@
 % GREENBERG+MLE
 
-clear all;
+%clear all;
 close all;
 clc;
 
@@ -36,7 +36,7 @@ fMLE=prob_fine(MLEbs,MLEp,slots);
 %fT=inline('nchoosek(c+i+s,i).*(prob_idle(p,n)).^i.*(1-prob_idle(p,n)).^(c+s)    .*   nchoosek(c+s,s).*(prob_succ_cond_idle(p,n)).^s.*(1-prob_succ_cond_idle(p,n)).^c','p','n','c','i','s');
 fT=inline('binopdf(i,c+i+s,p_idle)*binopdf(s,c+s,p_succ_cond_idle)','p_idle','p_succ_cond_idle','n','c','i','s');
 
-T=10;
+T=20;
 MLEraw=zeros(slots,T+1,T+1,length(MLEbs));
 tic
 parfor l=1:slots
@@ -63,7 +63,7 @@ parfor l=1:slots
 end
 toc
 
-MLElookup=zeros(slots,T+1,T+1);
+MLElookup=zeros(T+1,T+1,slots);
 
 for l=1:slots
     for s=0:T
@@ -76,7 +76,7 @@ for l=1:slots
                 error('c'' qualche errore'); %not valid 
             end
             %}
-            MLElookup(l,c+1,s+1)=x;
+            MLElookup(c+1,s+1,l)=x;
         end
     end
 end
@@ -96,7 +96,7 @@ parfor i=1:length(batchsizes)
     for l=1:slots
         for s=0:T
             for c=0:T-s
-                x=MLElookup(l,c+1,s+1);
+                x=MLElookup(c+1,s+1,l);
                 tmp4par(x)=tmp4par(x)+f(i,l)*fT(MLEp(l),n,c,T-c-s,s);
             end
         end 
