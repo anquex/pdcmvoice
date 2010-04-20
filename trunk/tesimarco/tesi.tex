@@ -1460,32 +1460,33 @@ Let $n$ be a batch size and $p$ be a given transmission probability. As expresse
 %\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/draw_coll_idle_succ_fixed_p}
 \caption[\emph{Basic Greenberg}: Event probability fixed $p$]{Probability of \emph{idle}, \emph{successful} or \emph{collided} slots varying $n$ while  $p=1/1024$.  $q_{0}(p,n) \approx  q_{1}(p,n)$ for $n=1023$}
+\label{fg:event-prob-fixed-p-varying-n}
 \end{center}
 \end{figure}
 
-It is quite immediate to see that:
+Examining Figure \ref{fg:event-prob-fixed-p-varying-n}, it is quite immediate to see that:
 \begin{itemize}
 \item $q_{0}(p,n) \approx q_{1}(p,n)$ when $p\approx {\displaystyle\frac{1}{n}}$ and, obviously,
 \item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $p \ll {\displaystyle\frac{1}{n}}$,
 \item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $p \gg {\displaystyle\frac{1}{n}}$.
 \end{itemize}
-$q_{2+}(p,n)$ is strictly increasing monotonic while $q_{0}(p,n)$ is strictly decreasing. Repeating a large number $T$ of test transmission with  probability $p$ each, we can simply use the number of collisions or idle slots to uniquely determined the batch size. On the other hand, successful probability $q_{1}(p,n)$ is non-monotonic and hence can not be used to uniquely determine the batch size.\\
+The collision probability $q_{2+}(p,n)$ is strictly increasing monotonic while the empty slot probability $q_{0}(p,n)$ is strictly decreasing. Repeating a large number $T$ of test transmission with  probability $p$ each, we can simply use the number of collisions or idle slots to uniquely determined the batch size. On the other hand, successful probability $q_{1}(p,n)$ is non-monotonic and hence can not be used to uniquely determine the batch size.\\
  
  The proposed technique to refine the estimate is the following.\\
  Running \emph{Basic Greenberg Algorithm} provides a raw estimate and the associated transmission probability $p$. Then we perform $T$ more transmissions and use a \emph{Maximum Likelihood Estimation (MLE)} to refine the estimate.\\ 
  
- Let $T$ be a number of slots of our choice and $N_{0}$, $N_{1}$, $N_{2+}$ random variables which represent the number of time slots with no transmissions, one transmission and collisions respectively.\\
+ Let $T$ be a number of slots of our choice we will use to refine the estimate and let $N_{0}$, $N_{1}$, $N_{2+}$ be random variables which represent the number of time slots with no transmissions, one transmission and collisions respectively.\\
  $N_{0}$, $N_{1}$, $N_{2+}$ are respectively binomial distributions with parameters $B(n,q_{0}(p,n))$, $B(n,q_{1}(p,n))$ and $B(n,q_{2+}(p,n))$. Of course $N_{0}+N_{1}+N_{2+}=T$ and
  \begin{eqnarray*}
 E[N_{0}] &=& Tq_{0}(p,n),\\
 E[N_{1}] &=& Tq_{1}(p,n),\\
 E[N_{2+}] &=& Tq_{2+}(p,n).
 \end{eqnarray*}
-Let $f_{T}(i,s,c,p',n')$ denote the probability to get $i$ idle, $s$ success and
- $c$ collision slots \begin{align}
+Let $f_{T}(i,s,c,p',n')$ denote the probability to get $i$ idle, $s$ success and $c$ collision slots:
+\begin{align}
 f_{T}(i,s,c,p',n')&= \textrm{Pr}(N_{0}=i,N_{1}=s,N_{2+}=c|n=n',p=p')\\
 \nonumber
- &=\textrm{Pr}(N_{0}=i|n=n',p=p')\textrm{Pr}(N_{1}=s,N_{2+}=c|n=n'-i,p=p'),
+ &=\textrm{Pr}(N_{0}=i|n=n',p=p')\textrm{Pr}(N_{1}=s,N_{2+}=c|n=n',p=p',i),
 \end{align}
 when we transmit with probability $p'$ and considered batch size is $n'$.\\
 Let $\mathcal{N}$ be the set of our considered batch sizes, then we can compute
@@ -1496,7 +1497,7 @@ MLE(i,s,c,l)=\argmax_{\displaystyle{n' \in \mathcal{N}}} \Bigl( f_{T}\bigl(i,s,c
 $MLE(i,s,c,l)$ is a $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= L(n_{max}) = \lceil\log_{2}n_{max}\rceil$ is a good practical choice, where $\displaystyle n_{max}= \mymax_{n' \in \mathcal{N}}{n'}$.\\
 Hence, our estimate is simply the result of a look-up in the $MLE$ table,
 \begin{equation}
-\hat{n} \longleftarrow MLE(i,s,c,l)
+\hat{n} \longleftarrow MLE(i,s,c,l).
 \end{equation}
 Is it worth to mention that:
 \begin{itemize}
@@ -1529,7 +1530,7 @@ Once both the batch size $n$ and the $MLE$ table are fixed, the probability to e
  where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. \\
 Hence the expected value of the estimate given $n$ can be trivially computed as follows:
 \begin{equation}
-E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n)
+E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n).
 \label{eq:EGA expected estimate given n}
 \end{equation}
  
