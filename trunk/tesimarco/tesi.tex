@@ -1370,7 +1370,7 @@ Given a current slot transmission probability $p$ and a batch of size $n$ we def
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
 \begin{equation}q_{0}(p,n)=(1-p)^{n} \label{eq:greenberg-prob-empty}\end{equation}
-\item the probability to get a successful transmission (one transmission)
+\item the probability to get a successful slots (exactly one transmission)
 \begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \label{eq:greenberg-prob-succ}\end{equation} 
 \item the probability to get a collision (two or more transmissions)
 \begin{equation}q_{2+}(p,n)=1-q_{0}(p,n)-q_{1}(p,n)\label{eq:greenberg-prob-coll}\end{equation}
@@ -1387,7 +1387,7 @@ Given $n$ nodes, the probability to terminate algorithm \ref{alg-greenberg} in s
 \label{eq:bgstopprobability}
 \end{equation}
 
-An overview of the behavior of $\fg(n,i)$ is presented in table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\ Equation \eqref{eq:bgstopprobability} defines the probability for biased estimate $\hat{n}$ to be equal to $2^{i}$ when the batch size is $n$. 
+An overview of the behavior of $\fg(n,i)$ is presented in Appendix in Table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\ Equation \eqref{eq:bgstopprobability} defines the probability for biased estimate $\hat{n}$ to be equal to $2^{i}$ when the batch size is $n$. 
 \begin{equation}
 \textrm{Pr}\left( \hat{n}=2^{i}|n\right)=\fg(n,i)  
 \end{equation}
@@ -1428,27 +1428,27 @@ This is not only true for sizes power of two but for any size. Figure \ref{fig:g
 
 %\subsection{Base $b$ Greenberg}
 \subsection{Considerations}
-Greenberg method is really good from the point view of running cost since it is $O\bigl(\log_{2}n\bigr)$ respect to the size  $n$ of the problem but it has also some non negligible drawbacks:
+Greenberg method is really good from the point view of running time cost since it is $O\bigl(\log_{2}n\bigr)$ considered the size  $n$ of the problem, but it has also some non negligible drawbacks:
 \begin{enumerate}[\bf a)]
-\item estimation phase results in a sequence of colliding messages. These provides informations about the cardinality of the batch but do not help to solve an, even small, portion of the eventually following batch resolution problem and can not carry auxiliary infromations. An algorithm that allows to get an estimate while transmitting successfully messages would offer some advantages when the problem is not only the pure estimation but also a subsequent resolution.
-\item it does not allow to achieve arbitrary precision in the estimate.\\ In fact we have that:
+\item Estimation phase results in a sequence of colliding messages. These provides informations about the cardinality of the batch but do not help to solve an, even small, portion of the eventually following batch resolution problem and can not carry auxiliary infromations. An algorithm that allows to get an estimate while transmitting successfully messages would offer some advantages when the problem is not only the pure estimation but involces also a subsequent resolution.
+\item Basic Greenberg does not allow to achieve arbitrary precision in the estimate. In fact, we have that:
 	\begin{enumerate}[\it i.]
 		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without any error.
-		\item the end-up distribution is not sharp enough but it spans over a few slots: this is shown by Figure \ref{fig:greenberg-dist-large}. The Figure shows that, for the examined batch sizes, fixed a problem of size $n$ we have about:
+		\item the end-up distribution is not sharp enough but it spans over a few slots: this is shown by Figure \ref{fig:greenberg-dist-large}. The Figure shows that, for the examined batch sizes, fixed a problem of size $n=2^{k}\gg 0$, the estimate is distributed as follows:
 		\begin{itemize}
-		\item 0.02\textpertenthousand\  estimate is $16n$;
-		\item 3\textpertenthousand\  estimate is $8n$;
-		\item 1.2\% estimate is $4n$;
-		\item 12.9\% estimate is $2n$;
-		\item 39.6\% estimate is $n$; $\checkmark$
-		\item 36.8\% estimate is $\frac{n}{2}$;
-		\item \ 9.1\% estimate is $\frac{n}{4}$;
-		\item \  3 \textperthousand\ estimate is $\frac{n}{8}$;
-		\item \ 0.02\textpertenthousand\ estimate is $\frac{n}{16}$;
+		\item $\approx 2\times10^{-6} \to 16n$;
+		\item $\approx 3\times10^{-4}  \to 8n$;
+		\item $\approx0.012  \to 4n$;
+		\item $\approx0.129 \to 2n$;
+		\item $\approx0.396 \to n$; $\checkmark$
+		\item $\approx0.368 \to \frac{n}{2}$;
+		\item $\approx0.091\to \frac{n}{4}$;
+		\item $\approx 3\times10^{-3} \to \frac{n}{8}$;
+		\item $\approx 2\times10^{-6} \to \frac{n}{16}$;
 		\end{itemize}
-		It is difficult to discriminate between $n$ and $\frac{n}{2}$ 
+		We notice, that using Greenberg Algorithm, it is difficult to discriminate between $n$ and $\displaystyle \frac{n}{2}$. 
 	\end{enumerate}
-\item to get a tighter estimate, base $b$ Greenberg has to be used. Anyway to improve the accuracy very small $b$ has to be used (see Table \ref{table:greenberg-b-phi}) and this results in worse running times: even if theoretically it remains $O(log_{b}n)$ which is a lower order term compared to $n$, in practice estimate time can be no more neglected. In this case, for reasons expressed in {\bf a)}, using Greenberg  could be a bad choice.
+\item Base $b$ Greenberg could  be used to get a tighter estimate. Anyway, to improve the accuracy, very small $b$ has to be choosen (see Table \ref{table:greenberg-b-phi}) which results in much worse running times: even if theoretically it remains $O(log_{b}n)$ which is a lower order term compared to $n$, in practice estimate time can be no more neglected. In this case, for reasons expressed in {\bf a)}, using Greenberg  could be a bad choice.
 \end{enumerate}
 
 \section{EGA BSE}
