@@ -227,7 +227,7 @@ Che fantastica storia è la vita.  ''\\}
 \vspace{\stretch{3}}\null
 \end{flushright}
 
-%\end{comment}
+\end{comment}
 %ABSTRACT
 \begin{abstract}
 This thesis
@@ -1570,7 +1570,7 @@ Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varyi
 
 \section{GEGA BSE}
 \label{sc:GEGA BSE}
-The  \emph{Generalized Enhached Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
+The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
 \mathcal{N}=\{1,2,3,...\}.
 \end{equation*}
@@ -1617,12 +1617,12 @@ Looking at the Table \ref{tb:GEGA-T10-l10} emerges that the estimate is always f
 
 The EGA MLE Table can be obtained as sub-case from the GEGA Table considering the largest allowed estimate value lower than and the smallest one larger than the estimate provided by the GEGA algorithm. The EGA estimate will be the one between the two for which the probability in \eqref{eq:MLEiscl} is maximized.\\
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width=\textwidth]{matlab/GEGA/GEGA-bias-varying-T}
+\begin{figure}[thbp]
+\makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
+  \includegraphics[width=1.25\textwidth]{matlab/GEGA/GEGA-bias-varying-T}% here 20% wider than \textwidth
+ }
 \caption[\emph{GEGA}: Estimate Bias]{\emph{GEGA}: Estimate Bias. The tree plots show the estimate expected value over the real batch size for different $T$. Data reported were computed using formula \eqref{eq:EGA expected estimate given n}.}
 \label{fg:GEGA-bias}
-\end{center}
 \end{figure}
 
 The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  

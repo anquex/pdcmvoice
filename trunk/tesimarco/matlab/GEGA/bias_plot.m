@@ -17,7 +17,7 @@ load(['GMLE-bias-T30']);
 h30=plot(batchsizes,bias);
 %clear fiscpn i k l n p p_idle p_succ_cond_idle prb_stop_slot D GMLE
 
-legend('$T=10$','$T=20$','$T=30$','Location','NorthEastOutside');
+legend('$T=10$','$T=20$','$T=30$','Location','Best');
 hl = legend;
 set(hl, 'Interpreter', 'Latex');
 set(hl, 'FontSize', 11);
@@ -35,10 +35,11 @@ set(fh, 'color', 'white'); % sets the color to white
 set(gca, 'Box', 'on' ); % here gca means get current axis
 grid on;
 
-set(h10, 'LineStyle', '-.', 'LineWidth', 1.0, 'Color', 'Black');
-set(h20, 'LineStyle', '--', 'LineWidth', 1.0, 'Color', 'Black');
-set(h30, 'LineStyle', '-', 'LineWidth', 1.0, 'Color', 'Black');
+set(h10, 'LineStyle', '-.', 'LineWidth', 1.1, 'Color', 'Black');
+set(h20, 'LineStyle', '--', 'LineWidth', 1.1, 'Color', 'Black');
+set(h30, 'LineStyle', '-', 'LineWidth', 1.1, 'Color', 'Black');
 
 %set(gca,'YTickLabel',)
-set(gca,'YLim',[1.029 1.073])
-set(gca,'XLim',[20 2000])
+set(gca,'YLim',[1.029 1.075])
+set(gca,'XLim',[5 2000])
+set(gca,'XScale','log');
