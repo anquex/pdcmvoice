@@ -1,26 +1,27 @@
 % calcola la distribuzione della stima n^ per ogni n in batchsizes
 tic
-batchsizes=[5:5:95,100:10:2000];
+batchsizes=[2:30 5:5:95,100:10:2000];
+batchsizes=unique(batchsizes);
 nmax=400000;
-T=30;
+T=128;
 load(['GMLE-T-' int2str(T)]); %loads GMLE(c,s,l) T b p slots
-return;
 D=zeros(length(batchsizes),nmax);
 bias=zeros(1,length(batchsizes));
 
 %max(max(max(GMLE))); % nel nostro caso è <2^23
 
-% GENERA LE STIME CONSENTITE
-allowed=2.^1:23;
-b=[];
-for i=1:length(allowed)-1
-    b=[b floor(linspace(allowed(i),allowed(i+1),3))];
-end
-allowed=unique(b);
-clear b i;
-
-% RESTRINGI IL CODOMINIO DELLE STIME CONSENTITE
-GMLE=GEGA2EGA(GMLE,allowed);
+% % GENERA LE STIME CONSENTITE
+% allowed=2.^1:23;
+% b=[];
+% for i=1:length(allowed)-1
+%     b=[b floor(linspace(allowed(i),allowed(i+1),3))];
+% end
+% allowed=unique(b);
+% %clear b i;
+% 
+% % RESTRINGI IL CODOMINIO DELLE STIME CONSENTITE
+% % errore nel metodo GEGA2EGA
+% GMLE2=GEGA2EGA(GMLE,allowed);
 
 % CALCOLA LA DISTRIBUZIONE PER OGNI BATCHSIZE CONSIDERATA
 for k=1:length(batchsizes)
@@ -47,4 +48,4 @@ for k=1:length(batchsizes)
     bias(k)=sum(estimates.*D(k,estimates))/n;
 end
 toc
-%save(['GMLE-bias-T' int2str(T)]);
+save(['GMLE-bias-T' int2str(T)]);
