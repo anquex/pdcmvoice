@@ -1609,11 +1609,11 @@ As example, the results of this computation when $T=10$ and $l=10$ are presented
 10 & 4111 & - & - & - & - & - & - & - & - & - & - \\ \hline
 \end{tabular}
 }
-\caption{\emph{GEGA}: Possible estimates when $T=10$ and $l=10$}
+\caption{\emph{GEGA}: Possible estimates when $T=10$ and $l=10$.}
 \label{tb:GEGA-T10-l10}
 \end{table}
 
-Looking at the Table \ref{tb:GEGA-T10-l10} emerges that the estimate is always finite. This good propriety  tfollows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
+Looking at the Table \ref{tb:GEGA-T10-l10} emerges that the estimate is always finite. This good propriety  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
 
 The EGA MLE Table can be obtained as sub-case from the GEGA Table considering the largest allowed estimate value lower than and the smallest one larger than the estimate provided by the GEGA algorithm. The EGA estimate will be the one between the two for which the probability in \eqref{eq:MLEiscl} is maximized.\\
 
@@ -1625,7 +1625,39 @@ The EGA MLE Table can be obtained as sub-case from the GEGA Table considering th
 \label{fg:GEGA-bias}
 \end{figure}
 
-The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  
+The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  Following Table \ref{tb:GEGA-average-bias} report the average bias $\phi{T}$ as function of $T$.\\ 
+
+\begin{table}[htdp]
+\centering
+\begin{tabular}{c|c}
+\toprule
+$T$ & $\phi(T)$ \\
+\midrule
+10 & 0.0723  \\
+20 & 0.0422  \\
+30 & 0.0299\\
+\bottomrule
+\end{tabular} 
+\caption[\emph{GEGA}: Average bias]{\emph{GEGA}: Average bias. $\phi(T)$ is simply computed by averaging the bias estimate for batchsizes from 2 to 2000.}
+\label{tb:GEGA-average-bias}
+\end{table}
+
+\begin{figure}[thbp]
+\makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
+    \includegraphics[width=1.2\textwidth]{matlab/GEGA/GEGA-bias-unbias-absolute-normalized-error}% here 20% wider than \textwidth
+ }
+ \caption[\emph{GEGA}: biased/unbiased absolute normalized estimate error]{\emph{GEGA}: biased/unbiased absolute normalized estimate error. The plot present $e(\hat{n})$ and $e(\tilde{n})$ for different $T$.}
+ \label{fg:GEGA-biased-unbiased}
+\end{figure}
+
+Estimate bias can be corrected by considering $\tilde{n}={\displaystyle \frac{\hat{n}}{\phi(T)+1}}$. This, as we shall see, provides higher quality estimate.\\
+To measure the performance of the proposed estimate method, we define the normalized absolute estimate error as
+\begin{equation}
+e(\hat{n})=\frac{|\hat{n}-n|}{n}.
+\label{GEGA-abs-error}
+\end{equation}
+In the same manner we can define $e(\tilde{n})$. The parameter $T$ is implicitly present in \eqref{GEGA-abs-error}.
+Figure \ref{fg:GEGA-biased-unbiased} shows that the bias corrected estimate performs better than the biased estimate for any batch size and $T$.
 \chapter{Comparison}
 GEGA estimate accuracy can not be dynamically adapted 
 \section{Conclusions}
