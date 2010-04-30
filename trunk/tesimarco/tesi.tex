@@ -1657,9 +1657,24 @@ e(\hat{n})=\frac{|\hat{n}-n|}{n}.
 \label{GEGA-abs-error}
 \end{equation}
 In the same manner we can define $e(\tilde{n})$. The parameter $T$ is implicitly present in \eqref{GEGA-abs-error}.
-Figure \ref{fg:GEGA-biased-unbiased} shows that the bias corrected estimate performs better than the biased estimate for any batch size and $T$.
+Figure \ref{fg:GEGA-biased-unbiased} shows that the bias corrected estimate performs better than the biased estimate for any batch size and $T$. Furthermore, you can notice that the error is quite independent from  the batch size.  
+\begin{figure}[thbp]
+\centering
+    \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k}% here 20% wider than \textwidth
+ \caption{\emph{GEGA}: temp.}
+ \label{fg:GEGA-min-T-for-k}
+\end{figure}
+
+\begin{figure}[thbp]
+\centering
+    \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k-detail}% here 20% wider than \textwidth
+ \caption{\emph{GEGA}: temp.}
+ \label{fg:GEGA-min-T-for-k}
+\end{figure}
 \chapter{Comparison}
 GEGA estimate accuracy can not be dynamically adapted 
+
+
 \section{Conclusions}
 \label{ch:Comparison}
 
