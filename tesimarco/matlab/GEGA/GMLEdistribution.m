@@ -1,9 +1,10 @@
 % calcola la distribuzione della stima n^ per ogni n in batchsizes
 tic
 batchsizes=[2:30 5:5:95,100:10:2000];
+%batchsizes=2000;
 batchsizes=unique(batchsizes);
-nmax=400000;
-T=128;
+nmax=450000; %400000;
+T=100;
 load(['GMLE-T-' int2str(T)]); %loads GMLE(c,s,l) T b p slots
 D=zeros(length(batchsizes),nmax);
 bias=zeros(1,length(batchsizes));
@@ -24,6 +25,7 @@ bias=zeros(1,length(batchsizes));
 % GMLE2=GEGA2EGA(GMLE,allowed);
 
 % CALCOLA LA DISTRIBUZIONE PER OGNI BATCHSIZE CONSIDERATA
+m=0;
 for k=1:length(batchsizes)
     n=batchsizes(k)
     for l=1:slots
@@ -37,6 +39,7 @@ for k=1:length(batchsizes)
                     sc=s+c;
                     i=T-sc;
                     fiscpn=binopdf(i,T,p_idle)*binopdf(s,sc,p_succ_cond_idle);
+                    %m=max(m,GMLE(c+1,s+1,l));
                     D(k,GMLE(c+1,s+1,l))=D(k,GMLE(c+1,s+1,l))+fiscpn*prob_stop_slot;
                 end
             end
