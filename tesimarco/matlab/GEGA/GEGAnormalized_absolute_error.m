@@ -51,5 +51,6 @@ legend('$T=30$, $\hat{n}$','$T=30$, $\tilde{n}$','$T=10$, $\hat{n}$','$T=10$, $\
 hhl = legend;
 set(hhl, 'Interpreter', 'Latex');
 set(hhl, 'FontSize', 11);
-%fh=figure(1);
-%saveas(fh,'GEGA-bias-unbias-absolute-normalized-error', 'epsc');
+set(gca,'YLim',[0.07 0.25])
+% fh=figure(1);
+% saveas(fh,'GEGA-bias-unbias-absolute-normalized-error', 'epsc');
