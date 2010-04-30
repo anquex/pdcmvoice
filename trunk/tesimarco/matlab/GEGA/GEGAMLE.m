@@ -9,9 +9,10 @@ end;
 
 start=tic;
 Ts=[0:1:128];
+Ts=[30];
 for T=Ts
     T
-    if exist(['GMLE-T-' int2str(T) '.mat'],'file')~=2
+    if exist(['GMLE-T-' int2str(T) '.mat'],'file')==2
         slots=20;
         GMLE=zeros(T+1,T+1,slots);
         b=2;
@@ -34,9 +35,24 @@ for T=Ts
                 fT0=inline(sfT0,'p','n','l','i','s','c');
                 GMLEtmp=zeros(T+1,T+1);
                 for c=0:T
+                    %c
                     for s=0:T-c
                         i=T-s-c;
+%                         sopra=0;
+%                         if(c>0)
+%                             sopra=GMLEtmp(c,s+1);
+%                         end
+%                         lato=0;
+%                         if(s>0)
+%                             lato=GMLEtmp(c+1,s);
+%                         end
+                        % if (c>0 && GMLEtmp(c+1,s+1)>GMLEtmp(c,s+1))
+                        % else
+                        %   GMLEtmp(c+1,s+1)=deasysolve(fT0,p,l,i,s,c);
+                        % end
+                        % default computation
                         GMLEtmp(c+1,s+1)=deasysolve(fT0,p,l,i,s,c);
+                        %GMLEtmp(c+1,s+1)=deasysolve2(fT0,p,l,i,s,c,max([2,sopra,lato]));
                     end
                 end
                 GMLE(:,:,l)=GMLEtmp;
@@ -48,7 +64,7 @@ for T=Ts
         end
         toc;
         
-        save(['GMLE-T-' int2str(T)], 'GMLE','T','b','slots','p');
+        %save(['GMLE-T-' int2str(T)], 'GMLE','T','b','slots','p');
     end
 end
 stop=toc;
