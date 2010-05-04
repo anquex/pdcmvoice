@@ -198,14 +198,14 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \null\vspace{\stretch{1}}
 
 %% DEDICATION
-\begin{comment}
+%\begin{comment}
 
 \frontmatter
 \cleardoublepage
 \begin{flushright}
 \null\vspace{\stretch{2}}
 \emph{\large 
-Ai miei genitori e allo zio Toni \ldots\\}
+Ai miei genitori e allo zio Toni\ldots\\}
 \vspace{\stretch{5}}\null
 \end{flushright}
 
@@ -227,7 +227,7 @@ Che fantastica storia è la vita.  ''\\}
 \vspace{\stretch{3}}\null
 \end{flushright}
 
-\end{comment}
+%\end{comment}
 %ABSTRACT
 \begin{abstract}
 This thesis
@@ -1088,7 +1088,7 @@ The idea behind algorithm \ref{alg-greenberg} appears to be quite simple: as the
     \label{fig:greeberg-split}
 \end{figure}
 
-Expected running time is $O(log_{2}n)$. In particular, since in the \emph{slotted}-ALOHA model considered in the paper reader feedback is supposed to be transmitted at the end of each transmission slot, expected running time can be expressed, in slot numbers, as $\approx 1+\log_{2}n$.\\
+Expected running time is $O(log_{2}\,n)$. In particular, since in the \emph{slotted}-ALOHA model considered in the paper reader feedback is supposed to be transmitted at the end of each transmission slot, expected running time can be expressed, in slot numbers, as $\approx 1+\log_{2}n$.\\
 
 An important note is that the algorithm always involves all the nodes in the batch: in each stage of the algorithm each node has to take a choice if transmit or not. 
 Each choice is independent of what the node did in the previous steps. \\ 
@@ -1646,7 +1646,7 @@ $T$ & $\phi(T)$ \\
 \makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
     \includegraphics[width=1.2\textwidth]{matlab/GEGA/GEGA-bias-unbias-absolute-normalized-error}% here 20% wider than \textwidth
  }
- \caption[\emph{GEGA}: biased/unbiased absolute normalized estimate error]{\emph{GEGA}: biased/unbiased absolute normalized estimate error. The plot present $e(\hat{n})$ and $e(\tilde{n})$ for different $T$.}
+ \caption[\emph{GEGA}: biased/unbiased absolute normalized estimate error]{\emph{GEGA}: biased/unbiased absolute normalized estimate error. The plot presents $e(\hat{n})$ and $e(\tilde{n})$ for different $T$.}
  \label{fg:GEGA-biased-unbiased}
 \end{figure}
 
@@ -1671,12 +1671,12 @@ Figure \ref{fg:GEGA-biased-unbiased} shows that the bias corrected estimate perf
  \caption{\emph{GEGA}: temp.}
  \label{fg:GEGA-min-T-for-k}
 \end{figure}
-\chapter{Comparison}
+\section{Comparison}
 GEGA estimate accuracy can not be dynamically adapted 
 
 
-\section{Conclusions}
-\label{ch:Comparison}
+\chapter*{Conclusions}
+\addcontentsline{toc}{chapter}{Conclusions}
 
 
 
