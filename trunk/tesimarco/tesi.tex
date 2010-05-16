@@ -670,7 +670,7 @@ In general we have
 \begin{equation}
 L_{n}^{MBT}\leq C \cdot n +1, \qquad \textrm{where} \qquad C=2.623.
 \end{equation}
-Using probability $p={\displaystyle\frac{1}{2}}$  results, for large $n$, in about 1.6\% peak performance loss  ($C=2.667$), which is a moderate decrease. \rev{ It is important to notice that  $p=0.4175$ is close to the optimal bias for small $n$ as well.\\}
+Using probability $p={\displaystyle\frac{1}{2}}$  results, for large $n$, in about 1.6\% peak performance loss  ($C=2.667$), which is a moderate decrease. It is important to notice that  $p=0.4175$ is very close to the optimal bias for small $n$ as well.\\
 
 \subsection{Clipped Modified Binary Tree}
 In this section we will show that, in some cases, partial resolution algorithms can achieve higher efficiency than complete resolution algorithms.\\
@@ -742,7 +742,7 @@ Figure \ref{m-groups-MBT-ALOHA} plots $L_{n}'(\rho)$, the average time to solve 
 \end{center}
 \end{figure}
 
-\revv{Splitting the batch into groups achieves lower average resolution time than applying the BRA to the original batch for a wide range of $\rho$ (when $L_{n}'(\rho)/L_{n}<1$).}\\
+\revv{Splitting the batch into groups achieves lower average resolution time than applying the BRA to the original batch for a wide range of $\rho$ \mbox{(when $L_{n}'(\rho)/L_{n}<1$)}.}\\
 We note that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice that the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain better than the trivial application of the BRA. On the other hand, overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
 In a CSMA scenario the performances depend on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
@@ -762,7 +762,7 @@ In a CSMA scenario the performances depend on $\beta$ and on the ratio between t
 \emph{Estimating Binary Tree} (EBT) has been recently proposed in \cite{popovski}. It does not work on parameters optimization but tries to use simple heuristics to skip tree nodes that will result in collisions with high probability.\\
 Given a batch of size $n$, the keys to understand EBT are the following:
 \begin{itemize}
-\item in the luckiest scenario running BT results in a balanced binary tree where all the leaves are at the same level,
+\item in the luckiest scenario, running BT results in a balanced binary tree where all the leaves are at the same level,
 \item consequently it seems to be a good idea to assume that nodes at levels in the tree less than $\lfloor \log_{2}n\rfloor$ will likely result in collided slots.
 \end{itemize}
 
@@ -770,18 +770,19 @@ EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal
  Assume that there are $k$ nodes whose \emph{id}s are in the sub-interval [0,$\pc$) and that they have been previously resolved: all and only the nodes with \emph{id} less than $\pc$ successfully transmitted their messages.  Let $\hat{n}$ express the estimate of $n$. When $\pc$ is greater than 0, setting $\hat{n}$ to $\displaystyle\frac{k}{\pc}$ provides a good estimate of $n$ that becomes more and more accurate as the algorithm goes on. EBT uses $\hat{n}$ (as soon as it is available) to choose the right level in the tree to analyze.\\
  
  The most straightforward  interpretation of the EBT algorithm can be:
- \begin{enumerate}
-\item Run the CBT algorithm.
-\item Repeat until the end of the process the following steps:
-\begin{enumerate}[a)]
-\item Update the estimate $\hat{n}$,
-\item Start a new CMBT at the next node from level $\lfloor\log_{2}\hat{n}\rfloor$.
 
-\end{enumerate}
+\begin{algorithm}
+\caption{\algname{Estimating Binary Tree}}
+\begin{algorithmic}
+\STATE  Run the CBT algorithm
+\WHILE{batch is not resolved}
+\STATE  Update the estimate $\hat{n}$
+\STATE Start a new CMBT at the next node from level $\lfloor\log_{2}\hat{n}\rfloor$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
-\end{enumerate}
-
-Here we gave only a short insight about the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
+Here we gave only a short insight of the algorithm and the estimate technique. In particular this estimate technique is a dynamic adaptation of that described later in Section \ref{se:cidon} and originally proposed in \cite{cidon}.\\
 
 \begin{comment}
 \subsection{EBT combined with optimum MBT (DA BUTTARE)}
@@ -826,32 +827,30 @@ The \emph{EBT using optimum MBT Algorithm}, proposed in this work, is the averag
 
 \section{Others}
 In this section we will shortly describe non \emph{tree-based} algorithms for batch resolution.
-\subsection{IERC}\marginpar{NUOVA}
+\subsection{IERC}
 The \emph{Interval Estimation Conflict Resolution (IERC)} \cite{popovski} is an adaptation of the FCFS \cite{gallager} algorithm for Poisson's arrivals of packets to the batch resolution.\\
 FCFS is the fastest known algorithm to solve Poisson's arrivals and it achieves efficiency $\eta=0.4871$.
 It assumes \emph{apriori} knowledge of the arrival rate $\lambda$ of the packets and works by splitting the time in epochs of length $\tau$.\\
 Now we briefly describe FCFS Alg. and then we will show how it can be translated to the batch resolution problem.\\ 
 
-At any time $k$, let $T (k)$ be the start time of the current enabled allocation interval. By default, packets generated in the enabled window $(T(k),T(k)+\tau]$ are allowed to be transmitted.
-When an \emph{idle} or \emph{successful} event occurs enabled time window gets incremented (shifted towards current time) by $\tau$. On the other hand, if a \emph{collision} takes place, a \emph{Clipped Binary Tree} (see Section \ref{cbt-estimation}) Alg. is started. Assume that CBT resolved the sub-interval $(T(k),T(k)+\alpha(k)]$, then at time $k'$ next FCFS enabled window will be $(T(k'),T(k')+\min(\tau,k'-T(k'))]$ where $T(k')=T(k)+\alpha(k)$.\\
+At any time $k$, let $T (k)$ be the start time of the current enabled allocation interval. Packets generated in the enabled window $(T(k),T(k)+\tau]$ are allowed to be transmitted.
+When an \emph{idle} or \emph{successful} event occurs enabled time window gets incremented (shifted towards current time) by $\tau$. On the other hand, if a \emph{collision} takes place, a \emph{Clipped Binary Tree} (see Section \ref{cbt-estimation}) algorithm is started. Given that CBT resolves the sub-interval $(T(k),T(k)+\alpha(k)]$, then next FCFS enabled window at time $k'$ will be $(T(k'),T(k')+\min(\tau,k'-T(k'))]$ where $T(k')=T(k)+\alpha(k)$.\\
 
 It can be shown \cite{gallager} that setting  $\tau={\displaystyle \frac{1.26}{\lambda}}$ leads to the maximum efficiency. This means that, on average, there are 1.26 nodes in an allocation interval of length $\tau$.\\
-The batch resolution problem can be adapted to be solve with an FCFS-like strategy in the following way:
+The batch resolution problem can be adapted to be solved with an FCFS-like strategy in the following way:
 \begin{itemize}
 \item nodes \emph{tokens} can be interpreted as arrival times;
-\item nodes must be splitted into $m={\displaystyle \frac{n}{1.26}}$ groups so that in each group we expect to have 1.26 nodes;
-\item behave FCFS-like to solve the problem.
+\item nodes must be splitted into $m={\displaystyle \frac{n}{1.26}}$ groups, so that in each group we expect to have 1.26 nodes;
+\item apply FCFS to solve the problem.
 \end{itemize}
-Following  these ideas, IERC achieves the same efficiency $\eta=0.4871$ of FCFS to solve the \emph{Batch Resolution Problem}.
+\revv{Following  these ideas, IERC achieves the same efficiency $\eta=0.4871$ of FCFS for Poisson's arrivals in solving the \emph{Batch Resolution Problem}: it is the asymptotically fastest know algorithm allowed by our scenario model. }
 
 \subsection{Window Based Approaches}
-\textcolor{red}{solo per dire che esistono, magari qualche riferimento bibliografico...\\}
 
-\marginpar{NUOVA, RICHIEDO VERIFICA DEL CONTENUTO}
-Another possible approach to the batch resolution is to consider a \emph{framed}-ALOHA-like scenario.\\
-In \emph{framed}-ALOHA, a frame (alias \emph{window}) is a sequence of consecutive slots.  When a node in the collision batch decides to transmit, it uniformly picks one and only one slot in the window and transmits in that slot.\\
-In windows based scenario usually we can work on the optimization of two parameters: $m$, the length of the window in slots, and $p$, the probability that a node transmits in the current window.
-Innovate approaches to the problem uses hybrid transmission scheme working by cycles that tries to optimize operational parameters after each transmission windows. On very inexpensive devices usually only windows based algorithms can be implemented.
+Another possible approach to the batch resolution is to consider a \emph{framed}-ALOHA scenario.\\
+In \emph{framed}-ALOHA, a frame (or \emph{window}) is a sequence of consecutive slots.  When a node in the collision batch decides to transmit, it uniformly picks one and only one slot in the window and transmits in that slot.\\
+In windows based scenarios, usually we can work on the optimization of two parameters: $m$, the length of the window in slots, and $p$, the probability that a node transmits in the current window.
+Innovative approaches to the problem uses hybrid transmission scheme working by cycles that tries to optimize operational parameters after each transmission windows.
 
 
 \chapter{Batch Size Estimate Techniques}
