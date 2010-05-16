@@ -737,12 +737,12 @@ Figure \ref{m-groups-MBT-ALOHA} plots $L_{n}'(\rho)$, the average time to solve 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/BTs/m-groups-MBT-ALOHA}
-\caption[$m$ Groups Split: ALOHA scenario]{\emph{$m$ Groups Split: ALOHA scenario}. \revv{Lower is better}.}
+\caption[$m$ Groups Split: ALOHA scenario]{\emph{$m$ Groups Split: ALOHA scenario}. \revv{Expected performance of group splitting over trivial batch resolution using optimum MBT for different $\rho$. Lower means better}.}
 \label{m-groups-MBT-ALOHA}
 \end{center}
 \end{figure}
 
-\revv{Splitting the batch into groups achieves lower average resolution time than applying the BRA to the original batch for a wide range of $\rho$ (when $L_{n}'(\rho)/L_{n}<1$).}
+\revv{Splitting the batch into groups achieves lower average resolution time than applying the BRA to the original batch for a wide range of $\rho$ (when $L_{n}'(\rho)/L_{n}<1$).}\\
 We note that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice that the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain better than the trivial application of the BRA. On the other hand, overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
 In a CSMA scenario the performances depend on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
@@ -750,7 +750,7 @@ In a CSMA scenario the performances depend on $\beta$ and on the ratio between t
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/BTs/m-groups-MBT-CSMA}
-\caption[$m$ groups split: CSMA scenario]{\emph{$m$ groups split: CSMA scenario}. Results were obtained using MBT with optimal probability $p$ in a slotted CSMA scenario. CSMA is more robust to inaccurate estimate than ALOHA.}
+\caption[$m$ Groups Split: CSMA scenario]{\emph{$m$ Groups Split: CSMA scenario}.  \revv{Expected performance of group splitting over trivial batch resolution using optimum MBT for different $\rho$. Lower means better}.}
 \label{m-groups-MBT-CSMA}
 \end{center}
 \end{figure}
