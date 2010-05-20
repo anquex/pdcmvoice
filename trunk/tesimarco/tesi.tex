@@ -855,17 +855,16 @@ Innovative approaches to the problem uses hybrid transmission scheme working by 
 
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
-We present here some noteworthy techniques for batch size estimate that can be found in literature.
-If a technique was not already identified by a name or associated to a acronym we used the name of one the authors as reference.\\
+Here we present some noteworthy techniques for batch size estimate that can be found in literature.
+If a technique was not already identified by a name or associated to an acronym, we used the name of one the authors as reference.\\
 
 In general, we assume to have no \emph{a priori} statistical knowledge about the conflict multiplicity. Estimation techniques are thus required to provide accurate estimates for the general zero-knowledge scenario.\\
 \section{Clipped Binary Tree}
 \label{cbt-estimation}
-A simple way to obtain an estimate of the batch size is to solve a minimum number of nodes. This can be done, for example, by using deterministic algorithms such as \emph{Clipped Binary Tree Algorithm} (CBT).\\
+A simple way to obtain an estimate of the batch size is to solve a certain number of nodes and then infer the batch size according to the time taken to solve these nodes. This can be done, for example, by using deterministic algorithms such as the \emph{Clipped Binary Tree (CBT) Algorithm}.\\
 CBT is a partial resolution algorithm since only a fraction of the packets of the batch are successfully transmitted.
-The algorithm is identical to the MBT (with $\displaystyle p=\frac{1}{2}$ since we require the nodes to be uniformly distributed in the interval [0,1) ) except that it is stopped (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
-When the algorithm stops, we know than the last two resolved nodes belong to the same level $i$ of the tree (root is assumed to be at level 0).\\
-Therefore, an estimate of the initial batch size is given by:
+The algorithm is identical to the MBT, with $\displaystyle p=\frac{1}{2}$ since we require nodes to be uniformly distributed in the interval [0,1), except that it stops (the tree is clipped) whenever two consecutive successful transmissions follow a conflict.\\
+When the algorithm stops, after $i$ collisions, we know than the last two resolved nodes belong to the same level $i$ of the tree (root is assumed to be at level 0). Therefore, an estimate of the initial batch size is given by:
 \begin{equation}
 \hat{n}\gets2^{i}
 \end{equation}
@@ -896,33 +895,31 @@ So this simple method is not good to obtain an estimate.
 \caption[\emph{CBT}: Example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
 \end{figure}
 
-Experimental results show that the variance of this obtained estimate is extremely high and the resulting accuracy is really poor.\\ 
-This is due to the fact that the batch of interest we use for the estimate becomes, at each level, smaller and smaller: the estimate, even for huge sizes, depends only on very few (3-5) nodes (those at the most left in the tree). Consequently estimate is quite inacurate.\\
-Results are reported in Appendix in tables  \ref{CBT-table-1}. Notice how slowly the distribution probability decrease.
+Experimental results show that the variance of this estimate is extremely high and the resulting accuracy is rather poor. This is due to the fact that the batch we use for the estimate becomes, at each level, smaller and smaller: in the average case we expect all the intervals to be balanced in the number of nodes. Using this algorithm we don't have knowledge of a sufficiently large number of intervals but we limit to analyze.
+the estimate, even for huge sizes, depends only on very few (3-5) nodes (those at the most left in the tree). Consequently estimate is quite inacurate.\\
+From the tables  \ref{CBT-table-1} reported in Appendix you can notice that the distribution probability decreases rather slowly.
 \section{Cidon}
 \label{se:cidon}
-Cidon and Sidi proposed this approach in \cite{cidon}. In their work they describe a complete resolution algorithm based on two phases:
+In \cite{cidon} Cidon and Sidi proposed a complete resolution algorithm based on two phases:
  
 \begin{enumerate}
-\item Estimating the initial batch size using a partial deterministic resolution scheme. 
-\item Performing an optimized complete deterministic resolution based on the results of phase 1. 
+\item Estimate the initial batch size using a partial deterministic resolution scheme. 
+\item Perform an optimized complete deterministic resolution based on the results of phase 1. 
 \end{enumerate}
 
-The strategy adopted to obtain the estimate is to resolve a small part of the initial batch and to accumulate the number of successful transmissions resulting.\\
-
-A node either takes part to the estimate phase or to the following resolution phase but not both.
+Phase 1 consists in resolving a small part of the initial batch, counting the number of successful transmissions.
+A node takes part either to the estimate phase or to the following resolution phase, not both.
 The probability $\pc$, which is an algorithm input parameter, determines this choice.
-We called it $\pc$ to underlined than this initial choice reflects on the expected accuracy of the resulting estimate.\\
+We called it $\pc$ to underlined that this initial choice reflects the expected accuracy of the resulting estimate, as it will be discussed in more detail later on.\\
 
 As usual we consider a batch $\mathcal{B}$ of unknown size $n$.
-At the beginning of the algorithm each node chooses to transmit with probability $\pc$. Thus the $n$ nodes are partitioned into two set $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consist of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. When a conflict occurs ( $|\mathcal{E}|\geq2$), a complete batch resolution algorithm is started to resolve the conflicts among  the nodes in $\mathcal{E}$ . By simply accumulating in $j$, during the estimate phase, the number of resolved nodes, we know the exact value of $|\mathcal{E}|$.
-Then we simply compute our estimate $\hat{n}$ as: 
+At the beginning of the algorithm each node chooses to transmit with probability $\pc$. Thus the $n$ nodes are partitioned into two sets, $\mathcal{E}$ and $\mathcal{D}$, where $\mathcal{E}$ consists of those that transmitted and $\mathcal{D}$ the rest. Clearly, $|\mathcal{E}|+|\mathcal{D}|=n$. If the resulting slot is empty or contains a successful transmission, we conclude that $|\mathcal{E}|=0$  or $|\mathcal{E}|=1$, respectively. When a conflict occurs ( $|\mathcal{E}|\geq2$), nodes in $\mathcal{E}$ use a complete BRA to resolve the conflict among them. Let $j$ be the number of resolved nodes at the end of phase 1, i.e. $|\mathcal{E}|=j$. Then the estimate $\hat{n}$ is given by 
 
 \begin{equation}
 \hat{n} \gets \frac{j}{\pc}.
 \end{equation}
-When the nodes are uniformly distributed in the real interval [0,1), $\displaystyle \frac{j}{\pc}$  identifies also the expect nodes density in the interval [0, 1) and the nodes in $\mathcal{E}$ are those whose \emph{id} can be mapped to a value belonging to the sub-interval [0, $\pc$).\\
-Following Figure \ref{cidon-nodes-id} shows the case providing a simple example.
+When the nodes are uniformly distributed in the real interval [0,1), $\displaystyle \frac{j}{\pc}$  identifies also the expected nodes density in the interval [0, 1) and the nodes in $\mathcal{E}$ are those whose \emph{id} can be mapped to a value belonging to the sub-interval [0, $\pc$).\\
+Figure \ref{cidon-nodes-id} illustrates the concept with a simple example.
 \begin{figure}[H]
     \centering
     \ovalbox{
@@ -938,17 +935,15 @@ Following Figure \ref{cidon-nodes-id} shows the case providing a simple example.
     
     \end{tikzpicture}
     }
-    \caption[\emph{Cidon}: Initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generates its own \emph{id} from the standard uniform distribution on the interval [0,1). Nodes whose \emph{id} is less than $\pc$ owns to $\mathcal{E}$. Nodes whose \emph{id} is greater or equal to $\pc$ owns to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
+    \caption[\emph{Cidon}: Initial split]{In this example $\pc=0.3$. At the beginning of the algorithm each node generates its own \emph{id} from the standard uniform distribution in the interval [0,1). Nodes whose \emph{id} is less than $\pc$ belongs to $\mathcal{E}$. Nodes whose \emph{id} is greater or equal to $\pc$ belongs to $\mathcal{D}$. Estimate of the batch returns $\lceil 2/0.3\rceil=7$ which, in this case, is the exact size of the batch.}
     \label{cidon-nodes-id}
 \end{figure}
 
-After the first phase,  the nodes in $\mathcal{E}$ are resolved, but those in $\mathcal{D}$ not yet. To speedup their resolution we are interested in the estimate $\hat{k}$ of $|\mathcal{D}|$, which we can compute as:
-
+After the first phase,  nodes in $\mathcal{E}$ are resolved, whereas those in $\mathcal{D}$ has still to be counted. An estimate $\hat{k}$ of $|\mathcal{D}|$ can be obtained as
 \begin{equation}
 \hat{k} \gets  \frac{j}{\pc}(1-\pc).
 \end{equation}
-
-Then the resolution of $\mathcal{D}$ begins. We note that $|\mathcal{E}| = 0$ does not imply $|\mathcal{D}| = 0$ and consequently a complete resolution algorithm has always to be performed on $\mathcal{D}$.
+This estimate is used as starting point for the second phase of the Cidon algorithm, whose  high level peudo-code is presented in Algorithm \ref{alg-cidon}.
  
  \begin{algorithm}[h!]
 \begin{algorithmic}[1]
@@ -966,26 +961,27 @@ Then the resolution of $\mathcal{D}$ begins. We note that $|\mathcal{E}| = 0$ do
 \caption{\algname{Cidon($\mathcal{B}$, $\pc$)}}
 \label{alg-cidon}
 \end{algorithm}
- High level peudo-code of \emph{Cidon} algorithm is presented in Alg. \ref{alg-cidon}.\\ \algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages.\\ \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$: the speedup is allowed by the knowledge of its expected multiplicity.\\
+\noindent\algname{Complete collision resolution ($\mathcal{E}$) } identifies any procedure able to resolve all the nodes in $\mathcal{E}$ allowing them to successfully transmit their messages.\\ \algname{Optimized complete collision resolution ($\mathcal{D}$,$\hat{k}$, $\pc$) } identifies an optimized way to resolve the batch $\mathcal{D}$ that takes into account the expected multiplicity of $\mathcal{D}$.\\
  
- The original paper proposes to use an \emph{$m$ groups split} (Section \ref{se:mgroups}) approach to resolve $\mathcal{D}$ where 
+ The original paper proposes to use an \emph{$m$ groups split} (Section \ref{se:mgroups}) approach to resolve $\mathcal{D}$, where 
  \begin{equation}
 m = \max(1, \lceil\alpha \hat{k}-\beta\rceil),
 \end{equation}
-
 and each group is resolved by applying the MBT algorithm.\\
-The parameter $\alpha$ determines the number of groups, and therefore the efficiency, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small: many of them would be empty resulting in a waste of time. 
+The parameter $\alpha$ determines the number of groups, and therefore the efficiency of the resolution process, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small in order to reduce the risk of empty groups. 
  
- $\alpha=0.786$ determines $\rho\approx 1.27$ which is the \emph{unique} optimum  nodes per group density. $\beta$ and $\pc$ depends on operational requirements: setting $\beta=8$ and  $\pc=0.1$ showed to be a good compromise to get efficient resolution for a wide range of batch sizes.\\  
+ $\alpha=0.786$ determines $\rho\approx 1.27$ which is the \emph{unique} \revv{optimum  nodes per group density}. $\beta$ and $\pc$ depend on operational requirements: in \cite{cidon} is showed that setting $\beta=8$ and  $\pc=0.1$ is a good compromise to get efficient resolution for a wide range of batch sizes.\\  
  
-Expected  cost of the estimate phase depends on the BRA used but in general can be considered $O(\pc n)$: time is linear in the size of $\mathcal{E}$.
+The average  cost of the estimate phase \revv{(phase 1)} depends on the BRA used but in general, for tree-based BRAs,  can be considered $O(\pc n)$.
 
+\begin{comment}
 \subsection{Estimate accuracy}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{cidon-estimate-accuracy}
 
-In the original paper \cite{cidon} there is no detailed analysis of the behavior of the estimate algorithm but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
+In the original paper \cite{cidon} there is no detailed analysis of the behavior of the estimate algorithm, but it is only shown the following fact: as $n$ grows the estimator becomes more accurate.\\
     
-Let $J$ be an integer random variable which expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. It can be thought as the probability distribution to put $j$ among  $n$ nodes in two bins choosing with probability $\pc$ the first one and $1-\pc$ the other one.  Therefore, we have the following:
+Let $J$ be an integer random variable that expresses the number of nodes in $\mathcal{E}$. Given a batch of size $n$, $J$ is binomially distributed with parameter $\pc$. Therefore, we have the following:
 
 \begin{equation}
 	P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j},
@@ -1009,10 +1005,10 @@ P\Bigl( \left| J-n\pc\right| \geq \epsilon n \,|\, n \Bigr) \leq \frac{\pc(1-\pc
 \label{eq:cidon-cheby}
  \end{equation}
  
- Let $\hat{N}={\displaystyle \frac{\hat{J}}{\pc}}$ be a real-valued random variable that expresses our estimate of $n$. Then from the aforementioned equations \eqref{cidon-J} - \eqref{eq:cidon-cheby}, it follows that:
+ Let $\hat{N}={\displaystyle \frac{J}{\pc}}$ be a real-valued random variable that expresses our estimate of $n$. Then from the aforementioned equations \eqref{cidon-J} - \eqref{eq:cidon-cheby}, it follows that:
 
 \begin{equation}
-P\left(\hat{N}=n|n\right)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n,
+P\left(\hat{N}=\hat{n}|n\right)={n \choose j}\pc^{j}(1-\pc)^{n-j} \quad \textrm{with} \quad \hat{n}=j/\pc, \quad 0\leq j\leq n,
 \end{equation}
 
 \begin{equation}
@@ -1022,8 +1018,9 @@ and, finally,
  \begin{equation}
 P\left( \left| \frac{\hat{N}}{n}-1\right| \geq \epsilon  \,\big|\, n \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}.
  \end{equation}
-which shows that in this estimation method we can trade off the accuracy with the consumption of resources, time or messages.
-
+which shows that in this estimation method we can trade off the accuracy with the consumption of resources in terms of time or messages.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{comment}
 \section{Greenberg}
 
 
@@ -1284,51 +1281,80 @@ P(0,0,L)=\ p_{2+}(n)^{L} = \left[1-\left(1-\frac{1}{L}\right)^{n}-\frac{n}{L}\le
 \chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
 
-In the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Now we would provide the reader a practical overview of the results achieved by each estimation scheme.\\
+In the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Here we present a performance analysis of each estimation scheme.\\
 We will analyze \emph{Cidon} to show which is the minimum amount of nodes to be resolved for the estimate to be within user-required constrains with high probability.\\  
 We will analyze the behavior of \emph{Greenberg} when varying the batch size.\\
 Finally, we propose and analyze a modification of \emph{Greenberg}, named \emph{[Generalized] Enhached Greenberg Algorithm ([G]EGA)}, which tries to refine the raw estimate provided by the original algorithm.
 \section{Cidon BSE}
 
-\begin{equation*}
-\end{equation*}
-We remember from Section \ref{cidon-estimate-accuracy} that
-\begin{equation*}P(J=j|n)={n \choose j}\pc^{j}(1-\pc)^{n-j},\end{equation*}
-and
-\begin{equation*}\hat{n}=\frac{j}{p}.\end{equation*}
-Note that  in Alg. \ref{alg-cidon} (Cidon) we have $\pc$ \emph{a priori} fixed since it is an input parameter of the algorithm. Consequently $J$ is a binomial distribution with parameters $B(n,\pc)$ and recalling \eqref{cidon-e-estimate}
-we get:
+
+In the original paper \cite{cidon} there is no detailed analysis of the behavior of the estimate algorithm, but it is only mentioned that as $n$ grows the estimator becomes more accurate.\\
+    
+Following from Section \ref{se:cidon}, let $j$ denote the number of nodes in $\mathcal{E}$ and $\pc$ be the expected fraction of nodes to be resolved in Cidon algorithm  Phase 1. $\pc$ is fixed \emph{a priori} since it is an input parameter of the algorithm and, therefore, given a batch of size $n$, $j$ is a binomially distributed random variable with parameters $n$ and $\pc$. Hence, we have the following:
+\begin{equation}
+E[j|n,\pc]=n\pc ,
+\label{cidon-e-estimate}
+\end{equation}
+\begin{equation}
+\textrm{var}(j|n,\pc)=n\pc(1-\pc).
+\end{equation}
+
+
+By applying Chebychev's Inequality \eqref{eq:cheby},  we have for any $\epsilon>0$
+ 
+ \begin{equation}
+P\Bigl( \left| j-n\pc\right| \geq \epsilon n \,|\, n \Bigr) \leq \frac{\pc(1-\pc)}{\epsilon^{2}n}.
+\label{eq:cidon-cheby}
+ \end{equation}
+ 
+We remember that the Cidon estimate is given by $\hat{n}={\displaystyle \frac{j}{\pc}}$. Then, from the aforementioned equations \eqref{cidon-e-estimate}-\eqref{eq:cidon-cheby}, it follows that:
+
 \begin{equation}
 E[\hat{n}|n,\pc]=\frac{1}{\pc}E\left[j|n,\pc\right]=n, \qquad \forall \,\pc
 \end{equation}
-This shows that Cidon provides an unbiased estimator ($E[\hat{n}|n]=n$) independently from $\pc$: $\pc$ influences only the variance of the estimator. 
-
+and
+ \begin{equation}
+P\left( \left| \frac{\hat{n}}{n}-1\right| \geq \epsilon  \,\big|\, n,\pc \right) \leq \frac{1-\pc}{\epsilon^{2}n\pc}.
+ \end{equation}
+which shows that using this estimation method we can trade off the accuracy with the consumption of resources in terms of time or messages. Furthermore, Cidon estimate is unbiased independently of $\pc$, which influences  the variance of the estimator. In fact, we have 
+\begin{equation}
+\textrm{var}(\hat{n}|n)  =  \frac{n}{\pc}-n.
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%
+\begin{comment}
 \begin{equation}
 \begin{split}
 \textrm{var}(\hat{n}|n) & =E[\hat{n}^{2}|n]- E[\hat{n}|n]^{2}\\
 & = \frac{1}{\pc^{2}}E[j^{2}|n] - n^{2}\\
 & = \frac{n\pc(1-\pc)+n^{2}\pc^{2}}{\pc^{2}}- n^{2}\\
-& =  \frac{n}{\pc}-n
+& =  \frac{n}{\pc}-n.
 \end{split}
 \end{equation}
-
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Cidon/cidon-variance-p}
 %\epsfile{file=matlab/Cidon/cidon-variance-p.eps,scale=0.8}
-\caption[\emph{Cidon}: Variance behavior]{\emph{Cidon}:  estimate accuracy dramatically improves while $\pc\leq0.1$.}
+\caption[\emph{Cidon}: Normalized variance]{\emph{Cidon}:  estimate normalized variance as function of $\pc$.}
+\label{fig:cidon-normalized-variance}
 \end{center}
 \end{figure}
 
-Variance is strict monotonically decreasing in $\pc$.
-Anyway it is difficult to establish in what measure an estimate can be considered accurate.\\
-Given $n$, let $k \geq1$ define the minimum required accuracy in the following way: 
+Figure \ref{fig:cidon-normalized-variance} shows that the variance is strict monotonically decreasing in $\pc$. Furthermore, you can notice that, for $\pc$ smaller than 0.1, a small increment in $\pc$ produces a large decrease in the normalized variance which reflects in a large estimate accuracy improvement. Hence, considering the tread-off between estimate overhead and resolution efficiency, solving up to $\frac{1}{10}$ of the initial batch in the estimate phase is a good practical choice.\\
+
+Anyway it is difficult to establish in what measure an estimate can be considered accurate. The idea we adopt is to require the estimate to be ``near'' the real batch size with very high probability. 
+Given $n$, let $k \geq1$ identify an interval surrounding $n$ in the following way: 
 \begin{equation}
 \frac{n}{k}\leq\hat{n}\leq kn
 \label{cidon-accuracy-constrains}
 \end{equation}
-Let $\theta$ be the probability we require for constrains \eqref{cidon-accuracy-constrains} to be satisfied.\\
-If we set $\theta=0.99$, we can find the minimum $\pc$, ensuring the estimate to be within confidence interval \eqref{cidon-accuracy-constrains}, by solving the following problem.\\
+We can study the algorithm behavior by considering as index for the estimate accuracy
+\begin{equation}
+\theta_{k}=P\left(\frac{n}{k}\leq\hat{n}\leq kn\right)
+\end{equation}
+Let $\theta$ be the minimum allowed value for $\theta_{k}$: in other words $\theta$ is the probability we require for constrains \eqref{cidon-accuracy-constrains} to be satisfied.\\
+If we set $\theta=0.99$, we can find the minimum $\pc$, ensuring the estimate to be within interval \eqref{cidon-accuracy-constrains}, by solving the following problem.\\
 \begin{equation}
 \begin{split}
 P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq j/\pc \leq kn \big| k,n,\pc\right)\\
@@ -1336,33 +1362,29 @@ P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq
 \end{split}
 \label{cidon-accuracy-bounds}
 \end{equation}
-Probability in \eqref{cidon-accuracy-bounds} is well behaved and expresses a constrain for $j$, which is a value assumed by $J$ mentioned in \eqref{cidon-J}. Since $J$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectible when $n\leq 200$.  \\
+Since $j$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectible when $n\leq 200$.  \\
 \begin{equation}
 f(k,n,\pc) = P\left(\left\lceil \frac{n\pc}{k}\right\rceil\leq j \leq \left\lfloor kn\pc\right\rfloor \big| k,n,\pc\right)\geq \theta
 \end{equation}
-Fixed $k$, $n$ and $\theta$, $\pc$ can be found by numerically solving\footnote{in this work we used bisection method}:
+Fixed $k$, $n$ and $\theta$, $\pc$ can be found by numerically solving the following equation:
 \begin{equation}
 f(k,n,\pc) = \theta
 \end{equation}
-Figure below shows minimum $\pc$ in function of $k$ for different batch sizes.\\
 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Cidon/cidon-k-p-minimum}
-\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy  $k$]{\emph{Cidon}: Minimum $\pc$ required for accuracy at least $k$ with $\theta=0.99$, plot step is 0.02}
+\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy  $k$]{\emph{Cidon}: Minimum $\pc$ as function of $k$ when $\theta=0.99$.}
 \label{cidon-k-p-minimum}
 \end{center}
 \end{figure}
 
-Figure \ref{cidon-k-p-minimum} shows how the fraction of the initial batch to resolve for estimate to be within  required confidence interval with high probability deeply depends on the size of the problem: smaller sizes require much higher $\pc$.\\
-At the same time, considering absolute cost in elapsed slots, Figure  \ref{cidon-k-L-minimum} shows that, for a wide range of $k$, the time required is quite independent of the size of the problem.\\
-Time required by the largest considered $n$ provides a  bound for smaller ones.\\
-Note that in Figure  \ref{cidon-k-L-minimum} an upper bound on the expected BRI time taken is plotted: this bound is not so tight for very small batches. With very small batches tree based BRAs performs better than what is reported.   
+Figure \ref{cidon-k-p-minimum} plots the minimum fraction $\pc$ of the batch to be resolved as function of $k$ when $\theta=0.99$. As you could expect, once the batch size is fixed, the minimum $\pc$ is  monotonically decreasing in $k$. In the same manner, when $k$ is fixed, the minimum fraction of the batch to resolve to achieve the same desired accuracy is lower for larger batch sizes. In Figure \ref{cidon-k-L-minimum} we report the expected time (in slots) required by \emph{Cidon} to achieve the desired accuracy in the estimate.  We notice that initially, when $k$ is larger than 1.5, the time required to achieve a given accuracy is very similar for each considered batch size. For tighter accuracies the time required depends largely on the size of the problem.\\ Furthermore, the time required by the largest considered batch size to achieve a given accuracy provides an upper bound for smaller batch sizes: in the same amount of time smaller batch sizes are expected to achieve higher accuracy.\\
 
 \begin{figure}[htb!]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Cidon/cidon-k-L-minimum}
-\caption[\emph{Cidon}: Upper bounds on the expected time required for accuracy $k$]{\emph{Cidon}: Upper bounds on the expected time (in slots) required to achieve accuracy at least $k$ with $\theta=0.99$,  plot step is 0.02}
+\caption[\emph{Cidon}: Expected time as function of the required accuracy]{\emph{Cidon}: Expected time as function of the required accuracy when $\theta=0.99$.}
 \label{cidon-k-L-minimum}
 \end{center}
 \end{figure}
@@ -1372,20 +1394,20 @@ Given a current slot transmission probability $p$ and a batch of size $n$ we def
 \begin{enumerate}
 \item the probability to get an empty slot (no transmissions)
 \begin{equation}q_{0}(p,n)=(1-p)^{n} \label{eq:greenberg-prob-empty}\end{equation}
-\item the probability to get a successful slots (exactly one transmission)
+\item the probability to get a successful slot (exactly one transmission)
 \begin{equation}q_{1}(p,n)=n p (1-p)^{n-1} \label{eq:greenberg-prob-succ}\end{equation} 
 \item the probability to get a collision (two or more transmissions)
 \begin{equation}q_{2+}(p,n)=1-q_{0}(p,n)-q_{1}(p,n)\label{eq:greenberg-prob-coll}\end{equation}
 \end{enumerate}
 
-In basic Greenberg (\emph{Alg.} \ref{alg-greenberg}) each slot is associated with a different probability $p$. Naming each slot $i$ starting with $1, 2, \dots,$ we have:
+In basic Greenberg (\emph{algorithm} \ref{alg-greenberg}) each slot is associated with a different probability $p$. Numbering slots $i$ from $1, 2,$ and so on we hence have
 \begin{equation}
-	p_{i}=p(i)=2^{i}
+	p_{i}=p(i)=2^{i}.
 \end{equation}
 
-Given $n$ nodes, the probability to terminate algorithm \ref{alg-greenberg} in slot $i$ is given by:
+Given $n$ nodes, the probability to terminate Greenberg algorithm  in slot $i$ is given by:
 \begin{equation}
-\fg(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \cdot \bigl( q_{0}(p_{i},n)+q_{1}(p_{i},n)\bigr)  
+\fg(n,i)=\prod_{k=1}^{i-1}q_{2+}(p_{k},n) \cdot \bigl( q_{0}(p_{i},n)+q_{1}(p_{i},n)\bigr)  .
 \label{eq:bgstopprobability}
 \end{equation}
 
@@ -1395,8 +1417,7 @@ An overview of the behavior of $\fg(n,i)$ is presented in Appendix in Table \ref
 \end{equation}
 
 Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behaves respectively for small and large sizes.
-We note that, for any fixed $n$, the distribution is well behaved: initially it is monotonically increasing, then a monotonically decreasing part follows.\\
-It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces a shift of 1 slot to the right but the values assumed are the same (see Figure \ref{fig:greenberg-dist-large} ).\\
+We note that, for any fixed $n$, the distribution is well behaved with a bell-like shape. It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces only a shift of the stop probability of one slot to the right (see Figure \ref{fig:greenberg-dist-large} ).\\
 
 
 \begin{figure}[htbp]
@@ -1426,31 +1447,19 @@ It turns out that, for batch sizes larger than 128, the distribution is ``stable
 \label{fig:greenberg-dist-general}
 \end{center}
 \end{figure}
-This is not only true for sizes power of two but for any size. Figure \ref{fig:greenberg-dist-general} shows the case where size $n'$ has color $c$ and size $2n'$ has, again, color $c$ but a different marker: values are the same but shifted right. Interestingly the highest peaks are located in $n=683$ and $n=1366$.
+This is actually even for batch sizes that are not power of 2. Figure \ref{fig:greenberg-dist-general} shows the case.
 
 %\subsection{Base $b$ Greenberg}
 \subsection{Considerations}
-Greenberg method is really good from the point view of running time cost since it is $O\bigl(\log_{2}n\bigr)$ considered the size  $n$ of the problem, but it has also some non negligible drawbacks:
+Greenberg method is really good in terms of running time cost, which is $O\bigl(\log_{2}n\bigr)$. However it has some non negligible drawbacks:
 \begin{enumerate}[\bf a)]
-\item Estimation phase results in a sequence of colliding messages. These provides informations about the cardinality of the batch but do not help to solve an, even small, portion of the eventually following batch resolution problem and can not carry auxiliary infromations. An algorithm that allows to get an estimate while transmitting successfully messages would offer some advantages when the problem is not only the pure estimation but involces also a subsequent resolution.
+\item The estimation phase results in a sequence of colliding messages. These provides information about the cardinality of the batch, but do not help to solve an even small portion of the batch and can not carry auxiliary information. An algorithm that allows to get an estimate while resolving nodes would offer some advantages when the problem is not only the pure batch size estimation, but the batch resolution.
 \item Basic Greenberg does not allow to achieve arbitrary precision in the estimate. In fact, we have that:
 	\begin{enumerate}[\it i.]
-		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without any error.
-		\item the end-up distribution is not sharp enough but it spans over a few slots: this is shown by Figure \ref{fig:greenberg-dist-large}. The Figure shows that, for the examined batch sizes, fixed a problem of size $n=2^{k}\gg 0$, the estimate is distributed as follows:
-		\begin{itemize}
-		\item $\approx 2\times10^{-6} \to 16n$;
-		\item $\approx 3\times10^{-4}  \to 8n$;
-		\item $\approx0.012  \to 4n$;
-		\item $\approx0.129 \to 2n$;
-		\item $\approx0.396 \to n$; $\checkmark$
-		\item $\approx0.368 \to \frac{n}{2}$;
-		\item $\approx0.091\to \frac{n}{4}$;
-		\item $\approx 3\times10^{-3} \to \frac{n}{8}$;
-		\item $\approx 2\times10^{-6} \to \frac{n}{16}$;
-		\end{itemize}
-		We notice, that using Greenberg algorithm, it is difficult to discriminate between $n$ and $\displaystyle \frac{n}{2}$. 
+		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without error.
+		\item the estimate distribution is not sharp enough around the correct value of the batch size but it spans over a few slots: this is shown in Figure \ref{fig:greenberg-dist-large}. We notice that using Greenberg algorithm it is difficult to discriminate between $n$ and $\displaystyle \frac{n}{2}$. 
 	\end{enumerate}
-\item Base $b$ Greenberg could  be used to get a tighter estimate. Anyway, to improve the accuracy, very small $b$ has to be choosen (see Table \ref{table:greenberg-b-phi}) which results in much worse running times: even if theoretically it remains $O(log_{b}n)$ which is a lower order term compared to $n$, in practice estimate time can be no more neglected. In this case, for reasons expressed in {\bf a)}, using Greenberg  could be a bad choice.
+\item Base $b$ Greenberg could  be used to get a tighter estimate. Anyway, to improve the accuracy, very small $b$ has to be choosen (see Table \ref{table:greenberg-b-phi}) which results in much worse running times: even if theoretically it remains $O(log_{b}n)$ which is sublinear in $n$, in practice estimate time can even overwhelm $n$ when $b$ is small.
 \end{enumerate}
 
 \section{EGA BSE}
@@ -1472,13 +1481,13 @@ Examining Figure \ref{fg:event-prob-fixed-p-varying-n}, it is quite immediate to
 \item $q_{0}(p,n) \gg q_{1}(p,n)$ and $q_{0}(p,n) \gg q_{2+}(p,n)$ when $p \ll {\displaystyle\frac{1}{n}}$,
 \item $q_{2+}(p,n) \gg q_{0}(p,n)$ and $q_{2+}(p,n) \gg q_{0}(p,n)$ when $p \gg {\displaystyle\frac{1}{n}}$.
 \end{itemize}
-The collision probability $q_{2+}(p,n)$ is strictly increasing monotonic while the empty slot probability $q_{0}(p,n)$ is strictly decreasing. Repeating a large number $T$ of test transmission with  probability $p$ each, we can simply use the number of collisions or idle slots to uniquely determined the batch size. On the other hand, successful probability $q_{1}(p,n)$ is non-monotonic and hence can not be used to uniquely determine the batch size.\\
+The collision probability $q_{2+}(p,n)$ is strictly monotonic  increasing, while the empty slot probability $q_{0}(p,n)$ is strictly decreasing. Repeating a large number $T$ of transmission with  probability $p$, we can simply use the number of collisions or idle slots to uniquely determined the batch size. On the other hand, successful probability $q_{1}(p,n)$ is non-monotonic and hence can not be used to uniquely determine the batch size.\\
  
 \noindent The proposed technique to refine the estimate is the following.\\
 Running \emph{Basic Greenberg Algorithm} provides a raw estimate and the associated transmission probability $p$. Then we perform $T$ more transmissions and use a \emph{Maximum Likelihood Estimation (MLE)} to refine the estimate.\\ 
  
- Let $T$ be a number of slots of our choice we will use to refine the estimate and let $N_{0}$, $N_{1}$, $N_{2+}$ be random variables which represent the number of time slots with no transmissions, one transmission and collisions respectively.\\
- $N_{0}$, $N_{1}$, $N_{2+}$ are respectively binomial distributions with parameters $B(n,q_{0}(p,n))$, $B(n,q_{1}(p,n))$ and $B(n,q_{2+}(p,n))$. Of course $N_{0}+N_{1}+N_{2+}=T$ and
+ Let $T$ be the number of slots we will use to refine the estimate and let $N_{0}$, $N_{1}$, $N_{2+}$ be random variables which represent the total number of time slots, respectively idle, successful and collided observed after the T additional slots.\\
+ $N_{0}$, $N_{1}$, $N_{2+}$ are respectively binomial distributions with parameters $B(n,q_{0}(p,n))$, $B(n,q_{1}(p,n))$ and $B(n,q_{2+}(p,n))$, respectively. Of course $N_{0}+N_{1}+N_{2+}=T$ and
  \begin{eqnarray*}
 E[N_{0}] &=& Tq_{0}(p,n),\\
 E[N_{1}] &=& Tq_{1}(p,n),\\
@@ -1491,19 +1500,18 @@ f_{T}(i,s,c,p',n')&= \textrm{Pr}(N_{0}=i,N_{1}=s,N_{2+}=c|n=n',p=p')\\
 \nonumber
  &=\textrm{Pr}(N_{0}=i|n=n',p=p')\textrm{Pr}(N_{1}=s,N_{2+}=c|n=n',p=p',i),
 \end{align}
-when we transmit with probability $p'$ and considered batch size is $n'$.\\
-The result of the transmission in each slot can be seen as an experiment with three possible outcomes. This is a more general case of a Bernoulli experiment and can be easily managed using conditional probability as expressed in \eqref{eg:Bettiol-test}. \\
-Let $\mathcal{N}$ be the set of our considered batch sizes, then we can compute
+when we transmit with probability $p'$ and the batch size is $n'$.\\
+Let $\mathcal{N}$ be the set of the target batch sizes. Then, we can define
 \begin{equation}
 MLE(i,s,c,l) \gets \argmax_{\displaystyle{n' \in \mathcal{N}}} \Bigl( f_{T}\bigl(i,s,c,p(l),n')\cdot \fg\bigl(n',l\bigr)\Bigr).
 \label{eq:MLEiscl}
 \end{equation}
-$MLE(i,s,c,l)$ is a $T \times T \times L$ matrix where $L$ is the maximum slot that can be visited during the  \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory. Setting $L= L(n_{max}) = \lceil\log_{2}n_{max}\rceil$ is a good practical choice, where $\displaystyle n_{max}= \mymax_{n' \in \mathcal{N}}{n'}$.\\
+$MLE(i,s,c,l)$ is a $T \times T \times L$ matrix where $L$ is the index of the ``farthest'' slot that can be visited during the  \emph{Basic Greenberg Algorithm}. $L$ depends on the maximum cardinality  $n_{max}$ considered for the problem. Consequently  $L$ must be chosen so not to worse the performance of our estimator (if $n_{max}$ is smaller than the real batch size $n$) and not to waste too much memory.\\
 Hence, our estimate is simply the result of a look-up in the $MLE$ table,
 \begin{equation}
 \hat{n} \longleftarrow MLE(i,s,c,l).
 \end{equation}
-Is it worth to mention that:
+Is it worth mentioning that:
 \begin{itemize}
 \item  For performance tuning, the $MLE$ table can be precomputed before running the estimate algorithm. The computational cost to fill the whole $MLE$ table depends on $T$ and $L$ and, if trivial exhaustive search on $\mathcal{N}$ is performed, also on $|\mathcal{N}|$. A fast way to compute the MLE table is described in Section \ref{sc:GEGA BSE}.
 \item The size of the $MLE$ table does not depend on $|\mathcal{N}|$ but only on $T$ and $L$.
@@ -1526,8 +1534,8 @@ The high level pseudo-code of the algorithm is the following:
 \caption{\algname{EGA $(\mathcal{B},T,\mathcal{N})$}}
 \label{alg-greenberg+MLE}
 \end{algorithm}
-Expected running time in slots follows from Greenberg expected running time and the further used slots. Therefore expected slot costis is $\approx \log_{2}n+T$.\\ 
-We note also that only $MLE(i,s,c,l)$ is involved by the algorithm and not the whole $MLE$ table. Hence, is it possible to choose if pre-compute and store the whole table or compute only $MLE(i,s,c,l)$ on-demand.\\
+Expected running time in slots follows from Greenberg expected running time and the further used slots. Therefore expected slot cost is is $\approx \log_{2}n+T$.\\ 
+We note also that only $MLE(i,s,c,l)$ is involved by the algorithm and not the whole $MLE$ table. Hence, is it possible to choose wheter pre-computing and storing the whole table or computing only $MLE(i,s,c,l)$ on-demand.\\
 Once both the batch size $n$ and the $MLE$ table are fixed, the probability to estimate $\hat{n}$ can be expressed as:
 \begin{equation}
 \textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
@@ -1549,8 +1557,8 @@ E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n).
 \end{comment}
 
 \subsection{Performance}
-Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the allowed estimates are the same of the basic Greenberg algorithm.\\
-Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice how there is only one extremely high peak located in a single slot instead of a peak being distributed between two consecutive slots with almost equal probability. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
+Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the target estimates are the same as for basic Greenberg algorithm.\\
+Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice that there is only one extremely sharp peak located in a single slot, instead of a bell-like shape distributed among consecutive slots. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
 Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varying $T$ for a fixed batch size: increasing $T$ the peak becomes more and more sharp.
 
 \begin{figure}[H]
@@ -1571,25 +1579,25 @@ Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varyi
 
 \section{GEGA BSE}
 \label{sc:GEGA BSE}
-The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not \emph{a-priori} limit the possible estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
+The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a-priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
 \mathcal{N}=\{1,2,3,...\}.
 \end{equation*}
 In this case the algorithm can be interpreted as follows:
 \begin{enumerate}
-\item Find the transmission probability $p$ for which the batch size is about 1 node with very high probability,
+\item Find the transmission probability $p$ for which the multiplicity of the activated set is 1 with very high probability,
 \item Use $T$ consecutive slots (a ``window'') to refine the estimate. The idea is similar to a window based estimate except that a node is allowed to transmit in each slot.
 \end{enumerate}
 
-\noindent Recalling equation \eqref{eq:MLEiscl}, given $i$, $s$, $c$ and $l$, the estimate can be found by solving:
+\noindent Recalling \eqref{eq:MLEiscl}, given $i$, $s$, $c$ and $l$, the estimate can be found by solving:
 \begin{equation}
 \frac{d\Bigl( f_{T}\bigl(i,s,c,p(l),n)\cdot \fg\bigl(n,l\bigr)\Bigr)}{dn}=0,
 \end{equation}
-which is not trivial to solve and involves numerical problems since $\fg(n,l)$ can present very small product terms. Then we solved the problem by investigating \eqref{eq:MLEiscl} using bisection method and taking the smallest integer $n$ for which
+which is not trivial to solve and involves numerical problems since $\fg(n,l)$ can present very small product terms. Then we solved the problem by using bisection method on  \eqref{eq:MLEiscl} and taking the largest integer $n$ for which
 \begin{equation}
-f_{T}\bigl(i,s,c,p(l),n+1)\cdot \fg\bigl(n+1,l\bigr)-f_{T}\bigl(i,s,c,p(l),n)\cdot \fg\bigl(n,l\bigr)\leq0.
+f_{T}\bigl(i,s,c,p(l),n+1)\cdot \fg\bigl(n+1,l\bigr)-f_{T}\bigl(i,s,c,p(l),n)\cdot \fg\bigl(n,l\bigr)\geq0.
 \end{equation}
-As example, the results of this computation when $T=10$ and $l=10$ are presented in Table \ref{tb:GEGA-T10-l10}.
+As an example, the results of this computation when $T=10$ and $l=10$ are presented in Table \ref{tb:GEGA-T10-l10}.
 
 \begin{table}[htbp]
 \centering
@@ -1614,9 +1622,9 @@ As example, the results of this computation when $T=10$ and $l=10$ are presented
 \label{tb:GEGA-T10-l10}
 \end{table}
 
-Looking at the Table \ref{tb:GEGA-T10-l10} emerges that the estimate is always finite. This good propriety  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
+Table \ref{tb:GEGA-T10-l10} reveals that the estimate is always finite. This good propriety  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
 
-The EGA MLE Table can be obtained as sub-case from the GEGA Table considering the largest allowed estimate value lower than and the smallest one larger than the estimate provided by the GEGA algorithm. The EGA estimate will be the one between the two for which the probability in \eqref{eq:MLEiscl} is maximized.\\
+The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from GEGA MLE Table. In fact, once the GEGA MLE Table has been computed,  for each tuple ($i$,$s$,$c$,$l$) providing estimate $n'$, the corresponding EGA estimate can be obtained by considering the closest two EGA target estimates surrounding $n'$ and by taking the best between the two by using \eqref{eq:MLEiscl} as usual.\\
 
 \begin{figure}[thbp]
 \makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
@@ -1626,7 +1634,7 @@ The EGA MLE Table can be obtained as sub-case from the GEGA Table considering th
 \label{fg:GEGA-bias}
 \end{figure}
 
-The estimate provided by GEGA showed to be biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have really small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is quite negligible in practice since the oscillations are too small to affect the estimate and are overwhelmed by the rounding operation.  Following Table \ref{tb:GEGA-average-bias} report the average bias $\phi{T}$ as function of $T$.\\ 
+The estimate provided by GEGA is biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have very small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is negligible in practice since the oscillations are too small to affect the estimate and are hidden by the rounding operation. Table \ref{tb:GEGA-average-bias} reports the average bias $\phi(T)$ as a function of $T$. The results where computed by averaging the bias estimate for batch sizes from 2 to 2000.\\ 
 
 \begin{table}[htdp]
 \centering
@@ -1639,7 +1647,7 @@ $T$ & $\phi(T)$ \\
 30 & 0.0299\\
 \bottomrule
 \end{tabular} 
-\caption[\emph{GEGA}: Average bias]{\emph{GEGA}: Average bias. $\phi(T)$ is simply computed by averaging the bias estimate for batchsizes from 2 to 2000.}
+\caption{\emph{GEGA}: Average bias.}
 \label{tb:GEGA-average-bias}
 \end{table}
 
@@ -1651,26 +1659,26 @@ $T$ & $\phi(T)$ \\
  \label{fg:GEGA-biased-unbiased}
 \end{figure}
 
-Estimate bias can be corrected by considering $\tilde{n}={\displaystyle \frac{\hat{n}}{\phi(T)+1}}$. This, as we shall see, provides higher quality estimate.\\
-To measure the performance of the proposed estimate method, we define the normalized absolute estimate error as
+Estimate bias can be corrected by considering $\tilde{n}={\displaystyle \frac{\hat{n}}{\phi(T)+1}}$. We will see that in this way we get higher quality estimate.\\
+To measure the performance of the proposed estimation method, we define the normalized absolute estimate error as
 \begin{equation}
 e(\hat{n})=\frac{|\hat{n}-n|}{n}.
 \label{GEGA-abs-error}
 \end{equation}
 In the same manner we can define $e(\tilde{n})$. The parameter $T$ is implicitly present in \eqref{GEGA-abs-error}.
-Figure \ref{fg:GEGA-biased-unbiased} shows that the bias corrected estimate performs better than the biased estimate for any batch size and $T$. Furthermore, you can notice that the error is quite independent from  the batch size.  
+Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate performs better than the biased estimate for any batch size and $T$. Furthermore, you can notice that the error is independent of the batch size.  Results presented in Figures  \ref{fg:GEGA-min-T-for-k} and  \ref{fg:GEGA-min-T-for-k-detail} shows that the accuracy in the estimate grows as $T$ grows and it is independent of the batch size when the batch size is not too small (ex.: $n=10$). In fact, for very small batch sizes, the accuracy shows a descending step trend since the  probability distribution is discrete and the adopted algorithm performs rounding operations. 
 \begin{figure}[thbp]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k}% here 20% wider than \textwidth
- \caption{\emph{GEGA}: temp.}
+ \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$}
  \label{fg:GEGA-min-T-for-k}
 \end{figure}
 
 \begin{figure}[thbp]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k-detail}% here 20% wider than \textwidth
- \caption{\emph{GEGA}: temp.}
- \label{fg:GEGA-min-T-for-k}
+ \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$, detailed view}
+ \label{fg:GEGA-min-T-for-k-detail}
 \end{figure}
 \section{Comparison}
 GEGA estimate accuracy can not be dynamically adapted 
