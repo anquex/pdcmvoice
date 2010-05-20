@@ -22,6 +22,7 @@
 %\usepackage{xcolor} va in conflitto con il paccketto color se c'è l'opzione [usenames]
 \usepackage[usenames, dvipsnames]{color} %testo colorato
 \usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage[headings]{fullpage}
 \usepackage{fancybox}
 \usepackage{rotating}
@@ -110,8 +111,9 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
 
-\usetikzlibrary{arrows}
+\usetikzlibrary{arrows} 
 \usetikzlibrary{snakes}
+\usetikzlibrary{plotmarks}
 %\pagestyle{headings} % {headings,plain ,empty} richiamato automaticamente da \usepackage[headings]{fullpage}
 
 %con la classe book+openright lascio una pagina bianca a fine capitolo e dopo il titolo se necessario, con empty page queste pagine non sono numerate e non hanno stile
@@ -1683,16 +1685,20 @@ Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate perf
 \section{Comparison}
 GEGA estimate accuracy can not be dynamically adapted 
 
+\begin{figure}[htbp]
+\centering
+\include{immagini/comparison}
+\end{figure}
 
-\begin{figure}[thbp]
+\begin{figure}[htbp]
 \centering
     \includegraphics[width=0.8\textwidth]{matlab/Comparison/comparison-gega-cidon}% here 20% wider than \textwidth
  \caption{\emph{GEGA vs Cidon}}
 \end{figure}
+
+
 \chapter*{Conclusions}
 \addcontentsline{toc}{chapter}{Conclusions}
-
-
 
 
 
