@@ -51,6 +51,8 @@
 % COMANDO PER PRIMA REVISIONE
 \newcommand{\rev}[1]{\textcolor{Cerulean}{#1}}
 \newcommand{\revv}[1]{{\tt#1}}
+\newcommand{\gega}{\emph{GEGA }}
+\newcommand{\cidon}{\emph{Cidon }}
 
 \captionsetup[lstlisting]{skip=10pt}
 \lstset{ %
@@ -1354,6 +1356,7 @@ Given $n$, let $k \geq1$ identify an interval surrounding $n$ in the following w
 We can study the algorithm behavior by considering as index for the estimate accuracy
 \begin{equation}
 \theta_{k}=P\left(\frac{n}{k}\leq\hat{n}\leq kn\right)
+\label{eq:zanella-bound}
 \end{equation}
 Let $\theta$ be the minimum allowed value for $\theta_{k}$: in other words $\theta$ is the probability we require for constrains \eqref{cidon-accuracy-constrains} to be satisfied.\\
 If we set $\theta=0.99$, we can find the minimum $\pc$, ensuring the estimate to be within interval \eqref{cidon-accuracy-constrains}, by solving the following problem.\\
@@ -1636,6 +1639,7 @@ The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from
 \label{fg:GEGA-bias}
 \end{figure}
 
+\subsection{Performance}
 The estimate provided by GEGA is biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have very small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is negligible in practice since the oscillations are too small to affect the estimate and are hidden by the rounding operation. Table \ref{tb:GEGA-average-bias} reports the average bias $\phi(T)$ as a function of $T$. The results where computed by averaging the bias estimate for batch sizes from 2 to 2000.\\ 
 
 \begin{table}[htdp]
@@ -1682,19 +1686,31 @@ Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate perf
  \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$, detailed view}
  \label{fg:GEGA-min-T-for-k-detail}
 \end{figure}
+\clearpage
 \section{Comparison}
-GEGA estimate accuracy can not be dynamically adapted 
-
+Here we will provide the reader a comparison between the estimates obtained using \emph{Cidon} and \emph{GEGA} algorithms in terms of accuracy and time. In fact, in real life scenarios, we will be interested in getting a ``tight enough'' estimate of the real batch size in a reasonable time. We must always remember that there is a trade-off between the time taken by an explicit estimate phase and the following resolution: the goal is to minimize the total cost.\\ For the comparison we considered the dynamically  adapting versions of the described algorithms:
+\begin{itemize}
+\item in \emph{Cidon} this means that $\pc$ is not \emph{a priori} fixed but, as the resolution goes on, gets updated in accordance to the resolved interval.
+\item in \emph{GEGA} this simply means that $T$ grows as the elapsed time.
+\end{itemize}
+In Figure \ref{fg:comparison} we try to answer the question: ``after time $t$ what is the accuracy of the estimate?''.
 \begin{figure}[htbp]
 \centering
 \include{immagini/comparison}
+\caption{\emph{GEGA vs Cidon}}
+\label{fg:comparison}
 \end{figure}
+We considered the average running time for both the algorithms to provide a meaningful ad fair comparison: in \emph{GEGA} $t\approx\log(n)+T$, in \emph{Cidon} $t\approx n\pc C$.   Figure \ref{fg:comparison} shows the minimum  $k$ for which $\theta_{k}$ expressed in \eqref{eq:zanella-bound} is greater than or equal to 0.99.
+You can notice that the \emph{GEGA} algorithm, since it provides always a finite estimate, gives a bound on the accuracy after just  $\log(n)$ slots: as soon as phase 1 ends. It results faster than \emph{Cidon} in providing the first bound for any batch size. Considering $n=10$ in the figure as a index of the behavior for very small batch sizes, you can see that initially \gega estimate is more accurate than \cidon but for $k$ less than two \cidon takes less time. For larger sizes ($n=100$ and $n=1000$) \gega achieves accuracy $k=2$ in about the half of the time taken by \cidon, and $k=1.5$ saving about $40-45$\% of time.\\
 
+In general we can say that \gega performs great for middle-large batch sizes when we require  $\hat{n}$ to be, with high probability, in the interval $\displaystyle \frac{n}{k}\leq\hat{n}\leq kn$ with $1.5\leq k\leq2$.
+\begin{comment}
 \begin{figure}[htbp]
 \centering
     \includegraphics[width=0.8\textwidth]{matlab/Comparison/comparison-gega-cidon}% here 20% wider than \textwidth
  \caption{\emph{GEGA vs Cidon}}
 \end{figure}
+\end{comment}
 
 
 \chapter*{Conclusions}

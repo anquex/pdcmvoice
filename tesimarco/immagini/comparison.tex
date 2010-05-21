@@ -105,7 +105,8 @@ coordinates{ (9.96578,4.096) (10.9658,4.004) (11.9658,3.328) (12.9658,3.09598) (
 \end{comment}
 
 %\begin{comment}
-\pgfplotsset{every axis/.append style={font=\large, line width=1pt, tick style={line width=0.8pt}}}
+\pgfplotsset{every axis/.append style={
+font=\large, line width=1pt, tick style={line width=0.8pt}}}
 \begin{tikzpicture}
     \begin{axis}[
         xlabel=Elapsed time in slots,
@@ -119,7 +120,7 @@ coordinates{ (9.96578,4.096) (10.9658,4.004) (11.9658,3.328) (12.9658,3.09598) (
 	xtick={0,10,20,30,40,50,60,70,80,90,100},
 	ytick={0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8},
 	yticklabels={1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7},
-	xlabel={Elapsed time in slots},
+	xlabel={$t$ elapsed time in slots},
 	ylabel={$k$ accuracy},
 	xmajorgrids,
 	ymajorgrids,
