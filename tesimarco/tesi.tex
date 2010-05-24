@@ -335,14 +335,13 @@ In this paper we present a novel approach to the problem of collision resolution
 \end{comment}
 
 \section{Document structure}
-\textcolor{red}{ANCORA PROVVISORIO}\\
 This master thesis is organized as follows:
 \begin{itemize}
 \item in Chapter \ref{ch:Batch Resolution} we will introduce the \emph{Batch Resolution Problem} since it is the main motivation to further study the \emph{Batch Size Estimate Problem}. We will deal about algorithms known in literature describing in details basic ones and providing an overview of the most recent and advanced ones. In particular we will concentrate on \emph{binary tree algorithms}.
-\item Chapter \ref{ch:Batch Size Estimate Techniques}  describes a few estimate techniques, using different approaches, in details.  Pseudo code for the algorithms is provided  and also mathematical analysis when possible. 
 
-\item in Chapter \ref{ch:Performance Analysis} we will further analyze algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide data for practical evaluation. We will also introduce a modified version of \emph{Greenberg} algorithm to achieve better estimate quality.
-\item in Chapter \ref{ch:Comparison} we will try to compare the different estimate algorithms and we will conclude our dissertation. \textcolor{red}{Qui fondamentalmente vorrei confrontare greenberg modificato con un approccio a finestra come Zanella o Lucent. (Finestra-> accuratezza, greenberg -> range opertativo)  a parità di slot }\\
+\item Chapter \ref{ch:Batch Size Estimate Techniques}  introduces to the the \emph{Batch Size Estimate Problem}.  We describe and analyze some noteworthy batch size estimate algorithm, both for slotted than framed scenarios. 
+
+\item Chapter \ref{ch:Performance Analysis} is the core of the work. We will analytically and numerically analyze the algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide a comprehensive evaluation of the tecniques. Hence, we will propose and analyze a new algorithm, namely \emph{GEGA}, with the goal to provide a fast, but good ``enough'', estimate as quickly as possible. Finally, we will compare the analyzed algorithms.
 \end{itemize}
 
  
@@ -1257,16 +1256,14 @@ P(0,0,L)=\ p_{2+}(n)^{L} = \left[1-\left(1-\frac{1}{L}\right)^{n}-\frac{n}{L}\le
 \chapter{Estimate Performance Analysis}
 \label{ch:Performance Analysis}
 
-In the previous Chapter we presented some noteworthy  \emph{batch size estimation  (BSE) algorithms}.\\ Here we present a performance analysis of each estimation scheme.\\
-We will analyze \emph{Cidon} to show which is the minimum amount of nodes to be resolved for the estimate to be within user-required constrains with high probability.\\  
-We will analyze the behavior of \emph{Greenberg} when varying the batch size.\\
-Finally, we propose and analyze a modification of \emph{Greenberg}, named \emph{[Generalized] Enhached Greenberg Algorithm ([G]EGA)}, which tries to refine the raw estimate provided by the original algorithm.
+In this Chapter, we present a performance analysis of some of the already mentioned noteworthy  \emph{batch size estimation  (BSE) algorithms}. The overview will obviously consider different batch sizes, algorithm parameters, time required and accuracy of the estimate. We want to support reader in choosing the best estimate technique suitable for its needs. \\
+First we will provide a detailed analytical analysis of  \emph{Cidon} algorithm and then, supported by numerical computation, we will derive its features in term of time and accuracy.\\  
+We will then discuss the behavior of \emph{Greenberg} with its pros and cons and try to overcome its limitations by introducing a slight modification of the original algorithm to achieve better estimate. \emph{Enhached Greenberg Algorithm (EGA)} is the middle-step in the development of our proposed estimate algorithm: it improves the estimate in terms of ``choosing the best power of 2'', maintaining the same target estimates allowed by basic Greenberg.  
+Then, we will describe and analyze the \emph{Generalized Enhached Greenberg Algorithm (GEGA)}, which combines Greenberg with a further test and performs \emph{maximum likelihood estimation} to determine the ``best'' estimate. Finally, the comparison between \emph{GEGA} and \emph{Cidon} will lead to the conclusions.
 \section{Cidon BSE}
-
-
-In the original paper \cite{cidon} there is no detailed analysis of the behavior of the estimate algorithm, but it is only mentioned that as $n$ grows the estimator becomes more accurate.\\
+The original paper \cite{cidon} describes the estimate technique but does not characterize it in details. The interest is focused on other aspects and, therefore, no detailed analysis of the behavior of the estimate algorithm is presented: it is only mentioned that as $n$ grows the estimator becomes more accurate. Hence, in this section we will provide a complete analysis of the estimate algorithm.\\
     
-Following from Section \ref{se:cidon}, let $j$ denote the number of nodes in $\mathcal{E}$ and $\pc$ be the expected fraction of nodes to be resolved in Cidon algorithm  Phase 1. $\pc$ is fixed \emph{a priori} since it is an input parameter of the algorithm and, therefore, given a batch of size $n$, $j$ is a binomially distributed random variable with parameters $n$ and $\pc$. Hence, we have the following:
+Following from Section \ref{se:cidon}, let $j$ denote the number of nodes in $\mathcal{E}$ and $\pc$ be the expected fraction of nodes to be resolved in Cidon algorithm  Phase 1. Parameter $\pc$ can be considered fixed \emph{a priori} since it is an input of the algorithm and, therefore, given a batch of size $n$, $j$ is a binomially distributed random variable with parameters $n$ and $\pc$. Hence, we have the following:
 \begin{equation}
 E[j|n,\pc]=n\pc ,
 \label{cidon-e-estimate}
@@ -1296,7 +1293,7 @@ which shows that using this estimation method we can trade off the accuracy with
 \begin{equation}
 \textrm{var}(\hat{n}|n)  =  \frac{n}{\pc}-n
 \end{equation}
-which reveals that as the number of resolved terminals increases, increasing the value of $p$ ,the estimation $\hat{n}$ becomes more accurate.
+which reveals that as the number of resolved terminals (and therefore $\pc$) increases the estimate $\hat{n}$ becomes more accurate.
 %%%%%%%%%%%%%%%%%%%%%
 \begin{comment}
 \begin{equation}
@@ -1320,8 +1317,8 @@ which reveals that as the number of resolved terminals increases, increasing the
 
 Figure \ref{fig:cidon-normalized-variance} shows that the variance is strict monotonically decreasing in $\pc$. Furthermore, you can notice that, for $\pc$ smaller than 0.1, a small increment in $\pc$ produces a large decrease in the normalized variance which reflects in a large estimate accuracy improvement. Hence, considering the tread-off between estimate overhead and resolution efficiency, solving up to $\frac{1}{10}$ of the initial batch in the estimate phase is a good practical choice.\\
 
-Anyway it is difficult to establish in what measure an estimate can be considered accurate. The idea we adopt is to require the estimate to be ``near'' the real batch size with very high probability. 
-Given $n$, let $k \geq1$ identify an interval surrounding $n$ in the following way: 
+However, it is difficult to establish in what measure an estimate can be considered accurate. The idea we adopt is to require the estimate to be ``near'' the real batch size with very high probability. 
+Given the real batch size $n$, let $k \geq1$ identify an interval surrounding $n$ in the following way: 
 \begin{equation}
 \frac{n}{k}\leq\hat{n}\leq kn
 \label{cidon-accuracy-constrains}
@@ -1340,7 +1337,7 @@ P\left(\frac{n}{k}\leq \hat{n} \leq kn \big| k,n\right)=& P\left(\frac{n}{k}\leq
 \end{split}
 \label{cidon-accuracy-bounds}
 \end{equation}
-Since $j$ assumes positive integer values we introduce rounding operations. In particular, rounding effect is non neglectible when $n\leq 200$.  \\
+Since $j$ assumes positive integer values, we introduce rounding operations. In particular, rounding effect is non neglectible when $n\leq 200$.  \\
 \begin{equation}
 f(k,n,\pc) = P\left(\left\lceil \frac{n\pc}{k}\right\rceil\leq j \leq \left\lfloor kn\pc\right\rfloor \big| k,n,\pc\right)\geq \theta
 \end{equation}
@@ -1357,7 +1354,7 @@ f(k,n,\pc) = \theta
 \end{center}
 \end{figure}
 
-Figure \ref{cidon-k-p-minimum} plots the minimum fraction $\pc$ of the batch to be resolved as function of $k$ when $\theta=0.99$. As you could expect, once the batch size is fixed, the minimum $\pc$ is  monotonically decreasing in $k$. In the same manner, when $k$ is fixed, the minimum fraction of the batch to resolve to achieve the same desired accuracy is lower for larger batch sizes. In Figure \ref{cidon-k-L-minimum} we report the expected time (in slots) required by \emph{Cidon} to achieve the desired accuracy in the estimate.  We notice that initially, when $k$ is larger than 1.5, the time required to achieve a given accuracy is very similar for each considered batch size. For tighter accuracies the time required depends largely on the size of the problem.\\ Furthermore, the time required by the largest considered batch size to achieve a given accuracy provides an upper bound for smaller batch sizes: in the same amount of time smaller batch sizes are expected to achieve higher accuracy.\\
+Figure \ref{cidon-k-p-minimum} plots the minimum fraction $\pc$ of the batch to be resolved as function of $k$ when $\theta=0.99$. As you could expect, once the batch size is fixed, the minimum $\pc$ is  monotonically decreasing in $k$. In the same manner, when $k$ is fixed, the minimum fraction of the batch to resolve to achieve the desired accuracy is lower for larger batch sizes. In Figure \ref{cidon-k-L-minimum} we report the expected time (in slots) required by \emph{Cidon} to achieve the desired accuracy in the estimate.  We notice that initially, when $k$ is larger than 1.5, the time required to achieve a given accuracy is very similar for each considered batch size. For tighter accuracies the time required depends largely on the size of the problem.\\ Furthermore, the time required by the largest considered batch size to achieve a given accuracy provides an upper bound for smaller batch sizes: in the same amount of time smaller batch sizes are expected to achieve higher accuracy.\\
 
 \begin{figure}[htb!]
 \begin{center}
@@ -1389,16 +1386,7 @@ Given $n$ nodes, the probability to terminate Greenberg algorithm  in slot $i$ i
 \label{eq:bgstopprobability}
 \end{equation}
 
-An overview of the behavior of $\fg(n,i)$ is presented in Appendix in Table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\ Equation \eqref{eq:bgstopprobability} defines the probability for biased estimate $\hat{n}$ to be equal to $2^{i}$ when the batch size is $n$. 
-\begin{equation}
-\textrm{Pr}\left( \hat{n}=2^{i}|n\right)=\fg(n,i)  
-\end{equation}
-
-Following Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behaves respectively for small and large sizes.
-We note that, for any fixed $n$, the distribution is well behaved with a bell-like shape. It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces only a shift of the stop probability of one slot to the right (see Figure \ref{fig:greenberg-dist-large} ).\\
-
-
-\begin{figure}[htbp]
+\begin{figure}[h]
 \begin{center}
 %\epsfig{file=matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity.eps,scale=0.7}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-uniformity-init}
@@ -1416,12 +1404,19 @@ We note that, for any fixed $n$, the distribution is well behaved with a bell-li
 \label{fig:greenberg-dist-large}
 \end{center}
 \end{figure}
+An overview of the behavior of $\fg(n,i)$ is presented in Appendix in Table \ref{basic-greenberg-stop-probabilities} on page \pageref{basic-greenberg-stop-probabilities}.\\ Equation \eqref{eq:bgstopprobability} defines the probability for biased estimate $\hat{n}$ to be equal to $2^{i}$ when the batch size is $n$. 
+\begin{equation}
+\textrm{Pr}\left( \hat{n}=2^{i}|n\right)=\fg(n,i)  
+\end{equation}
+
+Figures \ref{fig:greenberg-dist-small} and \ref{fig:greenberg-dist-large} show how the distribution behaves respectively for small and large sizes.
+We note that, for any fixed $n$, the distribution is well behaved with a bell-like shape. It turns out that, for batch sizes larger than 128, the distribution is ``stable'' in the sense that doubling the number of nodes produces only a shift of the stop probability of one slot to the right (see Figure \ref{fig:greenberg-dist-large} ).\\
 
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \begin{center}
-\includegraphics[width=0.9\textwidth]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-intermediate-values}
-\caption{\emph{Basic Greenberg}:  General sizes distribution.}
+\includegraphics[width=0.85\textwidth]{matlab/Greenberg_stop_prob/greenberg-stop-distribution-intermediate-values}
+\caption{\emph{Basic Greenberg}:  General batch sizes distribution.}
 \label{fig:greenberg-dist-general}
 \end{center}
 \end{figure}
@@ -1435,12 +1430,13 @@ Greenberg method is really good in terms of running time cost, which is $O\bigl(
 \item Basic Greenberg does not allow to achieve arbitrary precision in the estimate. In fact, we have that:
 	\begin{enumerate}[\it i.]
 		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without error.
-		\item the estimate distribution is not sharp enough around the correct value of the batch size but it spans over a few slots: this is shown in Figure \ref{fig:greenberg-dist-large}. We notice that using Greenberg algorithm it is difficult to discriminate between $n$ and $\displaystyle \frac{n}{2}$. 
+		\item the estimate distribution is not sharp enough around the correct value of the batch size but it spans over a few slots: this is shown in Figure \ref{fig:greenberg-dist-large}. We notice that using Greenberg algorithm it is difficult to discriminate between $n$ and $\frac{n}{2}$. 
 	\end{enumerate}
-\item Base $b$ Greenberg could  be used to get a tighter estimate. Anyway, to improve the accuracy, very small $b$ has to be choosen (see Table \ref{table:greenberg-b-phi}) which results in much worse running times: even if theoretically it remains $O(log_{b}n)$ which is sublinear in $n$, in practice estimate time can even overwhelm $n$ when $b$ is small.
+\item Base $b$ Greenberg could  be used to get a tighter estimate. Anyway, to improve the accuracy, very small $b$ has to be choosen which results in much worse running times (see Table \ref{table:greenberg-b-phi}): even if theoretically it remains $O(log_{b}n)$ which is sublinear in $n$, in practice estimate time can even overwhelm $n$ when $b$ is small.
 \end{enumerate}
 
 \section{EGA BSE}
+The \emph{Enhached Greenberg Algorithm (EGA)} is a first improvement over the Basic Greenberg algorithm. \\
 
 Let $n$ be a batch size and $p$ be a given transmission probability. As expressed by \eqref{eq:greenberg-prob-empty} \eqref{eq:greenberg-prob-succ} \eqref{eq:greenberg-prob-coll}, varying $n$ while $p$ is fixed results in very different probabilities for \emph{idle}, \emph{successful} and \emph{collided} slots.
 
@@ -1464,8 +1460,8 @@ The collision probability $q_{2+}(p,n)$ is strictly monotonic  increasing, while
 \noindent The proposed technique to refine the estimate is the following.\\
 Running \emph{Basic Greenberg Algorithm} provides a raw estimate and the associated transmission probability $p$. Then we perform $T$ more transmissions and use a \emph{Maximum Likelihood Estimation (MLE)} to refine the estimate.\\ 
  
- Let $T$ be the number of slots we will use to refine the estimate and let $N_{0}$, $N_{1}$, $N_{2+}$ be random variables which represent the total number of time slots, respectively idle, successful and collided observed after the T additional slots.\\
- $N_{0}$, $N_{1}$, $N_{2+}$ are respectively binomial distributions with parameters $B(n,q_{0}(p,n))$, $B(n,q_{1}(p,n))$ and $B(n,q_{2+}(p,n))$, respectively. Of course $N_{0}+N_{1}+N_{2+}=T$ and
+ Let $T$ be the number of slots we will use to refine the estimate and let $N_{0}$, $N_{1}$, $N_{2+}$ be random variables which represent the total number of idle, successful and collided slots, respectively, observed after the T additional slots.\\
+ $N_{0}$, $N_{1}$, $N_{2+}$ are binomial distributions with parameters $B(n,q_{0}(p,n))$, $B(n,q_{1}(p,n))$ and $B(n,q_{2+}(p,n))$, respectively. Of course $N_{0}+N_{1}+N_{2+}=T$ and
  \begin{eqnarray*}
 E[N_{0}] &=& Tq_{0}(p,n),\\
 E[N_{1}] &=& Tq_{1}(p,n),\\
@@ -1513,10 +1509,10 @@ The high level pseudo-code of the algorithm is the following:
 \label{alg-greenberg+MLE}
 \end{algorithm}
 Expected running time in slots follows from Greenberg expected running time and the further used slots. Therefore expected slot cost is is $\approx \log_{2}n+T$.\\ 
-We note also that only $MLE(i,s,c,l)$ is involved by the algorithm and not the whole $MLE$ table. Hence, is it possible to choose wheter pre-computing and storing the whole table or computing only $MLE(i,s,c,l)$ on-demand.\\
+We note also that only $MLE(i,s,c,l)$ is involved by the algorithm and not the whole $MLE$ table. Hence, is it possible to choose wheter precomputing and storing the whole table or computing only $MLE(i,s,c,l)$ on-demand.\\
 Once both the batch size $n$ and the $MLE$ table are fixed, the probability to estimate $\hat{n}$ can be expressed as:
 \begin{equation}
-\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}f(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
+\textrm{Pr}(\hat{n}=n'|n)=\sum_{l}\fg(n,l)\sum_{i}\sum_{s} \hat{X}_{MLE(i,s,c,l)}(n') \cdot f_{T}\big(i,s,c,p(l),n\bigl),
 \end{equation}
  where  $\hat{X}_{MLE(i,s,c,l)}(n')=1$ iff $MLE(i,s,c,l)=n'$,  $\hat{X}_{MLE(i,s,c,l)}(n')=0$ otherwise. \\
 Hence the expected value of the estimate given $n$ can be trivially computed as follows:
@@ -1535,11 +1531,11 @@ E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n).
 \end{comment}
 
 \subsection{Performance}
-Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the target estimates are the same as for basic Greenberg algorithm.\\
+Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the target estimates are the same as for \emph{basic Greenberg algorithm}.\\
 Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice that there is only one extremely sharp peak located in a single slot, instead of a bell-like shape distributed among consecutive slots. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
 Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varying $T$ for a fixed batch size: increasing $T$ the peak becomes more and more sharp.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T20}
 \caption{\emph{EGA}:  Large $2^{k}$ sizes distribution.}
@@ -1547,17 +1543,17 @@ Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varyi
 \end{center}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-fixed-n-varying-T}
-\caption[\emph{EGA}: Estimate distribution when varying $T$.]{\emph{EGA} estimate distribution when varying $T$. Plot refers to $n=1024$.}
+\caption[\emph{EGA}: Estimate distribution when varying $T$.]{\emph{EGA}: Estimate distribution when varying $T$. Plot refers to $n=1024$.}
 \label{fg:EGA-peaks-fixed-n-varing-T}
 \end{center}
 \end{figure}
-
+\clearpage
 \section{GEGA BSE}
 \label{sc:GEGA BSE}
-The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a-priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
+The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
 \mathcal{N}=\{1,2,3,...\}.
 \end{equation*}
@@ -1600,11 +1596,11 @@ As an example, the results of this computation when $T=10$ and $l=10$ are presen
 \label{tb:GEGA-T10-l10}
 \end{table}
 
-Table \ref{tb:GEGA-T10-l10} reveals that the estimate is always finite. This good propriety  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
+Table \ref{tb:GEGA-T10-l10} reveals that the estimate is always finite. This good feature  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
 
 The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from GEGA MLE Table. In fact, once the GEGA MLE Table has been computed,  for each tuple ($i$,$s$,$c$,$l$) providing estimate $n'$, the corresponding EGA estimate can be obtained by considering the closest two EGA target estimates surrounding $n'$ and by taking the best between the two by using \eqref{eq:MLEiscl} as usual.\\
 
-\begin{figure}[thbp]
+\begin{figure}[H]
 \makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
   \includegraphics[width=1.2\textwidth]{matlab/GEGA/GEGA-bias-varying-T}% here 20% wider than \textwidth
  }
@@ -1630,7 +1626,7 @@ $T$ & $\phi(T)$ \\
 \label{tb:GEGA-average-bias}
 \end{table}
 
-\begin{figure}[thbp]
+\begin{figure}[h]
 \makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
     \includegraphics[width=1.2\textwidth]{matlab/GEGA/GEGA-bias-unbias-absolute-normalized-error}% here 20% wider than \textwidth
  }
@@ -1645,45 +1641,50 @@ e(\hat{n})=\frac{|\hat{n}-n|}{n}.
 \label{GEGA-abs-error}
 \end{equation}
 In the same manner we can define $e(\tilde{n})$. The parameter $T$ is implicitly present in \eqref{GEGA-abs-error}.
-Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate performs better than the biased estimate for any batch size and $T$. Furthermore, you can notice that the error is independent of the batch size.  Results presented in Figures  \ref{fg:GEGA-min-T-for-k} and  \ref{fg:GEGA-min-T-for-k-detail} shows that the accuracy in the estimate grows as $T$ grows and it is independent of the batch size when the batch size is not too small (ex.: $n=10$). In fact, for very small batch sizes, the accuracy shows a descending step trend since the  probability distribution is discrete and the adopted algorithm performs rounding operations. 
-\begin{figure}[thbp]
+Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate performs better than the biased estimate for any batch size and $T$. Furthermore, you can notice that the error is independent of the batch size.  
+\begin{figure}[H]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k}% here 20% wider than \textwidth
  \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$}
  \label{fg:GEGA-min-T-for-k}
 \end{figure}
 
-\begin{figure}[thbp]
+\begin{figure}[H]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k-detail}% here 20% wider than \textwidth
  \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$, detailed view}
  \label{fg:GEGA-min-T-for-k-detail}
 \end{figure}
-\clearpage
+Results presented in Figures  \ref{fg:GEGA-min-T-for-k} and  \ref{fg:GEGA-min-T-for-k-detail} show that the accuracy in the estimate grows as $T$ increases and it is independent of the batch size when the batch size is not too small (ex.: $n=10$). In fact, for very small batch sizes, the accuracy shows a descending step trend since the  probability distribution is discrete and the adopted algorithm performs rounding operations. 
+
+%\clearpage
 \section{Comparison}
 Here we will provide the reader a comparison between the estimates obtained using \emph{Cidon} and \emph{GEGA} algorithms in terms of accuracy and time. In fact, in real life scenarios, we will be interested in getting a ``tight enough'' estimate of the real batch size in a reasonable time. We must always remember that there is a trade-off between the time taken by an explicit estimate phase and the following resolution: the goal is to minimize the total cost.\\ For the comparison we considered the dynamically  adapting versions of the described algorithms:
 \begin{itemize}
 \item in \emph{Cidon} this means that $\pc$ is not \emph{a priori} fixed but, as the resolution goes on, gets updated in accordance to the resolved interval.
 \item in \emph{GEGA} this simply means that $T$ grows as the elapsed time.
 \end{itemize}
-In Figure \ref{fg:comparison} we try to answer the question: ``after time $t$ what is the accuracy of the estimate?''.
-\begin{figure}[htbp]
+In Figure \ref{fg:comparison} we try to answer the question: ``elapsed time $t$, what is the accuracy of the estimate?''.
+\begin{figure}[h]
 \centering
 \include{immagini/comparison}
 \caption{\emph{GEGA vs Cidon}: Accuracy as function of elapsed time}
 \label{fg:comparison}
 \end{figure}
-We considered the average running time for both the algorithms to provide a meaningful ad fair comparison: in \emph{GEGA} $t\approx\log(n)+T$, in \emph{Cidon} $t\approx n\pc C$.   Figure \ref{fg:comparison} shows the minimum  $k$ for which $\theta_{k}$ in \eqref{eq:zanella-bound} is greater than or equal to 0.99.
-You can notice that the \emph{GEGA} algorithm, since it provides always a finite estimate, gives a bound on the accuracy after just  $\log(n)$ slots: as soon as phase 1 ends. It results faster than \emph{Cidon} in providing the first bound for any batch size. Considering $n=10$ in the figure as a index of the behavior for very small batch sizes, you can see that initially \gega estimate is more accurate than \cidon but for $k$ less than two \cidon takes less time. For larger sizes ($n=100$ and $n=1000$) \gega achieves accuracy $k=2$ in about the half of the time taken by \cidon, and $k=1.5$ saving about $40-45$\% of time.\\
+We considered the average running time for both the algorithms to provide a meaningful and as fair as possible comparison: in \emph{GEGA} $t\approx\log(n)+T$, in \emph{Cidon} $t\approx n\pc C$.   Figure \ref{fg:comparison} shows the minimum  $k$ for which $\theta_{k}$ in \eqref{eq:zanella-bound} is greater than or equal to 0.99.
+You can notice that the \emph{GEGA} algorithm, since it provides always a finite estimate, gives a bound on the accuracy after just  $\log(n)$ slots: as soon as phase 1 ends. Therefore, it results faster than \emph{Cidon} in providing the first bound for any batch size. Considering $n=10$ in the figure as an index of the behavior for very small batch sizes, you can see that initially \gega estimate is more accurate than \cidon but later, for $k$ smaller than two, \cidon takes less time. For larger sizes ($n=100$ and $n=1000$) \gega achieves accuracy $k=2$ in about the half of the time taken by \cidon, and $k=1.5$ saving about $40-45$\% of time.\\
 
-In general, we can say that \gega performs great for middle-large batch sizes when we require  $\hat{n}$ to be, with high probability, in the interval $\displaystyle \frac{n}{k}\leq\hat{n}\leq kn$ with $1.5\leq k\leq2$.
+
 \begin{comment}
-\begin{figure}[htbp]
+\begin{figure}[h]
 \centering
     \includegraphics[width=0.8\textwidth]{matlab/Comparison/comparison-gega-cidon}% here 20% wider than \textwidth
  \caption{\emph{GEGA vs Cidon}}
 \end{figure}
 \end{comment}
+
+In general, we can say that \gega performs great for middle-large batch sizes when we require  $\hat{n}$ to be, with high probability, in the interval $\displaystyle \frac{n}{k}\leq\hat{n}\leq kn$ with $1.5\leq k\leq2$.
+
 
 
 \chapter*{Conclusions}
