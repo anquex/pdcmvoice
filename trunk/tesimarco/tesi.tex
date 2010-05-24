@@ -204,7 +204,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \null\vspace{\stretch{1}}
 
 %% DEDICATION
-%\begin{comment}
+\begin{comment}
 
 \frontmatter
 \cleardoublepage
@@ -233,7 +233,7 @@ Che fantastica storia è la vita.  ''\\}
 \vspace{\stretch{3}}\null
 \end{flushright}
 
-%\end{comment}
+\end{comment}
 %ABSTRACT
 \begin{abstract}
 This thesis
@@ -341,14 +341,14 @@ This master thesis is organized as follows:
 
 \item Chapter \ref{ch:Batch Size Estimate Techniques}  introduces to the the \emph{Batch Size Estimate Problem}.  We describe and analyze some noteworthy batch size estimate algorithm, both for slotted than framed scenarios. 
 
-\item Chapter \ref{ch:Performance Analysis} is the core of the work. We will analytically and numerically analyze the algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide a comprehensive evaluation of the tecniques. Hence, we will propose and analyze a new algorithm, namely \emph{GEGA}, with the goal to provide a fast, but good ``enough'', estimate as quickly as possible. Finally, we will compare the analyzed algorithms.
+\item Chapter \ref{ch:Performance Analysis} is the core of the work. We will analytically and numerically analyze the algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide a comprehensive evaluation of the tecniques. Hence, we will propose and analyze a new algorithm, namely \emph{GEGA}, with the goal to provide a fast, but good ``enough'', estimate as quickly as possible. Finally, we will compare the described algorithms.
 \end{itemize}
 
  
 
 \chapter{Batch Resolution}
 \label{ch:Batch Resolution}
-Pure-ALOHA was the very first random-access protocol ever developed. It is trivially simple:
+Pure-ALOHA was the very first random-access protocol ever developed. It is as simple as possible:
 \begin{itemize}
 \item If you have data to send, send the data immediatly
 \item If the message collides with another transmission, try resending "later"
@@ -1258,8 +1258,8 @@ P(0,0,L)=\ p_{2+}(n)^{L} = \left[1-\left(1-\frac{1}{L}\right)^{n}-\frac{n}{L}\le
 
 In this Chapter, we present a performance analysis of some of the already mentioned noteworthy  \emph{batch size estimation  (BSE) algorithms}. The overview will obviously consider different batch sizes, algorithm parameters, time required and accuracy of the estimate. We want to support reader in choosing the best estimate technique suitable for its needs. \\
 First we will provide a detailed analytical analysis of  \emph{Cidon} algorithm and then, supported by numerical computation, we will derive its features in term of time and accuracy.\\  
-We will then discuss the behavior of \emph{Greenberg} with its pros and cons and try to overcome its limitations by introducing a slight modification of the original algorithm to achieve better estimate. \emph{Enhached Greenberg Algorithm (EGA)} is the middle-step in the development of our proposed estimate algorithm: it improves the estimate in terms of ``choosing the best power of 2'', maintaining the same target estimates allowed by basic Greenberg.  
-Then, we will describe and analyze the \emph{Generalized Enhached Greenberg Algorithm (GEGA)}, which combines Greenberg with a further test and performs \emph{maximum likelihood estimation} to determine the ``best'' estimate. Finally, the comparison between \emph{GEGA} and \emph{Cidon} will lead to the conclusions.
+We will then discuss the behavior of \emph{Greenberg} with its pros and cons and try to overcome its limitations by introducing a slight modification of the original algorithm to achieve better estimate. \emph{Enhanced Greenberg Algorithm (EGA)} is the middle-step in the development of our proposed estimate algorithm: it improves the estimate in terms of ``choosing the best power of 2'', maintaining the same target estimates allowed by basic Greenberg.  
+Then, we will describe and analyze the \emph{Generalized Enhanced Greenberg Algorithm (GEGA)}, which combines Greenberg with a further test and performs a \emph{maximum likelihood estimation} to determine the ``best'' estimate. Finally, the comparison between \emph{GEGA} and \emph{Cidon} will lead to the conclusions.
 \section{Cidon BSE}
 The original paper \cite{cidon} describes the estimate technique but does not characterize it in details. The interest is focused on other aspects and, therefore, no detailed analysis of the behavior of the estimate algorithm is presented: it is only mentioned that as $n$ grows the estimator becomes more accurate. Hence, in this section we will provide a complete analysis of the estimate algorithm.\\
     
@@ -1553,7 +1553,7 @@ Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varyi
 \clearpage
 \section{GEGA BSE}
 \label{sc:GEGA BSE}
-The  \emph{Generalized Enhanched Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
+The  \emph{Generalized Enhanced Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
 \begin{equation*}
 \mathcal{N}=\{1,2,3,...\}.
 \end{equation*}
