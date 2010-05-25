@@ -198,9 +198,8 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \thispagestyle{empty}
 \clearpage
 \null\vspace{\stretch{20}}
-\begin{center}
-{\large Last Update: \today,  \ \currenttime}
-\end{center}
+{\flushleft
+{\large Last Update: \today,  \ \currenttime}}
 \null\vspace{\stretch{1}}
 
 %% DEDICATION
@@ -236,12 +235,14 @@ Che fantastica storia è la vita.  ''\\}
 \end{comment}
 %ABSTRACT
 \begin{abstract}
-This thesis
+In this work we analyze the main \emph{batch resolution algorithms}. We particularly focus on the \emph{tree-based class} to underline how their efficiency depends on the batch size. In fact, batch size is a critical parameter when using smart resolution strategies that take advantage this information to improve resolution efficiency. The dissertation will continue with the analysis of noteworthy techniques available in literature for the \emph{batch size estimate}: in fact, original papers pay attention on the resolution process and leave the  estimate problem in the background.
+Finally we propose and analyze \emph{GEGA}, an estimate algorithm particularly good in terms of estimate accuracy  over time taken by the estimate process.
 \end{abstract}
 \selectlanguage{italian}
 \begin{abstract}
 \begin{singlespace}
-In questo lavoro sono stati analizzati i principali algoritmi per la risoluzione di insiemi di conflitto. In particolare sono stati discussi gli algoritmi ad albero evidenziando come la loro efficacia dipenda dalla taglia del problema. Si è messo pertanto in risalto come la conoscenza della cardinalità dell'insieme di collisione sia critica al fine di  risolvere il problema in maniera efficiente. Sono quindi state presentante e di seguito analizzate le tecniche note in letteratura per stimare la cardinalità di insiemi di conflitto. In particolar modo i documenti originali non presentavano un'analisi adeguata del loro comportamento in quanto l'attenzione era rivolta al processo di risoluzione dei nodi e non direttamente alla fase di stima. Infine è stato proposto un'approccio al problema che permette di ottenere una buona stima iniziale dell'insieme. L'algoritmo presentato risulta particolarmente valido in termini di accuratezza rispetto al tempo impiegato e permette di ottenere sempre una stima finita del numero di nodi vicina alla reale cardinalità dell'insieme esaminato.
+In questo lavoro sono stati analizzati i principali algoritmi per la risoluzione di insiemi di conflitto. In particolare ci si è concentrati  sugli algoritmi ad albero evidenziando come la loro efficacia dipenda dalla taglia del problema. 
+La cardinalità dell'insieme di collisione è infatti un parametro critico se si desidera utilizzare strategie ottimizzate per risolvere più efficientemente i nodi. A tal fine sono, in primo luogo, state analizzate le tecniche note in letteratura per la stima  della cardinalità di insiemi di conflitto: infatti i paper originali non presentavano un'analisi adeguata del loro comportamento poiché l'attenzione era rivolta al processo di risoluzione dei nodi e non direttamente alla fase di stima.  Nella parte finale del lavoro, al fine di ottenere una stima accurata ``quanto basta'' per finalità operative, viene proposto \emph{GEGA}. L'algoritmo presentato è particolarmente valido in termini di accuratezza rispetto al tempo impiegato e permette di ottenere sempre una stima finita del numero di nodi sufficientemente vicina alla reale cardinalità dell'insieme esaminato.
 \end{singlespace}
 \end{abstract}
 \selectlanguage{english}
@@ -702,7 +703,6 @@ Consequently, using CMBT is a good idea when the cardinality of the batch to sol
 
 \subsection{\emph{m} Groups Tree Resolution}
 \label{se:mgroups}
-\marginpar{NUOVA}
 
 More advanced algorithms for batch resolution, such as those presented in \cite{cidon} and \cite{greenberg87}, share a common idea: divide the initial batch into $m$ groups. We will not deal here about the details of the algorithms and the different approaches  they use to choose $m$. Instead we will concentrate on the common part of these algorithms: divide a batch of size $n$ into $m$ groups and apply a BRA to each group.\\
 Given $m$ groups, the probability to have exactly $i$ among $n$ nodes in a group is given by
@@ -1315,6 +1315,7 @@ which reveals that as the number of resolved terminals (and therefore $\pc$) inc
 \end{center}
 \end{figure}
 
+\subsection{Performance}
 Figure \ref{fig:cidon-normalized-variance} shows that the variance is strict monotonically decreasing in $\pc$. Furthermore, you can notice that, for $\pc$ smaller than 0.1, a small increment in $\pc$ produces a large decrease in the normalized variance which reflects in a large estimate accuracy improvement. Hence, considering the tread-off between estimate overhead and resolution efficiency, solving up to $\frac{1}{10}$ of the initial batch in the estimate phase is a good practical choice.\\
 
 However, it is difficult to establish in what measure an estimate can be considered accurate. The idea we adopt is to require the estimate to be ``near'' the real batch size with very high probability. 
@@ -1531,11 +1532,7 @@ E[\hat{n}|n]=\sum_{n'\in\,\mathcal{N}}n'\cdot\textrm{Pr}(\hat{n}=n'|n).
 \end{comment}
 
 \subsection{Performance}
-Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the target estimates are the same as for \emph{basic Greenberg algorithm}.\\
-Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice that there is only one extremely sharp peak located in a single slot, instead of a bell-like shape distributed among consecutive slots. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
-Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varying $T$ for a fixed batch size: increasing $T$ the peak becomes more and more sharp.
-
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-T20}
 \caption{\emph{EGA}:  Large $2^{k}$ sizes distribution.}
@@ -1543,14 +1540,17 @@ Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varyi
 \end{center}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Greenberg_MLE/greenberg-mle-fixed-n-varying-T}
 \caption[\emph{EGA}: Estimate distribution when varying $T$.]{\emph{EGA}: Estimate distribution when varying $T$. Plot refers to $n=1024$.}
 \label{fg:EGA-peaks-fixed-n-varing-T}
 \end{center}
 \end{figure}
-\clearpage
+Figures in this section were obtained by considering $\mathcal{N}=\{\textrm{powers of 2}\}$. Therefore, the target estimates are the same as for \emph{basic Greenberg algorithm}.\\
+Figure \ref{fg:EGA-sharp-peaks} shows that the proposed method peaks sharply near the right estimate. Comparing to the basic Greenberg method (see Figure \ref{fig:greenberg-dist-large}) you can notice that there is only one extremely sharp peak located in a single slot, instead of a bell-like shape distributed among consecutive slots. Furthermore, you can also notice how the probability to overestimate the batch size is a bit higher than the probability to underestimate it.\\
+Figure \ref{fg:EGA-peaks-fixed-n-varing-T} shows how the peak behaves when varying $T$ for a fixed batch size: increasing $T$ the peak becomes more and more sharp.
+%\clearpage
 \section{GEGA BSE}
 \label{sc:GEGA BSE}
 The  \emph{Generalized Enhanced Greenberg Algorithm (GEGA)} is a less restrictive form of the EGA algorithm in the sense that we do not  limit \emph{a priori} the set  of target estimates. This can be simply achieved by letting $\mathcal{N}$ be the set of all the positive integer numbers.
@@ -1689,8 +1689,26 @@ In general, we can say that \gega performs great for middle-large batch sizes wh
 
 \chapter*{Conclusions}
 \addcontentsline{toc}{chapter}{Conclusions}
+The final goal of this work was to investigate \emph{The Batch Size Estimate Problem} in order to develop, if possible, innovative techniques to solve the problem. Hence, we studied and analyzed both the \emph{Batch Size Estimate} and some of the \emph{Batch Resolution Algorithms} to understand in what measure the estimate can influence, and hopefully speedup, the resolution process. There are two possible ways to approach the matter: on one hand you can perform an explicit estimate phase, followed by a resolution one, on the other hand, you can choose to combine the two together. This second option is usually the case in window based scenarios where the result of the resolution is used to preform an estimate and where estimate and resolution processes coincide. Window based approach is really efficient when we have a good knowledge of the batch multiplicity but has the disadvantage that performs really poor when the batch size is different from the expected one. In fact, communication costs are reduced due to deferred feedback but, at the same time, a wrong estimate of the multiplicity results in really poor resolution performance. The big open problem of this approach is how to determine the size of the initial window. A large window results in good estimate and resolution of a possibly large amount of nodes but suffers poor performance if the batch to solve is much smaller than the windows size (empty slots) or much larger (collisions). Using \emph{GEGA} is a great choice in this scenario to determine the batch size in terms of operational range.\\
+The main advantages of \emph{GEGA} are:
+\begin{itemize}
+\item Speed. In fact, for a wide range of minimum required accuracies and batch sizes, it is faster than any other estimate algorithm known to us.
+\item Ability to adapt to any batch size. In fact, the time required by the algorithm depends mostly on the user required accuracy and is quite independent of the real batch size  (logarithmic addictive term).
+\item Estimate accuracy can be considered independent of the batch size.   
+\end{itemize}
+However, there are also some limitation to the proposed estimate scheme:
+\begin{itemize}
+\item It is not able to achieve arbitrary precision in the estimate;
+\item When looking for a really tight (almost exact) estimate, other estimate techniques are faster.
+\end{itemize}
 
+Therefore we suggest to adopt it to:
+\begin{itemize}
+\item provide an initial estimate of the batch size which can be further refined using other techniques or that can be used to speedup dynamically estimating resolution processes. 
+\item provide an estimate for algorithms that are ``robust'' in terms of resolution efficiency: their performance degrades smoothly when estimated batch size differs, but not too much, from the real one. 
+\end{itemize}
 
+Understanding in details how to balance the estimate overhead with the improved resolution efficiency depends on the applied BRA and goes beyond the goals of this work. Just to provide you an idea on how things work, referring, as an example, to the \emph{m Groups Split} in the CSMA scenario described in Section \ref{se:mgroups} we have that, following the notations used throughout this work, if estimate is within the interval $\frac{n}{k}\leq \hat{n}\leq kn$, maximum performance loss is below 3\% when $k=1.5$ and 7\% when $k=2$. Therefore, considering the estimate overhead and choosing accuracy in function of the batch size, using GEGA results convenient when the batch size is larger than 30-70.
 
 
 

@@ -133,7 +133,7 @@ $L_{22}^{CMBT} = 67.8123$ &$L_{23}^{CMBT} = 71.4436$ &$L_{24}^{CMBT} = 75.0234$ 
 
 \section{Greenberg bounded \emph{m}-moments}
 \label{sec:greenberg-moments}
-In general for base $b$ greenberg algorithm the first and second moments are bounded by:
+In general, for \emph{base $b$ greenberg} algorithm the first and second moments are bounded by:
 
 \begin{equation}
 \phi(b)= \frac{1}{\log b} \int_{0}^{\infty} \! e^{-x}(1+x) \prod_{k=1}^{\infty}(1-e^{-b^{k}x}(1+b^{k}x))x^{-2} \, dx
@@ -145,7 +145,7 @@ In general for base $b$ greenberg algorithm the first and second moments are bou
 \label{eq:greenberg-b-Phi}
 \end{equation}
 
-\noindent $\phi(b)$ was computed using the code below. Even if the integral is improper the integrand function goes fast to 0 and so the product does when $k$ grows. We found that considering interval (0,40) for numerical integration provides good results.\\
+Even if the integral is improper, the integrand function goes fast to 0 as $k$ grows. We found that considering interval (0,40) for numerical integration provides good results.\\
 \begin{comment}
 \lstinputlisting{matlab/Greenberg_base_b/phi/calculatephi.m}
 \lstinputlisting{matlab/Greenberg_base_b/phi/f4.m}
