@@ -199,7 +199,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \clearpage
 \null\vspace{\stretch{20}}
 {\flushleft
-{\large Last Update: \today,  \ \currenttime}}
+{\large Finished: \today,   \currenttime}}
 \null\vspace{\stretch{1}}
 
 %% DEDICATION
@@ -242,7 +242,7 @@ Finally we propose and analyze \emph{GEGA}, an estimate algorithm particularly g
 \begin{abstract}
 \begin{singlespace}
 In questo lavoro sono stati analizzati i principali algoritmi per la risoluzione di insiemi di conflitto. In particolare ci si è concentrati  sugli algoritmi ad albero evidenziando come la loro efficacia dipenda dalla taglia del problema. 
-La cardinalità dell'insieme di collisione è infatti un parametro critico se si desidera utilizzare strategie ottimizzate per risolvere più efficientemente i nodi. A tal fine sono, in primo luogo, state analizzate le tecniche note in letteratura per la stima  della cardinalità di insiemi di conflitto: infatti i paper originali non presentavano un'analisi adeguata del loro comportamento poiché l'attenzione era rivolta al processo di risoluzione dei nodi e non direttamente alla fase di stima.  Nella parte finale del lavoro, al fine di ottenere una stima accurata ``quanto basta'' per finalità operative, viene proposto \emph{GEGA}. L'algoritmo presentato è particolarmente valido in termini di accuratezza rispetto al tempo impiegato e permette di ottenere sempre una stima finita del numero di nodi sufficientemente vicina alla reale cardinalità dell'insieme esaminato.
+La cardinalità dell'insieme di collisione è infatti un parametro critico se si desidera utilizzare strategie ottimizzate per risolvere più efficientemente i nodi. A tal fine sono state analizzate, in primo luogo,  le tecniche note in letteratura per la stima  della cardinalità di insiemi di conflitto: infatti i paper originali non presentavano un'analisi adeguata del loro comportamento poiché l'attenzione era rivolta al processo di risoluzione dei nodi e non direttamente alla fase di stima.  Nella parte finale del lavoro, al fine di ottenere una stima sufficientemente accurata per finalità operative, viene proposto \emph{GEGA}. L'algoritmo presentato è particolarmente valido in termini di accuratezza della stima rispetto al tempo impiegato e permette di ottenere sempre una stima finita del numero di nodi sufficientemente vicina alla reale cardinalità dell'insieme esaminato.
 \end{singlespace}
 \end{abstract}
 \selectlanguage{english}
@@ -258,38 +258,34 @@ La cardinalità dell'insieme di collisione è infatti un parametro critico se si
 \mainmatter
 \chapter{Introduction}
 
-Generally speaking a set of actors contending for a common resource define a \emph{conflicting set}. As always, limited resources require policies to access them in an efficient and hopefully fair way. When the system is distributed, and this is our case, resource access can be assimilated to a coordination problem.\\ 
-\rev{In our scenario the contended resource is the physical transmission medium that is shared by several stations.}\\ \rev{At the beginning of wired computer networks, multiple access control (MAC) was a big issue for efficient communications. The introduction of packet buffered switches  in LANs reduced the conflicting set to only two stations  simplifying  the original problem. Switched networks, in fact, split large collision domains into smaller pieces thus realizing ring, star or mesh structures.\\ 
-In a wireless context the problem can not be easily avoided, due to the broadcast nature of the wireless medium.\\  
+Generally speaking a set of actors contending for a common resource defines a \emph{conflicting set}. As always, limited resources require access policies to provide efficient and, hopefully, fair use. When the system is distributed, resource access can be assimilated to a coordination problem.\\ 
+In the scenario considered in this thesis the contended resource is the physical transmission medium that is shared among several stations.\\ At the beginning of wired computer networks, multiple access control (MAC) was a big issue for efficient communication. The introduction of buffered switches  in LANs reduced the conflicting set to only few stations  simplifying  the original problem. Switched networks, in fact, split large collision domains into smaller pieces thus realizing ring, star or mesh structures.\\ 
+In a wireless context the problem can not be easily overcome, due to the broadcast nature of the wireless medium.\\  
+
+
+Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connections with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from a possibly large number of terminals.\\
+
+In particular we analyze the scenario where a reader broadcasts a query to the in-range nodes. Once the request is received, devices with data of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium, collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in destructive interference with waste of energy/time. This data traffic shows a bursty nature which is the worst case for all shared medium scenarios.\\
+
+In the literature this problem is referred to with different names: \emph{Batch/Conflict Resolution Problem}, \emph{Reader Collision Problem}, \emph{Object Identification Problem}.\\
+Algorithms trying to solve this problem are called \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
+
+In our terminology a query determines a subset of nodes which have to reply with a single message: this set of nodes constitutes the \emph{batch}. The size of the batch is not known beforehand.
+\textcolor{red}{
+Since each node has exactly one message to deliver, the problem of obtaining all the messages or counting the number of nodes involved by the resolution process is exactly the same.\\
+Instead the problem differs when we are not interested in the exact number of nodes but rather we aim at an estimate of the actual batch size, as accurate as possible.\\
+The knowledge of the batch size $n$ is an important factor for parameters optimization in order to improve the resolution efficiency  through the minimization of the time taken by the process.\\
 }
 
-Nowadays wireless connectivity in pervasive computing has ephemeral character and can be used for creating ad-hoc networks, sensor networks, connections with RFID (Radio Frequency Identification) tags etc. The communication tasks in such wireless networks often involve an inquiry over a shared channel, which can be invoked for discovery of neighboring devices in ad-hoc networks, counting the number of RFID tags that have a certain property, estimating the mean value contained in a group of sensors etc. Such an inquiry solicits replies from possibly large number of terminals.\\
-
-In particular we analyze the scenario where a reader broadcasts a query to the in-range nodes. Once the request is received, devices with data of interest are all concerned in transmitting the information back to the inquirer as soon as possible and, due to the shared nature of the communication medium,  while collision problems come in: only one successful transmission at time can be accomplished, concurrent transmissions result in destructive interference with inefficient waste of energy/time. This data traffic shows a bursty nature which is the worst case for all shared medium scenarios.\\
-
-This problem is referred in literature with different names: \emph{Batch/Conflict Resolution Problem}, \emph{Reader Collision Problem}, \emph{Object Identification Problem}.\\
-Algorithms trying to solve this problem efficiently  are called \emph{Batch Resolution Algorithms} (BRA) or  \emph{Collision Resolution Algorithms} (CRA).\\ 
-
-In our terminology a query determines a subset of nodes which have to reply with one (and only one) message: this set of nodes constitutes the \emph{batch}. The size of the batch can be known in advance, in lucky and optimistic scenarios, or \rev{it} can change in time.
-
-Since each node has exactly one message to deliver, the problem of obtaining all the messages or counting the number of nodes involved by the resolution process is exactly the same.
-
-\rev{
-Instead the problem differs when we are not interested in the exact number of nodes but rather we aim at an estimate of the actual batch size, as accurate as possible.}
-
-\rev{
-The knowledge of the batch size $n$ is an important factor for parameters optimization in order to improve the resolution efficiency  through the minimization of the time taken by the process.\\}
-
-\section{Model}
+\section{System Model}
 \label{se:model}
 
-We consider the following standard model of a multiple access channel. A large number of geographically distributed nodes communicate through a common radio channel. Any node generates a packet to be transmitted on the channel. Transmissions start at integer multiples of  time unit and last one unit of time called \emph{slot}.\\
+We consider the following standard model of a multiple access channel. A large number of geographically distributed nodes communicate through a common radio channel. Any node generates a packet to be transmitted over the channel. We consider a pure-slotted system where time is partitioned in units of the same length, called \emph{slots}.\\
 
 \rev{
-In \emph{pure-slotted} systems some form of synchronization among nodes is required to inform the nodes about the beginning of slots (or at least the beginning of a cycle of slots). Nodes can start a transmission only at the beginning of the slot, otherwise they will stay quiet until the next slot to come.\\}
+In \emph{pure-slotted} systems nodes are synchronized at slot boundaries. Nodes can start a transmission only at the beginning of the slot, otherwise they will stay quiet until the next slot to come. Each transmission lasts a single slot.\\}
 
-\rev{
-In \emph{carrier-sense multiple-access (CSMA)} networks each node is able to determine the beginning of a new slot by sensing the energy on the channel: when the channel is idle a device can start transmitting its message. In our scenario we assume that all the transmitted messages have a fixed length. Once a node has started transmitting it cannot sense the channel so that it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it results in a success or a collision. On the other hand, empty slots take less time than transmissions. Usually the duration of a transmission and idle slots are identified respectively by $T_{p}$ and $T_{s}$. An important parameter in the CSMA channel is the \emph{Carrier Sense Factor} $\beta={\displaystyle\frac{T_{s}}{T_{p}}<1}$.\\}
+A different model refers to \emph{carrier-sense multiple-access (CSMA)} networks, where each node is able to determine the beginning of a new slot by sensing the energy on the channel: when the channel is idle a device can start transmitting its message. In our scenario we assume that all the transmitted messages have a fixed duration. Once a node has started transmitting it cannot sense the channel so that it cannot be aware of the result of its transmission until it receives feedback. For this reason we have that a transmission always takes the same time, whether it results in a success or a collision. On the other hand, empty slots take less time than transmissions. Usually the duration of transmissions and idle slots are identified respectively by $T_{p}$ and $T_{s}$. An important parameter in the CSMA channel is the \emph{Carrier Sense Factor} $\beta={\displaystyle\frac{T_{s}}{T_{p}}<1}$.\\
 
 % precisare T_{s} T_{p} T_{c} ??
 
@@ -297,52 +293,52 @@ In \emph{carrier-sense multiple-access (CSMA)} networks each node is able to det
 CSMA/CD is not suitable for pervasive wireless devices such as sensors or RFID tags since they have to be keep as simple as possible to satisfy energy and cost requirements: they do not implement this MAC scheme and so no detection/reduction of collision time is possible.\\
 \end{comment}
 
-We assume that there is no external source of interference and that a transmission can fail only when a collision takes place.
-In short, saying $k$ nodes transmit simultaneously in a slot, we have what follows:
+We assume that there is no external source of interference and that a transmission fails only in case of collision.
+In short, saying $k$ nodes transmit simultaneously in a slot, the following events may occur:
 \begin{itemize}
-\item If $k=0$ then no transmission is attempted. The slot is said to be \emph{empty} or \emph{idle};
-\item If $k=1$ then the transmission succeeds. The slot is said to be \emph{successful};
-\item If $k\geq 2$ there is a conflict, meaning that the transmissions interfere destructively so that none succeeds. The slot is said to be \emph{collided}.\\
+\item $k=0$: there are no transmissions in the slot, which is said to be \emph{empty} or \emph{idle};
+\item $k=1$: a single node transmits in the slot, which is said to be \emph{successful};
+\item $k\geq 2$: more than one node transmits so that a collision occurs and the slot is said to be \emph{collided}.\\
 \end{itemize}
 
 \rev{
-Furthermore, throughout this work we assume that no new message is generated by the system or reaches it while it is running an \emph{estimate} or \emph{resolution algorithm}. In other words, newly generated packets are inhibited from being transmitted while an algorithm is in progress and they will eventually be considered only in the subsequent estimate or resolution process. This way to manage the information on the system is known as \emph{obvious-access scheme}.\\}
+Furthermore, throughout this work we assume that no new message is generated by the system while it is running an \emph{estimate} or \emph{resolution algorithm}. In other words, newly generated packets are inhibited from being transmitted while an algorithm is in progress and they will eventually be considered only in the subsequent estimate or resolution process. This way to manage the channel access of the nodes in the system is known as \emph{obvious-access scheme}.\\}
 
 \section{Goals}
 \emph{Batch Resolution Problem} is implicitly present in many practical applications over wireless networks such as:
 \begin{itemize}
-\item \emph{Neighbor Discovery}. After being deployed, nodes need to discover their one-hop neighbors. Regardless of the protocol used for message routing a node must absolutely inform its neighbors about its presence.
-Hence knowledge of one-hop neighbors is essential for almost all routing protocols, medium-access control protocols and several other topology-control algorithms such as construction of minimum spanning trees.
-Ideally, nodes should discover their neighbors as quickly as possible as rapid discovery of neighbors often translates into energy efficiency and it allows for other tasks to quickly start their execution on the system.
-\item \emph{Batch Polling}. It consists in collecting a possibly very large number of messages from different devices in response to \emph{time-driven} or \emph{event-driven} constrains. \emph{Time-driven} resolutions take place when an inquirer broadcasts a request to the nodes. \emph{Event-driven} resolutions take place when the nodes are alarmed from their sensors that an environmental event of interest took place. The problem is not properly a \emph{Batch Resolution Problem} when we are interested to obtain only 1 among $n$ messages as rapidly as possible. This case was studied in \cite{sift}.
-\item \emph{Object identification}, where physical objects are bridged to virtual ones by attaching to each object a sensor or an RFID tag. This allows asset tracking (e.g. libraries, animals), automated inventory and stock-keeping, toll collecting, and similar tasks. Wireless connection allows unobtrusive management and monitoring of resources.
+\item \emph{Neighbor Discovery}. After being deployed, nodes generally need to discover their neighbors, which is an information required by almost all routing protocols, medium-access control protocols and several other topology-control algorithms, such as construction of minimum spanning trees.
+Ideally, nodes should discover their neighbors as quickly as possible since rapid discovery of neighbors often translates into energy efficiency and allows for other tasks to quickly start their execution on the system.
+\item \emph{Batch Polling}. It consists in collecting a possibly very large number of messages from different devices in response to \emph{time-driven} or \emph{event-driven} events. \emph{Time-driven} batch polling takes place when an inquirer periodically broadcasts a request to the nodes. \emph{Event-driven} batch polling takes place when nodes send packets because triggered by the occurrence of events of interest. The problem is not properly a \emph{Batch Resolution Problem} when the aim is to obtain only one message out of $n$ as rapidly as possible. This case was studied in \cite{sift}.
+\item \emph{Object identification}. Physical objects are bridged to virtual ones by attaching to each object a sensor or an RFID tag. This allows asset tracking (e.g. libraries, animals), automated inventory and stock-keeping, toll collecting, and similar tasks. Wireless connection allows unobtrusive management and monitoring of resources.
 \end{itemize}
 
 In these applications:
 \begin{itemize}
-\item communications show spatially and timely correlated contention
-\item in general, density of nodes is time-varying. When a node wakes up it has no knowledge of the environment around it. In particular this shows to be true when nodes sleep for most of time and seldom wake up to transmit.
+\item Communications show spatially and timely correlated contention for channel access;
+\item In general, nodes multiplicity is time-varying. When a node wakes up it has no knowledge of the environment around it. In particular this holds when nodes sleep for most of time and seldomly wake up to transmit.
 \end{itemize}
  
-BRAs can run oblivious of the batch multiplicity $n$: they would anyway solve the problem but expected time required would not be as short as possible. In fact, the knowledge of the conflict multiplicity $n$ is the most critical factor to optimize the resolution and to allow the usage of advanced resolutions schemes which take advantage of the knowledge of $n$. Thus the importance of \emph{Batch Size Estimate} follows.\\
+BRAs can be oblivious of the batch multiplicity $n$: in this case, however, the expected batch resolution time (often referred to as \emph{batch resolution interval, BRI}) in not optimal. In fact, the knowledge of the conflict multiplicity $n$ is the most critical factor to optimize the batch resolution and to allows the usage of advanced resolutions schemes. For this reason the \emph{Batch Size Estimate} is pivotal.\\
 
-Hence, in this work, we will analyze different estimate techniques dealing with the quality and time taken by the estimate process.\\
-Most of works in which estimate techniques are proposed (such as \cite{cidon,greenberg87}) define the estimate  algorithm but do not provide data about the quality of the estimate or time taken by the process. In these works, in fact, after proposing an estimate scheme, the authors concentrate on the definition of an optimized resolution scheme considering a perfect knowledge of the batch size $n$ and ignoring the fact that only and estimate of $n$ can be provided without requiring the complete resolution of the batch.\\
-In this work we will focus on the estimate phase preferring analytical analysis when possible and using computer based simulations when analytical analysis showed to be too complex or impractical.\\
-Finally, we will try to propose improvements for some techniques in order to achieve better quality in the estimate and we will try to compare all the estimate algorithms to provide a comprehensive overview with pros and cons. 
+In this work, we will analyze different estimate techniques dealing with the quality and time taken by the estimate process.\\
+Most works concerning estimate techniques (such as \cite{cidon,greenberg87}) define the estimate  algorithm but do not analyze the ``quality'' of the estimate nor the time taken by the process. In fact, after proposing an estimate scheme, the authors focus on the definition of an optimized resolution scheme, considering perfect knowledge of the batch size $n$ and ignoring the fact that the estimate of $n$ is actually error ,unless the batch is completely resolved.\\
+In this work we will focus on the estimate phase preferring analytical error study when possible and using computer based simulations otherwise.\\
+Finally, we will propose improvements to some techniques in order to achieve better  estimate quality and we will compare all the considered estimate algorithms to provide a comprehensive overview of pros and cons of each solution. 
 
 \begin{comment}
 In this paper we present a novel approach to the problem of collision resolution for batch conflicts. We show how the conventional tree algorithms for collision resolution can be used to obtain progressively accurate estimation of the multiplicity. We use the estimation to propose a more efficient binary tree algorithm, termed Estimating Binary Tree (EBT) algorithm. The EBT algorithm is suited for implementation when the conflicting nodes are passive, such as e.g. RFID tags. We extend the approach to design the Interval Estimation Conflict Resolution (IECR) algorithm. For $n \rightarrow \infty $  we prove that the efficiency achieved by IECR for batch arrivals is identical with the efficiency that Gallager’s FCFS algorithm achieves for Poisson packet arrivals. For finite n, the simulation results show that IECR is, to the best of our knowledge, the most efficient batch resolution algorithm reported to date.
 \end{comment}
 
-\section{Document structure}
-This master thesis is organized as follows:
+\section{Content organization}
+This thesis is organized as follows.
 \begin{itemize}
-\item in Chapter \ref{ch:Batch Resolution} we will introduce the \emph{Batch Resolution Problem} since it is the main motivation to further study the \emph{Batch Size Estimate Problem}. We will deal about algorithms known in literature describing in details basic ones and providing an overview of the most recent and advanced ones. In particular we will concentrate on \emph{binary tree algorithms}.
+\item In Chapter \ref{ch:Batch Resolution} we will introduce the \emph{Batch Resolution Problem} that motivates the study of \emph{Batch Size Estimate Problem}. We will describe in details the fundamental schemes proposed in the literature and provide an overview of the most recent and advanced schemes. In particular we will concentrate on \emph{binary tree algorithms}.
 
-\item Chapter \ref{ch:Batch Size Estimate Techniques}  introduces to the the \emph{Batch Size Estimate Problem}.  We describe and analyze some noteworthy batch size estimate algorithm, both for slotted than framed scenarios. 
+\item Chapter \ref{ch:Batch Size Estimate Techniques}  introduces the \emph{Batch Size Estimate Problem}.  We describe and analyze some noteworthy batch size estimate algorithm, both for slotted and framed scenarios. 
 
-\item Chapter \ref{ch:Performance Analysis} is the core of the work. We will analytically and numerically analyze the algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide a comprehensive evaluation of the tecniques. Hence, we will propose and analyze a new algorithm, namely \emph{GEGA}, with the goal to provide a fast, but good ``enough'', estimate as quickly as possible. Finally, we will compare the described algorithms.
+\item Chapter \ref{ch:Performance Analysis} is the core of the work. We will analytically and numerically analyze the algorithms described in Chapter \ref{ch:Batch Size Estimate Techniques} to provide a comprehensive evaluation of the tecniques. Hence, we will propose and analyze a new algorithm, namely \emph{GEGA}, with the goal to provide a good estimate as quickly as possible. Finally, we will compare the described algorithms.
+\item The last Chapter draws conclusions.
 \end{itemize}
 
  
@@ -406,6 +402,7 @@ In case of \emph{collision} we know that at least 2 nodes are present and we hav
 Each node chooses to transmit with probability $p$ and not to transmit with probability $1-p$. Nodes that transmit  are said to belong to set $\mathcal{R}$ while the others to set $\mathcal{S}$. Of course $\mathcal{R}  \cap \mathcal{S} = \emptyset$ and $\mathcal{B} = \mathcal{R}  \cup \mathcal{S}$. The two sets are then resolved recursively starting from $\mathcal{R}$.\\
 Nodes in $\mathcal{S}$ wait until all terminals in $\mathcal{R}$ transmit successfully their packets, then they transmit.\\
 
+%\begin{comment}
 \algsetup{indent=2em} 
 \begin{algorithm}[h!]
 \caption{\algname{binary tree ($\mathcal{B}$)}}
@@ -425,6 +422,29 @@ Nodes in $\mathcal{S}$ wait until all terminals in $\mathcal{R}$ transmit succes
 \ENDIF
 \end{algorithmic}
 \end{algorithm}
+%\end{comment}
+
+\begin{comment}
+\algsetup{indent=2em} 
+\begin{algorithm}[h!]
+\caption{\algname{binary tree ($\mathcal{B}$)}}
+\label{alg:binarytree}
+\begin{algorithmic}
+\STATE \COMMENT{current slot status can be \emph{idle}, \emph{success}, \emph{collision}}
+\REQUIRE $\mathcal{B}$ batch with $|\mathcal{B}|=n$
+\STATE each node transmits its message
+\IF{(\emph{idle} or \emph{success})}
+	\STATE return
+\ELSE
+	\STATE each node flips a (possibly biased) coin
+	\STATE $\mathcal{R} \gets$ \{ nodes that flipped head\}
+	\STATE $\mathcal{S} \gets$ \{ nodes that flipped tail\}
+	\STATE \algname{Binary tree ($\mathcal{R}$)}
+	\STATE \algname{Binary tree ($\mathcal{S}$)}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+\end{comment}
 
 \rev{Pseudo-code in Alg. \ref{alg:binarytree} provides a very high level description of the splitting technique. The role of the supervisor is implicit in the code.\\}
 
@@ -1024,7 +1044,7 @@ The probability that at most one node transmits in a slot, monotonically grows w
 \STATE $i\gets 0$
 \REPEAT
 	\STATE $i\gets i+1$
-	\STATE choose to transmit with probability $2^{-i}$
+	\STATE choose to transmit with probability $p=2^{-i}$
 \UNTIL {no collision occurs}
 \STATE $\hat{n} \gets 2^{i}$
 \end{algorithmic}
