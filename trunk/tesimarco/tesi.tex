@@ -8,6 +8,7 @@
 \usepackage[final]{graphicx} %draft % To include graphics
 %\usepackage{epsfig}
 \usepackage{amsmath,amssymb,amsthm}
+\usepackage{frontespizio}
 \usepackage[none]{hyphenat} 
 \usepackage[small,bf]{caption}
 \usepackage{float} % parametro H in figure : posizionamento esattamente li
@@ -190,7 +191,100 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \begin{document}
 
-\include{mytitle}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TITOLO DEFAULT
+%\include{mytitle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% END TITOLO DEFAULT
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TITOLO 2
+
+%%FRONTESPIZIO
+\begin{titlepage}
+\pagestyle{empty}
+\begingroup
+% INTESTAZIONE
+\vspace*{-7\topskip}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  FIGURA!!!!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}[!h]
+%centrare
+\begin{center}
+%resize in cm
+\includegraphics[scale=1]{immagini/logo_unipd_black} %1.5 2.5
+\end{center}
+\end{figure}
+
+
+
+
+\centering \expandafter{\Large{UNIVERSITÀ DEGLI STUDI DI PADOVA}\par}
+\begin{center}
+        \LARGE{\rm\expandafter{Facolt\`a di Ingegneria}}\par
+        \large\expandafter{Corso di Laurea in Ingegneria Informatica}\par
+\end{center}
+
+%\vspace{0.5cm}
+\begin{center}
+        {\LARGE{Tesi di Laurea Specialistica}\par}
+\end{center}
+
+% TITOLO
+\vspace{2.5cm}
+\begin{center}
+        {\huge\bf \baselineskip=0.95em plus 1pt \expandafter{
+        %\sc Stima Della Molteplicità\\ Di Insiemi Di Conflitto
+        
+        STIMA DELLA MOLTEPLICITÀ\\ DI INSIEMI DI CONFLITTO
+        %Stima della molteplicità\\ di insiemi di conflitto
+        \par}}
+\end{center}
+
+\vspace{1cm}
+
+
+
+
+\vspace{2.5cm}
+
+\begin{tabular}{c p{3.3cm}c c}
+
+
+
+Relatore & & Laureando \\
+Prof. \textbf{Andrea Zanella} & & \textbf{Marco Bettiol}\\
+ & & {\small Matricola 586580-IF}\\
+\end{tabular}
+\vspace{4.5 cm}
+
+
+
+%CHIUSURA
+\line(1, 0){338} \\
+\begin{normalsize}
+\textsc{Anno Accademico 2009-2010}
+\end{normalsize}
+\par
+\vfill\par 
+\clearpage
+\endgroup
+
+
+
+
+
+
+
+\end{titlepage}
+
 
 %\doublespacing
 % LAST UPDATE
@@ -198,12 +292,15 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \thispagestyle{empty}
 \clearpage
 \null\vspace{\stretch{20}}
-{\flushleft
-{\large Finished: \today,   \currenttime}}
+{\flushleft \large Finished: \today,   \currenttime\\
+\null\vspace{\stretch{2}}
+\texttt{Author email: bettiol.marco at gmail dot com}
 \null\vspace{\stretch{1}}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   DEDICA                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% DEDICATION
-%\begin{comment}
 
 \frontmatter
 \cleardoublepage
