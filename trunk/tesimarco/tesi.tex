@@ -343,24 +343,24 @@ This thesis is organized as follows.
 
 \chapter{Batch Resolution}
 \label{ch:Batch Resolution}
-Pure-ALOHA was the very first random-access protocol ever developed. It is as simple as possible:
+One of the first MAC protocols for wireless systems is the Pure-ALOHA. It is very simple:
 \begin{itemize}
-\item If you have data to send, send the data immediatly
-\item If the message collides with another transmission, try resending "later"
+\item Nodes transmit their packets as soon as they are available
+\item If the transmission collides with another transmission, resend the packet in a later time.
 \end{itemize}
-Slotted-ALOHA is an improvement over Pure-ALOHA in which time is \emph{slotted} and transmissions can start only at the beginning of a slot boundary. Slotted-ALOHA assumes there is feedback from the receiver at the end of each slot so that all nodes learn whether or not a collision occurred.\\
-ALOHA protocol was studied under the assumption that a large number of identical sources transmit on the channel such that the number of new packets generated during any slot is a Poisson random variable with mean $\lambda$ (packets/slot).\\
-Slotted ALOHA has equilibrium rate (maximum throughput) of $1/e\approx 0.368$ packets/slot but it has proven maximum stable throughput 0 (hence it is unstable).\\
-The attempt to obtain stable throughput random-access protocols brought to the discovery of CRAs.\\
+Slotted-ALOHA is an improvement over Pure-ALOHA in which time is \emph{slotted} and transmissions can start only at the beginning of slots boundaries. ALOHA schemes assume that nodes receive feedback after each transmission, so that all nodes know whether or not a collision occurred.\\
+ALOHA protocols were studied under the assumption that a large number of identical sources transmit on the channel, so that the number of new packets generated during any slot can be modeled as a Poisson random variable with mean $\lambda$ (packet/slot).\\
+Slotted ALOHA achieves maximum throughput of $1/e\approx 0.368$ packet/slot, but it suffers stability problems.\\
+The attempt to obtain stable throughput random-access protocols brought to the discovery of \emph{Collision Resolution Algorithms}.\\
 
-A \emph{Collision Resolution Algorithm} (CRA) can be defined as a random-access protocol such that, whenever a collision occurs, then at some later time all senders will simultaneously learn from the feedback information that all packets involved in that collision have now been  successfully transmitted. The crux of collision resolution is the exploitation of the feedback information to control the ``random'' retransmission process.\\%massey
+A CRA can be defined as a random-access protocol such that, whenever a collision occurs, then at some later time all senders will simultaneously learn from the feedback information that all packets involved in that collision have now been  successfully transmitted. The crux of collision resolution is the exploitation of the feedback information to control the ``random'' retransmission process in such a way that chaotic retransmission can never occur \cite{massey}.\\%massey
 
 CRAs are interesting since their are able to solve conflicts of unknown multiplicities. Furthermore they are not tailored to solve only conflicts among packets arrivals characterized by Poisson's distributions but they are robust since they work for any arrival process characterized by an average arrival rate $\lambda$.\\
 
-CRAs can also be used to solve collisions among a batch of nodes which have a message to deliver. In this case CRAs are commonly called \emph{Batch Resolution Algorithms} (BRAs).\\
+CRAs can also be used to solve collisions among a batch of nodes, each having a single message to deliver. In this case CRAs are commonly called \emph{Batch Resolution Algorithms} (BRAs).\\
 
 In particular, the scenario we consider is the following: the reader probes a set of nodes. 
-In-range devices try to reply as soon as possible transmitting in the wireless medium. If two ore more devices reply at the same time we get a collision and the delivery of the messages fails. Consequently we require each node to run a distributed algorithm which implements anti-collision schemes in order to resolve all the nodes.\\
+In-range devices try to reply as soon as possible transmitting over the wireless medium. If two ore more devices reply at the same time we get a collision and the delivery of the messages fails. Consequently we require each node to run a distributed algorithm which implements anti-collision schemes in order to resolve all the nodes.\\
 There are many algorithms that enable batch resolution, and these, according to \cite{lucent}, can be classified into two categories: (a) \emph{probabilistic}, and (b) \emph{deterministic} \footnote{Both classes of algorithms use a probabilistic approach to solve the problem. As aforementioned, CRA were initially thought to solve Poisson-like packets arrivals. Hence, each packet is characterized by an arrival time. CRAs are able so solve collisions respecting the \emph{first-come first-served} (FCFS) policy. In \emph{Batch Resolution Problem} packets can be associated to virtual arrival times. Once the arrival time (alias node ID) is fixed each run of the same \emph{deterministic} algorithm behaves in the same way and nodes always get resolved in the same order and time amount. On the other hand, \emph{probabilistic} algorithms are not able to maintain the relative order among resolved nodes in different runs of the algorithms even if they globally solve the same initial collision.}.\\
 
 %%probabilistic
@@ -368,27 +368,26 @@ In \emph{probabilistic algorithms}, a framed ALOHA\footnote{ framed ALOHA is a m
 
 %%deterministic 
 
-\emph{Deterministic algorithms} typically use a slotted ALOHA model tries to reduce the contending batch in the next slot based on the transmission result in the previous one. These algorithms fall into the class of tree-based algorithms with the nodes classified on a binary tree and the reader moving down the tree at each step to identify all nodes. \\
+\emph{Deterministic algorithms} typically use a slotted ALOHA model and try to reduce the contending batch in the next slot based on the transmission result in the previous one. These algorithms fall into the class of \emph{tree-based algorithms} with the nodes classified on a binary tree based on their id and the reader moving down the tree at each step to identify all nodes. \\
 
 Deterministic algorithms are typically faster than probabilistic schemes in terms of actual node response slots used, however, they suffer from reader overhead since the reader has to specify address ranges to isolate  subsets of contending nodes using a probe at the beginning of each slot.
 
 Deterministic schemes assume that each node can understand and respond to complex commands from the reader, such as responding only if the \emph{id} is within an address range specified by the reader. Consequently not every device is able to support this class of algorithms. For example passive tags, which are the most dummy devices, cannot understand this kind of requests and they will continue to transmit in every resolution cycle. This lengthens the total time needed for the resolution process to complete. Wireless sensors, semi-active and active tags should allow to implement tree-based algorithms: the reader can acknowledge nodes that have succeeded at the end of each slot (immediate feedback), and hence those nodes can stay silent in subsequent slots, reducing the probability of collisions thereby shortening the overall identification time. Usually a node that successfully transmits its message is said \emph{resolved} and stays silent until the end of the algorithm.\\
-Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be alway active and listening to the channel in each step of the algorithm. 
+Furthermore, since tree algorithms require explicit feedback about channel status, they force devices to be always active and listening to the channel in each step of the algorithm. 
 \rev{Moreover, reader feedback in each slot adds overhead to the resolution.}\\
 On the other hand windows based algorithms are more energy saving since a device can sleep for most of time in the transmission window and only wake up in the slot it has decided to transmit on. In a windows of $w$ slots  a node will be up only for $1/w$ of time and wait for feedback at the end of the window.
 
 %%
 
-Most of the batch resolution algorithms  were originally developed for slotted scenarios.\\
-These algorithms can be flawlessly ported to the CSMA scheme.
+Most of the batch resolution algorithms  were originally developed for slotted scenarios but can be flawlessly ported to the CSMA scheme.
  
 \section{Binary Tree Algorithms}
 In `70s, concern over the instability of most ALOHA-like protocols led some researchers to look for random-access schemes that were provably stable. The breakthrough in these efforts was reached in 1977 by J.  Capetanakis  \cite{capetanakis77}, then a MIT doctoral student working with Prof. R. Gallager\footnote{FCFS splitting algorithm for Poisson's arrivals is one of his famous contributions.}, and independently achieved shortly thereafter by two Soviet researchers, B. Tsybakov and V. Mihhailov \cite{tsybakov}. Basic Binary Tree is the result of their studies.\\
 In the following sections we will describe and analyze the \emph{Basic Binary Tree Algorithm} and some of its variants applied to the \emph{Batch Resolution Problem}.\\
 
-We notice that \emph{tree algorthims require for the nodes in the batch to be unique}. This is a necessity since otherwise it would be impossible to force two nodes to behave in a different way. In this Chapter we will refer to this node uniqueness property as \emph{id}, \emph{address}, \emph{token}. Throughout the following sections, we will consider \emph{ids}, \emph{addresses} and \emph{tokens} equivalent.\\
+We notice that \emph{tree-based algorithms require for the nodes in the batch to be unique}: without a distinctive property it is impossible to force two nodes to behave in a different way. In this Chapter we refer to this node uniqueness property as \emph{id}, \emph{address}, \emph{token}: in our terminology they are equivalent.\\
 
-We also assume to operate in a \emph{slotted}-ALOHA-like scenario, unless otherwise specified.
+We also assume to operate in a \emph{slotted}-ALOHA scenario, unless otherwise specified.
 
 \subsection{Basic Binary Tree}
 \label{basicbinarytreedescription}
@@ -398,7 +397,7 @@ The supervisor broadcasts the result of the transmission to all the nodes.\\
 If we get \emph{idle} or  \emph{success} events, the resolution process stops meaning respectively that there were no nodes to resolve or there was only one node that was successfully resolved. That node delivered its message and will no longer take part in the current batch resolution.\\
 In case of \emph{collision} we know that at least 2 nodes are present and we have to solve the collision to obtain their messages. In this case all the $n$ nodes run the same algorithm.\\
 Each node chooses to transmit with probability $p$ and not to transmit with probability $1-p$. Nodes that transmit  are said to belong to set $\mathcal{R}$ while the others to set $\mathcal{S}$. Of course $\mathcal{R}  \cap \mathcal{S} = \emptyset$ and $\mathcal{B} = \mathcal{R}  \cup \mathcal{S}$. The two sets are then resolved recursively starting from $\mathcal{R}$.\\
-Nodes in $\mathcal{S}$ wait until all terminals in $\mathcal{R}$ transmit successfully their packets, then they transmit.\\
+Nodes in $\mathcal{S}$ wait until each terminal in $\mathcal{R}$ transmits successfully its packet, then they transmit.\\
 
 %\begin{comment}
 \algsetup{indent=2em} 
@@ -477,7 +476,7 @@ Here we want simply focus on how the algorithm behaves when $n$ grows.\\
 Considering the efficiency $\eta_{n}=n/L_{n}^{BT}$ (number of resolved nodes over slots) we have a decreasing series $\eta_{1}=1$, $\eta_{2}=0.40$, $\eta_{3}=0.3913$, \dots, $\eta_{16}=0.3542$ , \dots, $\eta_{31}=0.3505$. It can be shown \cite{capetanakis} that $\eta_{\infty} \approx 0.347$.\\
 
 Since the algorithm is much more efficient in solving small rather than large batches we would prefer to have (ideally)  $n$ batches of size 1 rather than 1 batch of size $n$.\\
-Hence, knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$, we can split the nodes into small groups, of approximately 1 node each, and resolve them faster. \\This is the idea behind many improvements over the basic BT and it reveals the importance of having an accurate estimate of $n$ to efficiently solve a batch.
+Hence, knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$, we can split the nodes into small groups, of approximately one node each, and resolve them faster. \\This is the idea behind many improvements over the basic BT and it reveals the importance of having an accurate estimate of $n$ to efficiently solve a batch.
 
 \begin{comment}
 \begin{figure}
@@ -533,7 +532,7 @@ Hence, knowing exactly the cardinality $n$ of the initial batch $\mathcal{B}$, w
 \label{example-bbt}
 \end{figure}
 
-In Figure \ref{example-bbt} we provide an example to further investigate the behavior of the algorithm. We notice that the instance starts with a collision in slot 1. Then nodes $n_{1}$, $n_{2}$, $n_{3}$ decide to proceed with a retransmission while $n_{4}$, $n_{5}$ remain idle. In slot 2 we see another collision, after it $n_{1}$ transmits again while $n_{2}$ and $ n_{3}$ to stay quiet. In slot 3 we have the first resolution, $n_{1}$ successfully send its message and leaves the collision resolution algorithm.\\
+In Figure \ref{example-bbt} we provide an example to further investigate the behavior of the algorithm. We notice that the instance starts with a collision in slot 1. Then nodes $n_{1}$, $n_{2}$, $n_{3}$ decide to proceed with a retransmission while $n_{4}$, $n_{5}$ remain idle. In slot 2 we see another collision, after it $n_{1}$ transmits again while $n_{2}$ and $ n_{3}$ to stay quiet. In slot 3 we have the first resolution, $n_{1}$ successfully sends its message and leaves the collision resolution algorithm.\\
 We notice that we can know the cardinality of a collision only after it has been fully  resolved. For example we know only after slot 6 that the collision in slot 2 involved 3 nodes.\\
 
 \begin{comment}
@@ -551,7 +550,7 @@ There are multiple ways to generate that the \emph{id}, such as:
 \item generating a `long enough' random binary string  at the beginning of the algorithm.
 \end{itemize}
 We do not want to enter in the details of these choices since there is no reason to prefer one method to the others but device technical limitations.\\ 
-Now we want to introduce an interesting interpretation of the \emph{id} that will be used later in algorithms such as EBT (Section \ref{se:EBT}) and Cidon (Section \ref{se:cidon}).\\
+We just want to introduce an interesting interpretation of the \emph{id} that will be used later in algorithms such as EBT (Section \ref{se:EBT}) and Cidon (Section \ref{se:cidon}).\\
 
 In general any infinite length binary string $\mathbf{b_{i}}=(b_{i1}b_{i2}b_{i3}\ldots)$, with $b_{ij} \in \{0,1\}$, can be associated to a real number $r_{i} \in [0,1)$ by a bijective map $r$ defined as follows:
 
@@ -564,7 +563,7 @@ For a finite length bit-string $\mathbf{a}=(a_{1}a_{2}\ldots a_{L})$ with length
 r(\mathbf{a})=\sum_{j=1}^{L} \ \frac{a_{j}}{2^{j}}
 \end{equation}
 In this case we have to carry $L$ as auxiliary information to allow the map to remain bijective.\\
-Following standard conventions, the empty string $\epsilon$ is prefix of any other string. It has length 0 and $r(\epsilon)=0$.
+Following standard conventions, the empty string $\epsilon$ is prefix of any other string, it has length 0 and $r(\epsilon)=0$.
 \begin{comment}
 \textcolor{red}{QUESTA OSSERVAZIONE é SOLO FRUTTO DEL MIO SACCO E MI SEMBRAVA INTERESSANTE.\\
 An interesting observation is that the distribution of the nodes into the real interval depends upon $p$, the probability  to obtain 0 or 1 tossing a biased coin.
@@ -591,10 +590,10 @@ We assume, following the standard approach, to visit the tree in pre-order, givi
 The visit starts from the root which has address $\epsilon$.\\
 Let $\mathbf{a}$ be the current enabled string, then the following rules apply:
 \begin{itemize}
-\item If $\mathbf{a}=\epsilon$ and last the event is  a success or an idle slot then the whole conflict has been resolved;
-\item If the last event is a collision then we visit the left child of the current node ($\mathbf{a}0$);
-\item If the last event is a success or a collision and $\mathbf{a}_{L}=0$ then we visit the right sibling of the current enabled node ($\mathbf{a}1$);
-\item If the last event is a success or a idle slot and $\mathbf{a}_{L}=1$ then we look in the path back to the root for the first node whose sibling has not yet been visited. Since we visit the tree in pre-order the next enabled string will be in the form $\mathbf{a}_{k}1$ with $k<L$.
+\item If $\mathbf{a}=\epsilon$ and last the event is success or idle then the whole conflict has been resolved;
+\item If the last event is collision then we visit the left child of the current node ($\mathbf{a}0$);
+\item If the last event is success or idle and $\mathbf{a}_{L}=0$ then we visit the right sibling ($\mathbf{a}_{L-1}1$) of the current enabled node;
+\item If the last event is success or idle and $\mathbf{a}_{L}=1$ then we look in the path back to the root for the first node whose sibling has not yet been visited. Since we visit the tree in pre-order the next enabled string will be in the form $\mathbf{a}_{k}1$ with $k<L$.
 \end{itemize}
 
 A detailed pseudo-code of an algorithm that implements the rules above (and more) can be found in \cite{popovski}. The \emph{Modified Binary Tree} algorithm presented in next section gets a remarkable performance improvement over BT by adding just one new rule.\\
@@ -613,7 +612,7 @@ The possible cases are: \textcolor{red}{qui incasino un po' le cose con una nota
 \subsection{Modified Binary Tree}
 \label{se:MBT}
 
-Modified binary tree is a simple way to improve the BT algorithm.\\ 
+The \emph{Modified Binary Tree (MBT)} is a simple way to improve the BT algorithm.\\ 
 \rev{
 To keep the notation simple, we will explain the idea illustrating what happens the first time it is applied. In this case  node $\tau$ is visited in slot $\tau$. This does not holds in general, but explanation would have required to use two different indexed for slots and nodes, and Figure \ref{example-mbt} would have been less immediate to understand.\\}
 
@@ -660,7 +659,7 @@ The observation is that, during the tree traversal, sometimes we know in advance
 \label{example-mbt}
 \end{figure}
 
-Expected time analysis is analogous  to Section \ref{basicbinarytreedescription}. The only difference is that after a collision, if we get an idle slot, we will skip the ``next one'' (saving a slot that would certainly be wasted otherwise). Consequently the expected slot cost is $\left[1 \cdot \bigl(1-Q_{0}(n)\bigr)+ 0\cdot Q_{0}(n)\right]$. Let $L_{n}^{MBT}$ be the expected cost in slots to solve a batch of size $n$ using the MBT Alg., then\\
+Expected time analysis is analogous  to Section \ref{basicbinarytreedescription}. The only difference is that after a collision, if we get an idle slot, we will skip the ``next one'' (saving a slot that would certainly be wasted otherwise). Consequently the expected slot cost is $\left[1 \cdot \bigl(1-Q_{0}(n)\bigr)+ 0\cdot Q_{0}(n)\right]$. Let $L_{n}^{MBT}$ be the expected cost in slots to solve a batch of size $n$ using the MBT algorithm, then\\
 \begin{equation}
 L_{n}^{MBT} = \bigl(1 - Q_{0}(n)\bigr)+\sum_{i=0}^{n} Q_{i}(n) (L_{i}^{MBT}+L_{n-i}^{MBT}),
 \end{equation}
@@ -678,7 +677,7 @@ Using probability $p={\displaystyle\frac{1}{2}}$  results, for large $n$, in abo
 
 \subsection{Clipped Modified Binary Tree}
 In this section we will show that, in some cases, partial resolution algorithms can achieve higher efficiency than complete resolution algorithms.\\
-The \emph{Clipped Modified Binary Tree (CMBT)} is an adaptation of the \emph{CBT} (see Section \ref{cbt-estimation}) algorithm for complete batch resolution. CBT is like the MBT Alg. but it ends up after two consecutive successful transmissions. Each CBT execution resolves at least two nodes but eventually the last run. Hence, since the multiplicity of the batch to resolve decreases of at least two units after each run, the algorithm terminates for sure.\\
+The \emph{Clipped Modified Binary Tree (CMBT)} is an adaptation of the \emph{CBT} (see Section \ref{cbt-estimation}) algorithm for complete batch resolution. CBT is like the MBT algorithm but it ends up after two consecutive successful transmissions. Each CBT execution resolves at least two nodes but eventually the last run. Hence, since the multiplicity of the batch to resolve decreases of at least two units after each run, the algorithm terminates for sure.\\
 
 \noindent Collisions tree visit is defined by the following rules: 
 \begin{itemize}
@@ -695,8 +694,8 @@ Consequently, using CMBT is a good idea when the cardinality of the batch to sol
   
 \begin{figure}[H]
 \begin{center}	
-    \subfloat[\emph{CMBT vs MBT}: very small sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-small}} 
-  \subfloat[\emph{CMBT vs MBT}: larger sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-large}}
+    \subfloat[\emph{CMBT vs MBT}: very small batch sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-small}} 
+  \subfloat[\emph{CMBT vs MBT}: larger batch sizes]{\includegraphics[scale=0.5]{matlab/EBT/CMBT-vs-MBT-large}}
   \end{center}
 \caption[\emph{CMBT} vs \emph{MBT}] {Expected resolution time in slots for the \emph{CMBT} and \emph{MBT} algorithms for small batch sizes.} 
 \label{fig:cmbt-vs-mbt}   
@@ -730,11 +729,11 @@ P_{m}(i|n)={n \choose i} \left(\frac{1}{m}\right)^{i} \left(1-\frac{1}{m}\right)
 Let $L_{k}$ be the expected cost to solve a batch of size $k$ with a chosen BRA. Then the expected cost to solve a batch of size $n$ dividing it into $m$ groups is given by
 \begin{equation}
 \label{eq:BT+m-group-ALOHA}
-L'_{n}(\rho)=m \sum_{i=0}^{n}L_{i}{n \choose i} \left(\frac{1}{m}\right)^{i} \left(1-\frac{1}{m}\right)^{n-i},
+L'_{n}(\rho)=m \sum_{i=0}^{n}L_{i}P_{m}(i|n),
 \end{equation}
-where $\rho={\displaystyle\frac{n}{m}}$ is the expected number of nodes in a group.\\
+where $\rho={\displaystyle\frac{n}{m}}$ is the mean number of nodes in a group.\\
 \revv{
-Figure \ref{m-groups-MBT-ALOHA} plots $L_{n}'(\rho)$, the average time to solve a batch of size $n$ using group splitting, over $L_{n}$, the average time   without splitting. Results were obtained computing  equation \eqref{eq:BT+m-group-ALOHA} for three different batch sizes varying $\rho$.  We plotted the results for the MBT algorithm with optimal probability $p$ in a slotted ALOHA scenario but considerations hold true for any \emph{tree-based BRA}.}
+Figure \ref{m-groups-MBT-ALOHA} plots $L_{n}'(\rho)$, the average time to solve a batch of size $n$ using group splitting, over $L_{n}$, the average time   without splitting. Results were obtained computing  equation \eqref{eq:BT+m-group-ALOHA} for three different batch sizes varying $\rho$.  We plotted the results for the MBT algorithm with optimal probability $p$ in a slotted ALOHA scenario but considerations hold for any \emph{tree-based BRA}.}
 
 
 \begin{figure}[H]
@@ -748,7 +747,7 @@ Figure \ref{m-groups-MBT-ALOHA} plots $L_{n}'(\rho)$, the average time to solve 
 \revv{Splitting the batch into groups achieves lower average resolution time than applying the BRA to the original batch for a wide range of $\rho$ \mbox{(when $L_{n}'(\rho)/L_{n}<1$)}.}\\
 We note that  $\rho\approx 1.26$ provides the best achievable performance. Furthermore we notice that the knowledge of the batch size is critical: $m$ can be set to the optimal value only knowing exactly the batch size $n$ but often we only have an estimate of $n$. If the estimate is smaller than $n$, performances smoothly degrade but still remain better than the trivial application of the BRA. On the other hand, overestimating $n$ can lead to performance loss when $\rho \approx 0.5$ or smaller.\\
 
-In a CSMA scenario the performances depend on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
+In a CSMA scenario the performances depend also on $\beta$ and on the ratio between the nodes packet size ($S_{n}$) and the supervisor feedback size ($S_{f}$). Figure \ref{m-groups-MBT-CSMA} was obtained considering $\displaystyle\frac{S_{n}}{S_{f}}\approx4$. We notice that in CSMA increasing idle slots probability ($\rho$ small) can lower the expected cost. CSMA is also much more robust to an overestimate of $n$ than \emph{slotted}-ALOHA.
 
 \begin{figure}[H]
 \begin{center}
@@ -769,7 +768,7 @@ Given a batch of size $n$, the keys to understand EBT are the following:
 \item consequently it seems to be a good idea to assume that nodes at levels in the tree less than $\lfloor \log_{2}n\rfloor$ will likely result in collided slots.
 \end{itemize}
 
-EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{apriori} known, a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}.\\
+EBT tries to skip inner nodes of the tree by visiting only nodes at levels equal or deeper than $\lfloor \log_{2}n\rfloor$. Since $n$ is not \emph{a priori} known, a dynamic estimating technique is adopted. To effectively use this estimate tecnique each node must be able to generate values from the standard uniform distribution on the interval [0,1) and to use that value as its unique \emph{id}.\\
  Assume that there are $k$ nodes whose \emph{id}s are in the sub-interval [0,$\pc$) and that they have been previously resolved: all and only the nodes with \emph{id} less than $\pc$ successfully transmitted their messages.  Let $\hat{n}$ express the estimate of $n$. When $\pc$ is greater than 0, setting $\hat{n}$ to $\displaystyle\frac{k}{\pc}$ provides a good estimate of $n$ that becomes more and more accurate as the algorithm goes on. EBT uses $\hat{n}$ (as soon as it is available) to choose the right level in the tree to analyze.\\
  
  The most straightforward  interpretation of the EBT algorithm can be:
@@ -833,8 +832,8 @@ In this section we will shortly describe non \emph{tree-based} algorithms for ba
 \subsection{IERC}
 The \emph{Interval Estimation Conflict Resolution (IERC)} \cite{popovski} is an adaptation of the FCFS \cite{gallager} algorithm for Poisson's arrivals of packets to the batch resolution.\\
 FCFS is the fastest known algorithm to solve Poisson's arrivals and it achieves efficiency $\eta=0.4871$.
-It assumes \emph{apriori} knowledge of the arrival rate $\lambda$ of the packets and works by splitting the time in epochs of length $\tau$.\\
-Now we briefly describe FCFS Alg. and then we will show how it can be translated to the batch resolution problem.\\ 
+It assumes \emph{a priori} knowledge of the arrival rate $\lambda$ of the packets and works by splitting the time in epochs of length $\tau$.\\
+Now we briefly describe FCFS algorithm. and then we will show how it can be translated to the batch resolution problem.\\ 
 
 At any time $k$, let $T (k)$ be the start time of the current enabled allocation interval. Packets generated in the enabled window $(T(k),T(k)+\tau]$ are allowed to be transmitted.
 When an \emph{idle} or \emph{successful} event occurs enabled time window gets incremented (shifted towards current time) by $\tau$. On the other hand, if a \emph{collision} takes place, a \emph{Clipped Binary Tree} (see Section \ref{cbt-estimation}) algorithm is started. Given that CBT resolves the sub-interval $(T(k),T(k)+\alpha(k)]$, then next FCFS enabled window at time $k'$ will be $(T(k'),T(k')+\min(\tau,k'-T(k'))]$ where $T(k')=T(k)+\alpha(k)$.\\
@@ -858,7 +857,7 @@ Innovative approaches to the problem uses hybrid transmission scheme working by 
 
 \chapter{Batch Size Estimate Techniques}
 \label{ch:Batch Size Estimate Techniques}
-Here we present some noteworthy techniques for batch size estimate that can be found in literature.
+Here we present some noteworthy techniques for batch size estimate that can be found in the literature.
 If a technique was not already identified by a name or associated to an acronym, we used the name of one the authors as reference.\\
 
 In general, we assume to have no \emph{a priori} statistical knowledge about the conflict multiplicity. Estimation techniques are thus required to provide accurate estimates for the general zero-knowledge scenario.\\
@@ -898,8 +897,8 @@ So this simple method is not good to obtain an estimate.
 \caption[\emph{CBT}: Example]{ Same example as in Figure \ref{example-bbt} but resolution using CBT ends up after two consecutive successful transmissions.}
 \end{figure}
 
-Experimental results show that the variance of this estimate is extremely high and the resulting accuracy is rather poor. This is due to the fact that the batch we use for the estimate becomes, at each level, smaller and smaller: in the average case we expect all the intervals to be balanced in the number of nodes. Using this algorithm we don't have knowledge of a sufficiently large number of intervals but we limit to analyze.
-the estimate, even for huge sizes, depends only on very few (3-5) nodes (those at the most left in the tree). Consequently estimate is quite inacurate.\\
+Experimental results show that the variance of this estimate is extremely high and the resulting accuracy is rather poor. This is due to the fact that the batch we use for the estimate becomes, at each level, smaller and smaller. Using this algorithm we do not have knowledge of a sufficiently large number of intervals but we limit to analyze only a few leafs.
+The resulting estimate, even for huge sizes, depends only on very few (3-5) outer nodes (those at the most left in the tree). Consequently estimate is quite inacurate.\\
 From the tables  \ref{CBT-table-1} reported in Appendix you can notice that the distribution probability decreases rather slowly.
 \section{Cidon}
 \label{se:cidon}
@@ -942,7 +941,7 @@ Figure \ref{cidon-nodes-id} illustrates the concept with a simple example.
     \label{cidon-nodes-id}
 \end{figure}
 
-After the first phase,  nodes in $\mathcal{E}$ are resolved, whereas those in $\mathcal{D}$ has still to be counted. An estimate $\hat{k}$ of $|\mathcal{D}|$ can be obtained as
+After the first phase,  nodes in $\mathcal{E}$ are resolved, whereas those in $\mathcal{D}$ have still to be counted. An estimate $\hat{k}$ of $|\mathcal{D}|$ can be obtained as
 \begin{equation}
 \hat{k} \gets  \frac{j}{\pc}(1-\pc).
 \end{equation}
@@ -973,7 +972,7 @@ m = \max(1, \lceil\alpha \hat{k}-\beta\rceil),
 and each group is resolved by applying the MBT algorithm.\\
 The parameter $\alpha$ determines the number of groups, and therefore the efficiency of the resolution process, when $n$ is large, while $\beta$  reduces the number of groups when $n$ is small in order to reduce the risk of empty groups. 
  
- $\alpha=0.786$ determines $\rho\approx 1.27$ which is the \emph{unique} \revv{optimum  nodes per group density}. $\beta$ and $\pc$ depend on operational requirements: in \cite{cidon} is showed that setting $\beta=8$ and  $\pc=0.1$ is a good compromise to get efficient resolution for a wide range of batch sizes.\\  
+ $\alpha=0.786$ determines $\rho\approx 1.27$ which is the \emph{unique} \revv{optimum  nodes per group density}. $\beta$ and $\pc$ depend on operational requirements: in \cite{cidon} it is showed that setting $\beta=8$ and  $\pc=0.1$ is a good compromise to get efficient resolution for a wide range of batch sizes.\\  
  
 The average  cost of the estimate phase \revv{(phase 1)} depends on the BRA used but in general, for tree-based BRAs,  can be considered $O(\pc n)$.
 
@@ -1051,7 +1050,7 @@ The probability that at most one node transmits in a slot, monotonically grows w
 \end{algorithm}
 
 The idea behind Algorithm \ref{alg-greenberg} appears to be quite simple: as the algorithm goes on, the initial unknown batch (of size $n$) is progressively sliced into smaller pieces. Only the nodes virtually inside the enabled slice are allowed to transmit. Slices get thinner and thinner until at most one node is contained in a slice. Figure \ref{fig:greeberg-split} illustrates the idea with an example:
-visually, nodes can be thought to be uniformly distributed on a circumference. Using Greenberg algorithm we will analyze at each slot a smaller sector (in this case the half of the previous one) of the circle and discover when a sector contains at most 1 node. Note that no overlapping sectors are drawn to maintain the image simple. However, in general, enabled nodes gets redistributed at each transmission test performed by the algorithm.\\
+visually, nodes can be thought to be uniformly distributed on a circumference. Using Greenberg algorithm we will analyze at each slot a smaller sector (in this case the half of the previous one) of the circle and discover when a sector contains at most 1 node. Note that no overlapping sectors are drawn to maintain the image simple. However, in general, enabled nodes get redistributed at each transmission test performed by the algorithm.\\
 \begin{figure}[htb!]
     \centering
     \begin{tikzpicture}[scale=0.8]  
@@ -1087,7 +1086,7 @@ visually, nodes can be thought to be uniformly distributed on a circumference. U
     \label{fig:greeberg-split}
 \end{figure}
 
-Expected running time is $O(log_{2}\,n)$. In particular, since in the \emph{slotted}-ALOHA model feedback is supposed to be transmitted at the end of each transmission slot, the expected running time in slots can be expressed as $\approx 1+\log_{2}n$.\\
+Expected running time is $O(log_{2}\,n)$. In particular, since in the \emph{slotted}-ALOHA model, feedback is supposed to be transmitted at the end of each transmission slot, the expected running time in slots can be expressed as $\approx 1+\log_{2}n$.\\
 
 An important note is that the algorithm always involves all the nodes in the batch: at each slot, each node decides whatever or not transmit. Each choice is independent of the past.
 This is of great importance and allows $\hat{n}$ to have bounded statistical moments: it can be shown that, for large $n$, it holds:
@@ -1107,7 +1106,7 @@ where
 \end{equation}
 
 \noindent $\phi$ and $\Phi$ are obtained in \cite{greenberg87} using advanced mathematical analysis supported by Mellin integral transform\footnote{In this work we only report the final results. Please, refer to the original paper for details.}.
-In general $\phi$ and $\Phi$ depend on the size of the problem. Table \ref{table:phi-Phi} shows the behavior of the expected estimate (and, therefore of $\phi$) as a  function of $n$. We note that the ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provide biased results.\\
+In general $\phi$ and $\Phi$ depend on the size of the problem. Table \ref{table:phi-Phi} shows the behavior of the expected estimate (and, therefore of $\phi$) as a  function of $n$. We note that the ratio $E[\hat{n}|n]/n$ monotonically decreases and gets stable at $0.9142$. This shows that this estimate technique provides biased results.\\
 
 \begin{table}[htb]
 \caption{\emph{Basic Greenberg}: Expected estimate and bias}
@@ -1218,7 +1217,7 @@ p_{1}(n)=\frac{n}{L}\left(1-\frac{1}{L}\right)^{n-1},
 \end{equation}
 
 \begin{equation}
-p_{2+}(n)=1-p_{i}(n)-p_{s}(n).
+p_{2+}(n)=1-p_{0}(n)-p_{1}(n).
 \end{equation}
 
 Considering the whole window, the outcome  consists in a tuple $(i,s,c)$, denoting the number of idle, success, and collision slots, which satisfies $i+s+c=L$.
@@ -1276,7 +1275,7 @@ P(0,0,L)=\ p_{2+}(n)^{L} = \left[1-\left(1-\frac{1}{L}\right)^{n}-\frac{n}{L}\le
 
 In this Chapter, we present a performance analysis of some of the already mentioned noteworthy  \emph{batch size estimation  (BSE) algorithms}. The overview will obviously consider different batch sizes, algorithm parameters, time required and accuracy of the estimate. We want to support reader in choosing the best estimate technique suitable for its needs. \\
 First we will provide a detailed analytical analysis of  \emph{Cidon} algorithm and then, supported by numerical computation, we will derive its features in term of time and accuracy.\\  
-We will then discuss the behavior of \emph{Greenberg} with its pros and cons and try to overcome its limitations by introducing a slight modification of the original algorithm to achieve better estimate. \emph{Enhanced Greenberg Algorithm (EGA)} is the middle-step in the development of our proposed estimate algorithm: it improves the estimate in terms of ``choosing the best power of 2'', maintaining the same target estimates allowed by basic Greenberg.  
+We will then discuss the behavior of \emph{Greenberg} with its pros and cons and try to overcome its limitations by introducing a modification of the original algorithm to achieve better estimate. \emph{Enhanced Greenberg Algorithm (EGA)} is the middle-step in the development of our proposed estimate algorithm: it improves the estimate in terms of ``choosing the best power of 2'', maintaining the same target estimates allowed by basic Greenberg.  
 Then, we will describe and analyze the \emph{Generalized Enhanced Greenberg Algorithm (GEGA)}, which combines Greenberg with a further test and performs a \emph{maximum likelihood estimation} to determine the ``best'' estimate. Finally, the comparison between \emph{GEGA} and \emph{Cidon} will lead to the conclusions.
 \section{Cidon BSE}
 The original paper \cite{cidon} describes the estimate technique but does not characterize it in details. The interest is focused on other aspects and, therefore, no detailed analysis of the behavior of the estimate algorithm is presented: it is only mentioned that as $n$ grows the estimator becomes more accurate. Hence, in this section we will provide a complete analysis of the estimate algorithm.\\
@@ -1337,7 +1336,7 @@ which reveals that as the number of resolved terminals (and therefore $\pc$) inc
 Figure \ref{fig:cidon-normalized-variance} shows that the variance is strict monotonically decreasing in $\pc$. Furthermore, you can notice that, for $\pc$ smaller than 0.1, a small increment in $\pc$ produces a large decrease in the normalized variance which reflects in a large estimate accuracy improvement. Hence, considering the tread-off between estimate overhead and resolution efficiency, solving up to $\frac{1}{10}$ of the initial batch in the estimate phase is a good practical choice.\\
 
 However, it is difficult to establish in what measure an estimate can be considered accurate. The idea we adopt is to require the estimate to be ``near'' the real batch size with very high probability. 
-Given the real batch size $n$, let $k \geq1$ identify an interval surrounding $n$ in the following way: 
+Given the real batch size $n$, let the \emph{error coefficient} $k \geq1$ identify an interval surrounding $n$ in the following way: 
 \begin{equation}
 \frac{n}{k}\leq\hat{n}\leq kn
 \label{cidon-accuracy-constrains}
@@ -1368,7 +1367,7 @@ f(k,n,\pc) = \theta
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Cidon/cidon-k-p-minimum}
-\caption[\emph{Cidon}: Minimum $\pc$ required for accuracy  $k$]{\emph{Cidon}: Minimum $\pc$ as function of $k$ when $\theta=0.99$.}
+\caption[\emph{Cidon}: Minimum $\pc$ required for error coefficient $k$]{\emph{Cidon}: Minimum $\pc$ as function of $k$ when $\theta=0.99$.}
 \label{cidon-k-p-minimum}
 \end{center}
 \end{figure}
@@ -1378,7 +1377,7 @@ Figure \ref{cidon-k-p-minimum} plots the minimum fraction $\pc$ of the batch to 
 \begin{figure}[htb!]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{matlab/Cidon/cidon-k-L-minimum}
-\caption[\emph{Cidon}: Expected time as function of the required accuracy]{\emph{Cidon}: Expected time as function of the required accuracy when $\theta=0.99$.}
+\caption[\emph{Cidon}: Expected time as function of the error coefficient]{\emph{Cidon}: Expected time as function of $k$ when $\theta=0.99$.}
 \label{cidon-k-L-minimum}
 \end{center}
 \end{figure}
@@ -1445,7 +1444,7 @@ This is actually even for batch sizes that are not power of 2. Figure \ref{fig:g
 \subsection{Considerations}
 Greenberg method is really good in terms of running time cost, which is $O\bigl(\log_{2}n\bigr)$. However it has some non negligible drawbacks:
 \begin{enumerate}[\bf a)]
-\item The estimation phase results in a sequence of colliding messages. These provides information about the cardinality of the batch, but do not help to solve an even small portion of the batch and can not carry auxiliary information. An algorithm that allows to get an estimate while resolving nodes would offer some advantages when the problem is not only the pure batch size estimation, but the batch resolution.
+\item The estimation phase results in a sequence of colliding messages. These provide information about the cardinality of the batch, but do not help to solve an even small portion of the batch and can not carry auxiliary information. An algorithm that allows to get an estimate while resolving nodes would offer some advantages when the problem is not only the pure batch size estimation, but the batch resolution.
 \item Basic Greenberg does not allow to achieve arbitrary precision in the estimate. In fact, we have that:
 	\begin{enumerate}[\it i.]
 		\item  the estimate is, by construction, a power of 2. Only a small subset of batch sizes can be mapped without error.
@@ -1616,9 +1615,19 @@ As an example, the results of this computation when $T=10$ and $l=10$ are presen
 
 Table \ref{tb:GEGA-T10-l10} reveals that the estimate is always finite. This good feature  follows from the bounded moments of the Greenberg algorithm. In general (see Table \ref{tb:window-estimate}), simple window based MLE estimators can not achieve finite estimate when all the events are collisions.\\
 
-The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from GEGA MLE Table. In fact, once the GEGA MLE Table has been computed,  for each tuple ($i$,$s$,$c$,$l$) providing estimate $n'$, the corresponding EGA estimate can be obtained by considering the closest two EGA target estimates surrounding $n'$ and by taking the best between the two by using \eqref{eq:MLEiscl} as usual.\\
+The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from GEGA MLE Table. In fact, once the GEGA MLE Table has been computed,  for each tuple ($i$,$s$,$c$,$l$) providing estimate $n'$, the corresponding EGA estimate can be obtained by considering the closest two EGA target estimates surrounding $n'$ and by taking the best between the two by using \eqref{eq:MLEiscl} as usual. Even more, since extensive computation of the  GEGA MLE can take really long time, it is worth to mention that computation can be speed up looking only for solutions which satisfy the following constrain:\\
+\begin{equation}
+\max(MLE(T-s-c,s-1,c,l),MLE(T-s-c,s,c-1,l))\leq MLE(i,s,c,l)
+\label{eq:speedup}
+\end{equation}
 
-\begin{figure}[H]
+This simply means that computing Table \ref{tb:GEGA-T10-l10} cells  by diagonal can benefit of \ref{eq:speedup} and speed up the computation process.
+
+\clearpage
+\subsection{Performance}
+
+The estimate provided by GEGA is biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have very small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is negligible in practice since the oscillations are too small to affect the estimate and are hidden by the rounding operation. Table \ref{tb:GEGA-average-bias} reports the average bias $\phi(T)$ as a function of $T$. 
+\begin{figure}[hb]
 \makebox[\textwidth][c]{% exchange [l] with [r] or [c] to extend it into the left border or both, respectively
   \includegraphics[width=1.2\textwidth]{matlab/GEGA/GEGA-bias-varying-T}% here 20% wider than \textwidth
  }
@@ -1626,8 +1635,7 @@ The EGA MLE Table defined in \eqref{eq:MLEiscl} can be obtained as sub-case from
 \label{fg:GEGA-bias}
 \end{figure}
 
-\subsection{Performance}
-The estimate provided by GEGA is biased. Figure \ref{fg:GEGA-bias} shows that the algorithm tends to overestimate the real batch size. Anyway, the bias can be easily corrected since it is always really near to the average value: the oscillations have very small amplitude. Increasing $T$ reduces the bias as well as the oscillations amplitude. Very small batch sizes (less than 20) show higher oscillations compared to larger ones: this fact is negligible in practice since the oscillations are too small to affect the estimate and are hidden by the rounding operation. Table \ref{tb:GEGA-average-bias} reports the average bias $\phi(T)$ as a function of $T$. The results where computed by averaging the bias estimate for batch sizes from 2 to 2000.\\ 
+The results where computed by averaging the bias estimate for batch sizes from 2 to 2000.\\ 
 
 \begin{table}[htdp]
 \centering
@@ -1663,17 +1671,17 @@ Figure \ref{fg:GEGA-biased-unbiased} shows that the bias-corrected estimate perf
 \begin{figure}[H]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k}% here 20% wider than \textwidth
- \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$}
+ \caption{\emph{GEGA}: Minimum $T$ to achieve error coefficient lower than $k$ with $\theta=0.99$}
  \label{fg:GEGA-min-T-for-k}
 \end{figure}
 
 \begin{figure}[H]
 \centering
     \includegraphics[width=0.8\textwidth,height=0.3\textheight]{matlab/GEGA/GEGA-min-T-for-k-detail}% here 20% wider than \textwidth
- \caption{\emph{GEGA}: Minimum $T$ to achieve accuracy $k$, detailed view}
+ \caption{\emph{GEGA}: Minimum $T$ to achieve error coefficient lower than $k$ with $\theta=0.99$ , detailed view}
  \label{fg:GEGA-min-T-for-k-detail}
 \end{figure}
-Results presented in Figures  \ref{fg:GEGA-min-T-for-k} and  \ref{fg:GEGA-min-T-for-k-detail} show that the accuracy in the estimate grows as $T$ increases and it is independent of the batch size when the batch size is not too small (ex.: $n=10$). In fact, for very small batch sizes, the accuracy shows a descending step trend since the  probability distribution is discrete and the adopted algorithm performs rounding operations. 
+Results presented in Figures  \ref{fg:GEGA-min-T-for-k} and  \ref{fg:GEGA-min-T-for-k-detail} show that the accuracy in the estimate grows as $T$ increases and it is independent of the batch size when the batch size is not too small (e.g.: $n=10$). In fact, for very small batch sizes, the error coefficient $k$ shows a descending steps trend since the  probability distribution is discrete and the adopted algorithm performs rounding operations. Furthermore, it is important to mention that $T$ allows the user to choose estimate accuracy easily, without caring about the batch size. In other words, if we require a given estimate accuracy, in terms of error coefficient $k$, the minimum necessary $T$ can be easily determined looking at Figure  \ref{fg:GEGA-min-T-for-k-detail}.
 
 %\clearpage
 \section{Comparison}
@@ -1682,15 +1690,16 @@ Here we will provide the reader a comparison between the estimates obtained usin
 \item in \emph{Cidon} this means that $\pc$ is not \emph{a priori} fixed but, as the resolution goes on, gets updated in accordance to the resolved interval.
 \item in \emph{GEGA} this simply means that $T$ grows as the elapsed time.
 \end{itemize}
-In Figure \ref{fg:comparison} we try to answer the question: ``elapsed time $t$, what is the accuracy of the estimate?''.
 \begin{figure}[h]
 \centering
 \include{immagini/comparison}
-\caption{\emph{GEGA vs Cidon}: Accuracy as function of elapsed time}
+\caption{\emph{GEGA vs Cidon}: Error coefficient $k$ as function of elapsed time}
 \label{fg:comparison}
 \end{figure}
+
+In Figure \ref{fg:comparison} we try to answer the question: ``When time $t$ is  elapsed, what is the accuracy of the estimate?''.
 We considered the average running time for both the algorithms to provide a meaningful and as fair as possible comparison: in \emph{GEGA} $t\approx\log(n)+T$, in \emph{Cidon} $t\approx n\pc C$.   Figure \ref{fg:comparison} shows the minimum  $k$ for which $\theta_{k}$ in \eqref{eq:zanella-bound} is greater than or equal to 0.99.
-You can notice that the \emph{GEGA} algorithm, since it provides always a finite estimate, gives a bound on the accuracy after just  $\log(n)$ slots: as soon as phase 1 ends. Therefore, it results faster than \emph{Cidon} in providing the first bound for any batch size. Considering $n=10$ in the figure as an index of the behavior for very small batch sizes, you can see that initially \gega estimate is more accurate than \cidon but later, for $k$ smaller than two, \cidon takes less time. For larger sizes ($n=100$ and $n=1000$) \gega achieves accuracy $k=2$ in about the half of the time taken by \cidon, and $k=1.5$ saving about $40-45$\% of time.\\
+You can notice that the \emph{GEGA} algorithm, since it provides always a finite estimate, gives a bound on the accuracy after just  $\approx\log_{2}n$ slots: as soon as phase 1 ends. Therefore, it results faster than \emph{Cidon} in providing the first bound for any batch size. Considering $n=10$ in the Figure as an index of the behavior for very small batch sizes, you can see that initially \gega estimate is more accurate than \cidon but later, for $k$ smaller than two, \cidon takes less time. For larger sizes ($n=100$ and $n=1000$) \gega achieves accuracy $k=2$ in about the half of the time taken by \cidon, and $k=1.5$ saving about 40\% of time.\\
 
 
 \begin{comment}
@@ -1707,7 +1716,7 @@ In general, we can say that \gega performs great for middle-large batch sizes wh
 
 \chapter*{Conclusions}
 \addcontentsline{toc}{chapter}{Conclusions}
-The final goal of this work was to investigate \emph{The Batch Size Estimate Problem} in order to develop, if possible, innovative techniques to solve the problem. Hence, we studied and analyzed both the \emph{Batch Size Estimate} and some of the \emph{Batch Resolution Algorithms} to understand in what measure the estimate can influence, and hopefully speedup, the resolution process. There are two possible ways to approach the matter: on one hand you can perform an explicit estimate phase, followed by a resolution one, on the other hand, you can choose to combine the two together. This second option is usually the case in window based scenarios where the result of the resolution is used to preform an estimate and where estimate and resolution processes coincide. Window based approach is really efficient when we have a good knowledge of the batch multiplicity but has the disadvantage that performs really poor when the batch size is different from the expected one. In fact, communication costs are reduced due to deferred feedback but, at the same time, a wrong estimate of the multiplicity results in really poor resolution performance. The big open problem of this approach is how to determine the size of the initial window. A large window results in good estimate and resolution of a possibly large amount of nodes but suffers poor performance if the batch to solve is much smaller than the windows size (empty slots) or much larger (collisions). Using \emph{GEGA} is a great choice in this scenario to determine the batch size in terms of operational range.\\
+The final goal of this work was to investigate \emph{The Batch Size Estimate Problem} in order to develop, if possible, innovative techniques to solve the problem. Hence, we studied and characterized both the \emph{Batch Size Estimate} and some of the \emph{Batch Resolution Algorithms} to understand in what measure the estimate can influence, and hopefully speedup, the resolution process. There are two possible ways to approach the matter: on one hand you can perform an explicit estimate phase, followed by a resolution one, on the other hand, you can choose to combine the two together. This second option is usually the case in window based scenarios where the result of the resolution is used to preform an estimate and where estimate and resolution processes coincide. Window based approach is really efficient when we have a good knowledge of the batch multiplicity but has the disadvantage that performs really poor when the batch size is different from the expected one. In fact, communication costs are reduced due to deferred feedback but, at the same time, a wrong estimate of the multiplicity results in really poor resolution performance. The big open problem of this approach is how to determine the size of the initial window. A large window results in good estimate and resolution of a possibly large amount of nodes but suffers poor performance if the batch to solve is much smaller than the windows size (empty slots) or much larger (collisions). Using \emph{GEGA} is a great choice in this scenario to determine the batch size in terms of operational range.\\
 The main advantages of \emph{GEGA} are:
 \begin{itemize}
 \item Speed. In fact, for a wide range of minimum required accuracies and batch sizes, it is faster than any other estimate algorithm known to us.
@@ -1723,10 +1732,10 @@ However, there are also some limitation to the proposed estimate scheme:
 Therefore we suggest to adopt it to:
 \begin{itemize}
 \item provide an initial estimate of the batch size which can be further refined using other techniques or that can be used to speedup dynamically estimating resolution processes. 
-\item provide an estimate for algorithms that are ``robust'' in terms of resolution efficiency: their performance degrades smoothly when estimated batch size differs, but not too much, from the real one. 
+\item provide an estimate for algorithms that are ``robust'' in terms of resolution efficiency: their performance degrades smoothly when estimated batch size differs, but not too much, from the real one (e.g. \emph{m Groups Splitting}). 
 \end{itemize}
 
-Understanding in details how to balance the estimate overhead with the improved resolution efficiency depends on the applied BRA and goes beyond the goals of this work. Just to provide you an idea on how things work, referring, as an example, to the \emph{m Groups Split} in the CSMA scenario described in Section \ref{se:mgroups} we have that, following the notations used throughout this work, if estimate is within the interval $\frac{n}{k}\leq \hat{n}\leq kn$, maximum performance loss is below 3\% when $k=1.5$ and 7\% when $k=2$. Therefore, considering the estimate overhead and choosing accuracy in function of the batch size, using GEGA results convenient when the batch size is larger than 30-70.
+Understanding in details how to balance the estimate overhead with the improved resolution efficiency depends on the applied BRA and goes beyond the goals of this work. Just to provide you an idea on how things work, referring, as an example, to the \emph{m Groups Split} in the CSMA scenario described in Section \ref{se:mgroups} we have that, following the notations used throughout this work, if estimate is within the interval $\frac{n}{k}\leq \hat{n}\leq kn$, maximum performance loss is below 3\% when $k=1.5$ and 7\% when $k=2$. Therefore, considering the estimate overhead and choosing the required accuracy in function of the batch size, using GEGA results convenient compared to oblivious resolution (MBT, no estimate performed) when the batch size is larger than 30-70.
 
 
 
@@ -1762,6 +1771,6 @@ Table V.}\label{rotfloat2} \end{sidewaystable}
 \end{comment}
 
 \include{appendix}
-
+\clearpage
 \include{bibliography}
 \end{document}
