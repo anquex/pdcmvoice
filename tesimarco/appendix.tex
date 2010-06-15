@@ -13,7 +13,7 @@ Let $X$ be a \emph{random variable} with expected value $\mu$ and finite varianc
 \label{eq:cheby}
 \end{equation}
 \subsection*{Binomial Distribution}
-The binomial distribution is the discrete probability distribution of the number of successes in a sequence of $n$ independent yes/no experiments, each of which yields success with probability $p$.\\ In general, let a random variable $K=  B(n,p)$ be a binomial distribution with parameters $n$ and $p$. The probability of getting exactly $k$ successes in n trials is given by the probability mass function:
+The binomial distribution is the discrete probability distribution of the number of successes in a sequence of $n$ independent yes/no experiments, each of which yields success with probability $p$.\\ In general, let a random variable $K=  B(n,p)$ be a binomial distribution with parameters $n$ and $p$. The probability of getting exactly $k$ successes in $n$ trials is given by the probability mass function:
 \begin{equation}
 f(k;n,p)=\textrm{Pr}(K=k)= {n \choose k} p^{k} (1-p)^{n-k} 
 \end{equation}
@@ -364,7 +364,7 @@ n & slot:& 7 &8 &9 &10 &11 &12 &13 &14 &15 &16 &17 &18 &19 &20 &21 &22 \\
 %%%%%%%%%%%%%%%%%%
 \clearpage
 \section{GEGA}
-
+From the table below you can see how Table \ref{tb:GEGA-T10-l10} changes when $T=20$. The density of target estimates near the ``right'' one increases and also the difference between the maximum and minimum allowed value gets larger.
 \begin{table}[H]
  \begin{minipage}[b]{18.5cm}
 \centering
@@ -401,7 +401,7 @@ n & slot:& 7 &8 &9 &10 &11 &12 &13 &14 &15 &16 &17 &18 &19 &20 &21 &22 \\
  \end{minipage}
  \end{table}
 
-
+\begin{comment}
 \begin{sidewaystable}
 \caption{\emph{GEGA}: Possible estimates when $T=30$ and $l=10$}
 \resizebox{25cm}{!}{
@@ -442,6 +442,6 @@ n & slot:& 7 &8 &9 &10 &11 &12 &13 &14 &15 &16 &17 &18 &19 &20 &21 &22 \\
 \end{tabular}
 }
 \end{sidewaystable}
-
+\end{comment}
 %%%%%%%%%%%%%%%%%%
 \end{appendices}
