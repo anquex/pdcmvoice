@@ -242,8 +242,8 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \begin{center}
         {\huge\bf \baselineskip=0.95em plus 1pt \expandafter{
         %\sc Stima Della Molteplicità\\ Di Insiemi Di Conflitto
-        
-        STIMA DELLA MOLTEPLICITÀ\\ DI INSIEMI DI CONFLITTO
+        BATCH SIZE ESTIMATE
+        %STIMA DELLA MOLTEPLICITÀ\\ DI INSIEMI DI CONFLITTO
         %Stima della molteplicità\\ di insiemi di conflitto
         \par}}
 \end{center}
@@ -292,7 +292,11 @@ Prof. \textbf{Andrea Zanella} & & \textbf{Marco Bettiol}\\
 \thispagestyle{empty}
 \clearpage
 \null\vspace{\stretch{20}}
-{\flushleft \large Finished: \today,   \currenttime\\
+{\flushleft \large 
+\begin{tabular}{ll}
+Defended on & $28^{th}$ June, 2010\\ 
+& Palazzo del Bo, Padova\\%Finished: \today,   \currenttime\\
+\end{tabular}\\
 \null\vspace{\stretch{2}}
 \texttt{Author email: bettiol.marco at gmail dot com}
 \null\vspace{\stretch{1}}
@@ -382,7 +386,7 @@ In these applications:
 \end{itemize}
  
 
-To adapt to any scenario, BRAs can be oblivious of the batch multiplicity $n$: in this case, however, the expected batch resolution time (often referred to as \emph{batch resolution interval, BRI}) in not optimal. In fact, the knowledge of the conflict multiplicity $n$ is the most critical factor to optimize the batch resolution and to allow the usage of advanced resolutions schemes characterized by higher resolution efficiency. For this reason the \emph{Batch Size Estimate} is pivotal.\\
+To adapt to any scenario, BRAs can be oblivious of the batch multiplicity $n$: in this case, however, the expected batch resolution time (often referred to as \emph{batch resolution interval, BRI}) is not optimal. In fact, the knowledge of the conflict multiplicity $n$ is the most critical factor to optimize the batch resolution and to allow the usage of advanced resolution schemes characterized by higher resolution efficiency. For this reason the \emph{Batch Size Estimate} is pivotal.\\
 
 
 \section{System Model}
@@ -542,7 +546,7 @@ Nodes in $\mathcal{S}$ wait until each terminal in $\mathcal{R}$ transmits succe
 
 \rev{Pseudo-code in Alg. \ref{alg:binarytree} provides a very high level description of the splitting technique. The role of the supervisor is implicit in the code.\\}
 
-\rev{Intuitively setting $p=1/2$ can be a good choice since the algorithm is in some sense ``symmetric'':  best performance are achived when $\mathcal{R}$ and $\mathcal{S}$ are balanced.\\}
+\rev{Intuitively setting $p=1/2$ can be a good choice since the algorithm is in some sense ``symmetric'':  best performance are achieved when $\mathcal{R}$ and $\mathcal{S}$ are balanced.\\}
 
 
 Let $L_{n}^{BT}$ be the expected running time in slots required to resolve a conflict among $n$ nodes using the \emph{Basic Binary Tree Algorithm} (\algname{BT}).
@@ -711,7 +715,7 @@ The possible cases are: \textcolor{red}{qui incasino un po' le cose con una nota
 
 The \emph{Modified Binary Tree (MBT)} is a simple way to improve the BT algorithm.\\ 
 \rev{
-To keep the notation simple, we will explain the idea illustrating what happens the first time it is applied. In this case  node $\tau$ is visited in slot $\tau$. This does not holds in general, but explanation would have required to use two different indexed for slots and nodes, and Figure \ref{example-mbt} would have been less immediate to understand.\\}
+To keep the notation simple, we will explain the idea illustrating what happens the first time it is applied. In this case  node $\tau$ is visited in slot $\tau$. This does not holds in general, but explanation would have required to use two different indexes for slots and nodes, and Figure \ref{example-mbt} would have been less immediate to understand.\\}
 
 The observation is that, during the tree traversal, sometimes we know in advance if the next slot will be collided. This happens when, after a collided slot $\tau$, we get an idle slot ($\tau+1$) in the left branch of the binary tree. In this case, visiting the right branch ($\tau+2$), we will certainly get a collision .\\
 \rev{In fact, after sensing slot $\tau$ is collided, we know that there are at least 2 nodes in the last visited sub-tree. None of them belongs to the left-branch  of that sub-tree since slot ($\tau+1$) is idle. Consequently they must be in the right branch of the sub-tree, whose enabling will hence result into a collision.
@@ -1254,7 +1258,7 @@ Using basic Algorithm \ref{alg-greenberg}, the expected value of $\hat{n}_{+}$ i
 \label{alg-greenberg-base-b}
 \end{algorithm}
 
-In Algorithm \ref{alg-greenberg-base-b}, the term $\phi(b)$ corrects the bias of the estimator. Table \ref{table:greenberg-b-phi} shows how $\phi$ and the expected cost in slots vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorithm cost ($\lesssim \log_{2}n$). We can notice that smaller $b$ results in smaller $\phi(b)$. This means that $b$ deeply biases the estimate: if $b^{'} < b^{''}$ then $E[\hat{n}(b^{'})] < E[\hat{n}(b^{''})]$. This follows form the fact that, decreasing $b$, the stop probability ``shift'' towards ``early slots'' associated to lower estimates.   
+In Algorithm \ref{alg-greenberg-base-b}, the term $\phi(b)$ corrects the bias of the estimator. Table \ref{table:greenberg-b-phi} shows how $\phi$ and the expected cost in slots vary for different $b$. Expected cost ($\lesssim \log_{b}n$) is expressed as a multiplicative factor for the basic Greenberg algorithm cost ($\lesssim \log_{2}n$). We can notice that smaller $b$ results in smaller $\phi(b)$. This means that $b$ deeply biases the estimate: if $b^{'} < b^{''}$ then $E[\hat{n}(b^{'})] < E[\hat{n}(b^{''})]$. This follows from the fact that, decreasing $b$, the stop probability ``shift'' towards ``early slots'' associated to lower estimates.   
 
 %nota della tabella, assicurarsi che sia nella stessa pagina
 
@@ -1551,7 +1555,7 @@ Greenberg method is really good in terms of running time cost, which is $O\bigl(
 \end{enumerate}
 
 \section{EGA BSE}
-The \emph{Enhached Greenberg Algorithm (EGA)} is a first improvement over the Basic Greenberg algorithm. \\
+The \emph{Enhanched Greenberg Algorithm (EGA)} is a first improvement over the Basic Greenberg algorithm. \\
 
 Let $n$ be a batch size and $p$ be a given transmission probability. As expressed by \eqref{eq:greenberg-prob-empty} \eqref{eq:greenberg-prob-succ} \eqref{eq:greenberg-prob-coll}, varying $n$ while $p$ is fixed results in very different probabilities for \emph{idle}, \emph{successful} and \emph{collided} slots.
 
