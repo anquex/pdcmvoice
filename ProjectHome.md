@@ -1,0 +1,3 @@
+This didactical project aims to create a VOIP application using internet oriented low bit rate codecs such as iLbc and speex.
+These are codecs which already implements tecniques for packet loss error concealment. Furter tecniques for FEC and Redundancy   would be implemented according to the results of IEEE studies and papers. RTCP network quality feedback would be use to bring choises to enable/disable FEC tecniques.
+Later, Background Recovery of lost packets would be implemented so to enable  recording of Telephone like quality calls.
